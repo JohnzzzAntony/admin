@@ -2,57 +2,73 @@
 {% load static %}
 
 {% block content %}
-<section class="py-5 mt-5 bg-light">
-    <!-- Quote Cart Hero Banner -->
-    <section class="py-5 position-relative text-center text-white mb-5" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg'); background-size: cover; background-position: center; min-height: 30vh; display: flex; align-items: center; justify-content: center;">
-        <div class="container py-4">
-            <h1 class="display-4 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">Quote Cart</h1>
-        </div>
-    </section>
+<!-- Hero Banner -->
+<section class="py-5 position-relative text-center text-white" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg'); background-size: cover; background-position: center; min-height: 30vh; display: flex; align-items: center; justify-content: center;">
+    <div class="container py-4">
+        <h1 class="display-4 font-weight-bold mt-5" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">Shopping Cart</h1>
+    </div>
+</section>
 
-    <div class="container py-5">
-        <h2 class="mb-5 text-left font-weight-bold border-bottom pb-3">My <span style="color:var(--accent-blue)">Quote Cart</span></h2>
-        
+<section class="py-5 bg-light">
+    <div class="container py-4">
+
         <div class="row">
+            <!-- Cart Items -->
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm rounded-lg mb-4" style="border-radius: 20px;">
+                <div class="card border-0 shadow-sm mb-4" style="border-radius:20px;">
                     <div class="card-body p-4">
                         <div class="table-responsive">
                             <table class="table align-middle text-center mb-0 border-0">
                                 <thead class="bg-light border-0">
-                                    <tr style="border-radius: 12px !important;">
-                                        <th scope="col" class="text-left border-0 py-3 pl-4" style="min-width: 250px; border-radius: 12px 0 0 12px;">Product</th>
+                                    <tr>
+                                        <th scope="col" class="text-left border-0 py-3 pl-4" style="min-width:250px;">Product</th>
                                         <th scope="col" class="border-0 py-3">Price</th>
                                         <th scope="col" class="border-0 py-3">Quantity</th>
-                                        <th scope="col" class="border-0 py-3 pr-4" style="border-radius: 0 12px 12px 0;">Action</th>
+                                        <th scope="col" class="border-0 py-3">Total</th>
+                                        <th scope="col" class="border-0 py-3 pr-4">Remove</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="spacer" style="height: 15px;"></tr>
                                     {% for item in cart_items %}
-                                    <tr class="shadow-sm mb-3 bg-white" style="border-radius: 12px;">
-                                        <td class="text-left d-flex align-items-center border-0 py-4 pl-4" style="border-radius: 12px 0 0 12px;">
-                                            <img src="{% if item.product.image %}{{ item.product.image.url }}{% else %}https://via.placeholder.com/50{% endif %}" alt="" style="width: 70px; height: 70px; object-fit: contain;" class="mr-3 border rounded shadow-sm">
-                                            <span class="font-weight-bold text-dark h6 mb-0">{{ item.product.name }}</span>
-                                        </td>
-                                        <td class="align-middle border-0 font-weight-bold" style="color: var(--primary-blue);">$ {{ item.price }}</td>
-                                        <td class="align-middle border-0">
-                                            <div class="input-group input-group-sm mx-auto" style="width: 100px;">
-                                                <input type="number" class="form-control text-center py-4 font-weight-bold border-0 bg-light" value="{{ item.quantity }}" readonly style="border-radius: 10px;">
+                                    <tr class="bg-white" style="border-radius:12px;">
+                                        <td class="text-left d-flex align-items-center border-0 py-4 pl-4">
+                                            <img src="{{ item.product.get_image_url }}" alt="{{ item.product.name }}"
+                                                 style="width:70px;height:70px;object-fit:contain;border:1px solid #eee;border-radius:10px;" class="mr-3 shadow-sm">
+                                            <div>
+                                                <a href="{% url 'product_detail' slug=item.product.slug %}"
+                                                   class="font-weight-bold text-dark text-decoration-none h6 mb-0 d-block">
+                                                    {{ item.product.name }}
+                                                </a>
+                                                <small class="text-muted">{{ item.product.category.name }}</small>
                                             </div>
                                         </td>
-                                        <td class="align-middle border-0 pr-4" style="border-radius: 0 12px 12px 0;">
-                                            <a href="{% url 'remove_from_cart' product_id=item.product.id %}" class="btn btn-sm btn-outline-danger shadow-sm py-2 px-3" style="border-radius: 10px;">
+                                        <td class="align-middle border-0 font-weight-bold" style="color:var(--primary-blue);">
+                                            {{ item.price }} AED
+                                        </td>
+                                        <td class="align-middle border-0">
+                                            <span class="badge badge-light px-3 py-2 font-weight-bold border" style="font-size:0.95rem;">
+                                                {{ item.quantity }}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle border-0 font-weight-bold text-dark">
+                                            {{ item.total_item }} AED
+                                        </td>
+                                        <td class="align-middle border-0 pr-4">
+                                            <a href="{% url 'remove_from_cart' product_id=item.product.id %}"
+                                               class="btn btn-sm btn-outline-danger" style="border-radius:50%;width:34px;height:34px;padding:0;line-height:32px;">
                                                 <i class="fa fa-times"></i>
                                             </a>
                                         </td>
                                     </tr>
-                                    <tr class="spacer" style="height: 15px;"></tr>
+                                    <tr style="height:10px;"></tr>
                                     {% empty %}
                                     <tr>
-                                        <td colspan="4" class="p-5 text-muted h5 text-center bg-white border-0" style="border-radius: 20px;">
-                                            <i class="fas fa-shopping-cart fa-3x mb-3 text-secondary"></i><br>
-                                            Your quote cart is currently empty.
+                                        <td colspan="5" class="text-center py-5 border-0">
+                                            <i class="fas fa-shopping-cart fa-3x mb-3 d-block text-secondary"></i>
+                                            <h5 class="text-muted mb-3">Your cart is empty.</h5>
+                                            <a href="{% url 'category_index' %}" class="btn btn-primary px-4 py-2" style="border-radius:30px;">
+                                                Browse Products
+                                            </a>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -61,99 +77,80 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-between mb-4">
-                    <a href="{% url 'category_index' %}" class="btn btn-outline-dark px-4 py-2" style="border-radius: 30px;"><i class="fa fa-arrow-left mr-2"></i>Continue Browsing</a>
-                </div>
+                <a href="{% url 'category_index' %}" class="btn btn-outline-dark px-4 py-2" style="border-radius:30px;">
+                    <i class="fa fa-arrow-left mr-2"></i>Continue Shopping
+                </a>
             </div>
-            
+
+            <!-- Order Summary -->
             <div class="col-lg-4">
-                <div class="card border-0 shadow-lg rounded-lg sticky-top" style="border-radius: 20px; top: 100px;">
-                    <div class="card-header bg-white border-0 pt-4 pb-0 text-center">
-                        <h4 class="font-weight-bold text-primary">Quote Summary</h4>
+                <div class="card border-0 shadow-lg sticky-top" style="border-radius:20px;top:100px;">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h5 class="font-weight-bold text-primary mb-0">
+                            <i class="fas fa-receipt mr-2"></i>Order Summary
+                        </h5>
                     </div>
-                    <div class="card-body p-4">
-                        <p class="text-muted small">By submitting this enquiry, our expert team will review the items and get back to you with a formal quotation, technical sheets, and shipping availability.</p>
-                        <div class="d-flex justify-content-between mb-3 border-top pt-3">
-                            <h6 class="font-weight-bold">Items Count</h6>
-                            <h6 class="font-weight-bold text-dark">{{ cart_count }}</h6>
+                    <div class="card-body px-4 py-3">
+                        {% for item in cart_items %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">{{ item.product.name|truncatechars:26 }} × {{ item.quantity }}</span>
+                            <span class="small font-weight-bold">{{ item.total_item }} AED</span>
+                        </div>
+                        {% endfor %}
+
+                        <hr class="my-3">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Shipping</span>
+                            <span class="text-success small font-weight-bold">Calculated at checkout</span>
+                        </div>
+
+                        <hr class="my-3">
+
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-bold mb-0">Total</h6>
+                            <h6 class="font-weight-bold mb-0 text-primary" id="cart-total">
+                                {% if cart_items %}—{% else %}0.00{% endif %} AED
+                            </h6>
                         </div>
                     </div>
-                    <div class="card-footer bg-white border-top-0 p-4 pt-0">
-                        <button type="button" class="btn btn-primary btn-block py-3 shadow-lg font-weight-bold {% if cart_count == 0 %}disabled{% endif %}" style="border-radius: 30px; background-color: var(--accent-blue);" data-toggle="modal" data-target="#quoteModal">
-                            Request Final Quote
+                    <div class="card-footer bg-white border-0 px-4 pb-4">
+                        {% if cart_items %}
+                        <a href="{% url 'checkout_billing' %}"
+                           class="btn btn-primary btn-block py-3 font-weight-bold shadow"
+                           style="border-radius:30px;background-color:var(--accent-blue);font-size:1.05rem;">
+                            <i class="fas fa-lock mr-2"></i>Proceed to Checkout
+                        </a>
+                        {% else %}
+                        <button class="btn btn-secondary btn-block py-3 disabled" style="border-radius:30px;" disabled>
+                            Your Cart is Empty
                         </button>
+                        {% endif %}
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt mr-1"></i>Secure &amp; encrypted checkout
+                            </small>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center mt-3" style="gap:10px;opacity:0.5;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" height="18" alt="Visa">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" height="22" alt="Mastercard">
+                            <span style="font-weight:900;font-size:0.9rem;color:#3eb98f;">tabby</span>
+                            <span style="font-weight:900;font-size:0.9rem;color:#ff6b35;">tamara</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </section>
 
-<!-- Image 3: Get your Quote Modal -->
-<div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 25px;">
-            <div class="modal-header border-0 pt-5 px-5">
-                <h2 class="modal-title font-weight-bold" id="quoteModalLabel" style="color:var(--primary-blue)">Get your <span class="text-dark">Quote</span></h2>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size: 2.5rem; line-height: 0.5;">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body px-5 pb-5">
-                <form id="quoteForm" method="POST" action="{% url 'submit_enquiry' %}">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <label class="font-weight-bold small text-muted text-uppercase mb-2">First Name*</label>
-                            <input type="text" name="first_name" class="form-control border-bottom border-top-0 border-left-0 border-right-0 rounded-0 bg-transparent px-0 font-weight-bold" placeholder="First Name" required>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="font-weight-bold small text-muted text-uppercase mb-2">Last Name*</label>
-                            <input type="text" name="last_name" class="form-control border-bottom border-top-0 border-left-0 border-right-0 rounded-0 bg-transparent px-0 font-weight-bold" placeholder="Last Name" required>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="font-weight-bold small text-muted text-uppercase mb-2">E-Mail*</label>
-                            <input type="email" name="email" class="form-control border-bottom border-top-0 border-left-0 border-right-0 rounded-0 bg-transparent px-0 font-weight-bold" placeholder="E-Mail" required>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="font-weight-bold small text-muted text-uppercase mb-2">Department</label>
-                            <input type="text" name="department" class="form-control border-bottom border-top-0 border-left-0 border-right-0 rounded-0 bg-transparent px-0 font-weight-bold" placeholder="Department">
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="font-weight-bold small text-muted text-uppercase mb-2">Country / Region*</label>
-                            <select name="country" class="form-control border-bottom border-top-0 border-left-0 border-right-0 rounded-0 bg-transparent px-0 font-weight-bold" required>
-                                <option value="" disabled selected>Select Territory</option>
-                                <option value="UAE">United Arab Emirates</option>
-                                <option value="Oman">Oman</option>
-                                <option value="Qatar">Qatar</option>
-                                <option value="Kuwait">Kuwait</option>
-                                <option value="Saudi Arabia">Saudi Arabia</option>
-                                <option value="Bahrain">Bahrain</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="font-weight-bold small text-muted text-uppercase mb-2">City*</label>
-                            <input type="text" name="city" class="form-control border-bottom border-top-0 border-left-0 border-right-0 rounded-0 bg-transparent px-0 font-weight-bold" placeholder="City" required>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="font-weight-bold small text-muted text-uppercase mb-2">Street</label>
-                            <input type="text" name="street" class="form-control border-bottom border-top-0 border-left-0 border-right-0 rounded-0 bg-transparent px-0 font-weight-bold" placeholder="Street Name / Building">
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="font-weight-bold small text-muted text-uppercase mb-2">Phone*</label>
-                            <input type="text" name="phone" class="form-control border-bottom border-top-0 border-left-0 border-right-0 rounded-0 bg-transparent px-0 font-weight-bold" placeholder="Phone Number" required>
-                        </div>
-                        <div class="col-12 mb-4 mt-3">
-                            <label class="font-weight-bold small text-muted text-uppercase mb-2">Your comment</label>
-                            <textarea name="comment" class="form-control border shadow-sm p-4 font-weight-bold" rows="5" placeholder="Tell us more about your specific needs or any technical questions..." style="border-radius: 15px;"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer border-0 px-5 pb-5">
-                <button type="submit" form="quoteForm" class="btn btn-primary btn-block py-4 shadow-lg font-weight-bold" style="border-radius: 30px; background-color: var(--primary-blue); font-size: 1.2rem;">Send Enquiry Now</button>
-            </div>
-        </div>
-    </div>
-</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var totals = [{% for item in cart_items %}{{ item.total_item }},{% endfor %}];
+    var sum = totals.reduce(function (a, b) { return a + b; }, 0);
+    var el = document.getElementById('cart-total');
+    if (el && totals.length) el.textContent = sum.toFixed(2) + ' AED';
+});
+</script>
 {% endblock %}

@@ -9,9 +9,22 @@ class HeroSliderAdmin(admin.ModelAdmin):
     list_filter = ('is_active',)
 
     def preview(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" style="width: 100px; height:60px;" />', obj.image.url)
-        elif obj.video:
+        url = obj.get_bg_url()
+        if url:
+            return format_html('<img src="{}" style="width: 100px; height:60px; object-fit: cover;" />', url)
+        elif obj.get_vid_url():
             return format_html('<span style="color: blue;">[Video Background]</span>')
         return "-"
     preview.short_description = 'Background Preview'
+
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'subtitle', 'is_active', 'order')
+        }),
+        ('Media (Upload or External URL)', {
+            'fields': (('image', 'image_url'), ('video', 'video_url'))
+        }),
+        ('Action Button', {
+            'fields': ('button_text', 'button_link')
+        }),
+    )

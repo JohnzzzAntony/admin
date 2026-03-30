@@ -41,24 +41,29 @@
                     {% for product in products %}
                     <div class="col-lg-4 col-md-6 col-sm-6 pb-4">
                         <div class="card product-item border-0 mb-4 shadow-sm h-100 rounded-3 overflow-hidden">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border-0 p-0">
-                                <a href="{% url 'product_detail' slug=product.slug %}">
-                                    {% if product.image %}
-                                    <img class="img-fluid w-100" src="{{ product.image.url }}" alt="{{ product.name }}" style="height: 250px; object-fit: contain;">
-                                    {% else %}
-                                    <img class="img-fluid w-100" src="https://via.placeholder.com/300?text=No+Image" alt="{{ product.name }}" style="height: 250px; object-fit: contain;">
-                                    {% endif %}
-                                </a>
-                            </div>
+                             <div class="card-header product-img position-relative overflow-hidden bg-transparent border-0 p-0 text-center" style="height:250px;">
+                                 <a href="{% url 'product_detail' slug=product.slug %}" class="d-block h-100">
+                                     <img class="img-fluid h-100" src="{{ product.get_image_url }}" alt="{{ product.name }}" style="object-fit: contain;">
+                                 </a>
+                             </div>
                             <div class="card-body text-center p-0 pt-3 pb-2">
                                 <a href="{% url 'product_detail' slug=product.slug %}" class="text-dark text-decoration-none">
                                     <h6 class="mb-2 text-dark font-weight-medium product-title-hover">{{ product.name }}</h6>
                                 </a>
+                                <div class="d-flex align-items-center justify-content-center mt-2">
+                                    {% if product.sale_price > 0 %}
+                                        <h6 class="font-weight-bold text-dark mb-0 mr-2">{{ product.sale_price }} AED</h6>
+                                        <small class="text-muted mr-1"><del>{{ product.regular_price }} AED</del></small>
+                                        <small class="text-success ml-2">({{ product.get_discount_percentage }}% OFF)</small>
+                                    {% else %}
+                                        <h6 class="font-weight-bold text-dark mb-0">{{ product.regular_price }} AED</h6>
+                                    {% endif %}
+                                </div>
                             </div>
                             <div class="card-footer bg-transparent border-0 text-center pb-4">
                                 <div class="btn-group w-100">
                                     <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-sm btn-outline-info rounded-left">View Details</a>
-                                    <a href="{% url 'add_to_cart' product_id=product.pk %}" class="btn btn-sm btn-primary rounded-right">Add to Quote +</a>
+                                    <a href="{% url 'add_to_cart' product_id=product.pk %}" class="btn btn-sm btn-primary rounded-right"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</a>
                                 </div>
                             </div>
                         </div>

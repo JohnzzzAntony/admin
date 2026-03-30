@@ -10,13 +10,13 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ('title', 'content', 'excerpt')
     
     fieldsets = (
-        ('Header Information', {
-            'fields': (('title', 'slug'), 'featured_image', 'is_published')
+        ('Article Details', {
+            'fields': (('title', 'slug'), ('featured_image', 'is_published'))
         }),
-        ('Content Information', {
+        ('Content', {
             'fields': ('excerpt', 'content')
         }),
-        ('SEO & Google Ranking', {
+        ('SEO & Discovery', {
             'classes': ('collapse',),
             'fields': ('meta_title', 'meta_description'),
         }),

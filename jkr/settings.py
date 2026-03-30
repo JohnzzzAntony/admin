@@ -160,6 +160,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to JKR Management System",
     "search_model": ["products.Product", "blog.Post"],
     "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "View Site", "url": "http://localhost:8000", "new_window": True},

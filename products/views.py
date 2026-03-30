@@ -3,18 +3,26 @@ from django.db.models import Q
 from .models import Product, Category
 
 def category_index(request):
-    """Image 1: Shows all categories in a grid."""
-    categories = Category.objects.all()
-    return render(request, 'products/category_index.html', {
-        'categories': categories
-    })
+    """Shows categories in a professional grid. Show all if parents aren't clearly defined."""
+    parents = Category.objects.filter(parent__isnull=True)
+    if parents.count() <= 1:
+        categories = Category.objects.all()
+    else:
+        categories = parents
+    return render(request, 'products/category_index.html', {'categories': categories})
 
 def product_list(request):
-    """Shows filtered/searched product list."""
-    categories = Category.objects.all()
-    products = Product.objects.all()
+    """Shows active products with stock, and categories in sidebar."""
+    parents = Category.objects.filter(parent__isnull=True)
+    categories = parents if parents.count() > 1 else Category.objects.all()
+
+    # Only show products with at least one in-stock SKU
+    products = Product.objects.filter(
+        is_active=True,
+        skus__quantity__gt=0,
+        skus__shipping_status='available'
+    ).distinct().order_by('-id')
     
-    # Handle Search
     query = request.GET.get('q')
     if query:
         products = products.filter(Q(name__icontains=query) | Q(overview__icontains=query))
@@ -25,17 +33,30 @@ def product_list(request):
     })
 
 def category_detail(request, slug):
-    """Shows products within a specific category."""
+    """Shows in-stock products within a category and its subcategories."""
     category = get_object_or_404(Category, slug=slug)
-    products = Product.objects.filter(category=category)
-    categories = Category.objects.all() # Needed for sidebar
+    # Get products from current category or children, only if they have stock
+    sub_ids = category.subcategories.values_list('id', flat=True)
+    products = Product.objects.filter(
+        (Q(category=category) | Q(category_id__in=sub_ids)),
+        is_active=True,
+        skus__quantity__gt=0,
+        skus__shipping_status='available'
+    ).distinct().order_by('-id')
+    
+    parents = Category.objects.filter(parent__isnull=True)
+    categories = parents if parents.count() > 1 else Category.objects.all()
+
     return render(request, 'products/product_list.html', {
         'current_category': category, 
         'products': products,
         'categories': categories
     })
 
-def product_detail(request, slug):
-    """Image 2: Product detail page with specs fetching by slug for SEO."""
-    product = get_object_or_404(Product, slug=slug)
+def product_detail(request, slug=None, pk=None):
+    """SEO-friendly product detail page. Supports both slug and PK for administrative legacy tools."""
+    if pk:
+        product = get_object_or_404(Product, pk=pk)
+    else:
+        product = get_object_or_404(Product, slug=slug)
     return render(request, 'products/product_detail.html', {'product': product})

@@ -3,59 +3,55 @@
 
 {% block content %}
     <!-- Hero Slider -->
-    <section class="slider-section position-relative overflow-hidden">
-        <div class="swiper home-slider">
+    <section class="home-slider position-relative overflow-hidden">
+        <div class="swiper main-hero-slider h-100">
             <div class="swiper-wrapper">
                 {% for slider in sliders %}
-                <div class="swiper-slide vh-100 position-relative">
-                    {% if slider.video %}
-                    <video class="video-bg " playsinline loop muted autoplay style="width: 100%; height: 100vh; object-fit: cover;">
-                        <source src="{{ slider.video.url }}" type="video/mp4">
+                <div class="swiper-slide h-100 position-relative">
+                    {% if slider.video or slider.video_url %}
+                    <video autoplay muted loop playsinline class="position-absolute w-100 h-100" style="object-fit: cover; top: 0; left: 0; z-index: -1;">
+                        <source src="{{ slider.get_vid_url }}" type="video/mp4">
                     </video>
-                    {% elif slider.image %}
-                    <img src="{{ slider.image.url }}" alt="{{ slider.title }}" class="img-fluid vh-100 w-100" style="object-fit: cover;">
+                    {% else %}
+                    <div class="position-absolute w-100 h-100" style="background: url('{{ slider.get_bg_url }}'); background-size: cover; background-position: center; z-index: -1;"></div>
                     {% endif %}
-                    <div class="slider-content container py-5" style="z-index: 10; position: absolute; bottom: 100px; left: 0; right: 0;">
-                        <div class="row">
-                            <div class="col-md-8 text-white">
-                                <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ slider.title }}</h1>
-                                <p class="lead h3 mb-4">{{ slider.subtitle }}</p>
-                                <a href="{{ slider.button_link }}" class="btn btn-primary btn-lg px-5 py-3 shadow-lg" style="border-radius: 50px; background-color: var(--accent-blue); border:none;">
-                                    {{ slider.button_text }}
-                                </a>
+                    
+                    <div class="container h-100 d-flex align-items-center">
+                        <div class="col-lg-8 text-white">
+                            <h4 class="text-uppercase tracking-widest mb-3 animate__animated animate__fadeInDown">{{ slider.subtitle }}</h4>
+                            <h1 class="display-3 font-weight-bold mb-4 animate__animated animate__fadeInUp" style="line-height: 1.1;">{{ slider.title }}</h1>
+                            <div class="animate__animated animate__fadeInUp animate__delay-1s">
+                                <a href="{{ slider.button_link }}" class="btn btn-primary btn-lg px-5 py-3 shadow-lg" style="border-radius: 50px;">{{ slider.button_text }}</a>
                             </div>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="swiper-slide bg-primary vh-100 d-flex align-items-center justify-content-center">
-                    <h1 class="text-white">Welcome to JKR International - Please add Sliders in Admin</h1>
+                <div class="swiper-slide h-100 d-flex align-items-center justify-content-center bg-dark text-white">
+                    <h1>Welcome to JKR International</h1>
                 </div>
                 {% endfor %}
             </div>
-            <div class="swiper-pagination"></div>
+            <!-- Slider navigation -->
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
         </div>
     </section>
 
-    <!-- Categories Section -->
-    <section class="py-5 bg-light" id="products">
-        <div class="container text-center pt-5">
-            <h2 class="section-title">Discover our <span style="color:var(--accent-blue)">Products & Services</span> here!</h2>
-            <p class="mb-5 lead">Leading Medical Equipment Suppliers and Distributor in UAE.</p>
-        </div>
-        <div class="container-fluid pb-5">
-            <div class="swiper category-slider">
+    <!-- Categories Section (Parent Categories) -->
+    <section class="py-5 bg-white">
+        <div class="container py-5">
+            <h2 class="section-title text-center mb-5 pb-3">Product <span class="text-primary">Categories</span></h2>
+            <div class="swiper category-slider pb-5">
                 <div class="swiper-wrapper">
                     {% for category in categories %}
                     <div class="swiper-slide">
-                        <div class="card border-0 shadow-sm mx-2 p-3 text-center h-100" style="border-radius: 20px;">
-                            <a href="/products/category/{{ category.slug }}" class="text-decoration-none">
-                                <img src="{% if category.image %}{{ category.image.url }}{% else %}https://via.placeholder.com/300{% endif %}" class="card-img-top mb-3 rounded shadow-sm" style="height: 200px; object-fit: cover;">
-                                <h5 class="text-dark">{{ category.name }}</h5>
-                            </a>
-                        </div>
+                        <a href="{% url 'category_detail' slug=category.slug %}" class="text-decoration-none">
+                            <div class="category-card text-center transition-all p-4 rounded-circle mx-auto shadow-sm" style="width: 220px; height: 220px; border: 2px solid #f1f1f1; background: #fff; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <img src="{{ category.get_image_url }}" alt="{{ category.name }}" class="img-fluid mb-2" style="max-height: 90px; object-fit: contain;">
+                                <h6 class="text-dark font-weight-bold mb-0">{{ category.name }}</h6>
+                            </div>
+                        </a>
                     </div>
                     {% endfor %}
                 </div>
@@ -67,7 +63,7 @@
         </div>
     </section>
 
-    <!-- Explore Latest Products Section (Image 1 Request) -->
+    <!-- Explore Latest Products Section -->
     <section class="py-5 bg-white">
         <div class="container py-5">
             <div class="d-flex justify-content-between align-items-end mb-5">
@@ -83,8 +79,8 @@
                     <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden" style="border-radius: 20px;">
                         <a href="{% url 'product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
                             <div class="position-relative">
-                                <img src="{% if product.image %}{{ product.image.url }}{% else %}https://via.placeholder.com/300{% endif %}" class="card-img-top" style="height: 250px; object-fit: cover;">
-                                {% if product.sale_price %}
+                                <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 250px; object-fit: contain;">
+                                {% if product.sale_price > 0 %}
                                 <span class="badge badge-danger position-absolute p-2" style="top: 15px; right: 15px; border-radius: 8px;">Sale</span>
                                 {% endif %}
                             </div>
@@ -92,11 +88,16 @@
                                 <h5 class="font-weight-bold mb-3" style="min-height: 3rem;">{{ product.name }}</h5>
                                 <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
                                     <div class="price">
-                                        {% if product.sale_price %}
-                                        <span class="h5 font-weight-bold text-primary mb-0">AED {{ product.sale_price }}</span>
-                                        <del class="small text-muted ml-2">AED {{ product.regular_price }}</del>
+                                        {% if product.sale_price > 0 %}
+                                        <div class="d-flex flex-column">
+                                            <span class="h5 font-weight-bold mb-0" style="color: var(--primary-blue) !important;">{{ product.sale_price }} AED</span>
+                                            <div class="d-flex align-items-center">
+                                                <del class="small text-muted">{{ product.regular_price }} AED</del>
+                                                <span class="badge badge-success-light bg-success-light text-success ml-2 font-weight-bold" style="font-size: 0.75rem;">SAVE {{ product.get_discount_percentage }}%</span>
+                                            </div>
+                                        </div>
                                         {% else %}
-                                        <span class="h5 font-weight-bold text-primary mb-0">AED {{ product.regular_price }}</span>
+                                        <span class="h5 font-weight-bold text-dark mb-0 font-weight-bold" style="color: var(--primary-blue) !important;">{{ product.regular_price }} AED</span>
                                         {% endif %}
                                     </div>
                                     <span class="text-primary"><i class="fas fa-plus-circle fa-lg"></i></span>
@@ -133,21 +134,17 @@
                             {% for video in about_us.videos.all %}
                             <div class="swiper-slide">
                                 <div class="position-relative overflow-hidden rounded-lg shadow" style="border-radius: 20px;">
-                                    <img src="{{ video.thumbnail.url }}" class="img-fluid w-100" style="height: 350px; object-fit: cover;">
+                                    <img src="{{ video.get_thumb_url }}" class="img-fluid w-100" style="height: 350px; object-fit: cover;">
                                     <div class="position-absolute d-flex align-items-center justify-content-center" style="top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3);">
                                         <a href="{{ video.video_url }}" class="text-white" data-fancybox onclick="event.preventDefault(); window.open('{{ video.video_url }}','_blank');">
                                             <i class="fas fa-play-circle fa-5x"></i>
                                         </a>
                                     </div>
-                                    {% if video.title %}
-                                    <div class="position-absolute p-3 text-white w-100" style="bottom:0; background: linear-gradient(transparent, rgba(0,0,0,0.7))">
-                                        <h5 class="m-0">{{ video.title }}</h5>
-                                    </div>
-                                    {% endif %}
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
+                        <div class="swiper-pagination"></div>
                     </div>
                 </div>
             </div>
@@ -189,7 +186,7 @@
                                 {% else %}
                                 <div class="w-100 h-100 p-2">
                                 {% endif %}
-                                    <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="img-fluid" style="max-height: 80px; object-fit: contain; filter: grayscale(100%); transition: all 0.3s ease;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='grayscale(100%)'">
+                                    <img src="{{ partner.get_logo_url }}" alt="{{ partner.name }}" class="img-fluid" style="max-height: 80px; object-fit: contain; filter: grayscale(100%); transition: all 0.3s ease;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='grayscale(100%)'">
                                 {% if partner.website_url %}
                                 </a>
                                 {% else %}
@@ -204,8 +201,74 @@
         </div>
     </section>
 
-    <!-- Testimonials Section (Image 1 Request) -->
-    <section class="py-5 bg-white overflow-hidden">
+    <!-- Services Section -->
+    <section class="py-5 bg-white overflow-hidden" id="services">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h3 class="text-primary font-weight-bold mb-2">OUR SERVICES</h3>
+                <h2 class="section-title">Specialized Maintenance Services</h2>
+                <p class="lead text-muted mx-auto" style="max-width: 800px;">
+                    We are dedicated to maintaining the health and effectiveness of your essential diagnostic equipment.
+                </p>
+            </div>
+
+            <div class="row pt-4">
+                {% for svc in services %}
+                <div class="col-lg-4 col-md-6 mb-5">
+                    <div class="service-box p-5 h-100 shadow-sm transition-all border text-center" style="border-radius: 40px;">
+                        <div class="icon-wrapper mb-4 mx-auto d-flex align-items-center justify-content-center shadow-lg" style="width: 100px; height: 100px; border-radius: 30px; background: #fff;">
+                            <img src="{{ svc.get_icon_url }}" alt="{{ svc.title }}" style="width: 50px; height: 50px; object-fit: contain;">
+                        </div>
+                        <h4 class="font-weight-bold mb-3 text-dark">{{ svc.title }}</h4>
+                        <p class="text-muted" style="line-height: 1.8;">{{ svc.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision (Image 1 Style) -->
+    <section class="py-5 bg-light">
+        <div class="container py-5">
+            {% for mv in mission_vision %}
+            <div class="row align-items-center mb-5 pb-5 {% if forloop.counter|divisibleby:2 %}flex-row-reverse{% endif %}">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h3 class="text-primary font-weight-bold text-uppercase mb-3">{{ mv.get_section_type_display }}</h3>
+                    <h2 class="section-title mb-4">{{ mv.title }}</h2>
+                    <p class="lead text-dark" style="line-height: 1.8;">{{ mv.content }}</p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="p-3 bg-white shadow rounded-lg overflow-hidden" style="border-radius: 30px;">
+                        <img src="{{ mv.get_img_url }}" class="img-fluid w-100" style="object-fit: cover; border-radius: 20px;">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-5 bg-white">
+        <div class="container py-5">
+            <h2 class="section-title text-center mb-5 pb-3">Latest <span class="text-primary">Gallery & Updates</span></h2>
+            <div class="row">
+                {% for item in gallery %}
+                <div class="col-md-3 col-6 mb-4">
+                    <a href="{{ item.get_img_url }}" data-fancybox="main-gallery" class="d-block shadow-sm rounded-lg overflow-hidden transition-all gallery-img-container">
+                        <img src="{{ item.get_img_url }}" alt="{{ item.title }}" class="img-fluid w-100" style="height: 250px; object-fit: cover;">
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-5">
+                <a href="/gallery/" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 50px;">Browse All Updates</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-5 bg-light">
         <div class="container py-5 text-center">
             <h4 class="text-primary font-weight-bold mb-3">TESTIMONIALS</h4>
             <h2 class="section-title mb-5 pb-3">Read what our clients have to share!</h2>
@@ -220,9 +283,7 @@
                             </div>
                             <p class="lead text-dark font-italic mb-5" style="line-height: 1.8;">"{{ t.content }}"</p>
                             <div class="d-flex align-items-center justify-content-center">
-                                {% if t.image %}
-                                <img src="{{ t.image.url }}" class="rounded-circle mr-3" style="width: 70px; height: 70px; object-fit: cover;">
-                                {% endif %}
+                                <img src="{{ t.get_img_url }}" class="rounded-circle mr-3" style="width: 70px; height: 70px; object-fit: cover;">
                                 <div class="text-left">
                                     <h5 class="font-weight-bold mb-0">{{ t.client_name }}</h5>
                                     <small class="text-muted text-uppercase">{{ t.position }}</small>
@@ -233,10 +294,6 @@
                             </div>
                         </div>
                     </div>
-                    {% empty %}
-                    <div class="swiper-slide">
-                        <p class="text-muted">No testimonials added yet.</p>
-                    </div>
                     {% endfor %}
                 </div>
                 <div class="swiper-pagination mt-5 position-relative"></div>
@@ -244,7 +301,7 @@
         </div>
     </section>
 
-    <!-- Our Clients Section (Image 1 Request) -->
+    <!-- Our Clients Section -->
     <section class="py-5 bg-light">
         <div class="container py-5">
             <h2 class="section-title text-center mb-5 pb-4">Our Clients</h2>
@@ -261,7 +318,7 @@
                             {% for client in public_clients %}
                             <div class="col-md-2 col-4 mb-4">
                                 <div class="bg-white p-3 rounded-lg shadow-sm text-center">
-                                    <img src="{{ client.logo.url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
+                                    <img src="{{ client.get_logo_url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
                                 </div>
                             </div>
                             {% endfor %}
@@ -282,7 +339,7 @@
                             {% for client in private_clients %}
                             <div class="col-md-2 col-4 mb-4">
                                 <div class="bg-white p-3 rounded-lg shadow-sm text-center">
-                                    <img src="{{ client.logo.url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
+                                    <img src="{{ client.get_logo_url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
                                 </div>
                             </div>
                             {% endfor %}
@@ -293,104 +350,74 @@
         </div>
     </section>
 
-    <!-- Instagram Section (Image 1 Request) -->
+    <!-- Instagram Section -->
     <section class="py-5 bg-white">
         <div class="container py-5">
             <div class="text-center mb-5">
                 <h4 class="text-primary font-weight-bold mb-1">GO SOCIAL WITH US</h4>
-                <h2 class="font-weight-bold mb-4">Follow our Instagram <span class="text-primary">{{ site_settings.instagram_handle|default:"@jkrinternational" }}</span></h2>
-            </div>
-            <div class="row no-gutters">
-                {% for post in social_posts %}
-                <div class="col-lg-2 col-md-4 col-6 p-1">
-                    <a href="{{ post.link|default:'#' }}" target="_blank" class="d-block overflow-hidden position-relative social-hover-box">
-                        <img src="{{ post.image.url }}" class="img-fluid w-100" style="height: 200px; object-fit: cover;">
-                        <div class="social-overlay d-flex align-items-center justify-content-center">
-                            <i class="fab fa-instagram fa-2x text-white"></i>
-                        </div>
-                    </a>
-                </div>
-                {% empty %}
-                {% for i in "123456"|make_list %}
-                <div class="col-lg-2 col-md-4 col-6 p-1">
-                    <img src="https://via.placeholder.com/400x400?text=Instagram" class="img-fluid" style="border-radius: 4px;">
-                </div>
-                {% endfor %}
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-
-    <!-- Queries / Contact CTA (Image 1 Request) -->
-    <section class="py-0">
-        <div class="container">
-            <div class="card border-0 shadow-lg px-5 py-5 text-white position-relative" style="background: var(--primary-blue); border-radius: 30px; margin-bottom: -50px; z-index: 5;">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <p class="h5 font-weight-bold mb-2">Any Queries, Feedback</p>
-                        <h2 class="display-4 font-weight-bold">We would love to hear from you</h2>
+                <p class="h6 text-muted mb-4">Follow our Instagram @jkrinternational</p>
+                <div class="row pt-4">
+                    {% for post in social_posts %}
+                    <div class="col-lg-2 col-md-4 col-6 mb-4">
+                        <a href="{{ post.link }}" target="_blank" class="d-block rounded-lg shadow-sm overflow-hidden instagram-item transition-all position-relative">
+                            <img src="{{ post.get_img_url }}" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
+                            <div class="post-overlay position-absolute d-flex align-items-center justify-content-center" style="top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); opacity:0; transition:all 0.3s ease;">
+                                <i class="fab fa-instagram text-white fa-2x"></i>
+                            </div>
+                        </a>
                     </div>
-                    <div class="col-md-4 text-md-right mt-4 mt-md-0">
-                        <a href="/contact/" class="btn btn-light btn-lg px-5 py-3 font-weight-bold" style="border-radius: 50px; color: var(--primary-blue);">Contact us</a>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </section>
-
-    <style>
-        .social-hover-box .social-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(17, 64, 132, 0.7);
-            opacity: 0;
-            transition: all 0.3s;
-        }
-        .social-hover-box:hover .social-overlay { opacity: 1; }
-        .section-title { font-weight: 800; font-size: 2.5rem; color: #333; }
-        .transition-all:hover { transform: translateY(-10px); }
-    </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        new Swiper(".home-slider", {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hero Slider
+        new Swiper('.main-hero-slider', {
             loop: true,
-            autoplay: { delay: 5000 },
-            pagination: { el: ".swiper-pagination", clickable: true },
-            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }
+            autoplay: { delay: 5000, disableOnInteraction: false },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
         });
 
-        new Swiper(".category-slider", {
-            slidesPerView: 2,
-            spaceBetween: 10,
-            loop: true,
-            autoplay: { delay: 2000 },
+        // Category Slider
+        new Swiper('.category-slider', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
             breakpoints: {
-                640: { slidesPerView: 3, spaceBetween: 20 },
-                1024: { slidesPerView: 4, spaceBetween: 30 }
-            },
-            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }
+                576: { slidesPerView: 2 },
+                768: { slidesPerView: 3 },
+                1024: { slidesPerView: 4 },
+                1200: { slidesPerView: 5 }
+            }
         });
 
-        new Swiper(".testimonial-slider", {
-            loop: true,
-            autoplay: { delay: 4000 },
-            pagination: { el: ".swiper-pagination", clickable: true },
-            slidesPerView: 1
-        });
-
-        var pCount = parseInt("{{ partners.count|default:0 }}") || 0;
-        new Swiper(".partner-slider", {
+        // Partner Slider
+        new Swiper('.partner-slider', {
             slidesPerView: 2,
             spaceBetween: 30,
-            loop: pCount > 2,
-            autoplay: { delay: 3000, disableOnInteraction: false },
+            autoplay: { delay: 3000 },
             breakpoints: {
-                640: { slidesPerView: 3, spaceBetween: 40, loop: pCount > 3 },
-                1024: { slidesPerView: 5, spaceBetween: 50, loop: pCount > 5 },
+                576: { slidesPerView: 3 },
+                768: { slidesPerView: 4 },
+                1024: { slidesPerView: 6 }
             }
+        });
+
+        // Testimonial Slider
+        new Swiper('.testimonial-slider', {
+            loop: true,
+            pagination: { el: '.swiper-pagination', clickable: true },
+            autoplay: { delay: 4000 }
+        });
+
+        // About Slider (Videos)
+        new Swiper('.about-slider', {
+            pagination: { el: '.swiper-pagination', clickable: true }
         });
     });
 </script>

@@ -2,6 +2,9 @@ from django.db import models
 from django.conf import settings
 from products.models import Product
 
+
+# ─── Legacy Order (kept for compatibility) ────────────────────────────────────
+
 class Order(models.Model):
     STATUS = (
         ('Pending', 'Pending'),
@@ -17,13 +20,16 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     sku = models.ForeignKey('products.ProductSKU', on_delete=models.CASCADE)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
-# New Model for Image 3 Quote Enquiry
+
+# ─── Quote Enquiry ────────────────────────────────────────────────────────────
+
 class QuoteEnquiry(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -34,14 +40,12 @@ class QuoteEnquiry(models.Model):
     street = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=50)
     comment = models.TextField(blank=True)
-    
     status = models.CharField(max_length=20, default='New', choices=(
         ('New', 'New'),
         ('Processing', 'Processing'),
         ('Quoted', 'Quoted'),
         ('Closed', 'Closed'),
     ))
-    
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -51,6 +55,7 @@ class QuoteEnquiry(models.Model):
         verbose_name = "Quote Enquiry"
         verbose_name_plural = "Quote Enquiries"
 
+
 class QuoteItem(models.Model):
     enquiry = models.ForeignKey(QuoteEnquiry, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -58,3 +63,93 @@ class QuoteItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
+
+
+# ─── Customer Order (full checkout flow) ──────────────────────────────────────
+
+class CustomerOrder(models.Model):
+
+    PAYMENT_METHOD_CHOICES = (
+        ('card',   'Credit / Debit Card'),
+        ('tabby',  'Tabby – Pay in 4'),
+        ('tamara', 'Tamara – Pay in 3'),
+        ('cod',    'Cash on Delivery'),
+    )
+
+    PAYMENT_STATUS_CHOICES = (
+        ('pending',   'Pending'),
+        ('paid',      'Paid'),
+        ('failed',    'Failed'),
+        ('refunded',  'Refunded'),
+    )
+
+    ORDER_STATUS_CHOICES = (
+        ('pending',    'Pending'),
+        ('confirmed',  'Confirmed'),
+        ('processing', 'Processing'),
+        ('shipped',    'Shipped'),
+        ('delivered',  'Delivered'),
+        ('cancelled',  'Cancelled'),
+    )
+
+    # ── Billing / Customer ──────────────────────────────────────────────────
+    first_name  = models.CharField(max_length=100)
+    last_name   = models.CharField(max_length=100)
+    email       = models.EmailField()
+    phone       = models.CharField(max_length=50)
+    department  = models.CharField(max_length=255, blank=True)
+    country     = models.CharField(max_length=100)
+    city        = models.CharField(max_length=100)
+    street      = models.CharField(max_length=255, blank=True)
+    comment     = models.TextField(blank=True, verbose_name="Customer Notes")
+
+    # ── Payment ─────────────────────────────────────────────────────────────
+    payment_method  = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default='cod')
+    payment_status  = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
+
+    # ── Order Management ─────────────────────────────────────────────────────
+    status          = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='pending')
+    total_amount    = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    admin_notes     = models.TextField(blank=True, verbose_name="Internal Admin Notes")
+    created_at      = models.DateTimeField(auto_now_add=True)
+    updated_at      = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Customer Order"
+        verbose_name_plural = "Customer Orders"
+
+    def __str__(self):
+        return f"Order #{self.pk} — {self.first_name} {self.last_name}"
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    def compute_total(self):
+        total = sum(item.total_price for item in self.items.all())
+        self.total_amount = total
+        self.save(update_fields=['total_amount'])
+        return total
+
+
+class CustomerOrderItem(models.Model):
+    order        = models.ForeignKey(CustomerOrder, related_name='items', on_delete=models.CASCADE)
+    product      = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    product_name = models.CharField(max_length=255, help_text="Snapshot of name at time of order")
+    quantity     = models.PositiveIntegerField(default=1)
+    unit_price   = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_price  = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def save(self, *args, **kwargs):
+        self.total_price = self.unit_price * self.quantity
+        if self.product and not self.product_name:
+            self.product_name = self.product.name
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.product_name} × {self.quantity}"
+
+    class Meta:
+        verbose_name = "Order Item"
+        verbose_name_plural = "Order Items"

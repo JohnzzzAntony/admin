@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block split_css %}
+<style>
+.pay-option { cursor:pointer; border:2px solid #dee2e6; border-radius:16px; padding:20px; transition:all .25s; background:#fff; }
+.pay-option:hover { border-color:var(--primary-blue); box-shadow:0 0 0 3px rgba(17,64,132,.1); }
+.pay-option.selected { border-color:var(--primary-blue); background:#f0f6ff; box-shadow:0 0 0 3px rgba(17,64,132,.15); }
+.pay-option input[type=radio] { display:none; }
+.pay-logo { height:32px; object-fit:contain; }
+.card-input-field { border-radius:10px; border:1.5px solid #dee2e6; padding:12px 16px; font-size:0.95rem; transition:border .2s; }
+.card-input-field:focus { border-color:var(--primary-blue); box-shadow:0 0 0 3px rgba(17,64,132,.1); outline:none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="py-5 mt-5 bg-light">
+    <div class="container py-4">
+
+        <!-- Checkout Steps -->
+        <div class="d-flex justify-content-center mb-5">
+            <div class="d-flex align-items-center">
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#28a745;color:#fff;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <small class="mt-1 text-success font-weight-bold">Billing</small>
+                </div>
+                <div style="width:80px;height:2px;background:var(--primary-blue);margin:0 8px;margin-bottom:18px;"></div>
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
+                    <small class="mt-1 font-weight-bold text-primary">Payment</small>
+                </div>
+                <div style="width:80px;height:2px;background:#ddd;margin:0 8px;margin-bottom:18px;"></div>
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#ddd;color:#999;display:flex;align-items:center;justify-content:center;font-weight:700;">3</div>
+                    <small class="mt-1 text-muted">Confirmation</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Payment Methods -->
+            <div class="col-lg-7 mb-4">
+                <div class="card border-0 shadow-sm rounded-lg">
+                    <div class="card-body p-4 p-md-5">
+                        <h4 class="font-weight-bold mb-4" style="color:var(--primary-blue);">
+                            <i class="fas fa-credit-card mr-2"></i>Payment Method
+                        </h4>
+
+                        <form method="POST" action="{% url 'checkout_payment' %}" id="payment-form">
+                            {% csrf_token %}
+
+                            <!-- Payment Options -->
+                            <div class="row mb-4" id="payment-options">
+
+                                <!-- Card -->
+                                <div class="col-6 col-md-3 mb-3">
+                                    <label class="pay-option w-100 text-center selected" id="opt-card" onclick="selectPayment('card')">
+                                        <input type="radio" name="payment_method" value="card" checked>
+                                        <i class="fas fa-credit-card fa-2x mb-2" style="color:var(--primary-blue);"></i>
+                                        <div class="font-weight-bold small">Card</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Visa / MC</div>
+                                    </label>
+                                </div>
+
+                                <!-- Tabby -->
+                                <div class="col-6 col-md-3 mb-3">
+                                    <label class="pay-option w-100 text-center" id="opt-tabby" onclick="selectPayment('tabby')">
+                                        <input type="radio" name="payment_method" value="tabby">
+                                        <div class="mb-1" style="height:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#3eb98f;">tabby</div>
+                                        <div class="font-weight-bold small">Tabby</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">4 payments</div>
+                                    </label>
+                                </div>
+
+                                <!-- Tamara -->
+                                <div class="col-6 col-md-3 mb-3">
+                                    <label class="pay-option w-100 text-center" id="opt-tamara" onclick="selectPayment('tamara')">
+                                        <input type="radio" name="payment_method" value="tamara">
+                                        <div class="mb-1" style="height:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#ff6b35;">tamara</div>
+                                        <div class="font-weight-bold small">Tamara</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">3 payments</div>
+                                    </label>
+                                </div>
+
+                                <!-- COD -->
+                                <div class="col-6 col-md-3 mb-3">
+                                    <label class="pay-option w-100 text-center" id="opt-cod" onclick="selectPayment('cod')">
+                                        <input type="radio" name="payment_method" value="cod">
+                                        <i class="fas fa-money-bill-wave fa-2x mb-2" style="color:#28a745;"></i>
+                                        <div class="font-weight-bold small">Cash</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Pay on delivery</div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Card Fields (shown only when card selected) -->
+                            <div id="card-fields">
+                                <div class="p-4 rounded-lg mb-4" style="background:#f8f9fa;border:1.5px solid #dee2e6;">
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold small">Card Number</label>
+                                        <input type="text" name="card_number" class="form-control card-input-field"
+                                               placeholder="1234 5678 9012 3456" maxlength="19" id="cardNum">
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6 mb-3">
+                                            <label class="font-weight-bold small">Expiry Date</label>
+                                            <input type="text" name="card_expiry" class="form-control card-input-field"
+                                                   placeholder="MM / YY" maxlength="7">
+                                        </div>
+                                        <div class="form-group col-md-6 mb-3">
+                                            <label class="font-weight-bold small">CVV</label>
+                                            <input type="password" name="card_cvv" class="form-control card-input-field"
+                                                   placeholder="•••" maxlength="4">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <label class="font-weight-bold small">Cardholder Name</label>
+                                        <input type="text" name="card_name" class="form-control card-input-field"
+                                               placeholder="As on card">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BNPL notice -->
+                            <div id="bnpl-notice" class="alert alert-info d-none" style="border-radius:12px;">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <span id="bnpl-text"></span> — You will be redirected to complete your payment after placing the order.
+                            </div>
+
+                            <!-- COD notice -->
+                            <div id="cod-notice" class="alert alert-success d-none" style="border-radius:12px;">
+                                <i class="fas fa-truck mr-2"></i>
+                                Cash on Delivery — Pay when your order arrives.
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block py-3 font-weight-bold shadow"
+                                    style="border-radius:30px;background:var(--accent-blue);font-size:1.05rem;">
+                                <i class="fas fa-lock mr-2"></i>Place Order
+                            </button>
+                            <div class="text-center mt-3">
+                                <small class="text-muted"><i class="fas fa-lock mr-1"></i>256-bit SSL encrypted</small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-5">
+                <!-- Billing recap -->
+                <div class="card border-0 shadow-sm rounded-lg mb-3">
+                    <div class="card-body p-4">
+                        <h6 class="font-weight-bold mb-3"><i class="fas fa-map-marker-alt mr-2 text-primary"></i>Delivering to</h6>
+                        <div class="text-muted small">
+                            <strong class="text-dark">{{ billing.first_name }} {{ billing.last_name }}</strong><br>
+                            {{ billing.street }}, {{ billing.city }}, {{ billing.country }}<br>
+                            {{ billing.phone }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items -->
+                <div class="card border-0 shadow-sm rounded-lg sticky-top" style="top:100px;">
+                    <div class="card-header bg-white border-0 pt-4">
+                        <h5 class="font-weight-bold">Order Summary</h5>
+                    </div>
+                    <div class="card-body p-4 pt-0">
+                        {% for item in cart_items %}
+                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                            <img src="{{ item.product.get_image_url }}" style="width:50px;height:50px;object-fit:contain;border-radius:8px;border:1px solid #eee;" class="mr-3">
+                            <div class="flex-grow-1">
+                                <div class="font-weight-bold small">{{ item.product.name|truncatechars:32 }}</div>
+                                <div class="text-muted small">Qty: {{ item.quantity }}</div>
+                            </div>
+                            <div class="font-weight-bold small">{{ item.total_item }} AED</div>
+                        </div>
+                        {% endfor %}
+                        <div class="d-flex justify-content-between">
+                            <strong>Total</strong>
+                            <strong class="text-primary" id="pay-total">— AED</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+function selectPayment(method) {
+    ['card','tabby','tamara','cod'].forEach(function(m){
+        document.getElementById('opt-'+m).classList.remove('selected');
+        document.querySelector('#opt-'+m+' input').checked = false;
+    });
+    document.getElementById('opt-'+method).classList.add('selected');
+    document.querySelector('#opt-'+method+' input').checked = true;
+
+    document.getElementById('card-fields').style.display  = method === 'card'  ? '' : 'none';
+    document.getElementById('bnpl-notice').classList.toggle('d-none', !['tabby','tamara'].includes(method));
+    document.getElementById('cod-notice').classList.toggle('d-none',  method !== 'cod');
+
+    if(method === 'tabby')  document.getElementById('bnpl-text').textContent = 'Split into 4 interest-free payments with Tabby';
+    if(method === 'tamara') document.getElementById('bnpl-text').textContent = 'Split into 3 easy payments with Tamara';
+}
+
+// Card number formatting
+document.getElementById('cardNum').addEventListener('input', function(e){
+    var v = e.target.value.replace(/\s+/g,'').replace(/[^0-9]/gi,'');
+    var matches = v.match(/\d{4,16}/g);
+    var match = matches && matches[0] || '';
+    var parts = [];
+    for(var i=0, len=match.length; i<len; i+=4) parts.push(match.substring(i, i+4));
+    e.target.value = parts.length ? parts.join(' ') : v;
+});
+
+// Total
+document.addEventListener('DOMContentLoaded', function() {
+    var totals = {% if cart_items %}[{% for item in cart_items %}{{ item.total_item }},{% endfor %}]{% else %}[]{% endif %};
+    var sum = totals.reduce(function(a,b){return a+b;}, 0);
+    var el = document.getElementById('pay-total');
+    if(el) el.textContent = sum.toFixed(2) + ' AED';
+});
+</script>
+{% endblock %}

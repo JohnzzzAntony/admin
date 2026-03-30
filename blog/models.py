@@ -5,7 +5,10 @@ from ckeditor.fields import RichTextField
 class Post(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
-    featured_image = models.ImageField(upload_to="blog/")
+    featured_image = models.ImageField(
+        upload_to="blog/",
+        help_text="Blog Cover. Recommended: 1200x800px. JPG, WEBP. Max 2MB."
+    )
     excerpt = models.TextField(blank=True, help_text="Short description for the blog card on the listing page.")
     content = RichTextField()
     

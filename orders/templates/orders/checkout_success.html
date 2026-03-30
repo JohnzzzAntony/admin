@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="py-5 mt-5 bg-light">
+    <div class="container py-5">
+
+        <!-- Steps - all complete -->
+        <div class="d-flex justify-content-center mb-5">
+            <div class="d-flex align-items-center">
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#28a745;color:#fff;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <small class="mt-1 text-success font-weight-bold">Billing</small>
+                </div>
+                <div style="width:80px;height:2px;background:#28a745;margin:0 8px;margin-bottom:18px;"></div>
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#28a745;color:#fff;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <small class="mt-1 text-success font-weight-bold">Payment</small>
+                </div>
+                <div style="width:80px;height:2px;background:#28a745;margin:0 8px;margin-bottom:18px;"></div>
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#28a745;color:#fff;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <small class="mt-1 text-success font-weight-bold">Confirmation</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="card border-0 shadow-sm rounded-lg p-5">
+                    <div class="mb-4">
+                        <div style="width:80px;height:80px;border-radius:50%;background:#28a745;color:#fff;font-size:2rem;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-weight-bold mb-2" style="color:var(--primary-blue);">Order Placed!</h3>
+                    <p class="text-muted mb-4">
+                        Thank you, <strong>{{ enquiry.first_name }}</strong>! Your order has been received.<br>
+                        We'll contact you at <strong>{{ enquiry.email }}</strong> to confirm.
+                    </p>
+                    <div class="p-3 rounded-lg mb-4" style="background:#f8f9fa;">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Order Reference</span>
+                            <strong>#{{ enquiry.id }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Payment Method</span>
+                            <strong>{{ payment_method|default:"Card" }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">Status</span>
+                            <span class="badge badge-warning px-3 py-2" style="border-radius:20px;">Processing</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'category_index' %}" class="btn btn-primary btn-block py-3 font-weight-bold"
+                       style="border-radius:30px;background:var(--accent-blue);">
+                        <i class="fas fa-arrow-left mr-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

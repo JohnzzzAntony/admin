@@ -7,7 +7,12 @@ from .models import Testimonial, Client, SocialPost
 def home(request):
     """Homepage aggregation view."""
     sliders = HeroSlider.objects.filter(is_active=True).order_by('order')
-    categories = Category.objects.all()
+    # Homepage categories: Show parents only if multiple exist; otherwise show all to prevent empty browsing.
+    parents = Category.objects.filter(parent__isnull=True)
+    if parents.count() <= 1:
+        categories = Category.objects.all()
+    else:
+        categories = parents
     about_us = AboutUs.objects.first()
     
     mission = MissionVision.objects.filter(section_type='mission').first()
@@ -23,7 +28,13 @@ def home(request):
     public_clients = Client.objects.filter(category='Public', is_active=True).order_by('order')
     private_clients = Client.objects.filter(category='Private', is_active=True).order_by('order')
     social_posts = SocialPost.objects.all().order_by('order')[:6]
-    latest_products = Product.objects.filter(is_active=True).order_by('-id')[:4]
+    
+    # Homepage should only show in-stock items
+    latest_products = Product.objects.filter(
+        is_active=True,
+        skus__quantity__gt=0,
+        skus__shipping_status='available'
+    ).distinct().order_by('-id')[:4]
 
     context = {
         'sliders': sliders,
