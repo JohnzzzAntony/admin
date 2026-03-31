@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Hero Header -->
+    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" style="background: linear-gradient(rgba(1, 43, 103, 0.8), rgba(1, 43, 103, 0.8)), url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1600'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
+        <div class="container py-5">
+            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">Store Locations</h1>
+            <p class="lead mt-3">Find a JKR International outlet near you</p>
+        </div>
+    </section>
+
+    <!-- Stores Section -->
+    <section class="py-5 bg-light">
+        <div class="container py-5">
+            <!-- Filter Tabs -->
+            <div class="row mb-5 justify-content-center">
+                <div class="col-lg-8">
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        <button class="btn btn-primary rounded-pill px-4 filter-btn active" data-city="all">All Locations</button>
+                        {% for city in cities %}
+                        <button class="btn btn-outline-primary rounded-pill px-4 filter-btn" data-city="{{ city|slugify }}">{{ city }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stores Grid -->
+            <div class="row g-4" id="stores-grid">
+                {% for store in stores %}
+                <div class="col-md-6 col-lg-4 store-card-wrapper" data-city="{{ store.city|slugify }}">
+                    <div class="card h-100 border-0 shadow-sm overflow-hidden" style="border-radius: 20px; transition: transform 0.3s ease;">
+                        <div class="position-relative" style="height: 240px;">
+                            <img src="{{ store.get_image_url }}" class="w-100 h-100 object-fit-cover" alt="{{ store.name }}" style="object-fit: cover;">
+                            <div class="position-absolute top-0 right-0 p-3">
+                                <span class="badge badge-primary transform-scale-up px-3 py-2" style="font-size: 0.9rem; border-radius: 10px;">{{ store.city }}</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h4 class="font-weight-bold mb-3" style="color: var(--primary-blue)">{{ store.name }}</h4>
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i>
+                                <p class="text-muted mb-0 small" style="line-height: 1.6;">{{ store.address }}</p>
+                            </div>
+                            <div class="d-flex align-items-center mb-4">
+                                <i class="fas fa-phone-alt mr-3 text-primary"></i>
+                                <a href="tel:{{ store.phone }}" class="text-decoration-none text-muted mb-0 small">{{ store.phone }}</a>
+                            </div>
+                            <div class="mt-auto">
+                                <a href="{{ store.map_url }}" target="_blank" class="btn btn-primary btn-block rounded-pill py-3 font-weight-bold">
+                                    <i class="fas fa-directions mr-2"></i> Get Directions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="p-5 bg-white rounded-lg shadow-sm">
+                        <i class="fas fa-store-slash fa-4x text-muted mb-3"></i>
+                        <h3 class="text-muted">No stores found</h3>
+                        <p>We are currently updating our locations list. Please check back soon.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .gap-3 { gap: 1rem; }
+        .object-fit-cover { object-fit: cover; }
+        .store-card-wrapper { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .filter-btn { border-width: 2px; font-weight: 600; font-size: 0.9rem; transition: all 0.3s; }
+        .store-card-wrapper:hover .card { transform: translateY(-10px); }
+        .active-filter { background-color: var(--primary-blue) !important; color: white !important; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const storeCards = document.querySelectorAll('.store-card-wrapper');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active button
+                    filterBtns.forEach(b => {
+                        b.classList.remove('btn-primary');
+                        b.classList.remove('active');
+                        b.classList.add('btn-outline-primary');
+                    });
+                    btn.classList.remove('btn-outline-primary');
+                    btn.classList.add('btn-primary');
+                    btn.classList.add('active');
+
+                    const selectedCity = btn.getAttribute('data-city');
+
+                    // Filter cards
+                    storeCards.forEach(card => {
+                        if (selectedCity === 'all' || card.getAttribute('data-city') === selectedCity) {
+                            card.style.display = 'block';
+                            setTimeout(() => {
+                                card.style.opacity = '1';
+                                card.style.transform = 'scale(1)';
+                            }, 50);
+                        } else {
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                card.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

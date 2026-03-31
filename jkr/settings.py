@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # Third-party apps
     'ckeditor',
     'ckeditor_uploader',
+    'import_export',
 
     # Custom apps
     'core',

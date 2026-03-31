@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import SiteSettings, Testimonial, Client, SocialPost
+from .models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation
+
+@admin.register(StoreLocation)
+class StoreLocationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'city', 'phone', 'is_active', 'order')
+    list_editable = ('is_active', 'order')
+    list_filter = ('city', 'is_active')
+    search_fields = ('name', 'address', 'city')
+    fields = (('name', 'city'), 'address', ('phone', 'map_url'), ('image', 'image_url'), ('is_active', 'order'))
 
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):

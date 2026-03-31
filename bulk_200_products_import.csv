@@ -1,0 +1,1001 @@
+category,name,slug,image_url,features,overview,technical_info,regular_price,sale_price,is_active,sku_title,sku_id,sku_quantity,sku_shipping_status,sku_weight
+Medical Equipment,Compact Cylinder X-001,compact-cylinder-x-001,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Cylinder X-001 is designed for high performance in medical equipment applications.,"Model: JKR-001
+Power: 220V
+Material: High Grade",4902,4166.7,TRUE,Standard,JKR-001-SKU,487,available,1.5
+Home Care,Digital Scanner X-002,digital-scanner-x-002,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Scanner X-002 is designed for high performance in home care applications.,"Model: JKR-002
+Power: 220V
+Material: High Grade",3052,2594.2,TRUE,Standard,JKR-002-SKU,216,available,1.5
+Surgical Supplies,Advanced Scanner X-003,advanced-scanner-x-003,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Scanner X-003 is designed for high performance in surgical supplies applications.,"Model: JKR-003
+Power: 220V
+Material: High Grade",2875,2443.75,TRUE,Standard,JKR-003-SKU,486,available,1.5
+Laboratory,Portable Ventilator X-004,portable-ventilator-x-004,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Ventilator X-004 is designed for high performance in laboratory applications.,"Model: JKR-004
+Power: 220V
+Material: High Grade",2371,2015.35,TRUE,Standard,JKR-004-SKU,436,available,1.5
+Medical Equipment,Automatic Meter X-005,automatic-meter-x-005,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Meter X-005 is designed for high performance in medical equipment applications.,"Model: JKR-005
+Power: 220V
+Material: High Grade",567,481.95,TRUE,Standard,JKR-005-SKU,274,available,1.5
+Laboratory,Premium Gloves X-006,premium-gloves-x-006,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Gloves X-006 is designed for high performance in laboratory applications.,"Model: JKR-006
+Power: 220V
+Material: High Grade",2334,1983.9,TRUE,Standard,JKR-006-SKU,42,available,1.5
+Home Care,Digital Scanner X-007,digital-scanner-x-007,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Scanner X-007 is designed for high performance in home care applications.,"Model: JKR-007
+Power: 220V
+Material: High Grade",648,550.8,TRUE,Standard,JKR-007-SKU,32,available,1.5
+Consumables,Compact Cylinder X-008,compact-cylinder-x-008,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Cylinder X-008 is designed for high performance in consumables applications.,"Model: JKR-008
+Power: 220V
+Material: High Grade",4738,4027.3,TRUE,Standard,JKR-008-SKU,483,available,1.5
+Laboratory,Automatic Pump X-009,automatic-pump-x-009,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Pump X-009 is designed for high performance in laboratory applications.,"Model: JKR-009
+Power: 220V
+Material: High Grade",1827,1552.95,TRUE,Standard,JKR-009-SKU,456,available,1.5
+Surgical Supplies,Industrial Cylinder X-010,industrial-cylinder-x-010,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Cylinder X-010 is designed for high performance in surgical supplies applications.,"Model: JKR-010
+Power: 220V
+Material: High Grade",1843,1566.55,TRUE,Standard,JKR-010-SKU,364,available,1.5
+Consumables,Premium Pump X-011,premium-pump-x-011,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Pump X-011 is designed for high performance in consumables applications.,"Model: JKR-011
+Power: 220V
+Material: High Grade",4320,3672.0,TRUE,Standard,JKR-011-SKU,290,available,1.5
+Surgical Supplies,Portable Monitor X-012,portable-monitor-x-012,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Monitor X-012 is designed for high performance in surgical supplies applications.,"Model: JKR-012
+Power: 220V
+Material: High Grade",2070,1759.5,TRUE,Standard,JKR-012-SKU,406,available,1.5
+Home Care,Digital Ventilator X-013,digital-ventilator-x-013,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Ventilator X-013 is designed for high performance in home care applications.,"Model: JKR-013
+Power: 220V
+Material: High Grade",4369,3713.65,TRUE,Standard,JKR-013-SKU,364,available,1.5
+Diagnostic Tools,Premium Gloves X-014,premium-gloves-x-014,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Gloves X-014 is designed for high performance in diagnostic tools applications.,"Model: JKR-014
+Power: 220V
+Material: High Grade",2182,1854.7,TRUE,Standard,JKR-014-SKU,165,available,1.5
+Home Care,Handheld Meter X-015,handheld-meter-x-015,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Meter X-015 is designed for high performance in home care applications.,"Model: JKR-015
+Power: 220V
+Material: High Grade",3717,3159.45,TRUE,Standard,JKR-015-SKU,98,available,1.5
+Home Care,Portable Scale X-016,portable-scale-x-016,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-016 is designed for high performance in home care applications.,"Model: JKR-016
+Power: 220V
+Material: High Grade",4290,3646.5,TRUE,Standard,JKR-016-SKU,322,available,1.5
+Laboratory,Compact Gloves X-017,compact-gloves-x-017,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Gloves X-017 is designed for high performance in laboratory applications.,"Model: JKR-017
+Power: 220V
+Material: High Grade",1928,1638.8,TRUE,Standard,JKR-017-SKU,116,available,1.5
+Medical Equipment,Advanced Ventilator X-018,advanced-ventilator-x-018,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Ventilator X-018 is designed for high performance in medical equipment applications.,"Model: JKR-018
+Power: 220V
+Material: High Grade",293,249.05,TRUE,Standard,JKR-018-SKU,445,available,1.5
+Home Care,Industrial Kit X-019,industrial-kit-x-019,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Kit X-019 is designed for high performance in home care applications.,"Model: JKR-019
+Power: 220V
+Material: High Grade",1435,1219.75,TRUE,Standard,JKR-019-SKU,451,available,1.5
+Consumables,Digital Scanner X-020,digital-scanner-x-020,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Scanner X-020 is designed for high performance in consumables applications.,"Model: JKR-020
+Power: 220V
+Material: High Grade",2517,2139.45,TRUE,Standard,JKR-020-SKU,330,available,1.5
+Consumables,Digital Ventilator X-021,digital-ventilator-x-021,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Ventilator X-021 is designed for high performance in consumables applications.,"Model: JKR-021
+Power: 220V
+Material: High Grade",729,619.65,TRUE,Standard,JKR-021-SKU,303,available,1.5
+Laboratory,Digital Ventilator X-022,digital-ventilator-x-022,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Ventilator X-022 is designed for high performance in laboratory applications.,"Model: JKR-022
+Power: 220V
+Material: High Grade",3712,3155.2,TRUE,Standard,JKR-022-SKU,159,available,1.5
+Surgical Supplies,Compact Scale X-023,compact-scale-x-023,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Scale X-023 is designed for high performance in surgical supplies applications.,"Model: JKR-023
+Power: 220V
+Material: High Grade",4872,4141.2,TRUE,Standard,JKR-023-SKU,59,available,1.5
+Medical Equipment,Digital Cylinder X-024,digital-cylinder-x-024,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Cylinder X-024 is designed for high performance in medical equipment applications.,"Model: JKR-024
+Power: 220V
+Material: High Grade",4248,3610.8,TRUE,Standard,JKR-024-SKU,489,available,1.5
+Surgical Supplies,Compact Scanner X-025,compact-scanner-x-025,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Scanner X-025 is designed for high performance in surgical supplies applications.,"Model: JKR-025
+Power: 220V
+Material: High Grade",2663,2263.55,TRUE,Standard,JKR-025-SKU,370,available,1.5
+Home Care,Compact Gloves X-026,compact-gloves-x-026,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Gloves X-026 is designed for high performance in home care applications.,"Model: JKR-026
+Power: 220V
+Material: High Grade",847,719.95,TRUE,Standard,JKR-026-SKU,339,available,1.5
+Home Care,Advanced Scanner X-027,advanced-scanner-x-027,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Scanner X-027 is designed for high performance in home care applications.,"Model: JKR-027
+Power: 220V
+Material: High Grade",2454,2085.9,TRUE,Standard,JKR-027-SKU,82,available,1.5
+Home Care,Premium Ventilator X-028,premium-ventilator-x-028,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Ventilator X-028 is designed for high performance in home care applications.,"Model: JKR-028
+Power: 220V
+Material: High Grade",2211,1879.35,TRUE,Standard,JKR-028-SKU,335,available,1.5
+Consumables,Handheld Gloves X-029,handheld-gloves-x-029,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Gloves X-029 is designed for high performance in consumables applications.,"Model: JKR-029
+Power: 220V
+Material: High Grade",4705,3999.25,TRUE,Standard,JKR-029-SKU,260,available,1.5
+Surgical Supplies,Industrial Scanner X-030,industrial-scanner-x-030,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Scanner X-030 is designed for high performance in surgical supplies applications.,"Model: JKR-030
+Power: 220V
+Material: High Grade",2484,2111.4,TRUE,Standard,JKR-030-SKU,323,available,1.5
+Home Care,Premium Needles X-031,premium-needles-x-031,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Needles X-031 is designed for high performance in home care applications.,"Model: JKR-031
+Power: 220V
+Material: High Grade",2873,2442.05,TRUE,Standard,JKR-031-SKU,397,available,1.5
+Laboratory,Digital Gloves X-032,digital-gloves-x-032,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Gloves X-032 is designed for high performance in laboratory applications.,"Model: JKR-032
+Power: 220V
+Material: High Grade",571,485.35,TRUE,Standard,JKR-032-SKU,401,available,1.5
+Medical Equipment,Handheld Needles X-033,handheld-needles-x-033,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Needles X-033 is designed for high performance in medical equipment applications.,"Model: JKR-033
+Power: 220V
+Material: High Grade",2597,2207.45,TRUE,Standard,JKR-033-SKU,2,available,1.5
+Medical Equipment,Advanced Meter X-034,advanced-meter-x-034,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Meter X-034 is designed for high performance in medical equipment applications.,"Model: JKR-034
+Power: 220V
+Material: High Grade",2829,2404.65,TRUE,Standard,JKR-034-SKU,325,available,1.5
+Surgical Supplies,Industrial Kit X-035,industrial-kit-x-035,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Kit X-035 is designed for high performance in surgical supplies applications.,"Model: JKR-035
+Power: 220V
+Material: High Grade",351,298.35,TRUE,Standard,JKR-035-SKU,52,available,1.5
+Medical Equipment,Automatic Pump X-036,automatic-pump-x-036,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Pump X-036 is designed for high performance in medical equipment applications.,"Model: JKR-036
+Power: 220V
+Material: High Grade",1183,1005.55,TRUE,Standard,JKR-036-SKU,123,available,1.5
+Medical Equipment,Industrial Scanner X-037,industrial-scanner-x-037,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Scanner X-037 is designed for high performance in medical equipment applications.,"Model: JKR-037
+Power: 220V
+Material: High Grade",1577,1340.45,TRUE,Standard,JKR-037-SKU,390,available,1.5
+Home Care,Portable Needles X-038,portable-needles-x-038,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Needles X-038 is designed for high performance in home care applications.,"Model: JKR-038
+Power: 220V
+Material: High Grade",2138,1817.3,TRUE,Standard,JKR-038-SKU,434,available,1.5
+Surgical Supplies,Portable Scanner X-039,portable-scanner-x-039,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scanner X-039 is designed for high performance in surgical supplies applications.,"Model: JKR-039
+Power: 220V
+Material: High Grade",3930,3340.5,TRUE,Standard,JKR-039-SKU,461,available,1.5
+Consumables,Compact Pump X-040,compact-pump-x-040,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Pump X-040 is designed for high performance in consumables applications.,"Model: JKR-040
+Power: 220V
+Material: High Grade",3281,2788.85,TRUE,Standard,JKR-040-SKU,236,available,1.5
+Diagnostic Tools,Handheld Meter X-041,handheld-meter-x-041,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Meter X-041 is designed for high performance in diagnostic tools applications.,"Model: JKR-041
+Power: 220V
+Material: High Grade",470,399.5,TRUE,Standard,JKR-041-SKU,40,available,1.5
+Consumables,Automatic Monitor X-042,automatic-monitor-x-042,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Monitor X-042 is designed for high performance in consumables applications.,"Model: JKR-042
+Power: 220V
+Material: High Grade",4149,3526.65,TRUE,Standard,JKR-042-SKU,466,available,1.5
+Laboratory,Portable Pump X-043,portable-pump-x-043,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Pump X-043 is designed for high performance in laboratory applications.,"Model: JKR-043
+Power: 220V
+Material: High Grade",731,621.35,TRUE,Standard,JKR-043-SKU,114,available,1.5
+Diagnostic Tools,Automatic Pump X-044,automatic-pump-x-044,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Pump X-044 is designed for high performance in diagnostic tools applications.,"Model: JKR-044
+Power: 220V
+Material: High Grade",4620,3927.0,TRUE,Standard,JKR-044-SKU,378,available,1.5
+Laboratory,Industrial Pump X-045,industrial-pump-x-045,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Pump X-045 is designed for high performance in laboratory applications.,"Model: JKR-045
+Power: 220V
+Material: High Grade",4375,3718.75,TRUE,Standard,JKR-045-SKU,344,available,1.5
+Home Care,Portable Ventilator X-046,portable-ventilator-x-046,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Ventilator X-046 is designed for high performance in home care applications.,"Model: JKR-046
+Power: 220V
+Material: High Grade",1508,1281.8,TRUE,Standard,JKR-046-SKU,39,available,1.5
+Diagnostic Tools,Portable Scale X-047,portable-scale-x-047,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-047 is designed for high performance in diagnostic tools applications.,"Model: JKR-047
+Power: 220V
+Material: High Grade",750,637.5,TRUE,Standard,JKR-047-SKU,155,available,1.5
+Laboratory,Compact Ventilator X-048,compact-ventilator-x-048,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Ventilator X-048 is designed for high performance in laboratory applications.,"Model: JKR-048
+Power: 220V
+Material: High Grade",516,438.6,TRUE,Standard,JKR-048-SKU,38,available,1.5
+Diagnostic Tools,Industrial Cylinder X-049,industrial-cylinder-x-049,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Cylinder X-049 is designed for high performance in diagnostic tools applications.,"Model: JKR-049
+Power: 220V
+Material: High Grade",2763,2348.55,TRUE,Standard,JKR-049-SKU,389,available,1.5
+Surgical Supplies,Portable Kit X-050,portable-kit-x-050,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Kit X-050 is designed for high performance in surgical supplies applications.,"Model: JKR-050
+Power: 220V
+Material: High Grade",1515,1287.75,TRUE,Standard,JKR-050-SKU,383,available,1.5
+Diagnostic Tools,Compact Pump X-051,compact-pump-x-051,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Pump X-051 is designed for high performance in diagnostic tools applications.,"Model: JKR-051
+Power: 220V
+Material: High Grade",1753,1490.05,TRUE,Standard,JKR-051-SKU,420,available,1.5
+Consumables,Compact Kit X-052,compact-kit-x-052,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Kit X-052 is designed for high performance in consumables applications.,"Model: JKR-052
+Power: 220V
+Material: High Grade",2340,1989.0,TRUE,Standard,JKR-052-SKU,103,available,1.5
+Consumables,Industrial Cylinder X-053,industrial-cylinder-x-053,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Cylinder X-053 is designed for high performance in consumables applications.,"Model: JKR-053
+Power: 220V
+Material: High Grade",1020,867.0,TRUE,Standard,JKR-053-SKU,362,available,1.5
+Medical Equipment,Automatic Cylinder X-054,automatic-cylinder-x-054,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Cylinder X-054 is designed for high performance in medical equipment applications.,"Model: JKR-054
+Power: 220V
+Material: High Grade",4138,3517.3,TRUE,Standard,JKR-054-SKU,268,available,1.5
+Laboratory,Compact Pump X-055,compact-pump-x-055,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Pump X-055 is designed for high performance in laboratory applications.,"Model: JKR-055
+Power: 220V
+Material: High Grade",509,432.65,TRUE,Standard,JKR-055-SKU,177,available,1.5
+Consumables,Industrial Ventilator X-056,industrial-ventilator-x-056,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Ventilator X-056 is designed for high performance in consumables applications.,"Model: JKR-056
+Power: 220V
+Material: High Grade",2160,1836.0,TRUE,Standard,JKR-056-SKU,23,available,1.5
+Laboratory,Industrial Ventilator X-057,industrial-ventilator-x-057,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Ventilator X-057 is designed for high performance in laboratory applications.,"Model: JKR-057
+Power: 220V
+Material: High Grade",1645,1398.25,TRUE,Standard,JKR-057-SKU,147,available,1.5
+Diagnostic Tools,Portable Cylinder X-058,portable-cylinder-x-058,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Cylinder X-058 is designed for high performance in diagnostic tools applications.,"Model: JKR-058
+Power: 220V
+Material: High Grade",2994,2544.9,TRUE,Standard,JKR-058-SKU,351,available,1.5
+Home Care,Handheld Gloves X-059,handheld-gloves-x-059,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Gloves X-059 is designed for high performance in home care applications.,"Model: JKR-059
+Power: 220V
+Material: High Grade",317,269.45,TRUE,Standard,JKR-059-SKU,290,available,1.5
+Home Care,Compact Monitor X-060,compact-monitor-x-060,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Monitor X-060 is designed for high performance in home care applications.,"Model: JKR-060
+Power: 220V
+Material: High Grade",3862,3282.7,TRUE,Standard,JKR-060-SKU,70,available,1.5
+Medical Equipment,Premium Cylinder X-061,premium-cylinder-x-061,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Cylinder X-061 is designed for high performance in medical equipment applications.,"Model: JKR-061
+Power: 220V
+Material: High Grade",911,774.35,TRUE,Standard,JKR-061-SKU,80,available,1.5
+Diagnostic Tools,Handheld Cylinder X-062,handheld-cylinder-x-062,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Cylinder X-062 is designed for high performance in diagnostic tools applications.,"Model: JKR-062
+Power: 220V
+Material: High Grade",2452,2084.2,TRUE,Standard,JKR-062-SKU,8,available,1.5
+Consumables,Portable Monitor X-063,portable-monitor-x-063,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Monitor X-063 is designed for high performance in consumables applications.,"Model: JKR-063
+Power: 220V
+Material: High Grade",3368,2862.8,TRUE,Standard,JKR-063-SKU,233,available,1.5
+Medical Equipment,Compact Monitor X-064,compact-monitor-x-064,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Monitor X-064 is designed for high performance in medical equipment applications.,"Model: JKR-064
+Power: 220V
+Material: High Grade",2423,2059.55,TRUE,Standard,JKR-064-SKU,435,available,1.5
+Medical Equipment,Industrial Meter X-065,industrial-meter-x-065,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Meter X-065 is designed for high performance in medical equipment applications.,"Model: JKR-065
+Power: 220V
+Material: High Grade",3914,3326.9,TRUE,Standard,JKR-065-SKU,111,available,1.5
+Laboratory,Compact Pump X-066,compact-pump-x-066,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Pump X-066 is designed for high performance in laboratory applications.,"Model: JKR-066
+Power: 220V
+Material: High Grade",4949,4206.65,TRUE,Standard,JKR-066-SKU,49,available,1.5
+Laboratory,Advanced Gloves X-067,advanced-gloves-x-067,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Gloves X-067 is designed for high performance in laboratory applications.,"Model: JKR-067
+Power: 220V
+Material: High Grade",4500,3825.0,TRUE,Standard,JKR-067-SKU,310,available,1.5
+Consumables,Handheld Scanner X-068,handheld-scanner-x-068,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Scanner X-068 is designed for high performance in consumables applications.,"Model: JKR-068
+Power: 220V
+Material: High Grade",4572,3886.2,TRUE,Standard,JKR-068-SKU,220,available,1.5
+Diagnostic Tools,Industrial Gloves X-069,industrial-gloves-x-069,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Gloves X-069 is designed for high performance in diagnostic tools applications.,"Model: JKR-069
+Power: 220V
+Material: High Grade",1924,1635.4,TRUE,Standard,JKR-069-SKU,356,available,1.5
+Laboratory,Automatic Kit X-070,automatic-kit-x-070,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Kit X-070 is designed for high performance in laboratory applications.,"Model: JKR-070
+Power: 220V
+Material: High Grade",1278,1086.3,TRUE,Standard,JKR-070-SKU,367,available,1.5
+Consumables,Compact Monitor X-071,compact-monitor-x-071,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Monitor X-071 is designed for high performance in consumables applications.,"Model: JKR-071
+Power: 220V
+Material: High Grade",3404,2893.4,TRUE,Standard,JKR-071-SKU,154,available,1.5
+Surgical Supplies,Portable Meter X-072,portable-meter-x-072,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Meter X-072 is designed for high performance in surgical supplies applications.,"Model: JKR-072
+Power: 220V
+Material: High Grade",4621,3927.85,TRUE,Standard,JKR-072-SKU,171,available,1.5
+Laboratory,Portable Monitor X-073,portable-monitor-x-073,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Monitor X-073 is designed for high performance in laboratory applications.,"Model: JKR-073
+Power: 220V
+Material: High Grade",3291,2797.35,TRUE,Standard,JKR-073-SKU,330,available,1.5
+Medical Equipment,Industrial Meter X-074,industrial-meter-x-074,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Meter X-074 is designed for high performance in medical equipment applications.,"Model: JKR-074
+Power: 220V
+Material: High Grade",1247,1059.95,TRUE,Standard,JKR-074-SKU,338,available,1.5
+Surgical Supplies,Premium Meter X-075,premium-meter-x-075,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Meter X-075 is designed for high performance in surgical supplies applications.,"Model: JKR-075
+Power: 220V
+Material: High Grade",3725,3166.25,TRUE,Standard,JKR-075-SKU,327,available,1.5
+Laboratory,Industrial Monitor X-076,industrial-monitor-x-076,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Monitor X-076 is designed for high performance in laboratory applications.,"Model: JKR-076
+Power: 220V
+Material: High Grade",2364,2009.4,TRUE,Standard,JKR-076-SKU,48,available,1.5
+Laboratory,Digital Pump X-077,digital-pump-x-077,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Pump X-077 is designed for high performance in laboratory applications.,"Model: JKR-077
+Power: 220V
+Material: High Grade",2261,1921.85,TRUE,Standard,JKR-077-SKU,265,available,1.5
+Consumables,Handheld Kit X-078,handheld-kit-x-078,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Kit X-078 is designed for high performance in consumables applications.,"Model: JKR-078
+Power: 220V
+Material: High Grade",354,300.9,TRUE,Standard,JKR-078-SKU,368,available,1.5
+Laboratory,Digital Kit X-079,digital-kit-x-079,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Kit X-079 is designed for high performance in laboratory applications.,"Model: JKR-079
+Power: 220V
+Material: High Grade",2267,1926.95,TRUE,Standard,JKR-079-SKU,234,available,1.5
+Laboratory,Digital Scanner X-080,digital-scanner-x-080,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Scanner X-080 is designed for high performance in laboratory applications.,"Model: JKR-080
+Power: 220V
+Material: High Grade",4907,4170.95,TRUE,Standard,JKR-080-SKU,350,available,1.5
+Laboratory,Premium Kit X-081,premium-kit-x-081,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Kit X-081 is designed for high performance in laboratory applications.,"Model: JKR-081
+Power: 220V
+Material: High Grade",1220,1037.0,TRUE,Standard,JKR-081-SKU,497,available,1.5
+Laboratory,Digital Meter X-082,digital-meter-x-082,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Meter X-082 is designed for high performance in laboratory applications.,"Model: JKR-082
+Power: 220V
+Material: High Grade",425,361.25,TRUE,Standard,JKR-082-SKU,76,available,1.5
+Home Care,Handheld Meter X-083,handheld-meter-x-083,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Meter X-083 is designed for high performance in home care applications.,"Model: JKR-083
+Power: 220V
+Material: High Grade",2138,1817.3,TRUE,Standard,JKR-083-SKU,64,available,1.5
+Consumables,Compact Kit X-084,compact-kit-x-084,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Kit X-084 is designed for high performance in consumables applications.,"Model: JKR-084
+Power: 220V
+Material: High Grade",4648,3950.8,TRUE,Standard,JKR-084-SKU,128,available,1.5
+Laboratory,Industrial Kit X-085,industrial-kit-x-085,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Kit X-085 is designed for high performance in laboratory applications.,"Model: JKR-085
+Power: 220V
+Material: High Grade",1298,1103.3,TRUE,Standard,JKR-085-SKU,354,available,1.5
+Home Care,Industrial Scanner X-086,industrial-scanner-x-086,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Scanner X-086 is designed for high performance in home care applications.,"Model: JKR-086
+Power: 220V
+Material: High Grade",3534,3003.9,TRUE,Standard,JKR-086-SKU,409,available,1.5
+Laboratory,Premium Ventilator X-087,premium-ventilator-x-087,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Ventilator X-087 is designed for high performance in laboratory applications.,"Model: JKR-087
+Power: 220V
+Material: High Grade",1528,1298.8,TRUE,Standard,JKR-087-SKU,3,available,1.5
+Medical Equipment,Advanced Meter X-088,advanced-meter-x-088,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Meter X-088 is designed for high performance in medical equipment applications.,"Model: JKR-088
+Power: 220V
+Material: High Grade",1103,937.55,TRUE,Standard,JKR-088-SKU,299,available,1.5
+Medical Equipment,Portable Scale X-089,portable-scale-x-089,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-089 is designed for high performance in medical equipment applications.,"Model: JKR-089
+Power: 220V
+Material: High Grade",3418,2905.3,TRUE,Standard,JKR-089-SKU,370,available,1.5
+Consumables,Compact Meter X-090,compact-meter-x-090,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Meter X-090 is designed for high performance in consumables applications.,"Model: JKR-090
+Power: 220V
+Material: High Grade",3178,2701.3,TRUE,Standard,JKR-090-SKU,115,available,1.5
+Laboratory,Handheld Scanner X-091,handheld-scanner-x-091,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Scanner X-091 is designed for high performance in laboratory applications.,"Model: JKR-091
+Power: 220V
+Material: High Grade",387,328.95,TRUE,Standard,JKR-091-SKU,386,available,1.5
+Surgical Supplies,Automatic Monitor X-092,automatic-monitor-x-092,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Monitor X-092 is designed for high performance in surgical supplies applications.,"Model: JKR-092
+Power: 220V
+Material: High Grade",1983,1685.55,TRUE,Standard,JKR-092-SKU,495,available,1.5
+Consumables,Industrial Cylinder X-093,industrial-cylinder-x-093,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Cylinder X-093 is designed for high performance in consumables applications.,"Model: JKR-093
+Power: 220V
+Material: High Grade",1042,885.7,TRUE,Standard,JKR-093-SKU,126,available,1.5
+Home Care,Handheld Scale X-094,handheld-scale-x-094,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Scale X-094 is designed for high performance in home care applications.,"Model: JKR-094
+Power: 220V
+Material: High Grade",4995,4245.75,TRUE,Standard,JKR-094-SKU,435,available,1.5
+Surgical Supplies,Automatic Cylinder X-095,automatic-cylinder-x-095,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Cylinder X-095 is designed for high performance in surgical supplies applications.,"Model: JKR-095
+Power: 220V
+Material: High Grade",1489,1265.65,TRUE,Standard,JKR-095-SKU,110,available,1.5
+Diagnostic Tools,Handheld Kit X-096,handheld-kit-x-096,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Kit X-096 is designed for high performance in diagnostic tools applications.,"Model: JKR-096
+Power: 220V
+Material: High Grade",2325,1976.25,TRUE,Standard,JKR-096-SKU,76,available,1.5
+Home Care,Advanced Gloves X-097,advanced-gloves-x-097,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Gloves X-097 is designed for high performance in home care applications.,"Model: JKR-097
+Power: 220V
+Material: High Grade",3473,2952.05,TRUE,Standard,JKR-097-SKU,290,available,1.5
+Home Care,Industrial Ventilator X-098,industrial-ventilator-x-098,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Ventilator X-098 is designed for high performance in home care applications.,"Model: JKR-098
+Power: 220V
+Material: High Grade",3435,2919.75,TRUE,Standard,JKR-098-SKU,247,available,1.5
+Diagnostic Tools,Premium Needles X-099,premium-needles-x-099,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Needles X-099 is designed for high performance in diagnostic tools applications.,"Model: JKR-099
+Power: 220V
+Material: High Grade",4586,3898.1,TRUE,Standard,JKR-099-SKU,359,available,1.5
+Laboratory,Premium Gloves X-100,premium-gloves-x-100,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Gloves X-100 is designed for high performance in laboratory applications.,"Model: JKR-100
+Power: 220V
+Material: High Grade",2290,1946.5,TRUE,Standard,JKR-100-SKU,175,available,1.5
+Consumables,Industrial Monitor X-101,industrial-monitor-x-101,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Monitor X-101 is designed for high performance in consumables applications.,"Model: JKR-101
+Power: 220V
+Material: High Grade",769,653.65,TRUE,Standard,JKR-101-SKU,200,available,1.5
+Medical Equipment,Portable Scale X-102,portable-scale-x-102,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-102 is designed for high performance in medical equipment applications.,"Model: JKR-102
+Power: 220V
+Material: High Grade",3500,2975.0,TRUE,Standard,JKR-102-SKU,467,available,1.5
+Home Care,Portable Needles X-103,portable-needles-x-103,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Needles X-103 is designed for high performance in home care applications.,"Model: JKR-103
+Power: 220V
+Material: High Grade",4937,4196.45,TRUE,Standard,JKR-103-SKU,97,available,1.5
+Laboratory,Digital Kit X-104,digital-kit-x-104,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Kit X-104 is designed for high performance in laboratory applications.,"Model: JKR-104
+Power: 220V
+Material: High Grade",1697,1442.45,TRUE,Standard,JKR-104-SKU,35,available,1.5
+Home Care,Industrial Ventilator X-105,industrial-ventilator-x-105,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Ventilator X-105 is designed for high performance in home care applications.,"Model: JKR-105
+Power: 220V
+Material: High Grade",1844,1567.4,TRUE,Standard,JKR-105-SKU,114,available,1.5
+Laboratory,Portable Scale X-106,portable-scale-x-106,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-106 is designed for high performance in laboratory applications.,"Model: JKR-106
+Power: 220V
+Material: High Grade",2705,2299.25,TRUE,Standard,JKR-106-SKU,496,available,1.5
+Laboratory,Portable Scale X-107,portable-scale-x-107,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-107 is designed for high performance in laboratory applications.,"Model: JKR-107
+Power: 220V
+Material: High Grade",3222,2738.7,TRUE,Standard,JKR-107-SKU,41,available,1.5
+Diagnostic Tools,Automatic Ventilator X-108,automatic-ventilator-x-108,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Ventilator X-108 is designed for high performance in diagnostic tools applications.,"Model: JKR-108
+Power: 220V
+Material: High Grade",760,646.0,TRUE,Standard,JKR-108-SKU,248,available,1.5
+Consumables,Portable Cylinder X-109,portable-cylinder-x-109,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Cylinder X-109 is designed for high performance in consumables applications.,"Model: JKR-109
+Power: 220V
+Material: High Grade",2036,1730.6,TRUE,Standard,JKR-109-SKU,26,available,1.5
+Home Care,Premium Pump X-110,premium-pump-x-110,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Pump X-110 is designed for high performance in home care applications.,"Model: JKR-110
+Power: 220V
+Material: High Grade",3462,2942.7,TRUE,Standard,JKR-110-SKU,144,available,1.5
+Diagnostic Tools,Premium Scale X-111,premium-scale-x-111,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Scale X-111 is designed for high performance in diagnostic tools applications.,"Model: JKR-111
+Power: 220V
+Material: High Grade",2132,1812.2,TRUE,Standard,JKR-111-SKU,384,available,1.5
+Home Care,Digital Pump X-112,digital-pump-x-112,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Pump X-112 is designed for high performance in home care applications.,"Model: JKR-112
+Power: 220V
+Material: High Grade",3612,3070.2,TRUE,Standard,JKR-112-SKU,11,available,1.5
+Medical Equipment,Digital Ventilator X-113,digital-ventilator-x-113,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Ventilator X-113 is designed for high performance in medical equipment applications.,"Model: JKR-113
+Power: 220V
+Material: High Grade",2392,2033.2,TRUE,Standard,JKR-113-SKU,482,available,1.5
+Home Care,Handheld Scanner X-114,handheld-scanner-x-114,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Scanner X-114 is designed for high performance in home care applications.,"Model: JKR-114
+Power: 220V
+Material: High Grade",1263,1073.55,TRUE,Standard,JKR-114-SKU,354,available,1.5
+Diagnostic Tools,Compact Gloves X-115,compact-gloves-x-115,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Gloves X-115 is designed for high performance in diagnostic tools applications.,"Model: JKR-115
+Power: 220V
+Material: High Grade",767,651.95,TRUE,Standard,JKR-115-SKU,160,available,1.5
+Laboratory,Portable Ventilator X-116,portable-ventilator-x-116,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Ventilator X-116 is designed for high performance in laboratory applications.,"Model: JKR-116
+Power: 220V
+Material: High Grade",1712,1455.2,TRUE,Standard,JKR-116-SKU,428,available,1.5
+Home Care,Handheld Cylinder X-117,handheld-cylinder-x-117,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Cylinder X-117 is designed for high performance in home care applications.,"Model: JKR-117
+Power: 220V
+Material: High Grade",2532,2152.2,TRUE,Standard,JKR-117-SKU,497,available,1.5
+Surgical Supplies,Industrial Cylinder X-118,industrial-cylinder-x-118,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Cylinder X-118 is designed for high performance in surgical supplies applications.,"Model: JKR-118
+Power: 220V
+Material: High Grade",3073,2612.05,TRUE,Standard,JKR-118-SKU,399,available,1.5
+Consumables,Portable Cylinder X-119,portable-cylinder-x-119,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Cylinder X-119 is designed for high performance in consumables applications.,"Model: JKR-119
+Power: 220V
+Material: High Grade",708,601.8,TRUE,Standard,JKR-119-SKU,467,available,1.5
+Laboratory,Handheld Ventilator X-120,handheld-ventilator-x-120,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Ventilator X-120 is designed for high performance in laboratory applications.,"Model: JKR-120
+Power: 220V
+Material: High Grade",235,199.75,TRUE,Standard,JKR-120-SKU,447,available,1.5
+Diagnostic Tools,Advanced Ventilator X-121,advanced-ventilator-x-121,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Ventilator X-121 is designed for high performance in diagnostic tools applications.,"Model: JKR-121
+Power: 220V
+Material: High Grade",1768,1502.8,TRUE,Standard,JKR-121-SKU,148,available,1.5
+Medical Equipment,Automatic Pump X-122,automatic-pump-x-122,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Pump X-122 is designed for high performance in medical equipment applications.,"Model: JKR-122
+Power: 220V
+Material: High Grade",3495,2970.75,TRUE,Standard,JKR-122-SKU,319,available,1.5
+Laboratory,Digital Ventilator X-123,digital-ventilator-x-123,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Ventilator X-123 is designed for high performance in laboratory applications.,"Model: JKR-123
+Power: 220V
+Material: High Grade",675,573.75,TRUE,Standard,JKR-123-SKU,213,available,1.5
+Diagnostic Tools,Industrial Needles X-124,industrial-needles-x-124,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Needles X-124 is designed for high performance in diagnostic tools applications.,"Model: JKR-124
+Power: 220V
+Material: High Grade",2507,2130.95,TRUE,Standard,JKR-124-SKU,267,available,1.5
+Medical Equipment,Premium Cylinder X-125,premium-cylinder-x-125,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Cylinder X-125 is designed for high performance in medical equipment applications.,"Model: JKR-125
+Power: 220V
+Material: High Grade",4889,4155.65,TRUE,Standard,JKR-125-SKU,320,available,1.5
+Consumables,Portable Scale X-126,portable-scale-x-126,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-126 is designed for high performance in consumables applications.,"Model: JKR-126
+Power: 220V
+Material: High Grade",626,532.1,TRUE,Standard,JKR-126-SKU,360,available,1.5
+Laboratory,Automatic Monitor X-127,automatic-monitor-x-127,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Monitor X-127 is designed for high performance in laboratory applications.,"Model: JKR-127
+Power: 220V
+Material: High Grade",1639,1393.15,TRUE,Standard,JKR-127-SKU,42,available,1.5
+Diagnostic Tools,Digital Needles X-128,digital-needles-x-128,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Needles X-128 is designed for high performance in diagnostic tools applications.,"Model: JKR-128
+Power: 220V
+Material: High Grade",1775,1508.75,TRUE,Standard,JKR-128-SKU,467,available,1.5
+Consumables,Handheld Scale X-129,handheld-scale-x-129,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Scale X-129 is designed for high performance in consumables applications.,"Model: JKR-129
+Power: 220V
+Material: High Grade",4750,4037.5,TRUE,Standard,JKR-129-SKU,225,available,1.5
+Home Care,Industrial Gloves X-130,industrial-gloves-x-130,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Gloves X-130 is designed for high performance in home care applications.,"Model: JKR-130
+Power: 220V
+Material: High Grade",4865,4135.25,TRUE,Standard,JKR-130-SKU,273,available,1.5
+Surgical Supplies,Automatic Needles X-131,automatic-needles-x-131,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Needles X-131 is designed for high performance in surgical supplies applications.,"Model: JKR-131
+Power: 220V
+Material: High Grade",1049,891.65,TRUE,Standard,JKR-131-SKU,468,available,1.5
+Diagnostic Tools,Advanced Gloves X-132,advanced-gloves-x-132,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Gloves X-132 is designed for high performance in diagnostic tools applications.,"Model: JKR-132
+Power: 220V
+Material: High Grade",526,447.1,TRUE,Standard,JKR-132-SKU,490,available,1.5
+Laboratory,Digital Meter X-133,digital-meter-x-133,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Meter X-133 is designed for high performance in laboratory applications.,"Model: JKR-133
+Power: 220V
+Material: High Grade",767,651.95,TRUE,Standard,JKR-133-SKU,348,available,1.5
+Consumables,Handheld Ventilator X-134,handheld-ventilator-x-134,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Ventilator X-134 is designed for high performance in consumables applications.,"Model: JKR-134
+Power: 220V
+Material: High Grade",4104,3488.4,TRUE,Standard,JKR-134-SKU,482,available,1.5
+Laboratory,Handheld Monitor X-135,handheld-monitor-x-135,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Monitor X-135 is designed for high performance in laboratory applications.,"Model: JKR-135
+Power: 220V
+Material: High Grade",1177,1000.45,TRUE,Standard,JKR-135-SKU,160,available,1.5
+Home Care,Compact Needles X-136,compact-needles-x-136,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Needles X-136 is designed for high performance in home care applications.,"Model: JKR-136
+Power: 220V
+Material: High Grade",3985,3387.25,TRUE,Standard,JKR-136-SKU,347,available,1.5
+Medical Equipment,Portable Scale X-137,portable-scale-x-137,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-137 is designed for high performance in medical equipment applications.,"Model: JKR-137
+Power: 220V
+Material: High Grade",3978,3381.3,TRUE,Standard,JKR-137-SKU,86,available,1.5
+Home Care,Portable Gloves X-138,portable-gloves-x-138,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Gloves X-138 is designed for high performance in home care applications.,"Model: JKR-138
+Power: 220V
+Material: High Grade",2840,2414.0,TRUE,Standard,JKR-138-SKU,325,available,1.5
+Consumables,Compact Scale X-139,compact-scale-x-139,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Scale X-139 is designed for high performance in consumables applications.,"Model: JKR-139
+Power: 220V
+Material: High Grade",568,482.8,TRUE,Standard,JKR-139-SKU,385,available,1.5
+Diagnostic Tools,Handheld Cylinder X-140,handheld-cylinder-x-140,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Cylinder X-140 is designed for high performance in diagnostic tools applications.,"Model: JKR-140
+Power: 220V
+Material: High Grade",4177,3550.45,TRUE,Standard,JKR-140-SKU,11,available,1.5
+Laboratory,Handheld Kit X-141,handheld-kit-x-141,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Kit X-141 is designed for high performance in laboratory applications.,"Model: JKR-141
+Power: 220V
+Material: High Grade",2248,1910.8,TRUE,Standard,JKR-141-SKU,145,available,1.5
+Laboratory,Compact Cylinder X-142,compact-cylinder-x-142,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Cylinder X-142 is designed for high performance in laboratory applications.,"Model: JKR-142
+Power: 220V
+Material: High Grade",4062,3452.7,TRUE,Standard,JKR-142-SKU,413,available,1.5
+Surgical Supplies,Compact Pump X-143,compact-pump-x-143,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Pump X-143 is designed for high performance in surgical supplies applications.,"Model: JKR-143
+Power: 220V
+Material: High Grade",3648,3100.8,TRUE,Standard,JKR-143-SKU,369,available,1.5
+Surgical Supplies,Automatic Kit X-144,automatic-kit-x-144,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Kit X-144 is designed for high performance in surgical supplies applications.,"Model: JKR-144
+Power: 220V
+Material: High Grade",324,275.4,TRUE,Standard,JKR-144-SKU,446,available,1.5
+Surgical Supplies,Digital Ventilator X-145,digital-ventilator-x-145,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Ventilator X-145 is designed for high performance in surgical supplies applications.,"Model: JKR-145
+Power: 220V
+Material: High Grade",2997,2547.45,TRUE,Standard,JKR-145-SKU,416,available,1.5
+Laboratory,Premium Scanner X-146,premium-scanner-x-146,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Scanner X-146 is designed for high performance in laboratory applications.,"Model: JKR-146
+Power: 220V
+Material: High Grade",3156,2682.6,TRUE,Standard,JKR-146-SKU,353,available,1.5
+Consumables,Digital Meter X-147,digital-meter-x-147,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Meter X-147 is designed for high performance in consumables applications.,"Model: JKR-147
+Power: 220V
+Material: High Grade",789,670.65,TRUE,Standard,JKR-147-SKU,309,available,1.5
+Home Care,Automatic Gloves X-148,automatic-gloves-x-148,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Gloves X-148 is designed for high performance in home care applications.,"Model: JKR-148
+Power: 220V
+Material: High Grade",785,667.25,TRUE,Standard,JKR-148-SKU,365,available,1.5
+Home Care,Advanced Pump X-149,advanced-pump-x-149,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Pump X-149 is designed for high performance in home care applications.,"Model: JKR-149
+Power: 220V
+Material: High Grade",3815,3242.75,TRUE,Standard,JKR-149-SKU,362,available,1.5
+Laboratory,Compact Scale X-150,compact-scale-x-150,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Scale X-150 is designed for high performance in laboratory applications.,"Model: JKR-150
+Power: 220V
+Material: High Grade",2495,2120.75,TRUE,Standard,JKR-150-SKU,98,available,1.5
+Laboratory,Premium Scale X-151,premium-scale-x-151,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Scale X-151 is designed for high performance in laboratory applications.,"Model: JKR-151
+Power: 220V
+Material: High Grade",4243,3606.55,TRUE,Standard,JKR-151-SKU,41,available,1.5
+Home Care,Portable Kit X-152,portable-kit-x-152,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Kit X-152 is designed for high performance in home care applications.,"Model: JKR-152
+Power: 220V
+Material: High Grade",4103,3487.55,TRUE,Standard,JKR-152-SKU,257,available,1.5
+Diagnostic Tools,Portable Scale X-153,portable-scale-x-153,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-153 is designed for high performance in diagnostic tools applications.,"Model: JKR-153
+Power: 220V
+Material: High Grade",4164,3539.4,TRUE,Standard,JKR-153-SKU,398,available,1.5
+Diagnostic Tools,Handheld Ventilator X-154,handheld-ventilator-x-154,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Ventilator X-154 is designed for high performance in diagnostic tools applications.,"Model: JKR-154
+Power: 220V
+Material: High Grade",2039,1733.15,TRUE,Standard,JKR-154-SKU,47,available,1.5
+Surgical Supplies,Automatic Monitor X-155,automatic-monitor-x-155,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Monitor X-155 is designed for high performance in surgical supplies applications.,"Model: JKR-155
+Power: 220V
+Material: High Grade",1254,1065.9,TRUE,Standard,JKR-155-SKU,207,available,1.5
+Diagnostic Tools,Portable Pump X-156,portable-pump-x-156,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Pump X-156 is designed for high performance in diagnostic tools applications.,"Model: JKR-156
+Power: 220V
+Material: High Grade",3397,2887.45,TRUE,Standard,JKR-156-SKU,419,available,1.5
+Surgical Supplies,Industrial Pump X-157,industrial-pump-x-157,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Pump X-157 is designed for high performance in surgical supplies applications.,"Model: JKR-157
+Power: 220V
+Material: High Grade",188,159.8,TRUE,Standard,JKR-157-SKU,335,available,1.5
+Laboratory,Digital Meter X-158,digital-meter-x-158,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Meter X-158 is designed for high performance in laboratory applications.,"Model: JKR-158
+Power: 220V
+Material: High Grade",1366,1161.1,TRUE,Standard,JKR-158-SKU,228,available,1.5
+Diagnostic Tools,Handheld Cylinder X-159,handheld-cylinder-x-159,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Cylinder X-159 is designed for high performance in diagnostic tools applications.,"Model: JKR-159
+Power: 220V
+Material: High Grade",266,226.1,TRUE,Standard,JKR-159-SKU,163,available,1.5
+Diagnostic Tools,Automatic Gloves X-160,automatic-gloves-x-160,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Gloves X-160 is designed for high performance in diagnostic tools applications.,"Model: JKR-160
+Power: 220V
+Material: High Grade",1685,1432.25,TRUE,Standard,JKR-160-SKU,55,available,1.5
+Consumables,Compact Meter X-161,compact-meter-x-161,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Meter X-161 is designed for high performance in consumables applications.,"Model: JKR-161
+Power: 220V
+Material: High Grade",1997,1697.45,TRUE,Standard,JKR-161-SKU,458,available,1.5
+Home Care,Handheld Cylinder X-162,handheld-cylinder-x-162,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Handheld Cylinder X-162 is designed for high performance in home care applications.,"Model: JKR-162
+Power: 220V
+Material: High Grade",2474,2102.9,TRUE,Standard,JKR-162-SKU,120,available,1.5
+Laboratory,Advanced Scanner X-163,advanced-scanner-x-163,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Scanner X-163 is designed for high performance in laboratory applications.,"Model: JKR-163
+Power: 220V
+Material: High Grade",4055,3446.75,TRUE,Standard,JKR-163-SKU,172,available,1.5
+Laboratory,Portable Pump X-164,portable-pump-x-164,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Pump X-164 is designed for high performance in laboratory applications.,"Model: JKR-164
+Power: 220V
+Material: High Grade",4410,3748.5,TRUE,Standard,JKR-164-SKU,14,available,1.5
+Medical Equipment,Premium Kit X-165,premium-kit-x-165,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Kit X-165 is designed for high performance in medical equipment applications.,"Model: JKR-165
+Power: 220V
+Material: High Grade",2592,2203.2,TRUE,Standard,JKR-165-SKU,205,available,1.5
+Home Care,Digital Meter X-166,digital-meter-x-166,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Meter X-166 is designed for high performance in home care applications.,"Model: JKR-166
+Power: 220V
+Material: High Grade",3704,3148.4,TRUE,Standard,JKR-166-SKU,63,available,1.5
+Diagnostic Tools,Industrial Ventilator X-167,industrial-ventilator-x-167,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Ventilator X-167 is designed for high performance in diagnostic tools applications.,"Model: JKR-167
+Power: 220V
+Material: High Grade",1854,1575.9,TRUE,Standard,JKR-167-SKU,393,available,1.5
+Laboratory,Digital Gloves X-168,digital-gloves-x-168,https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Gloves X-168 is designed for high performance in laboratory applications.,"Model: JKR-168
+Power: 220V
+Material: High Grade",241,204.85,TRUE,Standard,JKR-168-SKU,230,available,1.5
+Laboratory,Premium Pump X-169,premium-pump-x-169,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Pump X-169 is designed for high performance in laboratory applications.,"Model: JKR-169
+Power: 220V
+Material: High Grade",426,362.1,TRUE,Standard,JKR-169-SKU,166,available,1.5
+Laboratory,Portable Kit X-170,portable-kit-x-170,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Kit X-170 is designed for high performance in laboratory applications.,"Model: JKR-170
+Power: 220V
+Material: High Grade",3050,2592.5,TRUE,Standard,JKR-170-SKU,408,available,1.5
+Home Care,Premium Pump X-171,premium-pump-x-171,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Pump X-171 is designed for high performance in home care applications.,"Model: JKR-171
+Power: 220V
+Material: High Grade",4255,3616.75,TRUE,Standard,JKR-171-SKU,278,available,1.5
+Medical Equipment,Automatic Gloves X-172,automatic-gloves-x-172,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Gloves X-172 is designed for high performance in medical equipment applications.,"Model: JKR-172
+Power: 220V
+Material: High Grade",3376,2869.6,TRUE,Standard,JKR-172-SKU,458,available,1.5
+Surgical Supplies,Industrial Kit X-173,industrial-kit-x-173,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Kit X-173 is designed for high performance in surgical supplies applications.,"Model: JKR-173
+Power: 220V
+Material: High Grade",3733,3173.05,TRUE,Standard,JKR-173-SKU,462,available,1.5
+Laboratory,Industrial Needles X-174,industrial-needles-x-174,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Needles X-174 is designed for high performance in laboratory applications.,"Model: JKR-174
+Power: 220V
+Material: High Grade",4974,4227.9,TRUE,Standard,JKR-174-SKU,297,available,1.5
+Diagnostic Tools,Digital Needles X-175,digital-needles-x-175,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Needles X-175 is designed for high performance in diagnostic tools applications.,"Model: JKR-175
+Power: 220V
+Material: High Grade",4016,3413.6,TRUE,Standard,JKR-175-SKU,489,available,1.5
+Home Care,Portable Cylinder X-176,portable-cylinder-x-176,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Cylinder X-176 is designed for high performance in home care applications.,"Model: JKR-176
+Power: 220V
+Material: High Grade",2572,2186.2,TRUE,Standard,JKR-176-SKU,403,available,1.5
+Home Care,Compact Needles X-177,compact-needles-x-177,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Needles X-177 is designed for high performance in home care applications.,"Model: JKR-177
+Power: 220V
+Material: High Grade",3030,2575.5,TRUE,Standard,JKR-177-SKU,176,available,1.5
+Laboratory,Compact Scale X-178,compact-scale-x-178,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Scale X-178 is designed for high performance in laboratory applications.,"Model: JKR-178
+Power: 220V
+Material: High Grade",477,405.45,TRUE,Standard,JKR-178-SKU,415,available,1.5
+Surgical Supplies,Advanced Kit X-179,advanced-kit-x-179,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Kit X-179 is designed for high performance in surgical supplies applications.,"Model: JKR-179
+Power: 220V
+Material: High Grade",1047,889.95,TRUE,Standard,JKR-179-SKU,440,available,1.5
+Medical Equipment,Automatic Cylinder X-180,automatic-cylinder-x-180,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Cylinder X-180 is designed for high performance in medical equipment applications.,"Model: JKR-180
+Power: 220V
+Material: High Grade",4576,3889.6,TRUE,Standard,JKR-180-SKU,250,available,1.5
+Laboratory,Compact Needles X-181,compact-needles-x-181,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Needles X-181 is designed for high performance in laboratory applications.,"Model: JKR-181
+Power: 220V
+Material: High Grade",1120,952.0,TRUE,Standard,JKR-181-SKU,186,available,1.5
+Surgical Supplies,Automatic Kit X-182,automatic-kit-x-182,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Kit X-182 is designed for high performance in surgical supplies applications.,"Model: JKR-182
+Power: 220V
+Material: High Grade",4019,3416.15,TRUE,Standard,JKR-182-SKU,494,available,1.5
+Home Care,Industrial Meter X-183,industrial-meter-x-183,https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Meter X-183 is designed for high performance in home care applications.,"Model: JKR-183
+Power: 220V
+Material: High Grade",1871,1590.35,TRUE,Standard,JKR-183-SKU,379,available,1.5
+Laboratory,Automatic Cylinder X-184,automatic-cylinder-x-184,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Cylinder X-184 is designed for high performance in laboratory applications.,"Model: JKR-184
+Power: 220V
+Material: High Grade",3414,2901.9,TRUE,Standard,JKR-184-SKU,66,available,1.5
+Medical Equipment,Compact Pump X-185,compact-pump-x-185,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Pump X-185 is designed for high performance in medical equipment applications.,"Model: JKR-185
+Power: 220V
+Material: High Grade",2780,2363.0,TRUE,Standard,JKR-185-SKU,80,available,1.5
+Diagnostic Tools,Premium Monitor X-186,premium-monitor-x-186,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Monitor X-186 is designed for high performance in diagnostic tools applications.,"Model: JKR-186
+Power: 220V
+Material: High Grade",4005,3404.25,TRUE,Standard,JKR-186-SKU,214,available,1.5
+Consumables,Digital Pump X-187,digital-pump-x-187,https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Pump X-187 is designed for high performance in consumables applications.,"Model: JKR-187
+Power: 220V
+Material: High Grade",530,450.5,TRUE,Standard,JKR-187-SKU,138,available,1.5
+Consumables,Portable Needles X-188,portable-needles-x-188,https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Needles X-188 is designed for high performance in consumables applications.,"Model: JKR-188
+Power: 220V
+Material: High Grade",4691,3987.35,TRUE,Standard,JKR-188-SKU,394,available,1.5
+Laboratory,Advanced Pump X-189,advanced-pump-x-189,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Pump X-189 is designed for high performance in laboratory applications.,"Model: JKR-189
+Power: 220V
+Material: High Grade",1456,1237.6,TRUE,Standard,JKR-189-SKU,440,available,1.5
+Medical Equipment,Digital Scanner X-190,digital-scanner-x-190,https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Digital Scanner X-190 is designed for high performance in medical equipment applications.,"Model: JKR-190
+Power: 220V
+Material: High Grade",3812,3240.2,TRUE,Standard,JKR-190-SKU,165,available,1.5
+Laboratory,Portable Scale X-191,portable-scale-x-191,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Scale X-191 is designed for high performance in laboratory applications.,"Model: JKR-191
+Power: 220V
+Material: High Grade",1087,923.95,TRUE,Standard,JKR-191-SKU,452,available,1.5
+Medical Equipment,Premium Ventilator X-192,premium-ventilator-x-192,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Premium Ventilator X-192 is designed for high performance in medical equipment applications.,"Model: JKR-192
+Power: 220V
+Material: High Grade",1710,1453.5,TRUE,Standard,JKR-192-SKU,83,available,1.5
+Surgical Supplies,Automatic Cylinder X-193,automatic-cylinder-x-193,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Cylinder X-193 is designed for high performance in surgical supplies applications.,"Model: JKR-193
+Power: 220V
+Material: High Grade",2636,2240.6,TRUE,Standard,JKR-193-SKU,15,available,1.5
+Home Care,Automatic Scanner X-194,automatic-scanner-x-194,https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Scanner X-194 is designed for high performance in home care applications.,"Model: JKR-194
+Power: 220V
+Material: High Grade",2142,1820.7,TRUE,Standard,JKR-194-SKU,493,available,1.5
+Home Care,Compact Gloves X-195,compact-gloves-x-195,https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Gloves X-195 is designed for high performance in home care applications.,"Model: JKR-195
+Power: 220V
+Material: High Grade",2828,2403.8,TRUE,Standard,JKR-195-SKU,27,available,1.5
+Medical Equipment,Industrial Scale X-196,industrial-scale-x-196,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Industrial Scale X-196 is designed for high performance in medical equipment applications.,"Model: JKR-196
+Power: 220V
+Material: High Grade",2907,2470.95,TRUE,Standard,JKR-196-SKU,141,available,1.5
+Diagnostic Tools,Advanced Cylinder X-197,advanced-cylinder-x-197,https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Advanced Cylinder X-197 is designed for high performance in diagnostic tools applications.,"Model: JKR-197
+Power: 220V
+Material: High Grade",4177,3550.45,TRUE,Standard,JKR-197-SKU,130,available,1.5
+Surgical Supplies,Portable Meter X-198,portable-meter-x-198,https://images.unsplash.com/photo-1631815541542-e5510659359e?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Portable Meter X-198 is designed for high performance in surgical supplies applications.,"Model: JKR-198
+Power: 220V
+Material: High Grade",617,524.45,TRUE,Standard,JKR-198-SKU,403,available,1.5
+Surgical Supplies,Automatic Needles X-199,automatic-needles-x-199,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Automatic Needles X-199 is designed for high performance in surgical supplies applications.,"Model: JKR-199
+Power: 220V
+Material: High Grade",824,700.4,TRUE,Standard,JKR-199-SKU,366,available,1.5
+Laboratory,Compact Ventilator X-200,compact-ventilator-x-200,https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800,"Fast delivery
+Quality certified
+Warranty 1 year",This Compact Ventilator X-200 is designed for high performance in laboratory applications.,"Model: JKR-200
+Power: 220V
+Material: High Grade",4479,3807.15,TRUE,Standard,JKR-200-SKU,26,available,1.5

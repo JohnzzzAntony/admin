@@ -3,7 +3,7 @@ from django.utils import timezone
 from products.models import Category, Product, Collection, ProductSKU
 from sliders.models import HeroSlider
 from pages.models import AboutUs, MissionVision, Service, Counter, WhyUsCard, Partner, GalleryItem
-from .models import Testimonial, Client, SocialPost
+from .models import Testimonial, Client, SocialPost, StoreLocation
 
 def home(request):
     """Homepage aggregation view."""
@@ -86,3 +86,14 @@ def gallery_view(request):
     """Specific Gallery page."""
     gallery = GalleryItem.objects.all().order_by('order')
     return render(request, 'pages/gallery.html', {'gallery': gallery})
+
+def store_locations_view(request):
+    """Store Locations page with city filtering."""
+    stores = StoreLocation.objects.filter(is_active=True).order_by('order', 'name')
+    # Get unique cities for filter tabs
+    cities = StoreLocation.objects.filter(is_active=True).values_list('city', flat=True).distinct().order_by('city')
+    
+    return render(request, 'pages/stores.html', {
+        'stores': stores,
+        'cities': cities
+    })

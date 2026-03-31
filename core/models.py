@@ -97,3 +97,29 @@ class SocialPost(models.Model):
     def get_img_url(self):
         if self.image_url: return self.image_url
         return self.image.url if self.image else "https://via.placeholder.com/400"
+
+class StoreLocation(models.Model):
+    name = models.CharField(max_length=200)
+    image = models.ImageField(
+        upload_to="stores/", 
+        null=True, 
+        blank=True,
+        help_text="Storefront Photo. Recommended: 800x600px. JPG, WEBP. Max 1MB."
+    )
+    image_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted image.")
+    address = models.TextField()
+    city = models.CharField(max_length=100, help_text="e.g. Dubai, Sharjah, Abu Dhabi")
+    phone = models.CharField(max_length=50)
+    map_url = models.URLField(verbose_name="Google Maps URL", help_text="Link to the location on Google Maps (Get Directions)")
+    is_active = models.BooleanField(default=True, verbose_name="Enabled")
+    order = models.PositiveIntegerField(default=0, verbose_name="Sort Order")
+
+    class Meta:
+        ordering = ['order', 'name']
+
+    def get_image_url(self):
+        if self.image_url: return self.image_url
+        return self.image.url if self.image else "https://via.placeholder.com/600x400"
+
+    def __str__(self):
+        return f"{self.name} ({self.city})"

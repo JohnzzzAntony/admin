@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
+from import_export.admin import ImportExportModelAdmin
 from .models import Category, Product, ProductSKU, ProductImage, Attribute, AttributeOption, ProductAttributeValue, Offer, Collection
+from .resources import ProductResource, CategoryResource, ProductSKUResource
 
 
 # ─── Inlines ─────────────────────────────────────────────────────────────────
@@ -53,7 +55,8 @@ class AttributeAdmin(admin.ModelAdmin):
 # ─── Product ─────────────────────────────────────────────────────────────────
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(ImportExportModelAdmin):
+    resource_class = ProductResource
     list_display = ('name', 'category', 'is_active', 'stock_status')
     search_fields = ('name', 'meta_title', 'meta_keywords')
     readonly_fields = ('slug', 'product_seo_std_heading', 'product_seo_en_heading', 'product_seo_ar_heading')
@@ -116,7 +119,8 @@ class ProductAdmin(admin.ModelAdmin):
 # ─── Category ────────────────────────────────────────────────────────────────
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ImportExportModelAdmin):
+    resource_class = CategoryResource
     list_display = ('name', 'parent', 'show_on_homepage', 'homepage_order', 'slug')
     list_editable = ('show_on_homepage', 'homepage_order')
     list_filter = ('parent', 'show_on_homepage')
