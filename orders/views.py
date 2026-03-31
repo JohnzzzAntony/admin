@@ -4,22 +4,56 @@ from products.models import Product
 from .models import QuoteEnquiry, QuoteItem, CustomerOrder, CustomerOrderItem
 
 
+from products.models import Product, ProductSKU
+
 def _get_cart_items(request):
-    """Helper: resolve cart session into list of dicts."""
+    """
+    Helper: resolve cart session into list of dicts.
+    Cart stores SKU_ID as the unique key where possible, falls back to product_id if not.
+    """
     cart = request.session.get('enquiry_cart', {})
     items = []
-    for product_id, item_data in cart.items():
+    for item_key, item_data in cart.items():
         try:
-            product = Product.objects.get(id=int(product_id))
-            price = float(item_data.get('price', 0))
+            # We first try to see if item_key is a SKU_ID (alnum string)
+            sku = ProductSKU.objects.filter(sku_id=item_key).first()
+            if not sku:
+                # Fallback to product ID if SKU not found
+                product = Product.objects.get(id=int(item_key))
+                sku = product.skus.first() # Assume first SKU for basic products
+            else:
+                product = sku.product
+
             qty = int(item_data.get('quantity', 1))
+            price_info = sku.get_price_info()
+            
+            unit_price = price_info['final_price']
+            total_item = round(unit_price * qty, 2)
+            
+            offer_applied = price_info.get('offer')
+            bogo_message = None
+            if offer_applied and offer_applied.offer_type == 'bogo':
+                # BOGO Logic: Every 2nd item is FREE or "Add 1 Get 1"
+                # If they have 1 in cart, we can suggest adding another, or we can just double it.
+                # Requirement: "should show the other product also as per the offer"
+                # So if they have 1, we show a message or just calculate properly.
+                bogo_message = "BOGO Applied: Buy 1 Get 1 Free"
+                # Effective total: 1 unit price for every 2 items
+                payable_qty = (qty // 2) + (qty % 2)
+                total_item = round(unit_price * payable_qty, 2)
+
             items.append({
                 'product': product,
+                'sku': sku,
                 'quantity': qty,
-                'price': price,
-                'total_item': round(price * qty, 2),
+                'unit_price': unit_price,
+                'regular_price': price_info['regular_price'],
+                'total_item': total_item,
+                'has_offer': price_info['has_offer'],
+                'offer_name': offer_applied.name if offer_applied else None,
+                'bogo_message': bogo_message,
             })
-        except Product.DoesNotExist:
+        except (Product.DoesNotExist, ValueError):
             continue
     return items
 
@@ -28,36 +62,52 @@ def _get_cart_items(request):
 
 def enquiry_cart(request):
     cart_items = _get_cart_items(request)
-    return render(request, 'orders/enquiry_cart.html', {'cart_items': cart_items})
+    subtotal = sum(item['total_item'] for item in cart_items)
+    return render(request, 'orders/enquiry_cart.html', {
+        'cart_items': cart_items,
+        'subtotal': subtotal
+    })
 
 
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    sku_id = request.GET.get('sku')
+    
+    sku = None
+    if sku_id:
+        sku = ProductSKU.objects.filter(sku_id=sku_id).first()
+    if not sku:
+        sku = product.skus.first() # Fallback to first SKU
+    
+    if not sku:
+        messages.error(request, "This product has no active variants.")
+        return redirect('product_detail', slug=product.slug)
+
     cart = request.session.get('enquiry_cart', {})
-
-    # Use sale_price if set and > 0, else regular_price
-    rp = product.regular_price or 0
-    sp = product.sale_price or 0
-    price = float(sp if sp and sp > 0 else rp)
-
-    str_id = str(product_id)
-    if str_id in cart:
-        cart[str_id]['quantity'] += 1
+    item_key = sku.sku_id # Store by SKU ID for uniqueness and offer tracking
+    
+    if item_key in cart:
+        cart[item_key]['quantity'] += 1
     else:
-        cart[str_id] = {'quantity': 1, 'price': str(price)}
+        cart[item_key] = {'quantity': 1}
 
     request.session['enquiry_cart'] = cart
-    messages.success(request, f"✅ {product.name} added to cart.")
+    messages.success(request, f"✅ {product.name} (Variant: {sku.title or 'Standard'}) added to cart.")
     return redirect('enquiry_cart')
 
 
 def remove_from_cart(request, product_id):
+    # Support both product_id (legacy) and SKU ID in URL
+    sku_id = request.GET.get('sku')
     cart = request.session.get('enquiry_cart', {})
-    str_id = str(product_id)
-    if str_id in cart:
-        del cart[str_id]
-        request.session['enquiry_cart'] = cart
-        messages.info(request, "Item removed from cart.")
+    
+    if sku_id and sku_id in cart:
+        del cart[sku_id]
+    elif str(product_id) in cart:
+        del cart[str(product_id)]
+    
+    request.session['enquiry_cart'] = cart
+    messages.info(request, "Item removed from cart.")
     return redirect('enquiry_cart')
 
 
@@ -128,9 +178,9 @@ def checkout_payment(request):
             CustomerOrderItem.objects.create(
                 order=order,
                 product=product,
-                product_name=product.name,
+                product_name=f"{product.name} ({item['sku'].title})" if item.get('sku') else product.name,
                 quantity=item['quantity'],
-                unit_price=item['price'],
+                unit_price=item['unit_price'],
                 total_price=item['total_item']
             )
             total_amount += item['total_item']

@@ -49,9 +49,18 @@
 
             <!-- Tab Navigation -->
             <ul class="nav nav-pills justify-content-center mb-5" id="collectionTabs" role="tablist">
+                {% if active_offers_skus %}
+                <li class="nav-item px-2" role="presentation">
+                    <button class="nav-link active font-weight-bold px-4 py-2 shadow-sm" 
+                            id="tab-offers" data-toggle="pill" data-target="#content-offers" 
+                            type="button" role="tab" style="border-radius:30px; border: 1px solid transparent;">
+                        Latest Offers
+                    </button>
+                </li>
+                {% endif %}
                 {% for col in collections %}
                 <li class="nav-item px-2" role="presentation">
-                    <button class="nav-link {% if forloop.first %}active{% endif %} font-weight-bold px-4 py-2 shadow-sm" 
+                    <button class="nav-link {% if not active_offers_skus and forloop.first %}active{% endif %} font-weight-bold px-4 py-2 shadow-sm" 
                             id="tab-{{ col.slug }}" data-toggle="pill" data-target="#content-{{ col.slug }}" 
                             type="button" role="tab" style="border-radius:30px; border: 1px solid transparent;">
                         {{ col.name }}
@@ -62,8 +71,48 @@
 
             <!-- Tab Content -->
             <div class="tab-content" id="collectionTabContent">
+                {% if active_offers_skus %}
+                <div class="tab-pane fade show active" id="content-offers" role="tabpanel">
+                    <div class="row">
+                        {% for sku in active_offers_skus %}
+                        {% with price_info=sku.get_price_info %}
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden" style="border-radius: 20px;">
+                                <a href="{% url 'product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
+                                    <div class="position-relative">
+                                        <img src="{{ sku.product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
+                                        <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
+                                            {{ price_info.discount_display }}
+                                        </span>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem;">{{ sku.product.category.name|upper }}</h6>
+                                        <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ sku.product.name }}</h5>
+                                        {% if sku.title %}
+                                        <p class="small text-muted mb-2"><i class="fas fa-tag mr-1"></i> {{ sku.title }}</p>
+                                        {% endif %}
+                                        
+                                        <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
+                                            <div class="price">
+                                                <div class="d-flex flex-column">
+                                                    <span class="h5 font-weight-bold mb-0 text-primary">{{ price_info.final_price }} AED</span>
+                                                    <del class="small text-muted">{{ price_info.regular_price }} AED</del>
+                                                </div>
+                                            </div>
+                                            <span class="text-primary"><i class="fas fa-plus-circle fa-lg"></i></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        {% endwith %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
                 {% for col in collections %}
-                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" 
+                <div class="tab-pane fade {% if not active_offers_skus and forloop.first %}show active{% endif %}" 
                      id="content-{{ col.slug }}" role="tabpanel">
                     
                     {% if col.banner %}

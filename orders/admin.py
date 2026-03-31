@@ -87,6 +87,8 @@ class OrderStatusHistoryInline(admin.TabularInline):
         return False
 
 
+
+
 # ─── Custom Filters ───────────────────────────────────────────────────────────
 
 from django.utils import timezone
@@ -123,7 +125,9 @@ class CreatedAtRangeFilter(admin.SimpleListFilter):
         if val == 'this_month':
             return queryset.filter(created_at__year=now.year, created_at__month=now.month)
         
-        # 'custom' is handled via JS and created_at__gte/lte in URL
+        # 'custom' logic is handled by setting the fields in JS
+        # Django handles the 'created_at__gte' and 'created_at__lte' params automatically 
+        # in the URL if they are set correctly.
         return queryset
 
 
@@ -150,7 +154,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         'payment_method', 
         'payment_status', 
         'country', 
-        CreatedAtRangeFilter, # Using custom range filter
+        CreatedAtRangeFilter,
     )
     search_fields = ('first_name', 'last_name', 'email', 'phone', 'id')
     readonly_fields = (

@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from products.models import Category, Product, Collection
+from django.utils import timezone
+from products.models import Category, Product, Collection, ProductSKU
 from sliders.models import HeroSlider
 from pages.models import AboutUs, MissionVision, Service, Counter, WhyUsCard, Partner, GalleryItem
 from .models import Testimonial, Client, SocialPost
@@ -32,6 +33,15 @@ def home(request):
         skus__shipping_status='available'
     ).distinct().order_by('-id')[:4]
 
+    # Fetch SKUs with active offers (Part of fallback/offers logic)
+    now = timezone.now()
+    active_offers_skus = ProductSKU.objects.filter(
+        offers__is_active=True,
+        offers__start_date__lte=now,
+        offers__end_date__gte=now,
+        quantity__gt=0
+    ).distinct().prefetch_related('product', 'product__category')
+
     # Homepage Collections: Filter active ones and prefetch related SKUs for efficient rendering.
     collections = Collection.objects.filter(is_active=True).prefetch_related('skus__product')
 
@@ -39,6 +49,7 @@ def home(request):
         'sliders': sliders,
         'categories': categories,
         'collections': collections,
+        'active_offers_skus': active_offers_skus,
         'about_us': about_us,
         'mission': mission,
         'vision': vision,

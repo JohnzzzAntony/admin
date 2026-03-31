@@ -45,18 +45,38 @@
                                                        class="font-weight-bold text-dark text-decoration-none" style="font-size:0.95rem;">
                                                         {{ item.product.name }}
                                                     </a>
+                                                    {% if item.sku.title %}
+                                                    <div class="small text-primary font-weight-bold"><i class="fas fa-tag mr-1"></i> {{ item.sku.title }}</div>
+                                                    {% endif %}
                                                     <div class="small text-muted">{{ item.product.category.name }}</div>
+                                                    {% if item.offer_name %}
+                                                    <div class="badge badge-warning text-dark mt-1" style="font-size:0.7rem;">{{ item.offer_name }}</div>
+                                                    {% endif %}
+                                                    {% if item.bogo_message %}
+                                                    <div class="small text-success mt-1"><strong><i class="fas fa-gift mr-1"></i> {{ item.bogo_message }}</strong></div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-center font-weight-bold">{{ item.price }} AED</td>
-                                        <td class="text-center">
-                                            <span class="badge badge-secondary px-3 py-2">{{ item.quantity }}</span>
+                                        <td class="text-center font-weight-bold">
+                                            {% if item.has_offer %}
+                                            <div class="d-flex flex-column align-items-center">
+                                                <span class="text-primary">{{ item.unit_price }} AED</span>
+                                                <del class="small text-muted" style="font-size: 0.75rem;">{{ item.regular_price }} AED</del>
+                                            </div>
+                                            {% else %}
+                                            {{ item.unit_price }} AED
+                                            {% endif %}
                                         </td>
-                                        <td class="text-center font-weight-bold text-primary">{{ item.total_item }} AED</td>
                                         <td class="text-center">
-                                            <a href="{% url 'remove_from_cart' product_id=item.product.id %}"
-                                               class="btn btn-sm btn-outline-danger" style="border-radius:50%;width:34px;height:34px;padding:0;line-height:32px;">
+                                            <span class="badge badge-secondary px-3 py-2" style="font-size: 0.9rem;">{{ item.quantity }}</span>
+                                        </td>
+                                        <td class="text-center font-weight-bold text-primary" style="font-size: 1.1rem;">
+                                            {{ item.total_item }} AED
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{% url 'remove_from_cart' product_id=item.product.id %}?sku={{ item.sku.sku_id }}"
+                                               class="btn btn-sm btn-outline-danger shadow-sm" style="border-radius:50%;width:34px;height:34px;padding:0;line-height:32px;">
                                                 <i class="fas fa-times"></i>
                                             </a>
                                         </td>
@@ -105,13 +125,8 @@
                         <hr>
                         <div class="d-flex justify-content-between mt-3">
                             <h5 class="font-weight-bold">Total</h5>
-                            <h5 class="font-weight-bold text-primary">
-                                {% with total=0 %}
-                                {% for item in cart_items %}
-                                    {# JS will compute this below #}
-                                {% endfor %}
-                                <span id="cart-total">— AED</span>
-                                {% endwith %}
+                            <h5 class="font-weight-bold text-primary" id="cart-total">
+                                {{ subtotal|floatformat:2 }} AED
                             </h5>
                         </div>
                     </div>
@@ -144,14 +159,4 @@
         </div>
     </div>
 </section>
-
-<script>
-// Compute total client-side from data attributes
-document.addEventListener('DOMContentLoaded', function() {
-    const totals = {% if cart_items %}[{% for item in cart_items %}{{ item.total_item }},{% endfor %}]{% else %}[]{% endif %};
-    const sum = totals.reduce(function(a, b){ return a + b; }, 0);
-    const el = document.getElementById('cart-total');
-    if(el) el.textContent = sum.toFixed(2) + ' AED';
-});
-</script>
 {% endblock %}
