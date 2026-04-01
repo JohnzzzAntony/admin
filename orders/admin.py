@@ -1,5 +1,6 @@
-from django.contrib import admin
-from django.utils.html import mark_safe
+from django.contrib import admin, messages
+from django.utils.html import mark_safe, format_html
+from django.conf import settings
 from django.db.models import Q
 from django.conf import settings
 from .models import CustomerOrder, CustomerOrderItem, OrderStatusHistory
@@ -180,13 +181,15 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         rank = get_order_rank(obj)
         label = "First Time Order" if rank == 1 else f"Returning Customer (Order #{rank})"
         badge = self.customer_tag(obj)
-        return mark_safe(f'{badge} <span style="margin-left:10px;font-size:13px;color:#666;">{label}</span>')
+        return format_html('{} <span style="margin-left:10px;font-size:13px;color:#666;">{}</span>', badge, label)
+
     customer_order_tag.short_description = "Customer Loyalty Status"
 
     # ── List display helpers ─────────────────────────────────────────────────
 
     def order_number(self, obj):
-        return mark_safe(f'<strong>#JKR-{obj.pk:05d}</strong>')
+        return format_html('<strong>#JKR-{:05d}</strong>', obj.pk)
+
     order_number.short_description = "Order #"
     order_number.admin_order_field = 'id'
 
@@ -197,7 +200,8 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     def payment_method_badge(self, obj):
         icon = PAYMENT_METHOD_ICONS.get(obj.payment_method, '💳')
         label = obj.get_payment_method_display()
-        return mark_safe(f'<span style="font-size:13px;">{icon} {label}</span>')
+        return format_html('<span style="font-size:13px;">{} {}</span>', icon, label)
+
     payment_method_badge.short_description = "Payment"
 
     def payment_status_badge(self, obj):
@@ -215,17 +219,21 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     items_count.short_description = "Items"
 
     def total_display(self, obj):
-        return mark_safe(f'<strong>{obj.total_amount} {settings.CURRENCY}</strong>')
+        return format_html('<strong>{} {}</strong>', obj.total_amount, settings.CURRENCY)
+
     total_display.short_description = "Total"
 
     # ── Detail page readonly section headings (styled separators) ───────────
 
     def order_summary_heading(self, obj):
-        return mark_safe(
-            f'<div style="background:#f0f6ff;border-left:4px solid #2271b1;padding:10px 16px;border-radius:0 8px 8px 0;margin:8px 0;">'
-            f'<strong style="color:#2271b1;font-size:13px;">📋 Order #JKR-{obj.pk:05d} &nbsp;|&nbsp; '
-            f'Placed: {obj.created_at.strftime("%d %b %Y, %H:%M")}</strong></div>'
+        return format_html(
+            '<div style="background:#f0f6ff;border-left:4px solid #2271b1;padding:10px 16px;border-radius:0 8px 8px 0;margin:8px 0;">'
+            '<strong style="color:#2271b1;font-size:13px;">📋 Order #JKR-{:05d} &nbsp;|&nbsp; '
+            'Placed: {}</strong></div>',
+            obj.pk,
+            obj.created_at.strftime("%d %b %Y, %H:%M")
         )
+
     order_summary_heading.short_description = ''
 
     def billing_heading(self, obj):
@@ -244,13 +252,15 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         if not obj.pk: return "-"
         from django.urls import reverse
         url = reverse('admin:resend-notification', args=[obj.pk])
-        return mark_safe(
-            f'<div style="margin-top:10px;">'
-            f'<a class="button" href="{url}" style="background:#1d6fa4;color:#FFF;padding:8px 20px;border-radius:4px;text-decoration:none;font-weight:700;display:inline-block;box-shadow:0 2px 4px rgba(0,0,0,0.1);">'
-            f'📨 Resend Multi-Channel Notification</a>'
-            f'<p style="font-size:11px;color:#888;margin-top:5px;">This will trigger Email (and optional SMS/WhatsApp) based on global settings.</p>'
-            f'</div>'
+        return format_html(
+            '<div style="margin-top:10px;">'
+            '<a class="button" href="{}" style="background:#1d6fa4;color:#FFF;padding:8px 20px;border-radius:4px;text-decoration:none;font-weight:700;display:inline-block;box-shadow:0 2px 4px rgba(0,0,0,0.1);">'
+            '📨 Resend Multi-Channel Notification</a>'
+            '<p style="font-size:11px;color:#888;margin-top:5px;">This will trigger Email (and optional SMS/WhatsApp) based on global settings.</p>'
+            '</div>',
+            url
         )
+
     resend_notification_button.short_description = "Manual Notification Control"
 
     def get_urls(self):
@@ -273,25 +283,33 @@ class CustomerOrderAdmin(admin.ModelAdmin):
 
     def items_total_display(self, obj):
         total = sum(i.total_price for i in obj.items.all())
-        rows = "".join(
-            f'<tr><td style="padding:4px 10px;">{i.product_name}</td>'
-            f'<td style="padding:4px 10px;text-align:center;">{i.quantity}</td>'
-            f'<td style="padding:4px 10px;text-align:right;">{i.unit_price} {settings.CURRENCY}</td>'
-            f'<td style="padding:4px 10px;text-align:right;font-weight:700;">{i.total_price} {settings.CURRENCY}</td></tr>'
-            for i in obj.items.all()
+        rows = format_html("").join(
+            format_html(
+                '<tr><td style="padding:4px 10px;">{}</td>'
+                '<td style="padding:4px 10px;text-align:center;">{}</td>'
+                '<td style="padding:4px 10px;text-align:right;">{} {}</td>'
+                '<td style="padding:4px 10px;text-align:right;font-weight:700;">{} {}</td></tr>',
+                i.product_name,
+                i.quantity,
+                i.unit_price, settings.CURRENCY,
+                i.total_price, settings.CURRENCY
+            ) for i in obj.items.all()
         )
-        return mark_safe(
-            f'<table style="width:100%;border-collapse:collapse;font-size:13px;">'
-            f'<thead><tr style="background:#f5f5f5;">'
-            f'<th style="padding:6px 10px;text-align:left;">Product</th>'
-            f'<th style="padding:6px 10px;text-align:center;">Qty</th>'
-            f'<th style="padding:6px 10px;text-align:right;">Unit Price</th>'
-            f'<th style="padding:6px 10px;text-align:right;">Total</th></tr></thead>'
-            f'<tbody>{rows}</tbody>'
-            f'<tfoot><tr><td colspan="3" style="padding:8px 10px;font-weight:700;text-align:right;">Grand Total</td>'
-            f'<td style="padding:8px 10px;font-weight:700;text-align:right;color:#2271b1;">{total} {settings.CURRENCY}</td></tr></tfoot>'
-            f'</table>'
+        return format_html(
+            '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
+            '<thead><tr style="background:#f5f5f5;">'
+            '<th style="padding:6px 10px;text-align:left;">Product</th>'
+            '<th style="padding:6px 10px;text-align:center;">Qty</th>'
+            '<th style="padding:6px 10px;text-align:right;">Unit Price</th>'
+            '<th style="padding:6px 10px;text-align:right;">Total</th></tr></thead>'
+            '<tbody>{}</tbody>'
+            '<tfoot><tr><td colspan="3" style="padding:8px 10px;font-weight:700;text-align:right;">Grand Total</td>'
+            '<td style="padding:8px 10px;font-weight:700;text-align:right;color:#2271b1;">{} {}</td></tr></tfoot>'
+            '</table>',
+            rows,
+            total, settings.CURRENCY
         )
+
     items_total_display.short_description = "Items Summary"
 
     # ── Fieldsets ────────────────────────────────────────────────────────────

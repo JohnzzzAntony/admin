@@ -10,22 +10,30 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import environ
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+# Initialize environment variables
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False),
+    IS_PRODUCTION=(bool, False),
+)
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sr5_wai1eqm0rk1=6wc4ztez%ut0v#h#v&ht7yuplv(+8=jdzg'
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-sr5_wai1eqm0rk1=6wc4ztez%ut0v#h#v&ht7yuplv(+8=jdzg')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
+
 
 
 # Application definition
@@ -66,6 +74,26 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# ── Security Hardening ────────────────────────────────────────────────────────
+# https://docs.djangoproject.com/en/6.0/ref/settings/#security
+
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'SAMEORIGIN' # Allow same-origin for admin iframes (jazzmin/ckeditor)
+
+# Enable strict SSL security if in production
+IS_PRODUCTION = env('IS_PRODUCTION')
+if IS_PRODUCTION:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000 # 1 Year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    # Ensure site isn't indexed by search engines during staging (optional)
+    # DEBUG = False # Handled by env('DEBUG')
+
 
 ROOT_URLCONF = 'jkr.urls'
 
@@ -167,10 +195,7 @@ JAZZMIN_SETTINGS = {
     ],
 }
 
-import environ
-import os
-env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# Loaded at top of file
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='sk_test_12345')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_12345')
