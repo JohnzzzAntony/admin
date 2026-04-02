@@ -35,13 +35,15 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
     'admin.creativegradientz.com', 
     'creativegradientz.com', 
+    '.vercel.app',  # Added this to allow any Vercel subdomain
     'localhost', 
     '127.0.0.1'
 ])
 
 CSRF_TRUSTED_ORIGINS = [
     'https://admin.creativegradientz.com',
-    'https://creativegradientz.com'
+    'https://creativegradientz.com',
+    'https://*.vercel.app'  # Added this for secure form submission on Vercel
 ]
 
 
