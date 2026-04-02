@@ -32,7 +32,17 @@ SECRET_KEY = env('SECRET_KEY', default='django-insecure-sr5_wai1eqm0rk1=6wc4ztez
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
+    'admin.creativegradientz.com', 
+    'creativegradientz.com', 
+    'localhost', 
+    '127.0.0.1'
+])
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://admin.creativegradientz.com',
+    'https://creativegradientz.com'
+]
 
 
 
