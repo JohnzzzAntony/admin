@@ -1,0 +1,22 @@
+/* Status Dropdown Colors in Admin List View */
+.field-status select {
+    padding: 2px 10px !important;
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+    border: none !important;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    min-width: 140px;
+    appearance: none;
+}
+.field-status select.pending            { background-color: #ffc107 !important; color: #000 !important; }
+.field-status select.packaging          { background-color: #fd7e14 !important; }
+.field-status select.ready_for_shipment { background-color: #007bff !important; }
+.field-status select.shipped            { background-color: #6f42c1 !important; }
+.field-status select.delivered          { background-color: #28a745 !important; }
+.field-status select.return_to_origin    { background-color: #e83e8c !important; }
+.field-status select.refund             { background-color: #dc3545 !important; }
+.field-status select option { background-color: #fff !important; color: #000 !important; }
