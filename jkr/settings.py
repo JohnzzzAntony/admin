@@ -83,8 +83,8 @@ LOGOUT_REDIRECT_URL = 'core:home'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.middleware.gzip.GZipMiddleware', # For smaller & faster page loads
     'whitenoise.middleware.WhiteNoiseMiddleware', # For static files
+    'django.middleware.gzip.GZipMiddleware', # For smaller & faster page loads
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -197,6 +197,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise storage to handle static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
