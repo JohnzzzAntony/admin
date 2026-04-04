@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login - JKR International{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5 mt-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0 overflow-hidden" style="border-radius: 12px;">
+            <div class="card-header bg-dark text-white p-4">
+                <h3 class="mb-0 text-center font-weight-bold">Login to Your Account</h3>
+                <p class="text-center text-white-50 small mb-0 mt-2">Welcome back to JKR International</p>
+            </div>
+            <div class="card-body p-5">
+                <!-- Social Login Buttons -->
+                <div class="mb-4">
+                    <a href="{% url 'accounts:social_login' provider='google' %}" class="btn btn-outline-dark btn-block btn-lg d-flex align-items-center justify-content-center shadow-sm" style="border-radius: 8px; border-color: #ddd;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" height="20" class="mr-3">
+                        <span class="small font-weight-bold">Continue with Google</span>
+                    </a>
+                </div>
+
+                <div class="position-relative my-4">
+                    <hr>
+                    <span class="position-absolute px-3 bg-white text-muted small" style="top: -12px; left: 50%; transform: translateX(-50%);">OR LOGIN WITH EMAIL</span>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group mb-4">
+                        <label class="text-muted small font-weight-bold">USERNAME</label>
+                        <input type="text" name="username" class="form-control form-control-lg border-light" placeholder="Enter username" style="background-color: #f8f9fa;">
+                    </div>
+                    <div class="form-group mb-4">
+                        <label class="text-muted small font-weight-bold">PASSWORD</label>
+                        <input type="password" name="password" class="form-control form-control-lg border-light" placeholder="Enter password" style="background-color: #f8f9fa;">
+                    </div>
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+                    <button type="submit" class="btn btn-dark btn-block btn-lg shadow-sm font-weight-bold" style="border-radius: 8px;">Login</button>
+                    
+                    <hr class="my-5">
+                    
+                    <div class="text-center mt-3">
+                        <p class="text-muted">Don't have an account?</p>
+                        <a href="{% url 'accounts:register' %}" class="btn btn-outline-dark btn-block btn-lg font-weight-bold" style="border-radius: 8px;">Create New Account</a>
+                    </div>
+                    
+                    {% if next and 'checkout' in next %}
+                    <div class="text-center mt-4">
+                        <div class="position-relative my-4">
+                            <hr>
+                            <span class="position-absolute px-3 bg-white text-muted small" style="top: -12px; left: 50%; transform: translateX(-50%);">OR</span>
+                        </div>
+                        <a href="{% url 'accounts:guest_checkout' %}?next={{ next }}" class="btn btn-link text-dark font-weight-bold">Continue as Guest</a>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

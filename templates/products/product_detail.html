@@ -13,9 +13,9 @@
     <nav aria-label="breadcrumb" class="bg-light py-3 border-bottom">
         <div class="container">
             <ol class="breadcrumb bg-transparent p-0 mb-0" style="font-size: 0.9rem;">
-                <li class="breadcrumb-item"><a href="/" class="text-secondary">Home</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'category_index' %}" class="text-secondary">Products</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'category_detail' slug=product.category.slug %}" class="text-secondary">{{ product.category.name }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-secondary">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'products:category_index' %}" class="text-secondary">Products</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'products:category_detail' slug=product.category.slug %}" class="text-secondary">{{ product.category.name }}</a></li>
                 <li class="breadcrumb-item active text-dark font-weight-bold" aria-current="page">{{ product.name }}</li>
             </ol>
         </div>
@@ -99,7 +99,7 @@
                     </div>
 
                     <div class="d-flex my-5">
-                        <a href="{% url 'add_to_cart' product_id=product.id %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 8px; background-color: var(--primary-blue); min-width: 250px;"><i class="fas fa-cart-plus mr-2"></i>Add to Cart</a>
+                        <a href="{% url 'orders:add_to_cart' product_id=product.id %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 8px; background-color: var(--primary-blue); min-width: 250px;"><i class="fas fa-cart-plus mr-2"></i>Add to Cart</a>
                         {% if product.brochure %}
                         <a href="{{ product.brochure.url }}" target="_blank" class="ml-3 btn btn-outline-secondary px-4 py-3" style="border-radius: 8px;"><i class="fa fa-file-pdf text-primary mr-2"></i> Download Brochure</a>
                         {% endif %}
@@ -169,17 +169,19 @@
             </div>
 
             <!-- Related Products Section -->
+            {% if site_settings.pd_show_related|default:True %}
             <div class="mt-5 pt-5">
                 <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-2">
-                    <h2 class="font-weight-bold" style="color: var(--primary-blue);">Related Products</h2>
-                    <a href="{% url 'category_detail' slug=product.category.slug %}" class="text-secondary font-weight-bold text-decoration-none">View All <i class="fa fa-arrow-right ml-1 small"></i></a>
+                    <h2 class="font-weight-bold" style="color: var(--primary-blue);">{{ site_settings.pd_related_title|default:"Related Products" }}</h2>
+                    <a href="{% url 'products:category_detail' slug=product.category.slug %}" class="text-secondary font-weight-bold text-decoration-none">View All <i class="fa fa-arrow-right ml-1 small"></i></a>
                 </div>
                 <div class="row">
-                    {% for rp in product.category.products.all|slice:":4" %}
+                    {% for rp in product.category.products.all %}
                     {% if rp.id != product.id %}
+                    {% if forloop.counter <= site_settings.pd_related_count|default:4 %}
                     <div class="col-lg-3 col-md-6 mb-4">
                         <div class="card border-0 text-center h-100 shadow-sm category-card transition-all p-3" style="border-radius: 15px;">
-                            <a href="{% url 'product_detail' slug=rp.slug %}" class="text-decoration-none">
+                            <a href="{% url 'products:product_detail' slug=rp.slug %}" class="text-decoration-none">
                                 <img src="{{ rp.get_image_url }}" class="img-fluid mb-3" style="height: 180px; object-fit: contain;">
                                 <h6 class="text-dark font-weight-bold mb-3" style="min-height: 3rem;">{{ rp.name }}</h6>
                                 <span class="btn btn-outline-primary btn-sm btn-block py-2 mb-2" style="border-radius: 10px;"><i class="fas fa-cart-plus mr-1"></i> Add to Cart</span>
@@ -187,9 +189,11 @@
                         </div>
                     </div>
                     {% endif %}
+                    {% endif %}
                     {% endfor %}
                 </div>
             </div>
+            {% endif %}
         </div>
     </section>
 

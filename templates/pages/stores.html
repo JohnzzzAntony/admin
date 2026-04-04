@@ -3,10 +3,11 @@
 
 {% block content %}
     <!-- Hero Header -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" style="background: linear-gradient(rgba(1, 43, 103, 0.8), rgba(1, 43, 103, 0.8)), url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1600'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
+    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" 
+             style="background: linear-gradient(rgba(1, 43, 103, 0.8), rgba(1, 43, 103, 0.8)), url('{{ page_heroes.stores.get_hero_url|default:'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1600' }}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
         <div class="container py-5">
-            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">Store Locations</h1>
-            <p class="lead mt-3">Find a JKR International outlet near you</p>
+            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.stores.title|default:"Store Locations" }}</h1>
+            <p class="lead mt-3" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.stores.subtitle|default:"Find a JKR International outlet near you" }}</p>
         </div>
     </section>
 

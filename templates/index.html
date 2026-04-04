@@ -43,8 +43,8 @@
     <section class="py-5 bg-light" id="collections">
         <div class="container py-5">
             <div class="text-center mb-5">
-                <h2 class="section-title">Exclusive <span class="text-primary">Collections</span></h2>
-                <p class="lead text-muted mx-auto" style="max-width: 700px;">Handpicked selection of premium medical equipment and essential supplies.</p>
+                <h2 class="section-title">{{ site_settings.hp_collections_title|safe|default:'Exclusive <span class="text-primary">Collections</span>' }}</h2>
+                <p class="lead text-muted mx-auto" style="max-width: 700px;">{{ site_settings.hp_collections_subtitle|default:'Handpicked selection of premium medical equipment and essential supplies.' }}</p>
             </div>
 
             <!-- Tab Navigation -->
@@ -78,7 +78,7 @@
                         {% with price_info=sku.get_price_info %}
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden" style="border-radius: 20px;">
-                                <a href="{% url 'product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
+                                <a href="{% url 'products:product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
                                     <div class="position-relative">
                                         <img src="{{ sku.product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
                                         <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
@@ -126,7 +126,7 @@
                         {% with price_info=sku.get_price_info %}
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden" style="border-radius: 20px;">
-                                <a href="{% url 'product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
+                                <a href="{% url 'products:product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
                                     <div class="position-relative">
                                         <img src="{{ sku.product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
                                         {% if price_info.has_offer %}
@@ -172,12 +172,12 @@
     <!-- Categories Section (Parent Categories) -->
     <section class="py-5 bg-white">
         <div class="container py-5">
-            <h2 class="section-title text-center mb-5 pb-3">Product <span class="text-primary">Categories</span></h2>
+            <h2 class="section-title text-center mb-5 pb-3">{{ site_settings.hp_categories_title|safe|default:'Product <span class="text-primary">Categories</span>' }}</h2>
             <div class="swiper category-slider pb-5">
                 <div class="swiper-wrapper">
                     {% for category in categories %}
                     <div class="swiper-slide">
-                        <a href="{% url 'category_detail' slug=category.slug %}" class="text-decoration-none">
+                        <a href="{% url 'products:category_detail' slug=category.slug %}" class="text-decoration-none">
                             <div class="category-card text-center transition-all p-4 rounded-circle mx-auto shadow-sm" style="width: 220px; height: 220px; border: 2px solid #f1f1f1; background: #fff; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                                 <img src="{{ category.get_image_url }}" alt="{{ category.name }}" class="img-fluid mb-2" style="max-height: 90px; object-fit: contain;">
                                 <h6 class="text-dark font-weight-bold mb-0">{{ category.name }}</h6>
@@ -199,17 +199,17 @@
         <div class="container py-5">
             <div class="d-flex justify-content-between align-items-end mb-5">
                 <div>
-                    <h2 class="section-title mb-2">Explore <span class="text-primary">Latest Products</span></h2>
-                    <p class="lead text-muted">Discover our newest medical innovations and technology.</p>
+                    <h2 class="section-title mb-2">{{ site_settings.hp_latest_products_title|safe|default:'Explore <span class="text-primary">Latest Products</span>' }}</h2>
+                    <p class="lead text-muted">{{ site_settings.hp_latest_products_subtitle|default:'Discover our newest medical innovations and technology.' }}</p>
                 </div>
-                <a href="{% url 'category_index' %}" class="btn btn-link text-primary font-weight-bold mb-2">View All Products <i class="fas fa-chevron-right ml-2"></i></a>
+                <a href="{% url 'products:category_index' %}" class="btn btn-link text-primary font-weight-bold mb-2">View All Products <i class="fas fa-chevron-right ml-2"></i></a>
             </div>
             <div class="row">
                 {% for product in latest_products %}
                 {% with price_info=product.get_best_price_info %}
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden" style="border-radius: 20px;">
-                        <a href="{% url 'product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
+                        <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
                             <div class="position-relative">
                                 <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 250px; object-fit: contain; padding: 20px;">
                                 {% if price_info.has_offer %}
@@ -243,7 +243,7 @@
                 {% endwith %}
                 {% empty %}
                 <div class="col-12 text-center py-5">
-                    <p class="text-muted">Stay tuned for our latest medical products.</p>
+                    <p class="text-muted">{{ site_settings.hp_latest_products_empty|default:'Stay tuned for our latest medical products.' }}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -261,7 +261,7 @@
                     <div class="text-muted mb-4 lead">
                         {{ about_us.content|safe }}
                     </div>
-                    <a href="/about-us/" class="btn btn-outline-primary px-4 py-2" style="border-radius: 30px;">Read More</a>
+                    <a href="{% url 'core:about_us' %}" class="btn btn-outline-primary px-4 py-2" style="border-radius: 30px;">Read More</a>
                 </div>
                 <div class="col-lg-6">
                     <div class="swiper about-slider mt-4">
@@ -306,9 +306,9 @@
         <div class="container py-4">
             <div class="row align-items-center">
                 <div class="col-lg-3 mb-4 mb-lg-0 pr-lg-5">
-                    <h2 class="font-weight-bold text-dark mb-3" style="font-size: 2.5rem;">We Deal with,</h2>
+                    <h2 class="font-weight-bold text-dark mb-3" style="font-size: 2.5rem;">{{ site_settings.hp_partners_title|default:'We Deal with,' }}</h2>
                     <p class="text-muted" style="font-size: 1.1rem; line-height: 1.6;">
-                        100+ partnerships we've made ensure the quality of products we distribute
+                        {{ site_settings.hp_partners_subtitle|default:"100+ partnerships we've made ensure the quality of products we distribute" }}
                     </p>
                 </div>
                 <div class="col-lg-9">
@@ -340,10 +340,10 @@
     <section class="py-5 bg-white overflow-hidden" id="services">
         <div class="container py-5">
             <div class="text-center mb-5">
-                <h3 class="text-primary font-weight-bold mb-2">OUR SERVICES</h3>
-                <h2 class="section-title">Specialized Maintenance Services</h2>
+                <h3 class="text-primary font-weight-bold mb-2">{{ site_settings.hp_services_overtitle|default:'OUR SERVICES' }}</h3>
+                <h2 class="section-title">{{ site_settings.hp_services_title|default:'Specialized Maintenance Services' }}</h2>
                 <p class="lead text-muted mx-auto" style="max-width: 800px;">
-                    We are dedicated to maintaining the health and effectiveness of your essential diagnostic equipment.
+                    {{ site_settings.hp_services_subtitle|default:'We are dedicated to maintaining the health and effectiveness of your essential diagnostic equipment.' }}
                 </p>
             </div>
 
@@ -386,7 +386,7 @@
     <!-- Gallery Section -->
     <section class="py-5 bg-white">
         <div class="container py-5">
-            <h2 class="section-title text-center mb-5 pb-3">Latest <span class="text-primary">Gallery & Updates</span></h2>
+            <h2 class="section-title text-center mb-5 pb-3">{{ site_settings.hp_gallery_title|safe|default:'Latest <span class="text-primary">Gallery & Updates</span>' }}</h2>
             <div class="row">
                 {% for item in gallery %}
                 <div class="col-md-3 col-6 mb-4">
@@ -397,7 +397,7 @@
                 {% endfor %}
             </div>
             <div class="text-center mt-5">
-                <a href="/gallery/" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 50px;">Browse All Updates</a>
+                <a href="{% url 'core:gallery' %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 50px;">Browse All Updates</a>
             </div>
         </div>
     </section>
@@ -405,8 +405,8 @@
     <!-- Testimonials Section -->
     <section class="py-5 bg-light">
         <div class="container py-5 text-center">
-            <h4 class="text-primary font-weight-bold mb-3">TESTIMONIALS</h4>
-            <h2 class="section-title mb-5 pb-3">Read what our clients have to share!</h2>
+            <h4 class="text-primary font-weight-bold mb-3">{{ site_settings.hp_testimonials_overtitle|default:'TESTIMONIALS' }}</h4>
+            <h2 class="section-title mb-5 pb-3">{{ site_settings.hp_testimonials_title|default:'Read what our clients have to share!' }}</h2>
             
             <div class="swiper testimonial-slider px-4">
                 <div class="swiper-wrapper">
@@ -439,7 +439,7 @@
     <!-- Our Clients Section -->
     <section class="py-5 bg-light">
         <div class="container py-5">
-            <h2 class="section-title text-center mb-5 pb-4">Our Clients</h2>
+            <h2 class="section-title text-center mb-5 pb-4">{{ site_settings.hp_clients_title|default:'Our Clients' }}</h2>
             
             <!-- Public Sector -->
             <div class="mb-5 pb-5 border-bottom">
@@ -489,8 +489,8 @@
     <section class="py-5 bg-white">
         <div class="container py-5">
             <div class="text-center mb-5">
-                <h4 class="text-primary font-weight-bold mb-1">GO SOCIAL WITH US</h4>
-                <p class="h6 text-muted mb-4">Follow our Instagram @jkrinternational</p>
+                <h4 class="text-primary font-weight-bold mb-1">{{ site_settings.hp_social_overtitle|default:'GO SOCIAL WITH US' }}</h4>
+                <p class="h6 text-muted mb-4">{{ site_settings.hp_social_subtitle|default:'Follow our Instagram @jkrinternational' }}</p>
                 <div class="row pt-4">
                     {% for post in social_posts %}
                     <div class="col-lg-2 col-md-4 col-6 mb-4">

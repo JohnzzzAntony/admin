@@ -1,6 +1,36 @@
 from django.db import models
 from ckeditor.fields import RichTextField
 
+class PageHero(models.Model):
+    PAGE_CHOICES = (
+        ('about', 'About Us'),
+        ('products', 'Products'),
+        ('services', 'Services'),
+        ('gallery', 'Gallery'),
+        ('stores', 'Stores'),
+        ('blog', 'Blog'),
+        ('contact', 'Contact Us'),
+    )
+    page = models.CharField(max_length=20, choices=PAGE_CHOICES, unique=True)
+    hero_image = models.ImageField(
+        upload_to="heroes/", 
+        null=True, 
+        blank=True,
+        help_text="Recommended: 1920x600px. JPG, WEBP. Max 2MB."
+    )
+    hero_image_url = models.URLField(blank=True, null=True, help_text="Alternative external link for hero image.")
+    title = models.CharField(max_length=255, blank=True, help_text="Main title on the hero section.")
+    subtitle = models.TextField(blank=True, help_text="Subtitle or description below the title.")
+    
+    def get_hero_url(self):
+        if self.hero_image_url: return self.hero_image_url
+        return self.hero_image.url if self.hero_image else "https://via.placeholder.com/1920x600"
+
+    def __str__(self): return self.get_page_display()
+    class Meta:
+        verbose_name = "Page Hero Setting"
+        verbose_name_plural = "Page Hero Settings"
+
 class AboutUs(models.Model):
     title = models.CharField(max_length=255, default="About Us")
     heading = models.CharField(max_length=255, default="We craft solutions that enhance and Simplify Lives.")

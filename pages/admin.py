@@ -1,6 +1,16 @@
 from django.contrib import admin
-from .models import AboutUs, VideoCard, MissionVision, Service, Counter, WhyUsCard, GalleryItem, Partner
+from .models import PageHero, AboutUs, VideoCard, MissionVision, Service, Counter, WhyUsCard, GalleryItem, Partner
 from django.utils.html import format_html
+
+@admin.register(PageHero)
+class PageHeroAdmin(admin.ModelAdmin):
+    list_display = ('page', 'title', 'hero_preview')
+    fields = ('page', ('hero_image', 'hero_image_url'), 'title', 'subtitle')
+    
+    def hero_preview(self, obj):
+        url = obj.get_hero_url()
+        return format_html('<img src="{}" style="height:50px; width: 120px; object-fit: cover; border-radius: 5px;" />', url) if url else "-"
+    hero_preview.short_description = 'Hero Preview'
 
 class VideoCardInline(admin.TabularInline):
     model = VideoCard

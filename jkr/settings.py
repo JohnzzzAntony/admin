@@ -24,7 +24,7 @@ env = environ.Env(
     IS_PRODUCTION=(bool, False),
 )
 # Take environment variables from .env file
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'), overwrite=True)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-build-placeholder-key')
@@ -35,7 +35,6 @@ DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
     'admin.creativegradientz.com', 
     'creativegradientz.com', 
-    '.vercel.app',  # Added this to allow any Vercel subdomain
     'localhost', 
     '127.0.0.1'
 ])
@@ -43,7 +42,6 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
 CSRF_TRUSTED_ORIGINS = [
     'https://admin.creativegradientz.com',
     'https://creativegradientz.com',
-    'https://*.vercel.app'  # Added this for secure form submission on Vercel
 ]
 
 
@@ -67,6 +65,7 @@ INSTALLED_APPS = [
     'import_export',
 
     # Custom apps
+    'accounts',
     'core',
     'products',
     'orders',
@@ -76,8 +75,14 @@ INSTALLED_APPS = [
     'blog',
 ]
 
+# Authentication Settings
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'core:home'
+LOGOUT_REDIRECT_URL = 'core:home'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.gzip.GZipMiddleware', # For smaller & faster page loads
     'whitenoise.middleware.WhiteNoiseMiddleware', # For static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -85,6 +90,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
 ]
 
 # ── Security Hardening ────────────────────────────────────────────────────────
@@ -133,10 +140,12 @@ WSGI_APPLICATION = 'jkr.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-if env('DATABASE_URL', default=''):
+# Database configuration (Fast Local SQLite for Dev / Cloud Supabase for Production)
+if env('DATABASE_URL', default=None):
     DATABASES = {
         'default': env.db()
     }
+    DATABASES['default']['CONN_MAX_AGE'] = 600
 else:
     DATABASES = {
         'default': {

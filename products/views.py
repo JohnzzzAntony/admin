@@ -16,11 +16,14 @@ def product_list(request):
     parents = Category.objects.filter(parent__isnull=True)
     categories = parents if parents.count() > 1 else Category.objects.all()
 
-    # Only show products with at least one in-stock SKU
+    # Optimized queryset with select_related and prefetch_related to avoid N+1 issues
     products = Product.objects.filter(
         is_active=True,
         skus__quantity__gt=0,
         skus__shipping_status='available'
+    ).select_related('category').prefetch_related(
+        'skus', 
+        'skus__offers'
     ).distinct().order_by('-id')
     
     query = request.GET.get('q')
@@ -42,6 +45,9 @@ def category_detail(request, slug):
         is_active=True,
         skus__quantity__gt=0,
         skus__shipping_status='available'
+    ).select_related('category').prefetch_related(
+        'skus', 
+        'skus__offers'
     ).distinct().order_by('-id')
     
     parents = Category.objects.filter(parent__isnull=True)
@@ -56,7 +62,13 @@ def category_detail(request, slug):
 def product_detail(request, slug=None, pk=None):
     """SEO-friendly product detail page. Supports both slug and PK for administrative legacy tools."""
     if pk:
-        product = get_object_or_404(Product, pk=pk)
+        product = get_object_or_404(
+            Product.objects.select_related('category').prefetch_related('skus', 'skus__offers', 'images'), 
+            pk=pk
+        )
     else:
-        product = get_object_or_404(Product, slug=slug)
+        product = get_object_or_404(
+            Product.objects.select_related('category').prefetch_related('skus', 'skus__offers', 'images'), 
+            slug=slug
+        )
     return render(request, 'products/product_detail.html', {'product': product})

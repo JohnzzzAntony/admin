@@ -139,6 +139,8 @@ class CreatedAtRangeFilter(admin.SimpleListFilter):
 class CustomerOrderAdmin(admin.ModelAdmin):
     list_display  = (
         'order_number', 
+        'user',               # ← Added User connection
+        'is_guest',           # ← Added Guest flag
         'customer_tag',       # ← Added Customer Tag Badge
         'customer_name', 
         'email', 
@@ -368,6 +370,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
                 ('first_name', 'last_name'),
                 ('email', 'phone'),
                 'department',
+                ('user', 'is_guest'),
                 ('country', 'city'),
                 'street',
                 'comment',

@@ -12,8 +12,10 @@ def home(request):
     categories = Category.objects.filter(show_on_homepage=True).order_by('homepage_order')
     about_us = AboutUs.objects.first()
     
-    mission = MissionVision.objects.filter(section_type='mission').first()
-    vision = MissionVision.objects.filter(section_type='vision').first()
+    # Batch Mission/Vision queries to reduce one round-trip
+    mv_sections = MissionVision.objects.filter(section_type__in=['mission', 'vision'])
+    mission = next((mv for mv in mv_sections if mv.section_type == 'mission'), None)
+    vision = next((mv for mv in mv_sections if mv.section_type == 'vision'), None)
     
     services = Service.objects.all()
     counters = Counter.objects.all()
@@ -26,24 +28,28 @@ def home(request):
     private_clients = Client.objects.filter(category='Private', is_active=True).order_by('order')
     social_posts = SocialPost.objects.all().order_by('order')[:6]
     
-    # Homepage should only show in-stock items
+    # Optimized latest_products to fetch category and SKUs in bulk
     latest_products = Product.objects.filter(
         is_active=True,
         skus__quantity__gt=0,
         skus__shipping_status='available'
-    ).distinct().order_by('-id')[:4]
+    ).select_related('category').prefetch_related('skus', 'skus__offers').distinct().order_by('-id')[:4]
 
-    # Fetch SKUs with active offers (Part of fallback/offers logic)
+    # Fetch SKUs with active offers (Optimized with related items)
     now = timezone.now()
     active_offers_skus = ProductSKU.objects.filter(
         offers__is_active=True,
         offers__start_date__lte=now,
         offers__end_date__gte=now,
         quantity__gt=0
-    ).distinct().prefetch_related('product', 'product__category')
+    ).distinct().select_related('product', 'product__category').prefetch_related('offers')
 
-    # Homepage Collections: Filter active ones and prefetch related SKUs for efficient rendering.
-    collections = Collection.objects.filter(is_active=True).prefetch_related('skus__product')
+    # Homepage Collections: Filter active ones and prefetch related SKUs/Product data.
+    collections = Collection.objects.filter(is_active=True).prefetch_related(
+        'skus__product', 
+        'skus__product__category',
+        'skus__offers'
+    )
 
     context = {
         'sliders': sliders,

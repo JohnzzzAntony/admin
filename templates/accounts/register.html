@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - JKR International{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5 mt-5">
+    <div class="col-md-6">
+        <div class="card shadow border-0" style="border-radius: 12px;">
+            <div class="card-header bg-dark text-white p-4">
+                <h3 class="mb-0 text-center font-weight-bold">Register as a Client</h3>
+                <p class="text-center text-white-50 small mb-0 mt-2">Become part of the JKR International family</p>
+            </div>
+            <div class="card-body p-5">
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="form-group mb-4">
+                        <label class="text-muted small font-weight-bold">{{ field.label|upper }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-dark btn-block btn-lg shadow-sm font-weight-bold py-3 mt-4" style="border-radius: 8px;">Create My Account</button>
+                    
+                    <div class="text-center mt-4 pt-3">
+                        <p class="text-muted">Already have an account? <a href="{% url 'accounts:login' %}" class="text-dark font-weight-bold ml-2">Login Here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-group input {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        height: auto;
+        border: 1px solid #f1f3f5;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    .form-group input:focus {
+        background-color: #fff;
+        border-color: #343a40;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.1);
+    }
+    .form-group ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}

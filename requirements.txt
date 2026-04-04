@@ -21,3 +21,4 @@ charset-normalizer>=3.2.0
 urllib3>=2.0.4
 dj-database-url>=2.1.0
 python-dotenv>=1.0.0
+supabase>=2.4.0

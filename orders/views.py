@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.conf import settings
 from products.models import Product
 from .models import QuoteEnquiry, QuoteItem, CustomerOrder, CustomerOrderItem
 
@@ -94,7 +95,7 @@ def add_to_cart(request, product_id):
     
     if not sku:
         messages.error(request, "This product has no active variants.")
-        return redirect('product_detail', slug=product.slug)
+        return redirect('products:product_detail', slug=product.slug)
 
     cart = request.session.get('enquiry_cart', {})
     item_key = sku.sku_id # Store by SKU ID for uniqueness and offer tracking
@@ -106,7 +107,7 @@ def add_to_cart(request, product_id):
 
     request.session['enquiry_cart'] = cart
     messages.success(request, f"✅ {product.name} (Variant: {sku.title or 'Standard'}) added to cart.")
-    return redirect('enquiry_cart')
+    return redirect('orders:enquiry_cart')
 
 
 def remove_from_cart(request, product_id):
@@ -121,16 +122,26 @@ def remove_from_cart(request, product_id):
     
     request.session['enquiry_cart'] = cart
     messages.info(request, "Item removed from cart.")
-    return redirect('enquiry_cart')
+    return redirect('orders:enquiry_cart')
 
 
 # ── Checkout Step 1 — Billing ─────────────────────────────────────────────────
+
+def checkout_as_guest(request):
+    """Sets a session flag to allow checkout without login."""
+    request.session['is_guest_checkout'] = True
+    return redirect('orders:checkout_billing')
 
 def checkout_billing(request):
     cart_items, total_shipping = _get_cart_items(request)
     if not cart_items:
         messages.warning(request, "Your cart is empty.")
-        return redirect('enquiry_cart')
+        return redirect('orders:enquiry_cart')
+
+    # Auth logic: Must be logged in OR have clicked "Guest Checkout"
+    if not request.user.is_authenticated and not request.session.get('is_guest_checkout'):
+        from django.urls import reverse
+        return redirect(f"{reverse('accounts:login')}?next={request.path}")
 
     if request.method == 'POST':
         billing = {
@@ -145,7 +156,7 @@ def checkout_billing(request):
             'comment':    request.POST.get('comment', ''),
         }
         request.session['checkout_billing'] = billing
-        return redirect('checkout_payment')
+        return redirect('orders:checkout_payment')
 
     form_data = request.session.get('checkout_billing', {})
     subtotal = sum(item['total_item'] for item in cart_items)
@@ -165,9 +176,9 @@ def checkout_payment(request):
     billing = request.session.get('checkout_billing')
 
     if not cart_items:
-        return redirect('enquiry_cart')
+        return redirect('orders:enquiry_cart')
     if not billing:
-        return redirect('checkout_billing')
+        return redirect('orders:checkout_billing')
 
     subtotal = sum(item['total_item'] for item in cart_items)
     grand_total = subtotal + total_shipping
@@ -177,6 +188,8 @@ def checkout_payment(request):
 
         # Create the CustomerOrder record
         order = CustomerOrder.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            is_guest=not request.user.is_authenticated,
             first_name=billing.get('first_name', ''),
             last_name=billing.get('last_name', ''),
             email=billing.get('email', ''),
@@ -213,7 +226,7 @@ def checkout_payment(request):
         # Store order id for the success page
         request.session['last_order_id'] = order.id
 
-        return redirect('checkout_success')
+        return redirect('orders:checkout_success')
 
     return render(request, 'orders/checkout_payment.html', {
         'cart_items': cart_items,
@@ -229,7 +242,7 @@ def checkout_payment(request):
 def checkout_success(request):
     order_id = request.session.pop('last_order_id', None)
     if not order_id:
-        return redirect('enquiry_cart')
+        return redirect('orders:enquiry_cart')
         
     order = get_object_or_404(CustomerOrder, id=order_id)
     return render(request, 'orders/checkout_success.html', {
@@ -244,7 +257,7 @@ def submit_enquiry(request):
         cart = request.session.get('enquiry_cart', {})
         if not cart:
             messages.warning(request, "Your cart is empty.")
-            return redirect('enquiry_cart')
+            return redirect('orders:enquiry_cart')
         billing = {k: request.POST.get(k, '') for k in
                    ['first_name','last_name','email','department','country','city','street','phone','comment']}
         enquiry = QuoteEnquiry.objects.create(**billing)
@@ -254,5 +267,5 @@ def submit_enquiry(request):
         request.session['enquiry_cart'] = {}
         # For legacy, we keep using the old success page or redirect to home
         messages.success(request, "Your enquiry has been submitted successfully.")
-        return redirect('home')
-    return redirect('enquiry_cart')
+        return redirect('core:home')
+    return redirect('orders:enquiry_cart')

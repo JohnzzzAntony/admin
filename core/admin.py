@@ -13,8 +13,8 @@ class StoreLocationAdmin(admin.ModelAdmin):
 class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ('site_name',)
     fieldsets = (
-        ('Branding', {
-            'fields': (('site_name', 'logo', 'logo_url'), ('favicon', 'favicon_url'))
+        ('Branding & Global', {
+            'fields': (('site_name', 'fav_text'), ('logo', 'logo_url'), ('favicon', 'favicon_url'), ('header_title', 'header_subtitle'))
         }),
         ('SEO & Meta', {
             'fields': ('meta_title', 'meta_description')
@@ -22,10 +22,43 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         ('Communication', {
             'fields': (('email', 'phone'), 'whatsapp')
         }),
-        ('Branches', {
+        ('Branch Addresses', {
             'fields': ('dubai_address', 'abudhabi_address')
         }),
-        ('Social Networking', {
+        ('Home Page - Collections', {
+            'fields': ('hp_collections_title', 'hp_collections_subtitle')
+        }),
+        ('Home Page - Categories', {
+            'fields': ('hp_categories_title',)
+        }),
+        ('Home Page - Latest Products', {
+            'fields': ('hp_latest_products_title', 'hp_latest_products_subtitle', 'hp_latest_products_empty')
+        }),
+        ('Home Page - Partners', {
+            'fields': ('hp_partners_title', 'hp_partners_subtitle')
+        }),
+        ('Home Page - Services', {
+            'fields': ('hp_services_overtitle', 'hp_services_title', 'hp_services_subtitle')
+        }),
+        ('Home Page - Gallery', {
+            'fields': ('hp_gallery_title',)
+        }),
+        ('Home Page - Testimonials', {
+            'fields': ('hp_testimonials_overtitle', 'hp_testimonials_title')
+        }),
+        ('Home Page - Clients', {
+            'fields': ('hp_clients_title',)
+        }),
+        ('Home Page - Social', {
+            'fields': ('hp_social_overtitle', 'hp_social_subtitle')
+        }),
+        ('Product Detail Page', {
+            'fields': (('pd_related_title', 'pd_show_related'), 'pd_related_count')
+        }),
+        ('Footer Content', {
+            'fields': (('footer_quick_links_title', 'footer_support_title'), ('footer_legal_title', 'footer_newsletter_title'), 'footer_copyright_text')
+        }),
+        ('Social Networking Links', {
             'fields': (('facebook', 'instagram'), ('linkedin', 'twitter', 'instagram_handle'))
         }),
         ('Notification Channels', {

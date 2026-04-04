@@ -11,11 +11,11 @@
                 <div class="bg-white p-4 mb-30 shadow-sm rounded">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item bg-transparent border-bottom px-0">
-                            <a href="{% url 'product_list' %}" class="text-dark d-block {% if not current_category %}font-weight-bold{% endif %}">All Categories</a>
+                            <a href="{% url 'products:product_list' %}" class="text-dark d-block {% if not current_category %}font-weight-bold{% endif %}">All Categories</a>
                         </li>
                         {% for cat in categories %}
                         <li class="list-group-item bg-transparent border-bottom px-0">
-                            <a href="{% url 'category_detail' slug=cat.slug %}" class="text-dark d-block {% if current_category == cat %}font-weight-bold text-primary{% endif %}">
+                            <a href="{% url 'products:category_detail' slug=cat.slug %}" class="text-dark d-block {% if current_category == cat %}font-weight-bold text-primary{% endif %}">
                                 {{ cat.name }}
                             </a>
                         </li>
@@ -29,7 +29,7 @@
                 <div class="row pb-3">
                     <div class="col-12 pb-1">
                         <div class="d-flex align-items-center justify-content-between mb-4">
-                            <form action="{% url 'product_list' %}" method="get" class="w-50">
+                            <form action="{% url 'products:product_list' %}" method="get" class="w-50">
                                 <div class="input-group">
                                     <input type="text" name="q" class="form-control rounded-pill border-0 shadow-sm" placeholder="Search products..." value="{{ request.GET.q }}">
                                     <button type="submit" class="btn btn-primary rounded-pill ml-2 px-4 shadow-sm">Search</button>
@@ -42,12 +42,12 @@
                     <div class="col-lg-4 col-md-6 col-sm-6 pb-4">
                         <div class="card product-item border-0 mb-4 shadow-sm h-100 rounded-3 overflow-hidden">
                              <div class="card-header product-img position-relative overflow-hidden bg-transparent border-0 p-0 text-center" style="height:250px;">
-                                 <a href="{% url 'product_detail' slug=product.slug %}" class="d-block h-100">
+                                 <a href="{% url 'products:product_detail' slug=product.slug %}" class="d-block h-100">
                                      <img class="img-fluid h-100" src="{{ product.get_image_url }}" alt="{{ product.name }}" style="object-fit: contain;">
                                  </a>
                              </div>
                             <div class="card-body text-center p-0 pt-3 pb-2">
-                                <a href="{% url 'product_detail' slug=product.slug %}" class="text-dark text-decoration-none">
+                                <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-dark text-decoration-none">
                                     <h6 class="mb-2 text-dark font-weight-medium product-title-hover">{{ product.name }}</h6>
                                 </a>
                                 <div class="d-flex align-items-center justify-content-center mt-2">
@@ -64,8 +64,8 @@
                             </div>
                             <div class="card-footer bg-transparent border-0 text-center pb-4">
                                 <div class="btn-group w-100">
-                                    <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-sm btn-outline-info rounded-left">View Details</a>
-                                    <a href="{% url 'add_to_cart' product_id=product.pk %}" class="btn btn-sm btn-primary rounded-right"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</a>
+                                    <a href="{% url 'products:product_detail' slug=product.slug %}" class="btn btn-sm btn-outline-info rounded-left">View Details</a>
+                                    <a href="{% url 'orders:add_to_cart' product_id=product.pk %}" class="btn btn-sm btn-primary rounded-right"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</a>
                                 </div>
                             </div>
                         </div>
@@ -75,7 +75,7 @@
                         <i class="fa fa-search fa-3x text-muted mb-3"></i>
                         <h4>No products found</h4>
                         <p class="text-muted">Try adjusting your search or filter criteria.</p>
-                        <a href="{% url 'product_list' %}" class="btn btn-primary rounded-pill px-4 mt-2">Clear Filters</a>
+                        <a href="{% url 'products:product_list' %}" class="btn btn-primary rounded-pill px-4 mt-2">Clear Filters</a>
                     </div>
                     {% endfor %}
                 </div>

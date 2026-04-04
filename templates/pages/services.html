@@ -2,10 +2,12 @@
 {% load static %}
 
 {% block content %}
-    <!-- Hero Header matching Image 2 style -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-1.jpg'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
+    <!-- Hero Header -->
+    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" 
+             style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ page_heroes.services.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-1.jpg' }}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
         <div class="container py-5">
-            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">Our Services</h1>
+            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.services.title|default:"Our Services" }}</h1>
+            {% if page_heroes.services.subtitle %}<p class="lead" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.services.subtitle }}</p>{% endif %}
         </div>
     </section>
 

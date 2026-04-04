@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-    <title>{{ site_settings.meta_title|default:"Medical Equipment Suppliers and Distributor in UAE - JKR" }}</title>
+    <title>{{ site_settings.meta_title|default:site_settings.site_name|default:"JKR International" }}</title>
     <meta name="description" content="{{ site_settings.meta_description }}"/>
     {% if site_settings.favicon %}
     <link rel="icon" href="{{ site_settings.favicon.url }}" />
+    {% endif %}
+    {% if site_settings.fav_text %}
+    <!-- {{ site_settings.fav_text }} -->
     {% endif %}
 
     <!-- Google Fonts -->
@@ -51,30 +54,30 @@
     <!-- Header / Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'core:home' %}">
                 {% if site_settings.logo %}
-                <img src="{{ site_settings.logo.url }}" alt="JKR Logo" height="50">
+                <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" height="50">
                 {% else %}
-                <span class="font-weight-bold" style="color: var(--primary-blue); font-size: 1.5rem;">JKR International</span>
+                <span class="font-weight-bold" style="color: var(--primary-blue); font-size: 1.5rem;">{{ site_settings.header_title|default:site_settings.site_name|default:"JKR International" }}</span>
                 {% endif %}
-                <span class="ml-3 small font-weight-bold text-muted d-none d-lg-inline" style="border-left: 1px solid #ddd; padding-left: 15px;">JOY OF MOBILITY</span>
+                <span class="ml-3 small font-weight-bold text-muted d-none d-lg-inline" style="border-left: 1px solid #ddd; padding-left: 15px;">{{ site_settings.header_subtitle|default:"JOY OF MOBILITY" }}</span>
             </a>
             <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#mainNav">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'about_us' %}">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'category_index' %}">Products</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'services' %}">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'store_locations' %}">Stores</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'post_list' %}">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'core:about_us' %}">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'products:category_index' %}">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'core:services' %}">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'core:gallery' %}">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'core:store_locations' %}">Stores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'blog:post_list' %}">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'contact:contact' %}">Contact Us</a></li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <a href="{% url 'enquiry_cart' %}" class="mr-4 position-relative">
+                    <a href="{% url 'orders:enquiry_cart' %}" class="mr-4 position-relative">
                         <div class="bg-primary text-white p-2 rounded-circle shadow-sm" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-shopping-cart"></i>
                         </div>
@@ -82,6 +85,29 @@
                         <span class="badge badge-pill badge-danger position-absolute" style="top: -5px; right: -5px; border: 2px solid #fff;">{{ cart_count }}</span>
                         {% endif %}
                     </a>
+
+                    <!-- User Account Dropdown -->
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div class="bg-light rounded-circle text-primary d-flex align-items-center justify-content-center mr-2" style="width: 35px; height: 35px;">
+                                <i class="fas fa-user small"></i>
+                            </div>
+                            <span class="d-none d-sm-inline">{{ user.username }}</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow border-0 mt-2" aria-labelledby="userDropdown">
+                            {% if user.is_staff %}
+                            <a class="dropdown-item py-2" href="{% url 'admin:index' %}"><i class="fas fa-cog mr-2"></i> Admin Panel</a>
+                            <div class="dropdown-divider"></div>
+                            {% endif %}
+                            <a class="dropdown-item py-2" href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-sm px-4 mr-2 d-none d-md-inline-block" style="border-radius: 20px;">Login</a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm px-4 d-none d-md-inline-block" style="border-radius: 20px;">Sign Up</a>
+                    <a href="{% url 'accounts:login' %}" class="nav-link d-md-none"><i class="fas fa-user"></i></a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -111,26 +137,26 @@
 
                 <!-- Nav Cols -->
                 <div class="col-6 col-lg-2 mb-5">
-                    <h5 class="footer-heading">Quick Links</h5>
-                    <a href="/" class="footer-link">Home</a>
-                    <a href="{% url 'category_index' %}" class="footer-link">Products</a>
-                    <a href="/services/" class="footer-link">Services</a>
+                    <h5 class="footer-heading">{{ site_settings.footer_quick_links_title|default:"Quick Links" }}</h5>
+                    <a href="{% url 'core:home' %}" class="footer-link">Home</a>
+                    <a href="{% url 'products:category_index' %}" class="footer-link">Products</a>
+                    <a href="{% url 'core:services' %}" class="footer-link">Services</a>
                 </div>
                 <div class="col-6 col-lg-2 mb-5">
-                    <h5 class="footer-heading">Support</h5>
-                    <a href="/about-us/" class="footer-link">About</a>
-                    <a href="/contact/" class="footer-link">Contact</a>
+                    <h5 class="footer-heading">{{ site_settings.footer_support_title|default:"Support" }}</h5>
+                    <a href="{% url 'core:about_us' %}" class="footer-link">About</a>
+                    <a href="{% url 'contact:contact' %}" class="footer-link">Contact</a>
                 </div>
                 <div class="col-lg-1 d-none d-lg-block">
-                    <h5 class="footer-heading">Legal</h5>
-                    <a href="/privacy/" class="footer-link">Privacy Policy</a>
+                    <h5 class="footer-heading">{{ site_settings.footer_legal_title|default:"Legal" }}</h5>
+                    <a href="{% url 'core:home' %}" class="footer-link">Privacy Policy</a>
                 </div>
 
                 <!-- Newsletter Col -->
                 <div class="col-lg-3 mb-5 pl-lg-4">
                     <div class="newsletter-card">
-                        <h4 class="font-weight-bold text-white mb-3">Subscribe to our Newsletter</h4>
-                        <form action="{% url 'subscribe' %}" method="POST">
+                        <h4 class="font-weight-bold text-white mb-3">{{ site_settings.footer_newsletter_title|default:"Subscribe to our Newsletter" }}</h4>
+                        <form action="{% url 'contact:subscribe' %}" method="POST">
                             {% csrf_token %}
                             <div class="form-group mb-3">
                                 <input type="email" name="email" class="form-control newsletter-input w-100" placeholder="Email Address" required>
@@ -148,7 +174,7 @@
             </div>
             
             <div class="border-top border-secondary pt-4 text-center">
-                <p class="small text-white-50">© {% now "Y" %} {{ site_settings.site_name }}. All rights reserved.</p>
+                <p class="small text-white-50">© {% now "Y" %} {{ site_settings.site_name }}. {{ site_settings.footer_copyright_text|default:"All rights reserved." }}</p>
             </div>
         </div>
     </footer>
