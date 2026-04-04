@@ -1,4 +1,0 @@
-product,title,sku_id,quantity,unit,weight,length,width,height,delivery_time,shipping_status,free_shipping,additional_shipping_charge
-Oxygen Concentrator,Standard 5L,SKU-OXY-001,50,pcs,15,40,30,60,3-5 Days,available,TRUE,0
-Face Masks (Box of 50),Single Box,SKU-MASK-01,1000,box,0.2,20,10,10,1-2 Days,available,FALSE,5
-Adjustable Bed,Full Electric,SKU-BED-EL,10,pcs,120,210,95,50,7-10 Days,available,TRUE,0
