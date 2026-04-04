@@ -43,6 +43,8 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
     'https://admin.creativegradientz.com',
     'https://creativegradientz.com',
+    'https://admin-production-dac3.up.railway.app',
+    'https://*.up.railway.app'
 ])
 
 

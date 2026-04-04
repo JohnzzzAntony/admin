@@ -4,11 +4,14 @@ from django.core.files.base import ContentFile
 import urllib.request
 import textwrap
 
+import sys
+sys.path.append('.')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jkr.settings')
 django.setup()
 
 from products.models import Category, Product, ProductSKU, ProductImage
-from pages.models import AboutUs, MissionVision, Service, Counter, WhyUsCard, GalleryItem
+from pages.models import AboutUs, MissionVision, Service, Counter, WhyUsCard, GalleryItem, Partner
+from core.models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation
 from sliders.models import HeroSlider
 
 def populate():
@@ -18,6 +21,20 @@ def populate():
     MissionVision.objects.all().delete()
     Service.objects.all().delete()
     HeroSlider.objects.all().delete()
+    SiteSettings.objects.all().delete()
+    Partner.objects.all().delete()
+
+    print("Creating Site Settings...")
+    SiteSettings.objects.create(
+        site_name="JKR International",
+        header_title="JKR International",
+        header_subtitle="JOY OF MOBILITY",
+        email="info@jkrintl.com",
+        phone="+971 4 251 5383",
+        dubai_address="Office No. 2, Lootah Building, Marrakeh St, Umm Al Rammool, Rashidiya, Dubai",
+        footer_copyright_text="© 2024 JKR International. All rights reserved.",
+        fav_text="JKR"
+    )
 
     print("Creating Categories...")
     cats = [
@@ -37,33 +54,28 @@ def populate():
 
     print("Creating Products...")
     products_data = [
-        ("medi Armschlinge", "Orthopedic Products", "Comfortable arm sling for injury recovery.", 45.00),
-        ("duomed® smooth", "Compression Stockings", "Smooth and effective compression stockings for daily use.", 120.00),
-        ("iCHAIR MC1 LIGHT 1.610", "Wheelchairs", "Advanced lightweight electric wheelchair.", 2500.00),
-        ("Flash 1.135", "Wheelchairs", "Dynamic and rapid mobility wheelchair.", 1800.00),
-        ("Sissel Tour- Cushion", "Seating & Positioning System", "Cushion specifically designed for car seats.", 75.00),
-        ("SISSEL® Spiky-Ball", "Exercise Therapy", "Textured ball for deep tissue massage and therapy.", 15.00),
-        ("Euro Chair 2.750", "Wheelchairs", "Classic, reliable manual wheelchair from MEYRA.", 850.00),
-        ("CarePump Move8", "Physiotherapy & Rehabilitation", "High-tech rehabilitation pump system.", 3200.00),
-        ("Celta ST Manual Steel Chair", "Wheelchairs", "Sturdy manual steel chair for daily use.", 500.00),
-        ("Apollo Patient Bed", "Hospital Equipment & Furniture", "Super low single panel patient bed.", 1100.00),
+        ("medi Armschlinge", "Orthopedic Products", "Comfortable arm sling for injury recovery.", 45.00, "https://jkrintl.com/wp-content/uploads/2022/12/medi-Armschlinge.jpg"),
+        ("duomed® smooth", "Compression Stockings", "Smooth and effective compression stockings for daily use.", 120.00, "https://jkrintl.com/wp-content/uploads/2022/12/duomed-smooth.jpg"),
+        ("iCHAIR MC1 LIGHT 1.610", "Wheelchairs", "Advanced lightweight electric wheelchair.", 2500.00, "https://jkrintl.com/wp-content/uploads/2022/12/ichair-mc1.jpg"),
+        ("Flash 1.135", "Wheelchairs", "Dynamic and rapid mobility wheelchair.", 1800.00, "https://jkrintl.com/wp-content/uploads/2022/12/Flash.jpg"),
     ]
 
-    for title, cat, desc, price in products_data:
+    for title, cat, desc, price, img in products_data:
         p = Product.objects.create(
             category=cat_objs[cat],
             name=title,
             overview=desc,
+            regular_price=price,
+            image_url=img,
             is_active=True
         )
         ProductSKU.objects.create(
             product=p,
             sku_id=f"SKU-{title.split()[0].upper()}-001",
-            price=price,
             quantity=15,
             unit="pcs",
             weight=1.5, length=10, width=10, height=10,
-            shipping_charge=5.00,
+            additional_shipping_charge=5.00,
             delivery_time="2-3 Days",
             shipping_status="available"
         )
@@ -102,7 +114,15 @@ def populate():
         icon_svg='<svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM9 9a1 1 0 012 0v4a1 1 0 11-2 0V9zm1-5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"></path></svg>'
     )
 
-    print("Success! Database populated with JKR site mock data.")
+    Partner.objects.create(name="medi", website_url="https://www.medi.de/en/", logo_url="https://jkrintl.com/wp-content/uploads/2022/12/medi-logo.png")
+    Partner.objects.create(name="Meyra", website_url="https://www.meyra.com/", logo_url="https://jkrintl.com/wp-content/uploads/2022/12/Meyra-logo.png")
+    Partner.objects.create(name="Sissel", website_url="https://www.sissel.com/", logo_url="https://jkrintl.com/wp-content/uploads/2022/12/Sissel-logo.png")
+
+    print("Creating Testimonials & Clients...")
+    Testimonial.objects.create(client_name="Sarah Johnson", position="Health Specialist", content="JKR provided excellent support for our clinic's mobility needs. The equipment is top-notch.", rating=5)
+    Client.objects.create(name="Dubai Health Authority", category='Public', logo_url="https://jkrintl.com/wp-content/uploads/2022/12/DHA-Logo.png")
+
+    print("Success! Database populated with rich mock data.")
 
 if __name__ == '__main__':
     populate()
