@@ -34,6 +34,7 @@ DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
     'admin.creativegradientz.com', 
+    'ecom.creativegradientz.com', 
     'creativegradientz.com', 
     'localhost', 
     '127.0.0.1',
@@ -42,6 +43,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
 
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
     'https://admin.creativegradientz.com',
+    'https://ecom.creativegradientz.com',
     'https://creativegradientz.com',
     'https://admin-production-dac3.up.railway.app',
     'https://*.up.railway.app'
