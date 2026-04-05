@@ -18,8 +18,8 @@ class HeroSlider(models.Model):
     )
     video_url = models.URLField(blank=True, null=True, help_text="External URL for background video (YouTube/Vimeo not supported for direct background).")
     
-    button_text = models.CharField(max_length=100, default="Enquire Now")
-    button_link = models.CharField(max_length=255, default="/contact-us/")
+    button_text = models.CharField(max_length=100, default="Shop Now")
+    button_link = models.CharField(max_length=255, default="/products/")
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
 

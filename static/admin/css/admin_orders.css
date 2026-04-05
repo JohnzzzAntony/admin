@@ -1,0 +1,42 @@
+
+/* Admin Orders Status Coloring */
+.field-status select {
+    font-weight: 700;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    text-transform: uppercase;
+    font-size: 11px;
+    border: none !important;
+    color: white !important;
+}
+
+/* Pending */
+.field-status select[value="pending"], 
+.field-status select option[value="pending"] { background-color: #f39c12 !important; color: white !important; }
+
+/* Packaging */
+.field-status select[value="packaging"], 
+.field-status select option[value="packaging"] { background-color: #e67e22 !important; color: white !important; }
+
+/* Shipped */
+.field-status select[value="shipped"], 
+.field-status select option[value="shipped"] { background-color: #3498db !important; color: white !important; }
+
+/* Delivered */
+.field-status select[value="delivered"], 
+.field-status select option[value="delivered"] { background-color: #27ae60 !important; color: white !important; }
+
+/* Cancelled / Refund */
+.field-status select[value="refund"], 
+.field-status select option[value="refund"] { background-color: #e74c3c !important; color: white !important; }
+
+/* General badges in list view */
+.badge-status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    color: white;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    display: inline-block;
+}

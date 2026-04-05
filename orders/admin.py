@@ -145,9 +145,6 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         'customer_name', 
         'email', 
         'phone',
-        'payment_method_badge', 
-        'payment_status_badge',
-        'order_status_badge', 
         'status', 
         'items_count', 
         'total_display',
@@ -398,5 +395,4 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     )
 
     class Media:
-        css = {'all': ('admin/css/custom_order.css',)}
-        js = ('admin/js/custom_order.js',)
+        css = {'all': ('admin/css/admin_orders.css',)}

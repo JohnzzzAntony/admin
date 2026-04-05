@@ -136,9 +136,21 @@
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-block py-3 font-weight-bold shadow"
+                                    id="submitBtn"
                                     style="border-radius:30px;background:var(--accent-blue);font-size:1.05rem;">
-                                <i class="fas fa-lock mr-2"></i>Place Order
+                                <span id="btnText"><i class="fas fa-lock mr-2"></i>Place Order</span>
+                                <span id="btnLoader" class="d-none">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Processing Order...
+                                </span>
                             </button>
+
+                            <script>
+                                document.getElementById('payment-form').onsubmit = function() {
+                                    document.getElementById('submitBtn').disabled = true;
+                                    document.getElementById('btnText').classList.add('d-none');
+                                    document.getElementById('btnLoader').classList.remove('d-none');
+                                };
+                            </script>
                             <div class="text-center mt-3">
                                 <small class="text-muted"><i class="fas fa-lock mr-1"></i>256-bit SSL encrypted</small>
                             </div>

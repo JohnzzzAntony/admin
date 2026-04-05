@@ -23,7 +23,10 @@ class PostAdmin(admin.ModelAdmin):
     )
 
     def image_tag(self, obj):
-        if obj.featured_image:
-            return format_html('<img src="{}" style="width: 60px; height:45px; object-fit: cover; border-radius: 4px;" />', obj.featured_image.url)
+        try:
+            if obj.featured_image:
+                return format_html('<img src="{}" style="width: 60px; height:45px; object-fit: cover; border-radius: 4px;" />', obj.featured_image.url)
+        except Exception:
+            pass
         return "-"
     image_tag.short_description = 'Preview'
