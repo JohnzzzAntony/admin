@@ -139,20 +139,21 @@ class CreatedAtRangeFilter(admin.SimpleListFilter):
 class CustomerOrderAdmin(admin.ModelAdmin):
     list_display  = (
         'order_number', 
-        'user',               # ← Added User connection
-        'is_guest',           # ← Added Guest flag
-        'customer_tag',       # ← Added Customer Tag Badge
+        'user', 
+        'is_guest', 
+        'customer_tag', 
         'customer_name', 
         'email', 
         'phone',
         'payment_method_badge', 
         'payment_status_badge',
-        'status',             # This becomes "Order Status" due to short_description later
+        'order_status_badge', 
+        'status', 
         'items_count', 
         'total_display',
         'created_at',
     )
-    list_editable = ('status',) # Added list editable status
+    list_editable = ('status',) 
     list_filter   = (
         'status', 
         'payment_method', 

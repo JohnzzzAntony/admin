@@ -186,47 +186,73 @@ def checkout_payment(request):
     if request.method == 'POST':
         payment_method = request.POST.get('payment_method', 'card')
 
-        # Create the CustomerOrder record
-        order = CustomerOrder.objects.create(
-            user=request.user if request.user.is_authenticated else None,
-            is_guest=not request.user.is_authenticated,
-            first_name=billing.get('first_name', ''),
-            last_name=billing.get('last_name', ''),
-            email=billing.get('email', ''),
-            phone=billing.get('phone', ''),
-            department=billing.get('department', ''),
-            country=billing.get('country', ''),
-            city=billing.get('city', ''),
-            street=billing.get('street', ''),
-            comment=billing.get('comment', ''),
-            payment_method=payment_method,
-            status='pending',
-            payment_status='pending',
-            shipping_amount=total_shipping,
-            total_amount=grand_total
-        )
+        from django.db import transaction
+        try:
+            with transaction.atomic():
+                # Create the CustomerOrder record
+                order = CustomerOrder.objects.create(
+                    user=request.user if request.user.is_authenticated else None,
+                    is_guest=not request.user.is_authenticated,
+                    first_name=billing.get('first_name', ''),
+                    last_name=billing.get('last_name', ''),
+                    email=billing.get('email', ''),
+                    phone=billing.get('phone', ''),
+                    department=billing.get('department', ''),
+                    country=billing.get('country', ''),
+                    city=billing.get('city', ''),
+                    street=billing.get('street', ''),
+                    comment=billing.get('comment', ''),
+                    payment_method=payment_method,
+                    status='pending',
+                    payment_status='pending',
+                    shipping_amount=total_shipping,
+                    total_amount=grand_total
+                )
 
-        # Save line items
-        for item in cart_items:
-            product = item['product']
-            CustomerOrderItem.objects.create(
-                order=order,
-                product=product,
-                product_name=f"{product.name} ({item['sku'].title})" if item.get('sku') else product.name,
-                quantity=item['quantity'],
-                unit_price=item['unit_price'],
-                shipping_charge=item['shipping_item'],
-                total_price=item['total_item']
-            )
+                # Save line items
+                error_items = []
+                for item in cart_items:
+                    try:
+                        product = item['product']
+                        sku = item.get('sku')
+                        
+                        # Length-safe product name
+                        display_name = product.name
+                        if sku and hasattr(sku, 'title') and sku.title:
+                            display_name = f"{product.name} ({sku.title})"
+                        
+                        CustomerOrderItem.objects.create(
+                            order=order,
+                            product=product,
+                            product_name=display_name[:250],
+                            quantity=item['quantity'],
+                            unit_price=item['unit_price'],
+                            shipping_charge=item.get('shipping_item', 0),
+                            total_price=item['total_item']
+                        )
+                    except Exception as item_err:
+                        error_items.append(str(item_err))
+                
+                if error_items:
+                    raise ValueError(f"Failed to create items: {', '.join(error_items)}")
 
-        # Clear cart & billing from session
-        request.session['enquiry_cart'] = {}
-        request.session.pop('checkout_billing', None)
+                # Clear cart & billing from session
+                request.session['enquiry_cart'] = {}
+                request.session.pop('checkout_billing', None)
 
-        # Store order id for the success page
-        request.session['last_order_id'] = order.id
+                # Store order id for the success page
+                request.session['last_order_id'] = order.id
+                request.session.modified = True
 
-        return redirect('orders:checkout_success')
+            print(f"--- SUCCESS: Order #{order.id} Created ---")
+            return redirect('orders:checkout_success')
+
+        except Exception as e:
+            import traceback
+            print("--- ORDER CREATION CRASH ---")
+            traceback.print_exc()
+            messages.error(request, f"There was an error processing your order: {str(e)}")
+            return redirect('orders:checkout_payment')
 
     return render(request, 'orders/checkout_payment.html', {
         'cart_items': cart_items,

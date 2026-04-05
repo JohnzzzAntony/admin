@@ -206,6 +206,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Cloudinary Storage for Media Files in Production
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME', default='dltest'),
+    'API_KEY': env('CLOUDINARY_API_KEY', default='1234567'),
+    'API_SECRET': env('CLOUDINARY_API_SECRET', default='secretkey'),
+}
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
