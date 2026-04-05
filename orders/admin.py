@@ -236,7 +236,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
                              '<strong>📝 New Order Draft</strong></div>')
         return format_html(
             '<div style="background:#f0f6ff;border-left:4px solid #2271b1;padding:10px 16px;border-radius:0 8px 8px 0;margin:8px 0;">'
-            '<strong style="color:#2271b1;font-size:13px;">📋 Order #JKR-{} &nbsp;|&nbsp; '
+            '<strong style="color:#2271b1;font-size:13px;">📋 Order #DEMO-{} &nbsp;|&nbsp; '
             'Placed: {}</strong></div>',
             f"{obj.pk:05d}",
             obj.created_at.strftime("%d %b %Y, %H:%M")
@@ -289,7 +289,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         from django.shortcuts import get_object_or_404, redirect
         order = get_object_or_404(CustomerOrder, pk=order_id)
         send_customer_notification(order, is_automated=False)
-        self.message_user(request, f"Notifications have been successfully resent for Order #JKR-{order_id:05d}.")
+        self.message_user(request, f"Notifications have been successfully resent for Order #DEMO-{order_id:05d}.")
         return redirect('admin:orders_customerorder_change', order_id)
 
     def get_product_price(self, request):

@@ -13,7 +13,7 @@ def send_customer_notification(order, is_automated=True):
         if not site_config:
             return
 
-        order_id = f"JKR-{order.pk:05d}"
+        order_id = f"DEMO-{order.pk:05d}"
         customer_name = f"{order.first_name} {order.last_name}"
         status_label = order.get_status_display()
         tracking_link = f"{settings.SITE_URL}/orders/track/{order.pk}/" # Placeholder

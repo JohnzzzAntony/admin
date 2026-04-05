@@ -226,11 +226,11 @@ CKEDITOR_IMAGE_BACKEND = "pillow"
 
 # Jazzmin Admin Theme Configuration
 JAZZMIN_SETTINGS = {
-    "site_title": "JKR International Admin",
-    "site_header": "JKR Admin",
-    "site_brand": "JKR Joy, Knowhow, Responsibility",
+    "site_title": "Demo Admin",
+    "site_header": "Demo Admin",
+    "site_brand": "Demo Joy, Knowhow, Responsibility",
     "site_logo": "assets/logo.png",
-    "welcome_sign": "Welcome to JKR Management System",
+    "welcome_sign": "Welcome to Management System",
     "search_model": ["products.Product", "blog.Post"],
     "show_ui_builder": False,
     "changeform_format": "horizontal_tabs",

@@ -39,15 +39,15 @@ def populate():
     print("Creating Site Settings...")
     logo_url = upload_to_cloudinary("https://jkrintl.com/wp-content/uploads/2022/02/cropped-jkr-logo-ful.png")
     SiteSettings.objects.create(
-        site_name="JKR International",
-        header_title="JKR International",
-        header_subtitle="JOY OF MOBILITY",
+        site_name="Demo",
+        header_title="Demo Website",
+        header_subtitle="SITE FOR DEMO",
         logo_url=logo_url,
-        email="info@jkrintl.com",
-        phone="+971 4 251 5383",
-        dubai_address="Office No. 2, Lootah Building, Marrakeh St, Umm Al Rammool, Rashidiya, Dubai",
-        footer_copyright_text="© 2024 JKR International. All rights reserved.",
-        fav_text="JKR"
+        email="info@demo.com",
+        phone="+00 000 000 000",
+        dubai_address="Demo Address",
+        footer_copyright_text="© 2024 Demo Website. All rights reserved.",
+        fav_text="Demo"
     )
 
     print("Creating Categories...")
