@@ -16,11 +16,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='post',
-            name='excerpt',
-            field=models.TextField(blank=True, help_text='Short description for the blog card on the listing page.'),
-        ),
-        migrations.AddField(
-            model_name='post',
             name='meta_description',
             field=models.TextField(blank=True),
         ),
