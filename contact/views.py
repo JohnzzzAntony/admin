@@ -14,7 +14,7 @@ def contact(request):
             name=name, email=email, phone=phone, message=message
         )
         messages.success(request, "Hi! Thanks for reaching out. We will get back to you soon.")
-        return redirect('contact')
+        return redirect('contact:contact')
 
     return render(request, 'contact/contact.html')
 

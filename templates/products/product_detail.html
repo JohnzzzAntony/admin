@@ -72,7 +72,7 @@
                     
                     <div class="mb-4">
                         {% with price_info=product.get_best_price_info %}
-                        {% if price_info.has_offer %}
+                        {% if price_info.has_offer or price_info.regular_price > price_info.final_price %}
                             <div class="d-flex align-items-center mb-2">
                                 <h2 class="font-weight-bold text-dark mb-0 mr-3">{{ price_info.final_price }} AED</h2>
                                 <span class="badge badge-danger px-3 py-2" style="border-radius: 20px; font-size: 0.9rem;">
@@ -82,7 +82,7 @@
                             <div class="d-flex align-items-center">
                                 <h5 class="text-muted mb-0 mr-3"><del>{{ price_info.regular_price }} AED</del></h5>
                                 <span class="text-success font-weight-bold" style="font-size: 1.1rem;">
-                                    (You save: {{ price_info.discount_amount }} AED / {{ price_info.discount_percentage }}%)
+                                    (You save: {{ price_info.discount_amount }} AED)
                                 </span>
                             </div>
                         {% else %}
@@ -169,16 +169,16 @@
             </div>
 
             <!-- Related Products Section -->
-            {% if site_settings.pd_show_related|default:True %}
+            {% if design_settings.pd_show_related|default:True %}
             <div class="mt-5 pt-5">
                 <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-2">
-                    <h2 class="font-weight-bold" style="color: var(--primary-blue);">{{ site_settings.pd_related_title|default:"Related Products" }}</h2>
+                    <h2 class="font-weight-bold" style="color: var(--primary-blue);">{{ design_settings.pd_related_title|default:"Related Products" }}</h2>
                     <a href="{% url 'products:category_detail' slug=product.category.slug %}" class="text-secondary font-weight-bold text-decoration-none">View All <i class="fa fa-arrow-right ml-1 small"></i></a>
                 </div>
                 <div class="row">
                     {% for rp in product.category.products.all %}
                     {% if rp.id != product.id %}
-                    {% if forloop.counter <= site_settings.pd_related_count|default:4 %}
+                    {% if forloop.counter <= design_settings.pd_related_count|default:4 %}
                     <div class="col-lg-3 col-md-6 mb-4">
                         <div class="card border-0 text-center h-100 shadow-sm category-card transition-all p-3" style="border-radius: 15px;">
                             <a href="{% url 'products:product_detail' slug=rp.slug %}" class="text-decoration-none">

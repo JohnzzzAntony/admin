@@ -62,7 +62,7 @@ PAYMENT_METHOD_ICONS = {
 class CustomerOrderItemInline(admin.TabularInline):
     model = CustomerOrderItem
     extra = 0
-    fields = ('product', 'product_name', 'quantity', 'unit_price', 'shipping_charge', 'total_price')
+    fields = ('product', 'product_name', 'quantity', 'regular_price', 'unit_price', 'shipping_charge', 'total_price')
     readonly_fields = ('total_price',)
 
     def has_add_permission(self, request, obj=None):
@@ -147,12 +147,12 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         'phone',
         'payment_method_badge', 
         'payment_status_badge',
-        'status',             # This becomes "Order Status" due to short_description later
+        'status',              # This is the editable dropdown (colored via JS/CSS)
         'items_count', 
         'total_display',
         'created_at',
     )
-    list_editable = ('status',) # Added list editable status
+    list_editable = ('status',) 
     list_filter   = (
         'status', 
         'payment_method', 
@@ -192,7 +192,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
 
     def order_number(self, obj):
         if not obj.pk: return "#NEW"
-        return format_html('<strong>#JKR-{}</strong>', f"{obj.pk:05d}")
+        return format_html('<strong>#Demo-{}</strong>', f"{obj.pk:05d}")
 
     order_number.short_description = "Order #"
     order_number.admin_order_field = 'id'
@@ -235,7 +235,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
                              '<strong>📝 New Order Draft</strong></div>')
         return format_html(
             '<div style="background:#f0f6ff;border-left:4px solid #2271b1;padding:10px 16px;border-radius:0 8px 8px 0;margin:8px 0;">'
-            '<strong style="color:#2271b1;font-size:13px;">📋 Order #JKR-{} &nbsp;|&nbsp; '
+            '<strong style="color:#2271b1;font-size:13px;">📋 Order #Demo-{} &nbsp;|&nbsp; '
             'Placed: {}</strong></div>',
             f"{obj.pk:05d}",
             obj.created_at.strftime("%d %b %Y, %H:%M")
@@ -288,7 +288,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         from django.shortcuts import get_object_or_404, redirect
         order = get_object_or_404(CustomerOrder, pk=order_id)
         send_customer_notification(order, is_automated=False)
-        self.message_user(request, f"Notifications have been successfully resent for Order #JKR-{order_id:05d}.")
+        self.message_user(request, f"Notifications have been successfully resent for Order #Demo-{order_id:05d}.")
         return redirect('admin:orders_customerorder_change', order_id)
 
     def get_product_price(self, request):
@@ -327,23 +327,25 @@ class CustomerOrderAdmin(admin.ModelAdmin):
             '<tr><td style="padding:4px 10px;">{}</td>'
             '<td style="padding:4px 10px;text-align:center;">{}</td>'
             '<td style="padding:4px 10px;text-align:right;">{} {}</td>'
+            '<td style="padding:4px 10px;text-align:right;">{} {}</td>'
             '<td style="padding:4px 10px;text-align:right;font-weight:700;">{} {}</td></tr>',
-            ((i.product_name, i.quantity, i.unit_price, settings.CURRENCY, i.total_price, settings.CURRENCY) for i in items)
+            ((i.product_name, i.quantity, i.regular_price, settings.CURRENCY, i.unit_price, settings.CURRENCY, i.total_price, settings.CURRENCY) for i in items)
         )
         return format_html(
             '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
             '<thead><tr style="background:#f5f5f5;">'
             '<th style="padding:6px 10px;text-align:left;">Product</th>'
             '<th style="padding:6px 10px;text-align:center;">Qty</th>'
-            '<th style="padding:6px 10px;text-align:right;">Unit Price</th>'
+            '<th style="padding:6px 10px;text-align:right;">Regular Price</th>'
+            '<th style="padding:6px 10px;text-align:right;">Sale Price</th>'
             '<th style="padding:6px 10px;text-align:right;">Subtotal</th></tr></thead>'
             '<tbody>{}</tbody>'
             '<tfoot>'
-            '<tr style="border-top: 1px solid #ddd;"><td colspan="3" style="padding:8px 10px;text-align:right;color:#666;">Subtotal</td>'
+            '<tr style="border-top: 1px solid #ddd;"><td colspan="4" style="padding:8px 10px;text-align:right;color:#666;">Subtotal</td>'
             '<td style="padding:8px 10px;text-align:right;color:#666;">{} {}</td></tr>'
-            '<tr><td colspan="3" style="padding:4px 10px;text-align:right;color:#666;">Shipping</td>'
+            '<tr><td colspan="4" style="padding:4px 10px;text-align:right;color:#666;">Shipping</td>'
             '<td style="padding:4px 10px;text-align:right;color:#666;">{} {}</td></tr>'
-            '<tr style="font-weight:700;font-size:15px;"><td colspan="3" style="padding:12px 10px;text-align:right;border-top:2px solid #2271b1;">Grand Total</td>'
+            '<tr style="font-weight:700;font-size:15px;"><td colspan="4" style="padding:12px 10px;text-align:right;border-top:2px solid #2271b1;">Grand Total</td>'
             '<td style="padding:12px 10px;text-align:right;color:#2271b1;border-top:2px solid #2271b1;">{} {}</td></tr>'
             '</tfoot>'
             '</table>',
@@ -397,5 +399,5 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     )
 
     class Media:
-        css = {'all': ('admin/css/custom_order.css',)}
-        js = ('admin/js/custom_order.js',)
+        css = {'all': ('admin/css/admin_orders.css',)}
+        js = ('admin/js/admin_orders.js',)

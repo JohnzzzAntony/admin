@@ -214,6 +214,7 @@ def checkout_payment(request):
                 product=product,
                 product_name=f"{product.name} ({item['sku'].title})" if item.get('sku') else product.name,
                 quantity=item['quantity'],
+                regular_price=item.get('regular_price', item['unit_price']),
                 unit_price=item['unit_price'],
                 shipping_charge=item['shipping_item'],
                 total_price=item['total_item']

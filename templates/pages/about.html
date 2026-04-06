@@ -3,30 +3,33 @@
 
 {% block content %}
     <!-- Hero Header -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" 
-             style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ page_heroes.about.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
-        <div class="container py-5">
-            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.about.title|default:"About Us" }}</h1>
-            {% if page_heroes.about.subtitle %}<p class="lead" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.about.subtitle }}</p>{% endif %}
-        </div>
-    </section>
+    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white hero-section">
+    <div class="container py-5 d-flex flex-column align-items-center justify-content-center text-center">
+        <h1 class="display-3 font-weight-bold hero-title animate__animated animate__fadeInDown">{{ page_heroes.about.title|default:"About Us" }}</h1>
+        {% if page_heroes.about.subtitle %}
+        <p class="lead mt-3 animate__animated animate__fadeInUp animate__delay-1s" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5); max-width: 700px;">
+            {{ page_heroes.about.subtitle }}
+        </p>
+        {% endif %}
+    </div>
+</section>
 
     <!-- About Section -->
     <section class="py-5 bg-white">
         <div class="container py-5">
             {% if about_us %}
             <div class="row align-items-center">
-                <div class="col-lg-6 pr-lg-5 mb-5 mb-lg-0">
+                <div class="col-lg-6 pr-lg-5 mb-5 mb-lg-0" data-aos="fade-right">
                     <h2 class="display-4 font-weight-bold mb-4" style="color: var(--primary-blue)">{{ about_us.heading }}</h2>
                     <div class="lead text-muted mb-4" style="line-height: 1.8;">
                         {{ about_us.content|safe }}
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-6" data-aos="fade-left">
                     <div class="row">
                         <div class="col-12 mb-4">
                             {% if mission %}
-                            <div class="card border-0 shadow-lg p-5 h-100" style="border-radius: 30px; background-color: var(--primary-blue); color: #fff;">
+                            <div class="card border-0 shadow-lg p-5 h-100 hover-lift" style="border-radius: var(--border-radius-card); background-color: var(--primary-blue); color: #fff;">
                                 <h2 class="mb-4">Our Mission</h2>
                                 <p class="lead">{{ mission.content }}</p>
                             </div>
@@ -34,7 +37,7 @@
                         </div>
                         <div class="col-12">
                             {% if vision %}
-                            <div class="card border-0 shadow-lg p-5 h-100" style="border-radius: 30px; border: 2px solid var(--primary-blue); color: var(--primary-blue);">
+                            <div class="card border-0 shadow-lg p-5 h-100 hover-lift" style="border-radius: var(--border-radius-card); border: 2px solid var(--primary-blue); color: var(--primary-blue);">
                                 <h2 class="mb-4">Our Vision</h2>
                                 <p class="lead">{{ vision.content }}</p>
                             </div>
@@ -45,10 +48,25 @@
             </div>
             {% else %}
             <div class="text-center py-5">
-                <h3>Welcome to JKR International</h3>
+                <h3>Welcome to Demo International</h3>
                 <p>Please update "About Us" content in the backend.</p>
             </div>
             {% endif %}
         </div>
     </section>
+    <style>
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url("{{ page_heroes.about.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}");
+            background-size: cover;
+            background-position: center;
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero-title {
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+    </style>
 {% endblock %}

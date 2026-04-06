@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import HeroSlider
-from django.utils.html import format_html
+from django.utils.html import format_html, mark_safe
 
 @admin.register(HeroSlider)
 class HeroSliderAdmin(admin.ModelAdmin):
@@ -13,7 +13,7 @@ class HeroSliderAdmin(admin.ModelAdmin):
         if url:
             return format_html('<img src="{}" style="width: 100px; height:60px; object-fit: cover;" />', url)
         elif obj.get_vid_url():
-            return format_html('<span style="color: blue;">[Video Background]</span>')
+            return mark_safe('<span style="color: #6f42c1;">[Video Background]</span>')
         return "-"
     preview.short_description = 'Background Preview'
 

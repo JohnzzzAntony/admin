@@ -1,0 +1,211 @@
+/* Admin Premium Design System for Jazzmin (AdminLTE 3) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --sidebar-bg: rgba(15, 23, 42, 0.9);
+    --body-bg: #f8fafc;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: rgba(226, 232, 240, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    --radius-xl: 12px;
+    --radius-2xl: 20px;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    background-color: var(--body-bg) !important;
+}
+
+/* Glassmorphism Sidebar */
+.main-sidebar {
+    background: var(--sidebar-bg) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-right: 1px solid var(--glass-border) !important;
+}
+
+.brand-link {
+    background: transparent !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    padding: 1.5rem !important;
+}
+
+.brand-text {
+    font-weight: 700 !important;
+    letter-spacing: -0.5px;
+    color: #fff !important;
+}
+
+/* Sidebar Links */
+.nav-sidebar .nav-link {
+    border-radius: 10px !important;
+    margin: 0.2rem 0.8rem !important;
+    padding: 0.8rem 1rem !important;
+    transition: all 0.3s ease !important;
+    color: #cbd5e1 !important;
+    font-weight: 500;
+}
+
+.nav-sidebar .nav-link.active {
+    background: var(--primary) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
+}
+
+.nav-sidebar .nav-link:hover:not(.active) {
+    background: rgba(255,255,255,0.05) !important;
+    color: #fff !important;
+    transform: translateX(5px);
+}
+
+/* Top Navbar */
+.main-header {
+    background: rgba(255,255,255,0.7) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 0.5rem 1rem !important;
+}
+
+.navbar-nav .nav-link {
+    color: var(--text-main) !important;
+    font-weight: 500;
+}
+
+/* Dashboard Cards */
+.card {
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: var(--glass-shadow) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important;
+}
+
+.card-header {
+    background: transparent !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 1.25rem !important;
+}
+
+.card-title {
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    font-size: 1.1rem !important;
+}
+
+/* Modern Buttons (Neumorphism inspiration) */
+.btn-primary, .btn-info, .btn-success {
+    border-radius: 10px !important;
+    padding: 0.6rem 1.2rem !important;
+    font-weight: 600 !important;
+    border: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.btn-primary { background: var(--primary) !important; }
+.btn-primary:hover {
+    background: var(--primary-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Tables */
+.table { margin-bottom: 0 !important; }
+.table thead th {
+    background: #f1f5f9 !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-muted) !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase;
+    padding: 1rem !important;
+}
+
+.table td {
+    padding: 1rem !important;
+    vertical-align: middle !important;
+    border-top: none !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Form Controls */
+.form-control {
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 0.6rem 1rem !important;
+    background: #fff !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+.form-control:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Login Page Redesign */
+.login-page {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+}
+
+.login-box {
+    width: 450px !important;
+}
+
+.login-card-body {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-2xl) !important;
+    padding: 3rem !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.login-logo a {
+    color: #fff !important;
+    font-weight: 800 !important;
+    letter-spacing: -1.5px !important;
+    font-size: 2.5rem !important;
+}
+
+/* Theme switch/Glow effect */
+.content-wrapper {
+    background: transparent !important;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+    top: -300px;
+    right: -300px;
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.05) 0%, transparent 70%);
+    bottom: -300px;
+    left: -300px;
+    z-index: -1;
+    pointer-events: none;
+}

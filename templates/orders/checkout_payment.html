@@ -230,7 +230,7 @@ document.getElementById('cardNum').addEventListener('input', function(e){
 
 // Total (Server-side rendered grand_total is preferred)
 document.addEventListener('DOMContentLoaded', function() {
-    var grandTotal = {{ grand_total|default:0 }};
+    var grandTotal = Number("{{ grand_total|default:0 }}");
     var el = document.getElementById('pay-total');
     if(el) el.textContent = grandTotal.toFixed(2) + ' AED';
 });

@@ -3,10 +3,9 @@
 
 {% block content %}
     <!-- Hero Header -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" 
-             style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ page_heroes.products.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
+    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white hero-section">
         <div class="container py-5">
-            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.products.title|default:"Our Products" }}</h1>
+            <h1 class="display-3 font-weight-bold hero-title">{{ page_heroes.products.title|default:"Our Products" }}</h1>
             {% if page_heroes.products.subtitle %}<p class="lead" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.products.subtitle }}</p>{% endif %}
         </div>
     </section>
@@ -25,7 +24,7 @@
                     <div class="card border-0 text-center h-100 category-card transition-all" style="background: transparent;">
                         <a href="{% url 'products:category_detail' slug=category.slug %}" class="text-decoration-none">
                             <div class="overflow-hidden rounded-lg shadow-sm mb-3">
-                                <img src="{% if category.image %}{{ category.image.url }}{% else %}https://via.placeholder.com/300x400{% endif %}" alt="{{ category.name }}" class="img-fluid w-100 h-100" style="height: 250px; object-fit: cover;">
+                                <img src="{{ category.get_image_url }}" alt="{{ category.name }}" class="img-fluid w-100 h-100" style="height: 250px; object-fit: cover;">
                             </div>
                             <h5 class="text-dark font-weight-bold mb-1" style="font-size: 1.1rem; min-height: 3rem;">{{ category.name }}</h5>
                             <!-- Optionally show count if products are available -->
@@ -42,6 +41,19 @@
     </section>
 
     <style>
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url("{{ page_heroes.products.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}");
+            background-size: cover;
+            background-position: center;
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero-title {
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
         .col-lg-2-4 {
             width: 20%;
             flex: 0 0 20%;

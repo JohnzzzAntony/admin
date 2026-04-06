@@ -127,8 +127,11 @@ class Product(models.Model):
                 'final_price': sale,
                 'regular_price': reg,
                 'discount_amount': reg - sale,
-                'discount_percentage': self.get_discount_percentage(),
-                'discount_display': f"{self.get_discount_percentage()}% OFF" if sale < reg else None
+                'discount_display': f"{self.get_discount_percentage()}% OFF" if sale < reg else None,
+                'shipping_charge': 0,
+                'free_shipping': False,
+                'sku': None,
+                'total_with_shipping': sale
             }
         
         # Get all SKU price infos and sort by lowest final price
@@ -224,7 +227,11 @@ class ProductSKU(models.Model):
                 'offer': None,
                 'regular_price': regular_price,
                 'final_price': current_sale_price,
-                'discount_display': None
+                'discount_display': None,
+                'shipping_charge': self.additional_shipping_charge or Decimal('0') if not self.free_shipping else Decimal('0'),
+                'free_shipping': self.free_shipping,
+                'sku': self,
+                'total_with_shipping': current_sale_price + (self.additional_shipping_charge or Decimal('0') if not self.free_shipping else Decimal('0'))
             }
         
         # Apply offer on top of CURRENT sale_price if it's set, else regular
@@ -250,7 +257,11 @@ class ProductSKU(models.Model):
             'final_price': final,
             'discount_amount': reg - final,
             'discount_percentage': int(round(((reg - final) / reg) * 100)) if reg > 0 else 0,
-            'discount_display': f"{int(offer.discount_value)}% OFF" if offer.offer_type == 'percentage' else "OFFER"
+            'discount_display': f"{int(offer.discount_value)}% OFF" if offer.offer_type == 'percentage' else "OFFER",
+            'shipping_charge': self.additional_shipping_charge or Decimal('0') if not self.free_shipping else Decimal('0'),
+            'free_shipping': self.free_shipping,
+            'sku': self,
+            'total_with_shipping': final + (self.additional_shipping_charge or Decimal('0') if not self.free_shipping else Decimal('0'))
         }
 
     def save(self, *args, **kwargs):
@@ -259,11 +270,11 @@ class ProductSKU(models.Model):
             # Generate a unique SKU if not provided
             prefix = slugify(self.product.name)[:10].upper()
             suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
-            self.sku_id = f"JKR-{prefix}-{suffix}"
+            self.sku_id = f"Demo-{prefix}-{suffix}"
             # Ensure uniqueness
             while ProductSKU.objects.filter(sku_id=self.sku_id).exists():
                 suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
-                self.sku_id = f"JKR-{prefix}-{suffix}"
+                self.sku_id = f"Demo-{prefix}-{suffix}"
         super().save(*args, **kwargs)
 
     def __str__(self):

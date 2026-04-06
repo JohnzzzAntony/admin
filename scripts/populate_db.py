@@ -26,13 +26,13 @@ def populate():
 
     print("Creating Site Settings...")
     SiteSettings.objects.create(
-        site_name="JKR International",
-        header_title="JKR International",
-        header_subtitle="JOY OF MOBILITY",
-        email="info@jkrintl.com",
+        site_name="Demo International",
+        header_title="Demo International",
+        header_subtitle="Empowering Your Vision",
+        email="info@demointl.com",
         phone="+971 4 251 5383",
         dubai_address="Office No. 2, Lootah Building, Marrakeh St, Umm Al Rammool, Rashidiya, Dubai",
-        footer_copyright_text="© 2024 JKR International. All rights reserved.",
+        footer_copyright_text="© 2024 Demo International. All rights reserved.",
         fav_text="JKR"
     )
 
@@ -48,7 +48,7 @@ def populate():
     for c in cats:
         cat_objs[c] = Category.objects.create(
             name=c,
-            meta_title=f"{c} - JKR International",
+            meta_title=f"{c} - Demo International",
             meta_description=f"Best {c} in UAE with top quality."
         )
 
@@ -92,7 +92,7 @@ def populate():
     AboutUs.objects.create(
         title="About Us",
         heading="We craft solutions that enhance and Simplify Lives.",
-        content="<p>JKR International is a trusted Medical Equipment Supplier in UAE, providing high-quality wheelchairs, rehabilitation products, and expert guidance. Joy, Knowledge, Responsibility are our core values.</p>",
+        content="<p>Demo International is a trusted Medical Equipment Supplier in UAE, providing high-quality wheelchairs, rehabilitation products, and expert guidance. Joy, Knowledge, Responsibility are our core values.</p>",
     )
 
     MissionVision.objects.create(

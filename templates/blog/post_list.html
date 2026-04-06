@@ -3,11 +3,10 @@
 
 {% block content %}
     <!-- Hero Header -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" 
-             style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ page_heroes.blog.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
+    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white hero-section">
         <div class="container py-5">
-            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.blog.title|default:"Blogs" }}</h1>
-            {% if page_heroes.blog.subtitle %}<p class="lead" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.blog.subtitle }}</p>{% endif %}
+            <h1 class="display-3 font-weight-bold hero-title">{{ page_heroes.blog.title|default:"Blogs" }}</h1>
+            {% if page_heroes.blog.subtitle %}<p class="lead hero-subtitle">{{ page_heroes.blog.subtitle }}</p>{% endif %}
         </div>
     </section>
 
@@ -76,6 +75,19 @@
     </section>
 
     <style>
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url("{{ page_heroes.blog.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}");
+            background-size: cover;
+            background-position: center;
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero-title, .hero-subtitle {
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
         .card:hover img {
             transform: scale(1.1);
         }

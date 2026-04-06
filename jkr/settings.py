@@ -131,8 +131,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'core.context_processors.site_settings', # Global access to settings
-                'orders.context_processors.cart_count', # New Cart Counter
+                'core.context_processors.site_settings', 
+                'core.context_processors.page_heroes', 
+                'orders.context_processors.cart_count', 
             ],
         },
     },
@@ -219,11 +220,11 @@ CKEDITOR_IMAGE_BACKEND = "pillow"
 
 # Jazzmin Admin Theme Configuration
 JAZZMIN_SETTINGS = {
-    "site_title": "JKR International Admin",
-    "site_header": "JKR Admin",
-    "site_brand": "JKR Joy, Knowhow, Responsibility",
+    "site_title": "Demo Administration",
+    "site_header": "Demo Admin",
+    "site_brand": "Demo International",
     "site_logo": "assets/logo.png",
-    "welcome_sign": "Welcome to JKR Management System",
+    "welcome_sign": "Welcome to Demo Management System",
     "search_model": ["products.Product", "blog.Post"],
     "show_ui_builder": False,
     "changeform_format": "horizontal_tabs",
@@ -255,6 +256,7 @@ JAZZMIN_SETTINGS = {
         "blog.Post": "fas fa-newspaper",
         "sliders.Slider": "fas fa-images",
     },
+    "custom_css": "admin/css/admin_premium.css",
 }
 
 # Loaded at top of file

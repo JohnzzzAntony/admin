@@ -1,6 +1,7 @@
 
 /* Admin Orders Status Coloring */
-.field-status select {
+.field-status select, 
+.field-status .badge-status {
     font-weight: 700;
     padding: 6px 12px !important;
     border-radius: 20px !important;
@@ -8,35 +9,44 @@
     font-size: 11px;
     border: none !important;
     color: white !important;
-}
-
-/* Pending */
-.field-status select[value="pending"], 
-.field-status select option[value="pending"] { background-color: #f39c12 !important; color: white !important; }
-
-/* Packaging */
-.field-status select[value="packaging"], 
-.field-status select option[value="packaging"] { background-color: #e67e22 !important; color: white !important; }
-
-/* Shipped */
-.field-status select[value="shipped"], 
-.field-status select option[value="shipped"] { background-color: #3498db !important; color: white !important; }
-
-/* Delivered */
-.field-status select[value="delivered"], 
-.field-status select option[value="delivered"] { background-color: #27ae60 !important; color: white !important; }
-
-/* Cancelled / Refund */
-.field-status select[value="refund"], 
-.field-status select option[value="refund"] { background-color: #e74c3c !important; color: white !important; }
-
-/* General badges in list view */
-.badge-status {
-    padding: 5px 12px;
-    border-radius: 20px;
-    color: white;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
     display: inline-block;
+    transition: all 0.3s ease;
 }
+
+/* Base style for selects to make them look like badges */
+.field-status select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    text-align: center;
+    width: 140px !important; /* Fixed width to ensure full text visibility */
+    min-width: 140px !important;
+    padding-right: 25px !important; /* Space for the arrow */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    line-height: 1.2;
+}
+
+/* Adjust black arrow for light backgrounds (Pending) */
+.field-status select[data-status="pending"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* Coloring Map */
+.field-status select[data-status="pending"], .field-status select option[value="pending"] { background-color: #ffc107 !important; color: #000 !important; }
+.field-status select[data-status="packaging"], .field-status select option[value="packaging"] { background-color: #fd7e14 !important; color: #fff !important; }
+.field-status select[data-status="ready_for_shipment"], .field-status select option[value="ready_for_shipment"] { background-color: #007bff !important; color: #fff !important; }
+.field-status select[data-status="shipped"], .field-status select option[value="shipped"] { background-color: #6f42c1 !important; color: #fff !important; }
+.field-status select[data-status="delivered"], .field-status select option[value="delivered"] { background-color: #28a745 !important; color: #fff !important; }
+.field-status select[data-status="return_to_origin"], .field-status select option[value="return_to_origin"] { background-color: #e83e8c !important; color: #fff !important; }
+.field-status select[data-status="refund"], .field-status select option[value="refund"] { background-color: #dc3545 !important; color: #fff !important; }
+
+/* Custom Badge Classes */
+.badge-status.pending { background-color: #ffc107; color: #000; }
+.badge-status.packaging { background-color: #fd7e14; color: #fff; }
+.badge-status.ready_for_shipment { background-color: #007bff; color: #fff; }
+.badge-status.shipped { background-color: #6f42c1; color: #fff; }
+.badge-status.delivered { background-color: #28a745; color: #fff; }
+.badge-status.return_to_origin { background-color: #e83e8c; color: #fff; }
+.badge-status.refund { background-color: #dc3545; color: #fff; }

@@ -176,6 +176,7 @@ class CustomerOrderItem(models.Model):
     product      = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     product_name = models.CharField(max_length=255, help_text="Snapshot of name at time of order")
     quantity     = models.PositiveIntegerField(default=1)
+    regular_price   = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Regular price before offer")
     unit_price      = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Shipping cost for this specific item")
     total_price     = models.DecimalField(max_digits=10, decimal_places=2, default=0)

@@ -3,6 +3,28 @@
 
 {% block content %}
 <section class="py-5 bg-light mt-5">
+    {% if current_category %}
+    <div class="container-fluid mb-4">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <div class="category-banner position-relative rounded-3 overflow-hidden shadow-sm" style="height: 250px;">
+                    <img src="{{ current_category.get_image_url }}" alt="{{ current_category.name }}" class="w-100 h-100" style="object-fit: cover; filter: brightness(0.7);">
+                    <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white" style="top: 0; left: 0;">
+                        <h1 class="display-4 font-weight-bold mb-0 text-shadow">{{ current_category.name }}</h1>
+                        {% if current_category.meta_description %}
+                        <p class="lead text-white-50 mt-2">{{ current_category.meta_description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .text-shadow { text-shadow: 2px 2px 15px rgba(0,0,0,0.8); }
+        .category-banner img { transition: transform 0.5s ease; }
+        .category-banner:hover img { transform: scale(1.02); }
+    </style>
+    {% endif %}
     <div class="container-fluid">
         <div class="row px-xl-5">
             <!-- Sidebar -->
