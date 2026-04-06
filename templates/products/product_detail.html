@@ -192,8 +192,14 @@
                     <a href="{% url 'products:product_list' %}" class="btn-theme btn-outline-primary px-5 py-3 shadow-lg">Browse Collection</a>
                 </div>
                 <div class="row">
-                    {% for rp in product.cluster_products|slice:":4" %}
-                        {% include 'includes/sku_card.html' with sku=rp.get_primary_sku delay=forloop.counter|multiply:100 %}
+                    {% for rp in product.category.products.all|slice:":4" %}
+                        {% if rp.id != product.id %}
+                        {% with rpsku=rp.get_primary_sku %}
+                        {% if rpsku %}
+                            {% include 'includes/sku_card.html' with sku=rpsku delay=forloop.counter|multiply:100 %}
+                        {% endif %}
+                        {% endwith %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
