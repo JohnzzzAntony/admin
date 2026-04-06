@@ -3,38 +3,43 @@
 
 {% block content %}
     <!-- Hero Slider -->
-    <section class="home-slider position-relative overflow-hidden">
-        <div class="swiper main-hero-slider h-100">
+    <section class="home-slider position-relative overflow-hidden bg-light" style="height: 75vh; min-height: 550px;">
+        <div class="swiper main-hero-slider h-100 container py-4">
             <div class="swiper-wrapper">
                 {% for slider in sliders %}
                 <div class="swiper-slide h-100 position-relative">
-                    {% if slider.video or slider.video_url %}
-                    <video autoplay muted loop playsinline class="position-absolute w-100 h-100" style="object-fit: cover; top: 0; left: 0; z-index: -1;">
-                        <source src="{{ slider.get_vid_url }}" type="video/mp4">
-                    </video>
-                    {% else %}
-                    <div class="position-absolute w-100 h-100" style="background: url('{{ slider.get_bg_url }}'); background-size: cover; background-position: center; z-index: -1;"></div>
-                    {% endif %}
-                    
-                    <div class="container h-100 d-flex align-items-center">
-                        <div class="col-lg-8 text-white">
-                            <h4 class="text-uppercase tracking-widest mb-3 animate__animated animate__fadeInDown">{{ slider.subtitle }}</h4>
-                            <h1 class="display-3 font-weight-bold mb-4 animate__animated animate__fadeInUp" style="line-height: 1.1;">{{ slider.title }}</h1>
-                            <div class="animate__animated animate__fadeInUp animate__delay-1s">
-                                <a href="{{ slider.button_link }}" class="btn btn-primary btn-lg px-5 py-3 shadow-lg" style="border-radius: 50px;">{{ slider.button_text }}</a>
+                    <div class="hero-box h-100 w-100 position-relative overflow-hidden shadow-lg transition-all" style="border-radius: 40px; border: 8px solid #fff;">
+                        {% if slider.video or slider.video_url %}
+                        <video autoplay muted loop playsinline class="position-absolute w-100 h-100" style="object-fit: cover; top: 0; left: 0; z-index: -1;">
+                            <source src="{{ slider.get_vid_url }}" type="video/mp4">
+                        </video>
+                        {% else %}
+                        <div class="position-absolute w-100 h-100" style="background: url('{{ slider.get_bg_url }}'); background-size: cover; background-position: center; z-index: -1;"></div>
+                        {% endif %}
+
+                        <!-- Premium Overlay -->
+                        <div class="position-absolute w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6)); z-index: 0;"></div>
+                        
+                        <div class="container h-100 d-flex align-items-center position-relative" style="z-index: 1;">
+                            <div class="col-lg-8 text-white mt-5 pt-lg-5">
+                                <h4 class="text-uppercase tracking-widest mb-3 animate__animated animate__fadeInDown" style="letter-spacing: 3px; font-size: 0.9rem;">{{ slider.subtitle }}</h4>
+                                <h1 class="display-3 font-weight-bold mb-4 animate__animated animate__fadeInUp" style="line-height: 1.1; text-shadow: 2px 2px 15px rgba(0,0,0,0.3);">{{ slider.title }}</h1>
+                                <div class="animate__animated animate__fadeInUp animate__delay-1s mt-5">
+                                    <a href="{{ slider.button_link }}" class="btn btn-primary btn-lg px-5 py-3 shadow-lg hover-lift" style="border-radius: 50px; font-weight: 700; letter-spacing: 1px;">{{ slider.button_text }}</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="swiper-slide h-100 d-flex align-items-center justify-content-center bg-dark text-white">
-                    <h1>Welcome to Demo International</h1>
+                <div class="swiper-slide h-100 d-flex align-items-center justify-content-center bg-dark text-white rounded-lg">
+                    <h1 class="animate__animated animate__pulse animate__infinite">Welcome to Demo International</h1>
                 </div>
                 {% endfor %}
             </div>
-            <!-- Slider navigation -->
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
+            <!-- Slider navigation inside the container -->
+            <div class="swiper-button-next" style="color: #fff; right: 40px;"></div>
+            <div class="swiper-button-prev" style="color: #fff; left: 40px;"></div>
         </div>
     </section>
 
