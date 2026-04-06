@@ -114,6 +114,9 @@ if IS_PRODUCTION:
     SECURE_HSTS_SECONDS = 31536000 # 1 Year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = True
+    SECURE_REFERRER_POLICY = 'same-origin'
     # Ensure site isn't indexed by search engines during staging (optional)
     # DEBUG = False # Handled by env('DEBUG')
 
