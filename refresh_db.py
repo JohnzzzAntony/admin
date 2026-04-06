@@ -6,6 +6,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jkr.settings')
 django.setup()
 
 from orders.models import CustomerOrder, CustomerOrderItem, OrderStatusHistory, QuoteEnquiry, QuoteItem, Order, OrderItem
+from blog.models import Post
 
 def refresh_database():
     print("🧹 Refreshing database for production launch...")
@@ -19,6 +20,7 @@ def refresh_database():
     QuoteEnquiry.objects.all().delete()
     OrderItem.objects.all().delete()
     Order.objects.all().delete()
+    Post.objects.all().delete()
     
     # 2. Reset sequences (PostgreSQL/Neon specific)
     print("Resetting primary key sequences...")
@@ -31,6 +33,7 @@ def refresh_database():
             'orders_quoteitem',
             'orders_order',
             'orders_orderitem',
+            'blog_post',
         ]
         for table in tables:
             try:
