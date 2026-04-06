@@ -32,7 +32,7 @@ class MissionVisionAdmin(admin.ModelAdmin):
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('title', 'order', 'image_tag')
     list_editable = ('order',)
-    fields = (('title', 'order'), ('icon', 'icon_url'), 'description')
+    fields = (('title', 'order'), ('icon', 'icon_url'), 'icon_svg', 'description')
     
     def image_tag(self, obj):
         url = obj.get_icon_url()

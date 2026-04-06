@@ -21,11 +21,15 @@
                 {% for service in services %}
                 <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:forloop.counter0 }}00">
                     <div class="p-4 border-0 text-center h-100 transition-all hover-lift glass-card" style="border-radius: var(--border-radius-card); background: var(--card-bg); box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-                        <div class="icon-wrapper mb-4 d-inline-block p-3 rounded-circle" style="background: rgba(17, 64, 132, 0.05);">
-                            {% if service.icon %}
-                            <img src="{{ service.icon.url }}" alt="{{ service.title }}" height="60">
+                        <div class="icon-wrapper mb-4 d-inline-block p-3 rounded-circle" style="background: rgba(17, 64, 132, 0.05); width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            {% if service.icon_svg %}
+                                <div class="svc-icon-svg" style="width: 40px; height: 40px; color: var(--primary-blue); display: flex; align-items: center; justify-content: center;">
+                                    {{ service.icon_svg|safe }}
+                                </div>
+                            {% elif service.icon %}
+                                <img src="{{ service.icon.url }}" alt="{{ service.title }}" height="60">
                             {% else %}
-                            <i class="fas fa-hand-holding-medical fa-3x text-primary"></i>
+                                <i class="fas fa-hand-holding-medical fa-3x text-primary"></i>
                             {% endif %}
                         </div>
                         <h4 class="mb-3 font-weight-bold" style="color: var(--primary-blue)">{{ service.title }}</h4>

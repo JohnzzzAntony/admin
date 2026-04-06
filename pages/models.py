@@ -82,6 +82,7 @@ class Service(models.Model):
         help_text="Service Icon. Recommended: 256x256px (Transparent PNG). Max 500KB."
     )
     icon_url = models.URLField(blank=True, null=True)
+    icon_svg = models.TextField(blank=True, help_text="Paste SVG code here. If provided, it will be used instead of the image/URL.")
     description = models.TextField()
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']
