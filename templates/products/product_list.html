@@ -30,20 +30,21 @@
             <!-- Sidebar -->
             <div class="col-lg-3 col-md-4">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-light pr-3">Filter by Category</span></h5>
-                <div class="bg-white p-4 mb-30 shadow-sm rounded">
+                <div class="bg-white p-3 mb-30 shadow-sm rounded-4 border">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item bg-transparent border-bottom px-0">
-                            <a href="{% url 'products:product_list' %}" class="text-dark d-block {% if not current_category %}font-weight-bold{% endif %}">All Categories</a>
-                        </li>
-                        {% for cat in categories %}
-                        <li class="list-group-item bg-transparent border-bottom px-0">
-                            <a href="{% url 'products:category_detail' slug=cat.slug %}" class="text-dark d-block {% if current_category == cat %}font-weight-bold text-primary{% endif %}">
-                                {{ cat.name }}
+                        <li class="list-group-item bg-transparent border-bottom px-0 pb-2">
+                            <a href="{% url 'products:product_list' %}" class="text-dark d-block {% if not current_category %}font-weight-bold text-primary{% endif %}">
+                                <i class="fas fa-th-large mr-2"></i>All Collections
                             </a>
                         </li>
-                        {% endfor %}
+                        <div class="mt-3 category-scroll-container" style="max-height: 500px; overflow-y: auto;">
+                            {% for node in categories %}
+                                {% include 'products/category_tree_node.html' with node=node depth=0 %}
+                            {% endfor %}
+                        </div>
                     </ul>
                 </div>
+
             </div>
             
             <!-- Products -->

@@ -20,9 +20,19 @@ class AttributeOption(models.Model):
     def __str__(self): return f"{self.attribute.name}: {self.value}"
 
 class Category(models.Model):
-    parent = models.ForeignKey('self', related_name='subcategories', null=True, blank=True, on_delete=models.CASCADE)
+    # Core Fields
+    parent = models.ForeignKey(
+        'self', 
+        related_name='subcategories', 
+        null=True, 
+        blank=True, 
+        on_delete=models.CASCADE,
+        db_index=True,
+        help_text="The immediate parent of this category. Leave blank for a top-level category."
+    )
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
+    description = models.TextField(blank=True, help_text="Optional description for SEO and category page header.")
     image = models.ImageField(
         upload_to='categories/', 
         null=True, 
@@ -33,6 +43,11 @@ class Category(models.Model):
     icon_svg = models.TextField(blank=True, help_text="Paste SVG icon code here. Used if provided.")
     attributes = models.ManyToManyField(Attribute, blank=True, related_name='categories')
     
+    # Meta / Controls
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     # Homepage Config
     show_on_homepage = models.BooleanField(default=False, verbose_name="Show on Homepage")
     homepage_order   = models.PositiveIntegerField(default=0, verbose_name="Homepage Display Order")
@@ -41,29 +56,66 @@ class Category(models.Model):
     meta_title = models.CharField(max_length=255, blank=True, verbose_name="SEO Title Tag")
     meta_description = models.TextField(blank=True, verbose_name="SEO Meta Description")
     meta_keywords = models.CharField(max_length=255, blank=True, verbose_name="SEO Meta Keywords")
-    url_alias = models.CharField(max_length=255, blank=True, verbose_name="SEO URL Alias")
-    # SEO — English
-    meta_title_en = models.CharField(max_length=255, blank=True, verbose_name="Title Tag (EN)")
-    meta_description_en = models.TextField(blank=True, verbose_name="Meta Description (EN)")
-    meta_keywords_en = models.CharField(max_length=255, blank=True, verbose_name="Meta Keywords (EN)")
-    url_alias_en = models.CharField(max_length=255, blank=True, verbose_name="URL Alias (EN)")
-    # SEO — Arabic
-    meta_title_ar = models.CharField(max_length=255, blank=True, verbose_name="Title Tag (AR)")
-    meta_description_ar = models.TextField(blank=True, verbose_name="Meta Description (AR)")
-    meta_keywords_ar = models.CharField(max_length=255, blank=True, verbose_name="Meta Keywords (AR)")
-    url_alias_ar = models.CharField(max_length=255, blank=True, verbose_name="URL Alias (AR)")
-
+    
     @property
     def get_image_url(self):
         if self.image_url: return self.image_url
         if self.image: return self.image.url
         return "https://via.placeholder.com/300"
 
+    def get_all_children(self, include_self=True):
+        """
+        Recursively finds all subcategories under this category.
+        """
+        children = [self] if include_self else []
+        for sub in self.subcategories.filter(is_active=True):
+            children.extend(sub.get_all_children(include_self=True))
+        return children
+
+    def get_ancestors(self):
+        """
+        Returns a list of all parent categories up to the root.
+        """
+        ancestors = []
+        curr = self.parent
+        while curr:
+            ancestors.insert(0, curr)
+            curr = curr.parent
+        return ancestors
+
+    def clean(self):
+        """
+        Prevent circular parent-child relationships.
+        """
+        from django.core.exceptions import ValidationError
+        if self.parent:
+            curr = self.parent
+            while curr:
+                if curr == self:
+                    raise ValidationError("Circular relationship detected: A category cannot be its own ancestor.")
+                curr = curr.parent
+
     def save(self, *args, **kwargs):
+        self.full_clean()
         if not self.slug: self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-    def __str__(self): return f"{self.parent.name} > {self.name}" if self.parent else self.name
-    class Meta: verbose_name_plural = "Categories"
+        
+    def __str__(self):
+        full_path = [self.name]
+        k = self.parent
+        while k is not None:
+            full_path.append(k.name)
+            k = k.parent
+        return ' > '.join(full_path[::-1])
+
+    class Meta:
+        verbose_name_plural = "Categories"
+        ordering = ['name']
+        indexes = [
+            models.Index(fields=['parent']),
+            models.Index(fields=['slug']),
+        ]
+
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)

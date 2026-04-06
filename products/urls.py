@@ -1,16 +1,19 @@
-from django.urls import path, re_path
+from django.urls import path, re_path, include
+from rest_framework.routers import DefaultRouter
 from . import views
+
+router = DefaultRouter()
+router.register(r'categories/api', views.CategoryViewSet, basename='category_api')
 
 app_name = 'products'
 
 urlpatterns = [
+    path('api/', include(router.urls)), # API Endpoints
     path('', views.category_index, name='category_index'),
     path('results/', views.product_list, name='product_list'),
     path('category/<slug:slug>/', views.category_detail, name='category_detail'),
+    path('category/<path:hierarchy_path>/', views.category_detail, name='category_hierarchy_detail'),
     
-    # Dual-support for both slug and ID-based reversing. 
-    # This specifically catches cases in Jazzmin/Admin where it might try 
-    # to reverse for a PK before a slug is fully generated or saved.
     re_path(r'^id/(?P<pk>.*)/$', views.product_detail, name='product_detail'),
     path('<slug:slug>/', views.product_detail, name='product_detail'),
 ]

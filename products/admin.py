@@ -57,10 +57,12 @@ class AttributeAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'is_active', 'stock_status')
-
+    list_filter = ('category', 'is_active')
     search_fields = ('name', 'meta_title', 'meta_keywords')
+    autocomplete_fields = ('category',)
     readonly_fields = ('slug', 'product_seo_std_heading', 'product_seo_en_heading', 'product_seo_ar_heading')
     inlines = [ProductImageInline, ProductAttributeValueInline, SKUInline]
+
 
     def stock_status(self, obj):
         return "✅ In Stock" if obj.is_in_stock() else "❌ Out of Stock"
@@ -120,13 +122,32 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'parent', 'show_on_homepage', 'homepage_order', 'slug')
-    list_editable = ('show_on_homepage', 'homepage_order')
-    list_filter = ('parent', 'show_on_homepage')
+    list_display = ('name', 'parent', 'is_active', 'show_on_homepage', 'homepage_order', 'slug')
+    list_editable = ('is_active', 'show_on_homepage', 'homepage_order')
+    list_filter = ('parent', 'is_active', 'show_on_homepage')
+    search_fields = ('name', 'slug', 'meta_title')
     filter_horizontal = ('attributes',)
-    readonly_fields = ('slug',)
+    autocomplete_fields = ('parent',)
+    readonly_fields = ('slug', 'created_at', 'updated_at')
     
-    fields = ('parent', 'name', 'slug', 'show_on_homepage', 'homepage_order', 'image', 'image_url', 'icon_svg', 'attributes')
+    fieldsets = (
+        ('Hierarchy & Identification', {
+            'fields': (('parent', 'name'), 'slug', 'description'),
+        }),
+        ('Visibility & Layout', {
+            'fields': (('is_active', 'show_on_homepage', 'homepage_order'),),
+        }),
+        ('Media & Metadata', {
+            'fields': (('image', 'image_url'), 'icon_svg', 'attributes'),
+        }),
+        ('Audit Info', {
+            'fields': (('created_at', 'updated_at'),),
+        }),
+        ('SEO Optimization', {
+            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
+        }),
+    )
+
 
 
 # ─── Offers ──────────────────────────────────────────────────────────────────

@@ -14,6 +14,7 @@ urlpatterns = [
     path('contact/', include('contact.urls')),
     path('enquiry-cart/', include('orders.urls')),
     path('accounts/', include('accounts.urls')),
+    path('ai-manager/', include('ai_manager.urls')),
 ]
 
 if settings.DEBUG:

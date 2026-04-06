@@ -37,6 +37,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
     'creativegradientz.com', 
     'localhost', 
     '127.0.0.1',
+    '192.168.1.227', # Added for local network testing
     '.up.railway.app'
 ])
 
@@ -76,6 +77,7 @@ INSTALLED_APPS = [
     'pages',
     'contact',
     'blog',
+    'ai_manager',
 ]
 
 # Authentication Settings
@@ -237,6 +239,7 @@ JAZZMIN_SETTINGS = {
     "changeform_format": "horizontal_tabs",
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "AI Store Manager", "url": "/ai-manager/dashboard/", "new_window": False},
         {"name": "View Site", "url": "/", "new_window": True},
     ],
     "order_with_respect_to": [
@@ -264,6 +267,7 @@ JAZZMIN_SETTINGS = {
         "sliders.Slider": "fas fa-images",
     },
     "custom_css": "admin/css/admin_premium.css",
+    "custom_js": "admin/js/ai_agent.js",
 }
 
 # Loaded at top of file

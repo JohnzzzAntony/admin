@@ -1,0 +1,150 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block content %}
+<div id="ai-manager-app" style="min-height: 80vh; background: #0f172a; border-radius: 15px; margin-top: 20px; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    
+    <!-- Header -->
+    <div style="padding: 20px 30px; background: rgba(30, 41, 59, 0.5); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center;">
+            <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);">
+                <i class="fas fa-brain" style="font-size: 1.5rem;"></i>
+            </div>
+            <div>
+                <h2 style="margin: 0; font-size: 1.4rem; font-weight: 700;">AI Store Manager</h2>
+                <span style="font-size: 0.8rem; color: #94a3b8;"><span style="color: #22c55e;">●</span> Neural Agent Online</span>
+            </div>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-outline-light" style="border-radius: 20px; font-size: 0.75rem;">Clear Memory</button>
+        </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div id="chat-messages" style="flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px;">
+        
+        <!-- Welcome Message -->
+        <div class="message ai" style="max-width: 80%;">
+            <div style="background: rgba(30, 41, 59, 0.8); padding: 15px 20px; border-radius: 2px 20px 20px 20px; border-left: 3px solid #6366f1;">
+                Hello! I am your autonomous AI Manager. I can help you with:
+                <ul style="margin: 10px 0 0 20px; padding: 0;">
+                    <li>Adding Product Categories</li>
+                    <li>Staging New Products</li>
+                    <li>Generating High-Quality Marketing Images</li>
+                    <li>Technical Store Audits</li>
+                </ul>
+                <p style="margin-top: 10px; font-style: italic; opacity: 0.8;">Try saying: "Create category called Electronics"</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Processing Indicator -->
+    <div id="processing" style="display: none; padding: 10px 30px;">
+        <div style="display: flex; align-items: center; color: #6366f1; font-size: 0.9rem;">
+            <i class="fas fa-circle-notch fa-spin mr-2"></i> Thinking...
+        </div>
+    </div>
+
+    <!-- Actions Area (for generated images/forms) -->
+    <div id="action-result" style="padding: 0 30px; display: none;">
+        <div style="background: rgba(30, 41, 59, 0.5); border: 1px dashed rgba(99, 102, 241, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div id="action-content"></div>
+        </div>
+    </div>
+
+    <!-- Input Area -->
+    <div style="padding: 20px 30px; background: rgba(15, 23, 42, 0.8);">
+        <div style="position: relative; display: flex; align-items: center;">
+            <input type="text" id="ai-prompt" placeholder="Ask AI to do something... (e.g. Add product 'Coffee Maker' for 300 AED)" 
+                   style="width: 100%; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 15px 60px 15px 25px; color: #fff; outline: none; transition: border-color 0.3s;">
+            <button id="send-btn" style="position: absolute; right: 10px; width: 40px; height: 40px; background: #6366f1; border: none; border-radius: 50%; color: #fff; cursor: pointer; transition: transform 0.2s;">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const chatMessages = document.getElementById('chat-messages');
+    const aiPrompt = document.getElementById('ai-prompt');
+    const sendBtn = document.getElementById('send-btn');
+    const processing = document.getElementById('processing');
+    const actionResult = document.getElementById('action-result');
+    const actionContent = document.getElementById('action-content');
+
+    function appendMessage(text, type) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${type}`;
+        msgDiv.style.maxWidth = '80%';
+        if (type === 'user') msgDiv.style.alignSelf = 'flex-end';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.style.padding = '15px 20px';
+        contentDiv.style.borderRadius = type === 'user' ? '20px 20px 2px 20px' : '2px 20px 20px 20px';
+        contentDiv.style.background = type === 'user' ? '#6366f1' : 'rgba(30, 41, 59, 0.8)';
+        if (type === 'ai') contentDiv.style.borderLeft = '3px solid #6366f1';
+        
+        contentDiv.innerHTML = text;
+        msgDiv.appendChild(contentDiv);
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendCommand() {
+        const prompt = aiPrompt.value.trim();
+        if (!prompt) return;
+
+        appendMessage(prompt, 'user');
+        aiPrompt.value = '';
+        processing.style.display = 'block';
+
+        try {
+            const response = await fetch('/ai-manager/api/process/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            const data = await response.json();
+            processing.style.display = 'none';
+
+            if (data.status === 'success') {
+                appendMessage(data.response, 'ai');
+                
+                // Detailed handling for images or specific forms could go here
+                if (data.action === 'generate_image') {
+                    showActionContent('<div style="text-align:center; padding: 20px;"><i class="fas fa-magic fa-3x" style="color:#6366f1; margin-bottom:15px;"></i><p>Generating high-resolution product visual... (Simulated)</p></div>');
+                }
+            } else {
+                appendMessage("❌ Error: " + data.message, 'ai');
+            }
+        } catch (error) {
+            processing.style.display = 'none';
+            appendMessage("❌ Connection problem. Is the server running?", 'ai');
+        }
+    }
+
+    function showActionContent(html) {
+        actionResult.style.display = 'block';
+        actionContent.innerHTML = html;
+    }
+
+    sendBtn.addEventListener('click', sendCommand);
+    aiPrompt.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendCommand();
+    });
+</script>
+
+<style>
+    #ai-manager-app ::-webkit-scrollbar { width: 6px; }
+    #ai-manager-app ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    #ai-prompt:focus { border-color: #6366f1 !important; box-shadow: 0 0 10px rgba(99, 102, 241, 0.2); }
+    .message { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+{% endblock %}
