@@ -147,6 +147,10 @@ class Product(models.Model):
         if reg > 0 and sale < reg:
             return int(round(((reg - sale) / reg) * 100))
         return 0
+
+    def get_primary_sku(self):
+        return self.skus.first()
+
     def is_in_stock(self): return self.skus.filter(quantity__gt=0, shipping_status='available').exists()
     def __str__(self): return self.name
 

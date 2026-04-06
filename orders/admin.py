@@ -142,13 +142,13 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         'customer_name', 
         'email', 
         'phone',
-        'status_badge_editable', 
+        'status', 
         'items_count', 
         'payment_status_badge',
         'total_display',
         'created_at',
     )
-    list_editable = () # We'll use a custom field for status to make it more elegant 
+    list_editable = ('status',) 
     list_filter   = (
         'status', 
         'payment_method', 

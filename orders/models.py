@@ -150,10 +150,15 @@ class CustomerOrder(models.Model):
             # 1. Log history
             OrderStatusHistory.objects.create(order=self, status=self.status)
             
-            # 2. Trigger notifications in a background thread to prevent blocking the request
+            # 2. Trigger notifications in a background thread AFTER transaction commits
             import threading
+            from django.db import transaction
             from .notifications import send_customer_notification
-            threading.Thread(target=send_customer_notification, args=(self,), daemon=True).start()
+            
+            def start_notification_thread():
+                threading.Thread(target=send_customer_notification, args=(self,), daemon=True).start()
+                
+            transaction.on_commit(start_notification_thread)
             
             self.__status = self.status
 

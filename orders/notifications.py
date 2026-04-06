@@ -7,7 +7,8 @@ from core.models import SiteSettings
 logger = logging.getLogger(__name__)
 
 def send_customer_notification(order, is_automated=True):
-    """主 logic for multi-channel notifications."""
+    """Main logic for multi-channel notifications."""
+    from django.db import connection
     try:
         site_config = SiteSettings.objects.first()
         if not site_config:
@@ -22,7 +23,7 @@ def send_customer_notification(order, is_automated=True):
             f"Dear {customer_name},\n\n"
             f"Update for your Order #{order_id}: Your order status is now '{status_label}'.\n\n"
             f"Track your order here: {tracking_link}\n\n"
-            f"Thank you for choosing JKR International."
+            f"Thank you for choosing Demo."
         )
 
         # 1. Email Channel
@@ -54,3 +55,5 @@ def send_customer_notification(order, is_automated=True):
 
     except Exception as e:
         logger.error(f"Notification error: {e}")
+    finally:
+        connection.close()

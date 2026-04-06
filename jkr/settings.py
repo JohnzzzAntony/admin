@@ -128,6 +128,9 @@ TEMPLATES = [
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
+            'builtins': [
+                'core.templatetags.custom_filters',
+            ],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -229,7 +232,7 @@ CKEDITOR_IMAGE_BACKEND = "pillow"
 JAZZMIN_SETTINGS = {
     "site_title": "Demo Admin",
     "site_header": "Demo Admin",
-    "site_brand": "Demo Joy, Knowhow, Responsibility",
+    "site_brand": "Demo",
     "site_logo": "assets/logo.png",
     "welcome_sign": "Welcome to Management System",
     "search_model": ["products.Product", "blog.Post"],
