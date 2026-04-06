@@ -3,8 +3,8 @@
 
 {% block content %}
     <!-- Hero Slider -->
-    <section class="home-slider position-relative overflow-hidden bg-light" style="height: 75vh; min-height: 550px;">
-        <div class="swiper main-hero-slider h-100 container py-4">
+    <section class="home-slider position-relative overflow-hidden bg-light" style="height: 50vh; min-height: 380px;">
+        <div class="swiper main-hero-slider h-100 container py-2">
             <div class="swiper-wrapper">
                 {% for slider in sliders %}
                 <div class="swiper-slide h-100 position-relative">
@@ -21,7 +21,7 @@
                         <div class="position-absolute w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6)); z-index: 0;"></div>
                         
                         <div class="container h-100 d-flex align-items-center position-relative" style="z-index: 1;">
-                            <div class="col-lg-8 text-white mt-5 pt-lg-5">
+                            <div class="col-lg-8 text-white mt-3 pt-lg-2">
                                 <h4 class="text-uppercase tracking-widest mb-3 animate__animated animate__fadeInDown" style="letter-spacing: 3px; font-size: 0.9rem;">{{ slider.subtitle }}</h4>
                                 <h1 class="display-3 font-weight-bold mb-4 animate__animated animate__fadeInUp" style="line-height: 1.1; text-shadow: 2px 2px 15px rgba(0,0,0,0.3);">{{ slider.title }}</h1>
                                 <div class="animate__animated animate__fadeInUp animate__delay-1s mt-5">
