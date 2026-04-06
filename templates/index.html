@@ -76,7 +76,7 @@
                     <div class="row">
                         {% for sku in active_offers_skus %}
                         {% with price_info=sku.get_price_info %}
-                        <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+                        <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                             <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
                                 <a href="{% url 'products:product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
                                     <div class="position-relative">
@@ -124,7 +124,7 @@
                     <div class="row">
                         {% for sku in col.skus.all %}
                         {% with price_info=sku.get_price_info %}
-                        <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+                        <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                             <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
                                 <a href="{% url 'products:product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
                                     <div class="position-relative">
@@ -207,7 +207,7 @@
             <div class="row">
                 {% for product in latest_products %}
                 {% with price_info=product.get_best_price_info %}
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+                <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                     <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
                         <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
                             <div class="position-relative">

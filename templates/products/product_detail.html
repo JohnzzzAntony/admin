@@ -98,10 +98,10 @@
                         </div>
                     </div>
 
-                    <div class="d-flex my-5">
-                        <a href="{% url 'orders:add_to_cart' product_id=product.id %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 8px; background-color: var(--primary-blue); min-width: 250px;"><i class="fas fa-cart-plus mr-2"></i>Add to Cart</a>
+                    <div class="d-flex flex-column flex-sm-row my-5">
+                        <a href="{% url 'orders:add_to_cart' product_id=product.id %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold mb-3 mb-sm-0" style="border-radius: 8px; background-color: var(--primary-blue); min-width: 250px;"><i class="fas fa-cart-plus mr-2"></i>Add to Cart</a>
                         {% if product.brochure %}
-                        <a href="{{ product.brochure.url }}" target="_blank" class="ml-3 btn btn-outline-secondary px-4 py-3" style="border-radius: 8px;"><i class="fa fa-file-pdf text-primary mr-2"></i> Download Brochure</a>
+                        <a href="{{ product.brochure.url }}" target="_blank" class="ml-sm-3 btn btn-outline-secondary px-4 py-3" style="border-radius: 8px;"><i class="fa fa-file-pdf text-primary mr-2"></i> Download Brochure</a>
                         {% endif %}
                     </div>
                 </div>
@@ -179,7 +179,7 @@
                     {% for rp in product.category.products.all %}
                     {% if rp.id != product.id %}
                     {% if forloop.counter <= design_settings.pd_related_count|default:4 %}
-                    <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="col-lg-3 col-md-6 col-6 mb-4">
                         <div class="card border-0 text-center h-100 shadow-sm category-card transition-all p-3" style="border-radius: 15px;">
                             <a href="{% url 'products:product_detail' slug=rp.slug %}" class="text-decoration-none">
                                 <img src="{{ rp.get_image_url }}" class="img-fluid mb-3" style="height: 180px; object-fit: contain;">
