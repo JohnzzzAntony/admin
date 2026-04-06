@@ -25,12 +25,12 @@
                             <h1 class="display-3 font-weight-bold mb-4" style="line-height: 1.1;">{{ slider.title|safe }}</h1>
                             <p class="lead mb-5 text-white-50 pr-lg-5">{{ slider.description|default:"Experience the peak of quality and innovation." }}</p>
                             <div class="d-flex flex-wrap align-items-center">
-                                <a href="{% if slider.button_link %}{{ slider.button_link }}{% else %}/products/{% endif %}" 
+                                <a href="{% if slider.button_link %}{{ slider.button_link }}{% else %}{% url 'products:product_list' %}{% endif %}" 
                                    class="btn-theme btn-primary-theme btn-lg mr-3 mt-3 px-5 py-3">
                                     {{ slider.button_text|default:"Shop Now" }} <i class="fa-solid fa-arrow-right-long ml-2"></i>
                                 </a>
                                 
-                                <a href="{% if slider.button_2_link %}{{ slider.button_2_link }}{% else %}/contact/{% endif %}" 
+                                <a href="{% if slider.button_2_link %}{{ slider.button_2_link }}{% else %}{% url 'contact:contact' %}{% endif %}" 
                                    class="btn-theme btn-outline-light btn-lg mt-3 px-5 py-3" 
                                    style="border: 1px solid rgba(255,255,255,0.4); backdrop-filter: blur(5px);">
                                     {{ slider.button_2_text|default:"Enquiry" }}
