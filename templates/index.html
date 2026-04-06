@@ -120,9 +120,13 @@
                 <div class="tab-pane fade {% if not active_offers_skus and forloop.first %}show active{% endif %}" 
                      id="content-{{ col.slug }}" role="tabpanel">
                     
-                    {% if col.banner %}
+                    {% if col.banner or col.banner_url %}
                     <div class="collection-banner mb-5 rounded-lg shadow-sm overflow-hidden" style="height: 250px; border-radius: 25px;">
+                        {% if col.banner_url %}
+                        <img src="{{ col.banner_url }}" class="w-100 h-100" style="object-fit: cover;">
+                        {% else %}
                         <img src="{{ col.banner.url }}" class="w-100 h-100" style="object-fit: cover;">
+                        {% endif %}
                     </div>
                     {% endif %}
 
@@ -184,7 +188,13 @@
                     <div class="swiper-slide" data-aos="zoom-in" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                         <a href="{% url 'products:category_detail' slug=category.slug %}" class="text-decoration-none">
                             <div class="category-card text-center transition-all p-4 rounded-circle mx-auto shadow-sm hover-lift" style="width: 220px; height: 220px; border: 2px solid #f1f1f1; background: #fff; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <img src="{{ category.get_image_url }}" alt="{{ category.name }}" class="img-fluid mb-2" style="max-height: 90px; object-fit: contain;">
+                                {% if category.icon_svg %}
+                                    <div class="category-icon-svg mb-2" style="max-height: 90px; max-width: 90px; color: var(--primary-blue);">
+                                        {{ category.icon_svg|safe }}
+                                    </div>
+                                {% else %}
+                                    <img src="{{ category.get_image_url }}" alt="{{ category.name }}" class="img-fluid mb-2" style="max-height: 90px; object-fit: contain;">
+                                {% endif %}
                                 <h6 class="text-dark font-weight-bold mb-0">{{ category.name }}</h6>
                             </div>
                         </a>
@@ -292,6 +302,35 @@
     </section>
     {% endif %}
 
+    <!-- Why Choose Us Section -->
+    {% if why_us %}
+    <section class="py-5 bg-white">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Why <span class="text-primary">Choose Us</span></h2>
+                <p class="lead text-muted">Excellence in service and product quality across the region.</p>
+            </div>
+            <div class="row">
+                {% for item in why_us %}
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+                    <div class="card h-100 border-0 shadow-sm p-4 text-center transition-all hover-lift" style="border-radius: 30px; background: var(--bg-light-box);">
+                        <div class="icon-box mb-4 mx-auto d-flex align-items-center justify-content-center bg-white shadow-sm" style="width: 80px; height: 80px; border-radius: 25px; color: var(--primary-blue);">
+                            {% if item.icon_svg %}
+                                <div style="width: 40px; height: 40px;">{{ item.icon_svg|safe }}</div>
+                            {% else %}
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            {% endif %}
+                        </div>
+                        <h4 class="font-weight-bold mb-3">{{ item.title }}</h4>
+                        <p class="text-muted mb-0">{{ item.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
     <!-- Milestones/Counters -->
     <section class="py-5" style="background-color: var(--primary-blue);">
         <div class="container py-5 text-center text-white">
@@ -299,6 +338,11 @@
                 {% for counter in counters %}
                 <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                     <div class="counter-box p-4 rounded-lg bg-white bg-opacity-10 shadow-sm border border-light border-opacity-25 hover-lift" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+                        {% if counter.icon_svg %}
+                        <div class="counter-icon mb-3" style="font-size: 2rem; color: #fff; max-height: 50px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {{ counter.icon_svg|safe }}
+                        </div>
+                        {% endif %}
                         <h2 class="display-3 font-weight-bold counter-value mb-2">{{ counter.value }}</h2>
                         <p class="h5 font-weight-light">{{ counter.title }}</p>
                     </div>
@@ -329,7 +373,13 @@
                                 {% else %}
                                 <div class="w-100 h-100 p-2">
                                 {% endif %}
-                                    <img src="{{ partner.get_logo_url }}" alt="{{ partner.name }}" class="img-fluid" style="max-height: 80px; object-fit: contain; filter: grayscale(100%); transition: all 0.3s ease;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='grayscale(100%)'">
+                                     {% if partner.icon_svg %}
+                                        <div style="max-height: 80px; width: 100%; display: flex; align-items: center; justify-content: center; filter: grayscale(100%); transition: all 0.3s ease;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='grayscale(100%)'">
+                                            {{ partner.icon_svg|safe }}
+                                        </div>
+                                    {% else %}
+                                        <img src="{{ partner.get_logo_url }}" alt="{{ partner.name }}" class="img-fluid" style="max-height: 80px; object-fit: contain; filter: grayscale(100%); transition: all 0.3s ease;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='grayscale(100%)'">
+                                    {% endif %}
                                 {% if partner.website_url %}
                                 </a>
                                 {% else %}
@@ -389,7 +439,13 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="p-3 bg-white shadow rounded-lg overflow-hidden" style="border-radius: 30px;">
+                        {% if mv.icon_svg %}
+                        <div class="p-4 text-center">
+                            {{ mv.icon_svg|safe }}
+                        </div>
+                        {% else %}
                         <img src="{{ mv.get_img_url }}" class="img-fluid w-100" style="object-fit: cover; border-radius: 20px;">
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -466,8 +522,12 @@
                         <div class="row">
                             {% for client in public_clients %}
                             <div class="col-md-2 col-4 mb-4">
-                                <div class="bg-white p-3 rounded-lg shadow-sm text-center">
-                                    <img src="{{ client.get_logo_url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
+                                <div class="bg-white p-3 rounded-lg shadow-sm text-center d-flex align-items-center justify-content-center" style="height: 100px;">
+                                    {% if client.icon_svg %}
+                                        <div style="max-height: 60px; max-width: 100%;">{{ client.icon_svg|safe }}</div>
+                                    {% else %}
+                                        <img src="{{ client.get_logo_url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
+                                    {% endif %}
                                 </div>
                             </div>
                             {% endfor %}
@@ -487,8 +547,12 @@
                         <div class="row">
                             {% for client in private_clients %}
                             <div class="col-md-2 col-4 mb-4">
-                                <div class="bg-white p-3 rounded-lg shadow-sm text-center">
-                                    <img src="{{ client.get_logo_url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
+                                <div class="bg-white p-3 rounded-lg shadow-sm text-center d-flex align-items-center justify-content-center" style="height: 100px;">
+                                    {% if client.icon_svg %}
+                                        <div style="max-height: 60px; max-width: 100%;">{{ client.icon_svg|safe }}</div>
+                                    {% else %}
+                                        <img src="{{ client.get_logo_url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
+                                    {% endif %}
                                 </div>
                             </div>
                             {% endfor %}
@@ -509,7 +573,13 @@
                     {% for post in social_posts %}
                     <div class="col-lg-2 col-md-4 col-6 mb-4">
                         <a href="{{ post.link }}" target="_blank" class="d-block rounded-lg shadow-sm overflow-hidden instagram-item transition-all position-relative">
+                            {% if post.icon_svg %}
+                            <div class="d-flex align-items-center justify-content-center bg-light" style="height: 180px;">
+                                {{ post.icon_svg|safe }}
+                            </div>
+                            {% else %}
                             <img src="{{ post.get_img_url }}" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
+                            {% endif %}
                             <div class="post-overlay position-absolute d-flex align-items-center justify-content-center" style="top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); opacity:0; transition:all 0.3s ease;">
                                 <i class="fab fa-instagram text-white fa-2x"></i>
                             </div>

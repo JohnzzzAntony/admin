@@ -26,7 +26,7 @@ class AboutUsAdmin(admin.ModelAdmin):
 @admin.register(MissionVision)
 class MissionVisionAdmin(admin.ModelAdmin):
     list_display = ('section_type', 'title')
-    fields = ('section_type', 'title', 'content', ('image', 'image_url'))
+    fields = ('section_type', 'title', 'content', ('image', 'image_url'), 'icon_svg')
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
@@ -43,6 +43,7 @@ class ServiceAdmin(admin.ModelAdmin):
 class CounterAdmin(admin.ModelAdmin):
     list_display = ('title', 'value', 'order')
     list_editable = ('value', 'order')
+    fields = (('title', 'value'), 'icon_svg', 'order')
 
 @admin.register(WhyUsCard)
 class WhyUsCardAdmin(admin.ModelAdmin):
@@ -64,7 +65,7 @@ class GalleryItemAdmin(admin.ModelAdmin):
 class PartnerAdmin(admin.ModelAdmin):
     list_display = ('name', 'website_url', 'order', 'image_tag')
     list_editable = ('order',)
-    fields = (('name', 'order'), ('logo', 'logo_url'), 'website_url')
+    fields = (('name', 'order'), ('logo', 'logo_url'), 'icon_svg', 'website_url')
 
     def image_tag(self, obj):
         url = obj.get_logo_url()

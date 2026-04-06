@@ -24,7 +24,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
             'fields': (('email', 'phone'), 'whatsapp')
         }),
         ('Branch Addresses', {
-            'fields': ('dubai_address', 'abudhabi_address')
+            'fields': (('branch1_name', 'dubai_address'), ('branch2_name', 'abudhabi_address'))
         }),
         ('Footer Content', {
             'fields': (('footer_quick_links_title', 'footer_support_title'), ('footer_legal_title', 'footer_newsletter_title'), 'footer_copyright_text')
@@ -100,10 +100,10 @@ class ClientAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'is_active', 'order')
     list_editable = ('category', 'is_active', 'order')
     list_filter = ('category', 'is_active')
-    fields = ('name', ('logo', 'logo_url'), 'category', 'order', 'is_active')
+    fields = ('name', ('logo', 'logo_url'), 'icon_svg', 'category', 'order', 'is_active')
 
 @admin.register(SocialPost)
 class SocialPostAdmin(admin.ModelAdmin):
     list_display = ('id', 'order')
     list_editable = ('order',)
-    fields = (('image', 'image_url'), 'link', 'order')
+    fields = (('image', 'image_url'), 'icon_svg', 'link', 'order')

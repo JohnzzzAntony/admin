@@ -23,8 +23,10 @@ class SiteSettings(models.Model):
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=50, blank=True)
     whatsapp = models.CharField(max_length=50, blank=True)
-    dubai_address = models.TextField(blank=True)
-    abudhabi_address = models.TextField(blank=True)
+    branch1_name = models.CharField(max_length=100, default="Dubai")
+    dubai_address = models.TextField(blank=True, verbose_name="Branch 1 Address")
+    branch2_name = models.CharField(max_length=100, default="Abu Dhabi")
+    abudhabi_address = models.TextField(blank=True, verbose_name="Branch 2 Address")
     facebook = models.URLField(blank=True)
     instagram = models.URLField(blank=True)
     linkedin = models.URLField(blank=True)
@@ -90,6 +92,7 @@ class Client(models.Model):
         help_text="Client Logo. Recommended: 300x120px (Transparent PNG). Max 500KB."
     )
     logo_url = models.URLField(blank=True, null=True)
+    icon_svg = models.TextField(blank=True, help_text="Paste SVG code for logo here.")
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='Public')
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -107,6 +110,7 @@ class SocialPost(models.Model):
         help_text="Instagram Preview. Recommended: 1080x1080px (Square). JPG, WEBP. Max 2MB."
     )
     image_url = models.URLField(blank=True, null=True)
+    icon_svg = models.TextField(blank=True, help_text="Paste SVG code here.")
     link = models.URLField(blank=True)
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']

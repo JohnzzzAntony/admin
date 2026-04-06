@@ -30,6 +30,7 @@ class Category(models.Model):
         help_text="Recommended: 512x512px. JPG, PNG, WEBP. Max 1MB."
     )
     image_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted image.")
+    icon_svg = models.TextField(blank=True, help_text="Paste SVG icon code here. Used if provided.")
     attributes = models.ManyToManyField(Attribute, blank=True, related_name='categories')
     
     # Homepage Config
@@ -302,6 +303,7 @@ class Collection(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
     banner = models.ImageField(upload_to='collections/', null=True, blank=True, help_text="Homepage Banner for this collection.")
+    banner_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted banner image.")
     skus = models.ManyToManyField(ProductSKU, related_name='collections', blank=True)
     is_active = models.BooleanField(default=True)
     display_order = models.PositiveIntegerField(default=0)

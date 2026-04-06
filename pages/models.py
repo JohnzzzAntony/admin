@@ -67,6 +67,7 @@ class MissionVision(models.Model):
         help_text="Recommended: 1200x800px. JPG, WEBP. Max 2MB."
     )
     image_url = models.URLField(blank=True, null=True)
+    icon_svg = models.TextField(blank=True, help_text="Paste SVG code here.")
     section_type = models.CharField(max_length=20, choices=SECTION_TYPES, unique=True)
     def __str__(self): return self.get_section_type_display()
     def get_img_url(self):
@@ -94,6 +95,7 @@ class Service(models.Model):
 class Counter(models.Model):
     title = models.CharField(max_length=100)
     value = models.CharField(max_length=50, help_text="Example: 15, 100+, etc.")
+    icon_svg = models.TextField(blank=True, help_text="Paste SVG code here.")
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']
     def __str__(self): return f"{self.title}: {self.value}"
@@ -132,6 +134,7 @@ class Partner(models.Model):
         help_text="Brand Logo. Recommended: 400x400px (Transparent PNG). Max 500KB."
     )
     logo_url = models.URLField(blank=True, null=True)
+    icon_svg = models.TextField(blank=True, help_text="Paste SVG logo code here. Used if provided.")
     website_url = models.URLField(blank=True, help_text="Optional link to partner website")
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']

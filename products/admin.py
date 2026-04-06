@@ -159,7 +159,7 @@ class CategoryAdmin(ImportExportModelAdmin):
             'fields': (('show_on_homepage', 'homepage_order'),),
         }),
         ('Image', {
-            'fields': (('image', 'image_url'),),
+            'fields': (('image', 'image_url'), 'icon_svg'),
         }),
         ('Attributes', {
             'fields': ('attributes',),
@@ -193,3 +193,4 @@ class CollectionAdmin(admin.ModelAdmin):
     list_editable = ('is_active', 'display_order')
     filter_horizontal = ('skus',)
     readonly_fields = ('slug',)
+    fields = ('name', ('banner', 'banner_url'), 'slug', 'skus', 'is_active', 'display_order')

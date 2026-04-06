@@ -409,12 +409,12 @@
                     {% endif %}
                     
                     <div class="office-box mb-4">
-                        <h6 class="font-weight-bold text-white mb-2">Dubai :</h6>
-                        <p class="small text-white-50">{{ site_settings.dubai_address|default:"Office No. 2, Lootah Building, Marrakeh St, Umm Al Rammool, Rashidiya, Dubai"|linebreaksbr }}</p>
+                        <h6 class="font-weight-bold text-white mb-2">{{ site_settings.branch1_name|default:"Dubai" }} :</h6>
+                        <p class="small text-white-50">{{ site_settings.dubai_address|linebreaksbr }}</p>
                     </div>
                     <div class="office-box">
-                        <h6 class="font-weight-bold text-white mb-2">Abu Dhabi :</h6>
-                        <p class="small text-white-50">{{ site_settings.abudhabi_address|default:"Abu Dhabi Office Info"|linebreaksbr }}</p>
+                        <h6 class="font-weight-bold text-white mb-2">{{ site_settings.branch2_name|default:"Abu Dhabi" }} :</h6>
+                        <p class="small text-white-50">{{ site_settings.abudhabi_address|linebreaksbr }}</p>
                     </div>
                 </div>
 
