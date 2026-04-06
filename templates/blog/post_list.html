@@ -2,107 +2,88 @@
 {% load static %}
 
 {% block content %}
-    <!-- Modern Blog Header -->
-    <div class="py-5 mt-5 position-relative overflow-hidden" style="background: rgba(var(--primary-rgb), 0.03);">
-        <div class="container py-4 text-center">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-transparent p-0 mb-4 small text-uppercase tracking-widest font-weight-bold justify-content-center">
-                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-muted">Home</a></li>
-                    <li class="breadcrumb-item active text-primary" aria-current="page">Insights & Innovations</li>
-                </ol>
-            </nav>
-            <div data-aos="fade-up">
-                <h1 class="display-3 font-weight-bold mb-3">{{ page_heroes.blog.title|default:"Innovation Journal" }}</h1>
-                <p class="text-muted lead font-weight-light mx-auto" style="max-width: 700px;">
-                    Explore our latest medical insights, technology breakthroughs, and industry news.
-                </p>
-            </div>
+    <!-- Hero Header -->
+    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" 
+             style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ page_heroes.blog.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
+        <div class="container py-5">
+            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.blog.title|default:"Blogs" }}</h1>
+            {% if page_heroes.blog.subtitle %}<p class="lead" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.blog.subtitle }}</p>{% endif %}
         </div>
-    </div>
+    </section>
 
     <!-- Blogs List Section -->
-    <section class="py-5">
+    <section class="py-5 bg-white">
         <div class="container py-5">
             <div class="row">
                 {% for post in posts %}
-                <div class="col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
-                    <div class="premium-card overflow-hidden h-100 p-0 bg-white shadow-2xl border-light hover-up">
-                        <a href="{% url 'blog:post_detail' slug=post.slug %}" class="text-decoration-none d-block h-100">
-                            <!-- Image with Badge -->
-                            <div class="position-relative overflow-hidden" style="height: 250px;">
-                                <img src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}https://via.placeholder.com/600x400{% endif %}" alt="{{ post.title }}" class="img-fluid w-100 h-100 transition-slow" style="object-fit: cover;">
-                                <div class="glassmorphism-dark position-absolute border-0" style="top: 20px; right: 20px; padding: 6px 15px; border-radius: 8px;">
-                                    <span class="text-white smallest font-weight-bold tracking-widest text-uppercase">INSIGHT</span>
-                                </div>
+                <div class="col-lg-4 mb-5">
+                    <div class="card border-0 shadow-sm overflow-hidden h-100 p-0" style="border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important; border: 1px solid #eee !important;">
+                        <a href="{% url 'blog:post_detail' slug=post.slug %}" class="text-decoration-none">
+                            <!-- Image with "BLOG" Badge -->
+                            <div class="position-relative overflow-hidden">
+                                <img src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}https://via.placeholder.com/600x400{% endif %}" alt="{{ post.title }}" class="img-fluid w-100" style="height: 250px; object-fit: cover; transition: transform 0.3s ease;">
+                                
+                                <span class="position-absolute px-3 py-1 font-weight-bold text-white small" style="top: 20px; right: 20px; background-color: #6cce95; border-radius: 4px; font-size: 0.75rem; letter-spacing: 1px;">BLOG</span>
                             </div>
 
-                            <!-- Post Content -->
-                            <div class="card-body p-4 p-md-5 d-flex flex-column">
-                                <span class="text-primary smallest font-weight-bold text-uppercase tracking-widest mb-3 opacity-75">
-                                    <i class="far fa-calendar-alt mr-2"></i> {{ post.published_date|date:"M d, Y" }}
-                                </span>
-                                <h4 class="font-weight-bold text-dark mb-4 h4 overflow-hidden" style="line-height: 1.5; color: #111 !important; height: 3rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                            <!-- Post Content/Excerpt -->
+                            <div class="card-body p-4 text-left">
+                                <h4 class="font-weight-bold text-dark mb-4 h4" style="line-height: 1.4; color: #333 !important; min-height: 4.5rem; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                                     {{ post.title }}
                                 </h4>
-                                <div class="text-muted mb-5 small overflow-hidden" style="line-height: 1.8; font-weight: 300; height: 4rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                                    {{ post.excerpt|default:"Stay updated with the latest in medical technology and healthcare innovation in the region." }}
+                                <div class="text-muted mb-4 small" style="line-height: 1.6; min-height: 3.5rem; display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
+                                    {{ post.excerpt|default:"Sharing our latest updates and industry insights for the healthcare sector in the Middle East." }}
                                 </div>
-                                <div class="mt-auto pt-4 border-top border-light d-flex align-items-center justify-content-between">
-                                    <span class="text-primary font-weight-bold smallest text-uppercase tracking-widest">
-                                        READ STORY <i class="fas fa-arrow-right ml-2 transition-all"></i>
-                                    </span>
-                                    <span class="text-muted smallest font-weight-light opacity-50">
-                                        {{ post.content|wordcount|divisibleby:200|default:5 }} min read
-                                    </span>
-                                </div>
+                                <span class="font-weight-bold text-uppercase" style="color: #6cce95; font-size: 0.8rem; letter-spacing: 0.5px;">READ MORE »</span>
                             </div>
                         </a>
                     </div>
                 </div>
                 {% empty %}
-                <div class="col-12 text-center py-5" data-aos="fade-up">
-                    <div class="premium-card p-5 d-inline-block bg-white shadow-lg" style="max-width: 500px;">
-                        <i class="far fa-newspaper display-4 text-primary opacity-25 mb-4"></i>
-                        <h3 class="font-weight-bold">Coming Soon</h3>
-                        <p class="text-muted font-weight-light">Stay tuned for our upcoming healthcare insights and medical advancements.</p>
-                        <a href="/" class="btn-theme btn-primary-theme px-5 mt-4">Return Home</a>
-                    </div>
+                <div class="col-12 text-center py-5">
+                    <h5 class="text-muted">Stay tuned! Our latest medical insights and news are coming soon.</h5>
                 </div>
                 {% endfor %}
             </div>
 
-            <!-- Modern Pagination -->
+            <!-- Image: Pagination matching 1 | 2 | 3 layout -->
             {% if posts.has_other_pages %}
-            <div class="mt-5 pt-5 d-flex justify-content-center">
-                <nav aria-label="Page navigation" class="glassmorphism p-2 px-4 shadow-sm border-0 bg-white" style="border-radius: 50px;">
-                    <ul class="pagination pagination-modern mb-0">
-                        {% if posts.has_previous %}
-                            <li class="page-item"><a class="page-link border-0 text-dark" href="?page={{ posts.previous_page_number }}"><i class="fas fa-chevron-left"></i></a></li>
-                        {% endif %}
-
-                        {% for i in posts.paginator.page_range %}
-                            {% if posts.number == i %}
-                                <li class="page-item active mx-1"><span class="page-link bg-primary text-white border-0 rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;">{{ i }}</span></li>
-                            {% else %}
-                                <li class="page-item mx-1"><a class="page-link border-0 rounded-circle d-flex align-items-center justify-content-center text-muted" style="width: 40px; height: 40px;" href="?page={{ i }}">{{ i }}</a></li>
+            <div class="row mt-4 pt-5">
+                <div class="col-12">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center border-0">
+                            {% if posts.has_previous %}
+                                <li class="page-item mx-1"><a class="page-link shadow-sm border px-3 py-2 text-dark font-weight-bold" href="?page={{ posts.previous_page_number }}" style="border-radius: 4px;">«</a></li>
                             {% endif %}
-                        {% endfor %}
 
-                        {% if posts.has_next %}
-                            <li class="page-item"><a class="page-link border-0 text-dark" href="?page={{ posts.next_page_number }}"><i class="fas fa-chevron-right"></i></a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
+                            {% for i in posts.paginator.page_range %}
+                                {% if posts.number == i %}
+                                    <li class="page-item active mx-1"><span class="page-link shadow-sm border px-3 py-2 font-weight-bold" style="background-color: #114084; border-color:#114084; border-radius: 4px;">{{ i }}</span></li>
+                                {% else %}
+                                    <li class="page-item mx-1"><a class="page-link shadow-sm border px-3 py-2 text-dark font-weight-bold" href="?page={{ i }}" style="border-radius: 4px;">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if posts.has_next %}
+                                <li class="page-item mx-1"><a class="page-link shadow-sm border px-3 py-2 text-dark font-weight-bold" href="?page={{ posts.next_page_number }}" style="border-radius: 4px;">»</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
             </div>
             {% endif %}
         </div>
     </section>
 
     <style>
-        .hover-up:hover { transform: translateY(-10px); }
-        .transition-slow { transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); }
-        .hover-up:hover .transition-slow { transform: scale(1.05); }
-        .pagination-modern .page-link:hover:not(.active) { background: #f8f9fa; color: var(--primary); }
-        .hover-up:hover .fa-arrow-right { transform: translateX(5px); }
+        .card:hover img {
+            transform: scale(1.1);
+        }
+        .pagination .page-link {
+            transition: all 0.2s;
+        }
+        .pagination .page-link:hover {
+            background-color: #f8f9fa;
+        }
     </style>
 {% endblock %}

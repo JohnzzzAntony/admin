@@ -2,202 +2,193 @@
 {% load static %}
 
 {% block content %}
-<section class="py-5 mt-5 position-relative overflow-hidden" style="background: rgba(var(--primary-rgb), 0.03);">
+<section class="py-5 mt-5 bg-light">
     <div class="container py-4">
-        <!-- Modern Page Header -->
-        <div class="row align-items-center mb-5" data-aos="fade-right">
-            <div class="col-lg-6">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb bg-transparent p-0 mb-3 small text-uppercase tracking-widest font-weight-bold">
-                        <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-muted">Home</a></li>
-                        <li class="breadcrumb-item active text-primary" aria-current="page">Your Procurement Cart</li>
-                    </ol>
-                </nav>
-                <h1 class="display-4 font-weight-bold mb-0">Secure <span class="text-primary">Checkout</span></h1>
-            </div>
-            <div class="col-lg-6 text-lg-right mt-4 mt-lg-0">
-                {% if cart_items %}
-                <div class="glassmorphism d-inline-block px-4 py-2 border-0 shadow-sm" style="border-radius: 50px; background: white;">
-                    <span class="text-muted smallest font-weight-bold text-uppercase">Total Items: <span class="text-primary">{{ cart_items|length }}</span></span>
-                </div>
-                {% endif %}
-            </div>
+
+        <!-- Page Title -->
+        <div class="d-flex align-items-center mb-5">
+            <h2 class="font-weight-bold mb-0" style="color:var(--primary-blue);">
+                <i class="fas fa-shopping-cart mr-3"></i>Your Cart
+            </h2>
+            {% if cart_items %}
+            <span class="badge badge-primary ml-3 px-3 py-2" style="border-radius:20px;font-size:1rem;">
+                {{ cart_items|length }} item{{ cart_items|length|pluralize }}
+            </span>
+            {% endif %}
         </div>
 
         <div class="row">
             <!-- Cart Items -->
-            <div class="col-lg-8" data-aos="fade-up">
-                <div class="premium-card p-0 overflow-hidden bg-white shadow-2xl mb-5">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light text-uppercase smallest tracking-widest font-weight-bold">
-                                <tr>
-                                    <th class="border-0 px-4 py-4">Solution</th>
-                                    <th class="border-0 text-center py-4">Investment</th>
-                                    <th class="border-0 text-center py-4">Units</th>
-                                    <th class="border-0 text-center py-4">Subtotal</th>
-                                    <th class="border-0 text-center py-4">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in cart_items %}
-                                <tr class="transition-all">
-                                     <td class="px-4 py-4">
-                                         <div class="d-flex align-items-center">
-                                             <div class="premium-card p-2 mr-4 bg-white" style="width: 80px; height: 80px; border-radius: 12px; border: 1px solid #f0f0f0;">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-lg mb-4">
+                    <div class="card-body p-4">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="border-0">Product</th>
+                                        <th class="border-0 text-center">Price</th>
+                                        <th class="border-0 text-center">Qty</th>
+                                        <th class="border-0 text-center">Total</th>
+                                        <th class="border-0 text-center">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                    <tr>
+                                         <td>
+                                             <div class="d-flex align-items-center">
                                                  <img src="{{ item.product.get_image_url }}" alt="{{ item.product.name }}"
-                                                      class="img-fluid w-100 h-100" style="object-fit: contain;">
-                                             </div>
-                                             <div>
-                                                 <a href="{% url 'products:product_detail' slug=item.product.slug %}"
-                                                    class="font-weight-bold text-dark text-decoration-none h6 mb-1 d-block hover-text-primary">
-                                                     {{ item.product.name }}
-                                                 </a>
-                                                 {% if item.sku.title %}
-                                                 <div class="smallest text-primary font-weight-bold mb-1"><i class="fas fa-tag mr-1"></i> {{ item.sku.title }}</div>
-                                                 {% endif %}
-                                                 <div class="smallest text-muted font-weight-light">{{ item.product.category.name }}</div>
-                                                 
-                                                 {% if item.is_free_shipping %}
-                                                 <div class="smallest text-success font-weight-bold mt-2"><i class="fas fa-truck mr-2"></i> Free Delivery</div>
-                                                 {% elif item.shipping_item > 0 %}
-                                                 <div class="smallest text-info font-weight-bold mt-2"><i class="fas fa-truck mr-2"></i> Local Delivery: {{ item.shipping_item }} AED</div>
-                                                 {% endif %}
+                                                      style="width:65px;height:65px;object-fit:contain;border-radius:8px;border:1px solid #eee;" class="mr-3">
+                                                 <div>
+                                                     <a href="{% url 'products:product_detail' slug=item.product.slug %}"
+                                                        class="font-weight-bold text-dark text-decoration-none" style="font-size:0.95rem;">
+                                                         {{ item.product.name }}
+                                                     </a>
+                                                     {% if item.sku.title %}
+                                                     <div class="small text-primary font-weight-bold"><i class="fas fa-tag mr-1"></i> {{ item.sku.title }}</div>
+                                                     {% endif %}
+                                                     <div class="small text-muted">{{ item.product.category.name }}</div>
+                                                     
+                                                     {% if item.is_free_shipping %}
+                                                     <div class="small text-success font-weight-bold mt-1"><i class="fas fa-truck mr-1"></i> Free Shipping</div>
+                                                     {% elif item.shipping_item > 0 %}
+                                                     <div class="small text-info font-weight-bold mt-1"><i class="fas fa-truck mr-1"></i> Shipping: {{ item.shipping_item }} AED</div>
+                                                     {% endif %}
 
-                                                 {% if item.offer_name %}
-                                                 <div class="badge badge-soft-warning mt-2">{{ item.offer_name }}</div>
-                                                 {% endif %}
+                                                     {% if item.offer_name %}
+                                                     <div class="badge badge-warning text-dark mt-1" style="font-size:0.7rem;">{{ item.offer_name }}</div>
+                                                     {% endif %}
+                                                     {% if item.bogo_message %}
+                                                     <div class="small text-success mt-1"><strong><i class="fas fa-gift mr-1"></i> {{ item.bogo_message }}</strong></div>
+                                                     {% endif %}
+                                                 </div>
                                              </div>
-                                         </div>
-                                     </td>
-                                    <td class="text-center py-4">
-                                        {% if item.has_offer %}
-                                        <div class="d-flex flex-column align-items-center">
-                                            <span class="font-weight-bold text-dark">{{ item.unit_price }} AED</span>
-                                            <del class="smallest text-muted opacity-50">{{ item.regular_price }} AED</del>
-                                        </div>
-                                        {% else %}
-                                        <span class="font-weight-bold text-dark">{{ item.unit_price }} AED</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="text-center py-4">
-                                        <div class="glassmorphism d-inline-block px-3 py-1 font-weight-bold text-primary smallest" style="border-radius: 8px;">{{ item.quantity }}</div>
-                                    </td>
-                                    <td class="text-center py-4">
-                                        <span class="font-weight-bold text-primary" style="font-size: 1.1rem;">{{ item.total_item }} AED</span>
-                                    </td>
-                                    <td class="text-center py-4">
-                                        <a href="{% url 'orders:remove_from_cart' product_id=item.product.id %}?sku={{ item.sku.sku_id }}"
-                                           class="btn btn-sm btn-outline-danger border-0 rounded-circle transition-all" style="width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="5" class="text-center py-120">
-                                        <div class="opacity-25 mb-4"><i class="fas fa-shopping-basket display-1"></i></div>
-                                        <h3 class="font-weight-bold text-muted">Your cart is silent</h3>
-                                        <p class="text-muted font-weight-light mb-5">Start adding medical innovations to your procurement list.</p>
-                                        <a href="{% url 'products:product_list' %}" class="btn-theme btn-primary-theme px-5 py-3">
-                                            Explore Solutions
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                         </td>
+                                        <td class="text-center font-weight-bold">
+                                            {% if item.has_offer %}
+                                            <div class="d-flex flex-column align-items-center">
+                                                <span class="text-primary">{{ item.unit_price }} AED</span>
+                                                <del class="small text-muted" style="font-size: 0.75rem;">{{ item.regular_price }} AED</del>
+                                            </div>
+                                            {% else %}
+                                            {{ item.unit_price }} AED
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge badge-secondary px-3 py-2" style="font-size: 0.9rem;">{{ item.quantity }}</span>
+                                        </td>
+                                        <td class="text-center font-weight-bold text-primary" style="font-size: 1.1rem;">
+                                            {{ item.total_item }} AED
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{% url 'orders:remove_from_cart' product_id=item.product.id %}?sku={{ item.sku.sku_id }}"
+                                               class="btn btn-sm btn-outline-danger shadow-sm" style="border-radius:50%;width:34px;height:34px;padding:0;line-height:32px;">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <i class="fas fa-shopping-cart fa-3x mb-3 text-secondary d-block"></i>
+                                            <h5 class="text-muted">Your cart is empty.</h5>
+                                            <a href="{% url 'products:category_index' %}" class="btn btn-primary mt-3" style="border-radius:30px;">
+                                                Browse Products
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="d-flex flex-wrap align-items-center justify-content-between">
-                    <a href="{% url 'products:product_list' %}" class="btn btn-link text-muted font-weight-bold p-0 text-decoration-none hover-text-primary">
-                        <i class="fas fa-chevron-left mr-3"></i>Continue Procurement
-                    </a>
-                    <p class="mb-0 smallest text-muted font-weight-light"><i class="fas fa-info-circle mr-2"></i> Taxes and delivery calculated at checkout.</p>
-                </div>
+                <a href="{% url 'products:category_index' %}" class="btn btn-outline-dark px-4 py-2" style="border-radius:30px;">
+                    <i class="fa fa-arrow-left mr-2"></i>Continue Shopping
+                </a>
             </div>
 
             <!-- Order Summary -->
-            <div class="col-lg-4 mt-5 mt-lg-0" data-aos="fade-left">
-                <div class="premium-card p-5 bg-white border-0 shadow-2xl sticky-top" style="top: 120px;">
-                    <h5 class="font-weight-bold mb-5 pb-3 border-bottom d-flex align-items-center">
-                        Order Summary
-                        <div class="ml-auto opacity-25"><i class="fas fa-receipt"></i></div>
-                    </h5>
-                    
-                    <div class="summary-details mb-5">
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="text-muted font-weight-light">Subtotal</span>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-lg">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h5 class="font-weight-bold">Order Summary</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {% with subtotal=0 %}
+                        {% for item in cart_items %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">{{ item.product.name|truncatechars:28 }}</span>
+                            <span class="small font-weight-bold">{{ item.total_item }} AED</span>
+                        </div>
+                        {% endfor %}
+                        {% endwith %}
+                        <hr>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal</span>
                             <span class="font-weight-bold">{{ subtotal|floatformat:2 }} AED</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="text-muted font-weight-light">Local Delivery</span>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Shipping</span>
                             {% if total_shipping > 0 %}
-                            <span class="font-weight-bold text-info">+{{ total_shipping|floatformat:2 }} AED</span>
+                            <span class="font-weight-bold">{{ total_shipping|floatformat:2 }} AED</span>
                             {% else %}
-                            <span class="text-success font-weight-bold text-uppercase smallest tracking-wide">Included</span>
+                            <span class="text-success font-weight-bold">FREE</span>
                             {% endif %}
                         </div>
-                        <div class="d-flex justify-content-between pt-4 border-top">
-                            <span class="h5 font-weight-bold mb-0">Grand Total</span>
-                            <div class="text-right">
-                                <span class="h4 font-weight-bold text-primary mb-0 d-block">{{ grand_total|floatformat:2 }} AED</span>
-                                <small class="smallest text-muted font-weight-light">Inclusive of all local taxes</small>
-                            </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mt-3">
+                            <h5 class="font-weight-bold">Grand Total</h5>
+                            <h5 class="font-weight-bold text-primary" id="cart-total">
+                                {{ grand_total|floatformat:2 }} AED
+                            </h5>
                         </div>
                     </div>
-
-                    <div class="checkout-actions">
+                    <div class="card-footer bg-white border-0 p-4 pt-0">
                         {% if cart_items %}
-                            {% if user.is_authenticated %}
-                            <a href="{% url 'orders:checkout_billing' %}" class="btn-theme btn-primary-theme btn-lg btn-block py-4 shadow-2xl font-weight-bold">
-                                <i class="fas fa-shield-alt mr-3"></i> Proceed to Checkout
-                            </a>
-                            {% else %}
-                            <a href="javascript:void(0);" onclick="handleGuestCheckout()" class="btn-theme btn-primary-theme btn-lg btn-block py-4 shadow-2xl font-weight-bold">
-                                <i class="fas fa-lock mr-3"></i> Secure Checkout
-                            </a>
-                            {% endif %}
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'orders:checkout_billing' %}"
+                           class="btn btn-primary btn-block py-3 shadow font-weight-bold"
+                           style="border-radius:30px;background-color:var(--accent-blue);font-size:1.05rem;">
+                            <i class="fas fa-lock mr-2"></i>Proceed to Checkout
+                        </a>
                         {% else %}
-                        <button class="btn btn-light btn-lg btn-block py-4 opacity-50 cursor-not-allowed" disabled>
+                        <a href="javascript:void(0);" onclick="handleGuestCheckout()"
+                           class="btn btn-primary btn-block py-3 shadow font-weight-bold"
+                           style="border-radius:30px;background-color:var(--accent-blue);font-size:1.05rem;">
+                            <i class="fas fa-lock mr-2"></i>Proceed to Checkout
+                        </a>
+                        <script>
+                        function handleGuestCheckout() {
+                            if (confirm("You are not logged in. Would you like to Checkout as a Guest?\n\n- Click 'OK' to proceed as Guest\n- Click 'Cancel' to Login / Register")) {
+                                window.location.href = "{% url 'orders:checkout_as_guest' %}";
+                            } else {
+                                window.location.href = "{% url 'accounts:login' %}?next={% url 'orders:checkout_billing' %}";
+                            }
+                        }
+                        </script>
+                        {% endif %}
+                        {% else %}
+                        <button class="btn btn-secondary btn-block py-3" style="border-radius:30px;" disabled>
                             Cart is Empty
                         </button>
                         {% endif %}
-                    </div>
-
-                    <div class="mt-5 text-center">
-                        <div class="d-flex justify-content-center mb-4 opacity-75" style="gap: 15px;">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" height="15" alt="Visa" class="grayscale">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" height="15" alt="Mastercard" class="grayscale">
-                            <img src="https://www.tabby.ai/img/favicon/tabby-mark.svg" height="15" alt="Tabby" class="grayscale">
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-lock mr-1"></i>Secure & encrypted checkout
+                            </small>
                         </div>
-                        <p class="smallest text-muted mb-0"><i class="fas fa-shield-check text-success mr-2"></i> Encrypted Transaction Security</p>
+                        <!-- Payment icons -->
+                        <div class="d-flex justify-content-center mt-3" style="gap:8px;opacity:0.6;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" height="20" alt="Visa">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" height="20" alt="Mastercard">
+                            <img src="https://www.tabby.ai/img/favicon/tabby-mark.svg" height="20" alt="Tabby">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-{% if not user.is_authenticated %}
-<script>
-function handleGuestCheckout() {
-    if (confirm("Would you like to proceed as a Guest?\n\nOur system will track your order via email.")) {
-        window.location.href = "{% url 'orders:checkout_as_guest' %}";
-    } else {
-        window.location.href = "{% url 'accounts:login' %}?next={% url 'orders:checkout_billing' %}";
-    }
-}
-</script>
-{% endif %}
-
-<style>
-    .badge-soft-warning { background: rgba(255, 193, 7, 0.1); color: #856404; font-size: 0.7rem; font-weight: bold; border-radius: 4px; padding: 4px 8px; }
-    .grayscale { filter: grayscale(1); transition: filter 0.3s; }
-    .grayscale:hover { filter: grayscale(0); }
-    .hover-text-primary:hover { color: var(--primary) !important; }
-    .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important; }
-    tr:hover { background: rgba(var(--primary-rgb), 0.01); }
-</style>
 {% endblock %}

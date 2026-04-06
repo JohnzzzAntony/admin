@@ -139,16 +139,20 @@ class CreatedAtRangeFilter(admin.SimpleListFilter):
 class CustomerOrderAdmin(admin.ModelAdmin):
     list_display  = (
         'order_number', 
+        'user',               # ← Added User connection
+        'is_guest',           # ← Added Guest flag
+        'customer_tag',       # ← Added Customer Tag Badge
         'customer_name', 
         'email', 
         'phone',
-        'status', 
-        'items_count', 
+        'payment_method_badge', 
         'payment_status_badge',
+        'status',             # This becomes "Order Status" due to short_description later
+        'items_count', 
         'total_display',
         'created_at',
     )
-    list_editable = ('status',) 
+    list_editable = ('status',) # Added list editable status
     list_filter   = (
         'status', 
         'payment_method', 
@@ -209,17 +213,10 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         return _badge(obj.get_payment_status_display(), color)
     payment_status_badge.short_description = "Payment Status"
 
-    def status_badge_editable(self, obj):
-        """Displays a colored status label that links to the status change section."""
+    def order_status_badge(self, obj):
         color = ORDER_STATUS_COLORS.get(obj.status, '#888')
-        label = obj.get_status_display()
-        return format_html(
-            '<div style="background:{}; color:#fff; padding:5px 12px; border-radius:30px; '
-            'font-size:11px; font-weight:700; text-align:center; display:inline-block; min-width:110px;">{}</div>',
-            color, label
-        )
-    status_badge_editable.short_description = "Order Status"
-    status_badge_editable.admin_order_field = 'status'
+        return _badge(obj.get_status_display(), color)
+    order_status_badge.short_description = "Order Status"
 
     def items_count(self, obj):
         return obj.items.count()
@@ -238,7 +235,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
                              '<strong>📝 New Order Draft</strong></div>')
         return format_html(
             '<div style="background:#f0f6ff;border-left:4px solid #2271b1;padding:10px 16px;border-radius:0 8px 8px 0;margin:8px 0;">'
-            '<strong style="color:#2271b1;font-size:13px;">📋 Order #DEMO-{} &nbsp;|&nbsp; '
+            '<strong style="color:#2271b1;font-size:13px;">📋 Order #JKR-{} &nbsp;|&nbsp; '
             'Placed: {}</strong></div>',
             f"{obj.pk:05d}",
             obj.created_at.strftime("%d %b %Y, %H:%M")
@@ -291,7 +288,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         from django.shortcuts import get_object_or_404, redirect
         order = get_object_or_404(CustomerOrder, pk=order_id)
         send_customer_notification(order, is_automated=False)
-        self.message_user(request, f"Notifications have been successfully resent for Order #DEMO-{order_id:05d}.")
+        self.message_user(request, f"Notifications have been successfully resent for Order #JKR-{order_id:05d}.")
         return redirect('admin:orders_customerorder_change', order_id)
 
     def get_product_price(self, request):
@@ -400,4 +397,5 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     )
 
     class Media:
-        css = {'all': ('admin/css/admin_orders.css',)}
+        css = {'all': ('admin/css/custom_order.css',)}
+        js = ('admin/js/custom_order.js',)

@@ -2,95 +2,38 @@
 {% load static %}
 
 {% block content %}
-    <!-- Modern Hero Header -->
-    <section class="py-5 mt-5 position-relative overflow-hidden premium-hero-section text-center text-white" 
-             style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ page_heroes.gallery.get_hero_url|default:'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80' }}'); background-size: cover; background-position: center; min-height: 45vh; display: flex; align-items: center; justify-content: center;">
-        <div class="container py-5" data-aos="fade-up">
-            <h1 class="display-3 font-weight-bold mb-3 tracking-tight" style="text-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                {{ page_heroes.gallery.title|default:"Visual <span class='text-primary'>Innovation</span>" }}
-            </h1>
-            {% if page_heroes.gallery.subtitle %}
-                <p class="lead font-weight-light opacity-75" style="text-shadow: 0 5px 15px rgba(0,0,0,0.3); max-width: 700px; margin: 0 auto;">
-                    {{ page_heroes.gallery.subtitle }}
-                </p>
-            {% else %}
-                <p class="lead font-weight-light opacity-75" style="text-shadow: 0 5px 15px rgba(0,0,0,0.3); max-width: 700px; margin: 0 auto;">
-                    Explore a curated showcase of our state-of-the-art medical solutions and healthcare breakthrough moments.
-                </p>
-            {% endif %}
+    <!-- Hero Header -->
+    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" 
+             style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ page_heroes.gallery.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-1.jpg' }}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
+        <div class="container py-5">
+            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.gallery.title|default:"Our Gallery" }}</h1>
+            {% if page_heroes.gallery.subtitle %}<p class="lead" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.gallery.subtitle }}</p>{% endif %}
         </div>
-        <!-- Decorative subtle overlay -->
-        <div class="position-absolute w-100 h-100" style="top:0; left:0; background: radial-gradient(circle at center, transparent, rgba(0,0,0,0.4)); pointer-events: none;"></div>
     </section>
 
-    <!-- Modern Gallery Grid -->
-    <section class="py-120 overflow-hidden" style="background: rgba(var(--primary-rgb), 0.02);">
-        <div class="container pb-5">
-            <!-- Filter / Category Section (Placeholder for potential future use) -->
-            <div class="row mb-5 text-center" data-aos="fade-up">
-                <div class="col-12">
-                    <div class="glassmorphism d-inline-flex p-1 shadow-sm border-0" style="border-radius: 50px; background: white;">
-                        <button class="btn btn-primary px-4 py-2 font-weight-bold rounded-pill shadow-sm">All Highlights</button>
-                        <button class="btn btn-link text-muted px-4 py-2 font-weight-bold rounded-pill text-decoration-none hover-text-primary">Medical Tech</button>
-                        <button class="btn btn-link text-muted px-4 py-2 font-weight-bold rounded-pill text-decoration-none hover-text-primary">Facilities</button>
-                        <button class="btn btn-link text-muted px-4 py-2 font-weight-bold rounded-pill text-decoration-none hover-text-primary">Events</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row grid-container">
+    <!-- Gallery Grid -->
+    <section class="py-5 bg-white">
+        <div class="container py-5">
+            <div class="row no-gutters">
                 {% for item in gallery %}
-                <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
-                    <div class="premium-card p-0 overflow-hidden bg-white shadow-2xl h-100 group">
-                        <div class="position-relative overflow-hidden cursor-pointer">
-                            <a href="{{ item.image.url }}" data-fancybox="gallery" data-caption="{{ item.title }}">
-                                <img src="{{ item.image.url }}" class="img-fluid w-100 transition-all duration-500 transform-gpu group-hover-scale-110" 
-                                     style="object-fit: cover; height: 350px;">
-                                
-                                <!-- Premium Hover Overlay -->
-                                <div class="position-absolute w-100 h-100 group-hover-opacity-100 opacity-0 transition-all duration-500 d-flex flex-column justify-content-end p-5" 
-                                     style="top:0; left:0; background: linear-gradient(transparent, rgba(0,0,0,0.9));">
-                                    <div class="transform-gpu translate-y-4 group-hover-translate-y-0 transition-all duration-500 delay-100">
-                                        {% if item.title %}
-                                        <h4 class="text-white font-weight-bold mb-2">{{ item.title }}</h4>
-                                        {% endif %}
-                                        <div class="d-flex align-items-center">
-                                            <span class="smallest text-primary font-weight-bold tracking-widest text-uppercase">Exclusive Showcase</span>
-                                            <div class="ml-auto bg-primary rounded-circle p-2 shadow-lg">
-                                                <i class="fas fa-expand text-white"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
+                <div class="col-lg-3 col-md-4 col-6 p-2">
+                    <div class="overflow-hidden rounded-lg shadow-sm social-hover-box h-100 position-relative" style="border-radius: 20px;">
+                        <a href="{{ item.image.url }}" data-fancybox="gallery">
+                            <img src="{{ item.image.url }}" class="img-fluid w-100 h-100" style="object-fit:cover; transition: transform .3s; min-height: 250px;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        </a>
+                        {% if item.title %}
+                        <div class="position-absolute p-3 text-white w-100" style="bottom:0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); pointer-events: none;">
+                            <h6 class="m-0 font-weight-bold small">{{ item.title }}</h6>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
                 {% empty %}
-                <div class="col-12 text-center py-120">
-                    <div class="opacity-10 mb-4"><i class="fas fa-images display-1"></i></div>
-                    <h5 class="text-muted font-weight-light">The showcase is currently being curated.</h5>
-                    <p class="text-muted small">Quality excellence taking form. Check back soon for our latest updates.</p>
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted h3">Stay tuned for our latest medical products and gallery.</p>
                 </div>
                 {% endfor %}
             </div>
-            
-            <div class="text-center mt-5" data-aos="fade-up">
-                <p class="smallest text-muted font-weight-light">
-                    <i class="fas fa-camera-retro mr-2"></i> All visuals are property of <span class="text-primary font-weight-bold">Demo Store</span> Global Media.
-                </p>
-            </div>
         </div>
     </section>
-
-<style>
-    .group:hover .group-hover-scale-110 { transform: scale(1.1); }
-    .group:hover .group-hover-opacity-100 { opacity: 1 !important; }
-    .group:hover .group-hover-translate-y-0 { transform: translateY(0) !important; }
-    .translate-y-4 { transform: translateY(1.5rem); }
-    .duration-500 { transition-duration: 500ms; }
-    .transform-gpu { will-change: transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-    .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1) !important; }
-    .hover-text-primary:hover { color: var(--primary) !important; }
-</style>
 {% endblock %}

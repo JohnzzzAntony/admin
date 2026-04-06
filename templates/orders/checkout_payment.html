@@ -3,333 +3,236 @@
 
 {% block split_css %}
 <style>
-    .pay-option { 
-        cursor:pointer; 
-        border:2px solid #f0f0f0; 
-        border-radius:20px; 
-        padding:25px 15px; 
-        transition:all .3s cubic-bezier(0.4, 0, 0.2, 1); 
-        background:#fff;
-        position: relative;
-        overflow: hidden;
-    }
-    .pay-option:hover { 
-        border-color:var(--primary); 
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    }
-    .pay-option.selected { 
-        border-color:var(--primary); 
-        background:rgba(var(--primary-rgb), 0.05); 
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    }
-    .pay-option.selected::after {
-        content: '\f058';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        color: var(--primary);
-        font-size: 1.1rem;
-    }
-    .pay-option input[type=radio] { display:none; }
-    .card-input-field { 
-        border-radius:12px; 
-        border:1.5px solid #eee; 
-        padding:15px 18px; 
-        font-size:1rem; 
-        transition:all .2s; 
-        background: #fff;
-    }
-    .card-input-field:focus { 
-        border-color:var(--primary); 
-        box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1); 
-        outline:none; 
-    }
-    .payment-icon { font-size: 2.2rem; margin-bottom: 15px; transition: transform 0.3s; }
-    .pay-option:hover .payment-icon { transform: scale(1.1); }
+.pay-option { cursor:pointer; border:2px solid #dee2e6; border-radius:16px; padding:20px; transition:all .25s; background:#fff; }
+.pay-option:hover { border-color:var(--primary-blue); box-shadow:0 0 0 3px rgba(17,64,132,.1); }
+.pay-option.selected { border-color:var(--primary-blue); background:#f0f6ff; box-shadow:0 0 0 3px rgba(17,64,132,.15); }
+.pay-option input[type=radio] { display:none; }
+.pay-logo { height:32px; object-fit:contain; }
+.card-input-field { border-radius:10px; border:1.5px solid #dee2e6; padding:12px 16px; font-size:0.95rem; transition:border .2s; }
+.card-input-field:focus { border-color:var(--primary-blue); box-shadow:0 0 0 3px rgba(17,64,132,.1); outline:none; }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="py-5 mt-5">
-    <div class="container py-5">
+<section class="py-5 mt-5 bg-light">
+    <div class="container py-4">
 
-        <!-- Enhanced Checkout Steps -->
-        <div class="row justify-content-center mb-5">
-            <div class="col-md-10 col-lg-8">
-                <div class="d-flex align-items-center justify-content-between position-relative px-4">
-                    <div class="step-line position-absolute w-100" style="height: 2px; background: #eee; top: 20px; left: 0; z-index: 1;">
-                        <div class="progress-bar-fill" style="width: 50%; height: 100%; background: var(--primary); transition: width 0.5s;"></div>
+        <!-- Checkout Steps -->
+        <div class="d-flex justify-content-center mb-5">
+            <div class="d-flex align-items-center">
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#28a745;color:#fff;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-check"></i>
                     </div>
-                    
-                    <div class="d-flex flex-column align-items-center position-relative" style="z-index: 2;">
-                        <div class="step-circle bg-success text-white d-flex align-items-center justify-content-center shadow-sm" 
-                             style="width:45px; height:45px; border-radius:50%; font-weight:700; border: 4px solid #fff;">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <span class="mt-2 small font-weight-bold text-success">Billing</span>
-                    </div>
-
-                    <div class="d-flex flex-column align-items-center position-relative" style="z-index: 2;">
-                        <div class="step-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-lg" 
-                             style="width:45px; height:45px; border-radius:50%; font-weight:700; border: 4px solid #fff;">2</div>
-                        <span class="mt-2 small font-weight-bold text-dark">Payment</span>
-                    </div>
-
-                    <div class="d-flex flex-column align-items-center position-relative" style="z-index: 2;">
-                        <div class="step-circle bg-light text-muted d-flex align-items-center justify-content-center" 
-                             style="width:45px; height:45px; border-radius:50%; font-weight:700; border: 4px solid #fff;">3</div>
-                        <span class="mt-2 small font-weight-bold text-muted">Confirmation</span>
-                    </div>
+                    <small class="mt-1 text-success font-weight-bold">Billing</small>
+                </div>
+                <div style="width:80px;height:2px;background:var(--primary-blue);margin:0 8px;margin-bottom:18px;"></div>
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
+                    <small class="mt-1 font-weight-bold text-primary">Payment</small>
+                </div>
+                <div style="width:80px;height:2px;background:#ddd;margin:0 8px;margin-bottom:18px;"></div>
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#ddd;color:#999;display:flex;align-items:center;justify-content:center;font-weight:700;">3</div>
+                    <small class="mt-1 text-muted">Confirmation</small>
                 </div>
             </div>
         </div>
 
         <div class="row">
             <!-- Payment Methods -->
-            <div class="col-lg-8 mb-4">
-                <div class="premium-card border-0 p-4 p-md-5 bg-white h-100" data-aos="fade-up">
-                    <div class="d-flex align-items-center justify-content-between mb-5">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-box mr-3 bg-light p-3 rounded-circle text-primary">
-                                <i class="fas fa-shield-alt fa-lg"></i>
-                            </div>
-                            <h3 class="font-weight-bold mb-0">Secure Payment</h3>
-                        </div>
-                        <div class="d-none d-md-flex align-items-center opacity-75">
-                            <i class="fab fa-cc-visa mx-2 fa-2x text-muted"></i>
-                            <i class="fab fa-cc-mastercard mx-2 fa-2x text-muted"></i>
-                            <i class="fab fa-cc-apple-pay mx-2 fa-2x text-muted"></i>
-                        </div>
-                    </div>
+            <div class="col-lg-7 mb-4">
+                <div class="card border-0 shadow-sm rounded-lg">
+                    <div class="card-body p-4 p-md-5">
+                        <h4 class="font-weight-bold mb-4" style="color:var(--primary-blue);">
+                            <i class="fas fa-credit-card mr-2"></i>Payment Method
+                        </h4>
 
-                    <form method="POST" action="{% url 'orders:checkout_payment' %}" id="payment-form">
-                        {% csrf_token %}
+                        <form method="POST" action="{% url 'orders:checkout_payment' %}" id="payment-form">
+                            {% csrf_token %}
 
-                        <!-- Payment Selection Interface -->
-                        <div class="mb-4">
-                            <label class="form-label font-weight-bold small text-uppercase tracking-wider mb-3">Choose Your Payment Method</label>
-                            <div class="row" id="payment-options">
+                            <!-- Payment Options -->
+                            <div class="row mb-4" id="payment-options">
 
-                                <!-- Credit/Debit Card -->
+                                <!-- Card -->
                                 <div class="col-6 col-md-3 mb-3">
                                     <label class="pay-option w-100 text-center selected" id="opt-card" onclick="selectPayment('card')">
                                         <input type="radio" name="payment_method" value="card" checked>
-                                        <div class="payment-icon text-primary"><i class="fas fa-credit-card"></i></div>
+                                        <i class="fas fa-credit-card fa-2x mb-2" style="color:var(--primary-blue);"></i>
                                         <div class="font-weight-bold small">Card</div>
-                                        <div class="text-muted extra-small">Visa / MC</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Visa / MC</div>
                                     </label>
                                 </div>
 
-                                <!-- Tabby (BNPL) -->
+                                <!-- Tabby -->
                                 <div class="col-6 col-md-3 mb-3">
                                     <label class="pay-option w-100 text-center" id="opt-tabby" onclick="selectPayment('tabby')">
                                         <input type="radio" name="payment_method" value="tabby">
-                                        <div class="payment-icon" style="color:#3eb98f; font-weight:900;">T</div>
+                                        <div class="mb-1" style="height:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#3eb98f;">tabby</div>
                                         <div class="font-weight-bold small">Tabby</div>
-                                        <div class="text-muted extra-small">Split in 4</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">4 payments</div>
                                     </label>
                                 </div>
 
-                                <!-- Tamara (BNPL) -->
+                                <!-- Tamara -->
                                 <div class="col-6 col-md-3 mb-3">
                                     <label class="pay-option w-100 text-center" id="opt-tamara" onclick="selectPayment('tamara')">
                                         <input type="radio" name="payment_method" value="tamara">
-                                        <div class="payment-icon" style="color:#ff6b35; font-weight:900;">T</div>
+                                        <div class="mb-1" style="height:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#ff6b35;">tamara</div>
                                         <div class="font-weight-bold small">Tamara</div>
-                                        <div class="text-muted extra-small">Split in 3</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">3 payments</div>
                                     </label>
                                 </div>
 
-                                <!-- Cash on Delivery -->
+                                <!-- COD -->
                                 <div class="col-6 col-md-3 mb-3">
                                     <label class="pay-option w-100 text-center" id="opt-cod" onclick="selectPayment('cod')">
                                         <input type="radio" name="payment_method" value="cod">
-                                        <div class="payment-icon text-success"><i class="fas fa-wallet"></i></div>
+                                        <i class="fas fa-money-bill-wave fa-2x mb-2" style="color:#28a745;"></i>
                                         <div class="font-weight-bold small">Cash</div>
-                                        <div class="text-muted extra-small">On Delivery</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Pay on delivery</div>
                                     </label>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Card Implementation Details -->
-                        <div id="card-fields" class="mb-4">
-                            <div class="premium-card p-4 p-md-5 bg-light hover-none shadow-none" style="border: 1px solid #eee !important;">
-                                <div class="row">
-                                    <div class="col-12 mb-4">
-                                        <label class="form-label font-weight-bold small text-uppercase tracking-wider">Card Number</label>
-                                        <div class="position-relative">
-                                            <input type="text" name="card_number" class="form-control card-input-field pr-5"
-                                                   placeholder="0000 0000 0000 0000" maxlength="19" id="cardNum">
-                                            <div class="position-absolute" style="top: 50%; right: 20px; transform: translateY(-50%);">
-                                                <i class="fas fa-credit-card text-muted"></i>
-                                            </div>
+                            <!-- Card Fields (shown only when card selected) -->
+                            <div id="card-fields">
+                                <div class="p-4 rounded-lg mb-4" style="background:#f8f9fa;border:1.5px solid #dee2e6;">
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold small">Card Number</label>
+                                        <input type="text" name="card_number" class="form-control card-input-field"
+                                               placeholder="1234 5678 9012 3456" maxlength="19" id="cardNum">
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6 mb-3">
+                                            <label class="font-weight-bold small">Expiry Date</label>
+                                            <input type="text" name="card_expiry" class="form-control card-input-field"
+                                                   placeholder="MM / YY" maxlength="7">
                                         </div>
-                                    </div>
-                                    
-                                    <div class="col-md-6 mb-4">
-                                        <label class="form-label font-weight-bold small text-uppercase tracking-wider">Expiry Date</label>
-                                        <input type="text" name="card_expiry" class="form-control card-input-field"
-                                               placeholder="MM / YY" maxlength="7">
-                                    </div>
-                                    
-                                    <div class="col-md-6 mb-4">
-                                        <label class="form-label font-weight-bold small text-uppercase tracking-wider">Security Code (CVV)</label>
-                                        <div class="position-relative">
+                                        <div class="form-group col-md-6 mb-3">
+                                            <label class="font-weight-bold small">CVV</label>
                                             <input type="password" name="card_cvv" class="form-control card-input-field"
                                                    placeholder="•••" maxlength="4">
-                                            <div class="position-absolute" style="top: 50%; right: 20px; transform: translateY(-50%); cursor: help;" title="The 3 or 4 digit code on the back of your card">
-                                                <i class="fas fa-question-circle text-muted"></i>
-                                            </div>
                                         </div>
                                     </div>
-                                    
-                                    <div class="col-12">
-                                        <label class="form-label font-weight-bold small text-uppercase tracking-wider">Cardholder Name</label>
+                                    <div class="form-group mb-0">
+                                        <label class="font-weight-bold small">Cardholder Name</label>
                                         <input type="text" name="card_name" class="form-control card-input-field"
-                                               placeholder="FULL NAME AS PRINTED ON CARD">
+                                               placeholder="As on card">
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Payment Notices -->
-                        <div id="bnpl-notice" class="premium-card p-4 mb-4 bg-light d-none hover-none shadow-none text-center" style="border: 1px dashed var(--primary) !important;">
-                            <i class="fas fa-clock text-primary fa-2x mb-3 d-block"></i>
-                            <h6 class="font-weight-bold mb-2">Buy Now, Pay Later</h6>
-                            <p class="text-muted small mb-0" id="bnpl-text"></p>
-                        </div>
+                            <!-- BNPL notice -->
+                            <div id="bnpl-notice" class="alert alert-info d-none" style="border-radius:12px;">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <span id="bnpl-text"></span> — You will be redirected to complete your payment after placing the order.
+                            </div>
 
-                        <div id="cod-notice" class="premium-card p-4 mb-4 bg-light d-none hover-none shadow-none text-center" style="border: 1px dashed #28a745 !important;">
-                            <i class="fas fa-truck-loading text-success fa-2x mb-3 d-block"></i>
-                            <h6 class="font-weight-bold mb-2">Cash on Delivery Available</h6>
-                            <p class="text-muted small mb-0">Experience convenience. Pay exactly when you receive your order at your doorstep.</p>
-                        </div>
+                            <!-- COD notice -->
+                            <div id="cod-notice" class="alert alert-success d-none" style="border-radius:12px;">
+                                <i class="fas fa-truck mr-2"></i>
+                                Cash on Delivery — Pay when your order arrives.
+                            </div>
 
-                        <!-- Submit Section -->
-                        <button type="submit" class="btn-theme btn-primary-theme btn-lg btn-block py-4 mt-2" id="submitBtn">
-                            <span id="btnText"><i class="fas fa-lock mr-2"></i>Complete Secure Payment</span>
-                            <span id="btnLoader" class="d-none">
-                                <i class="fas fa-circle-notch fa-spin mr-2"></i>Encrypting Transaction...
-                            </span>
-                        </button>
-
-                        <div class="d-flex align-items-center justify-content-center mt-4 text-muted small">
-                            <i class="fas fa-shield-check text-success mr-2"></i>
-                            Your connection is secured with industry-standard 256-bit SSL encryption.
-                        </div>
-                    </form>
+                            <button type="submit" class="btn btn-primary btn-block py-3 font-weight-bold shadow"
+                                    style="border-radius:30px;background:var(--accent-blue);font-size:1.05rem;">
+                                <i class="fas fa-lock mr-2"></i>Place Order
+                            </button>
+                            <div class="text-center mt-3">
+                                <small class="text-muted"><i class="fas fa-lock mr-1"></i>256-bit SSL encrypted</small>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <!-- Order Confirmation Sidebar -->
-            <div class="col-lg-4">
-                <div class="premium-card border-0 p-4 sticky-top bg-light hover-none shadow-none" style="top:120px; border: 1px dashed rgba(0,0,0,0.1) !important;" data-aos="fade-left">
-                    <div class="mb-4 pb-4 border-bottom">
-                        <h6 class="font-weight-bold text-uppercase tracking-wider small text-muted mb-3">Shipping To</h6>
-                        <div class="premium-card p-3 bg-white hover-none shadow-sm">
-                            <div class="font-weight-bold mb-1">{{ billing.first_name }} {{ billing.last_name }}</div>
-                            <div class="small text-muted">{{ billing.street }}, {{ billing.city }}</div>
-                            <div class="small text-muted font-italic">{{ billing.phone }}</div>
+            <!-- Order Summary -->
+            <div class="col-lg-5">
+                <!-- Billing recap -->
+                <div class="card border-0 shadow-sm rounded-lg mb-3">
+                    <div class="card-body p-4">
+                        <h6 class="font-weight-bold mb-3"><i class="fas fa-map-marker-alt mr-2 text-primary"></i>Delivering to</h6>
+                        <div class="text-muted small">
+                            <strong class="text-dark">{{ billing.first_name }} {{ billing.last_name }}</strong><br>
+                            {{ billing.street }}, {{ billing.city }}, {{ billing.country }}<br>
+                            {{ billing.phone }}
                         </div>
                     </div>
+                </div>
 
-                    <div class="order-recap mb-4">
-                        <h6 class="font-weight-bold text-uppercase tracking-wider small text-muted mb-3">Order Details</h6>
-                        <div class="order-items-scroll pr-2 mb-3" style="max-height: 250px; overflow-y: auto;">
-                            {% for item in cart_items %}
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="{{ item.product.get_image_url }}" class="rounded-lg mr-3" style="width:50px; height:50px; object-fit:contain; background:#fff; border:1px solid #f0f0f0;">
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <div class="font-weight-bold small text-truncate">{{ item.product.name }}</div>
-                                    <div class="text-muted extra-small">x{{ item.quantity }}</div>
-                                </div>
-                                <div class="font-weight-bold small ml-2">{{ item.total_item|floatformat:2 }}</div>
+                <!-- Items -->
+                <div class="card border-0 shadow-sm rounded-lg sticky-top" style="top:100px;">
+                    <div class="card-header bg-white border-0 pt-4">
+                        <h5 class="font-weight-bold">Order Summary</h5>
+                    </div>
+                    <div class="card-body p-4 pt-0">
+                        {% for item in cart_items %}
+                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                            <img src="{{ item.product.get_image_url }}" style="width:50px;height:50px;object-fit:contain;border-radius:8px;border:1px solid #eee;" class="mr-3">
+                            <div class="flex-grow-1">
+                                <div class="font-weight-bold small">{{ item.product.name|truncatechars:32 }}</div>
+                                <div class="text-muted small">Qty: {{ item.quantity }}</div>
                             </div>
-                            {% endfor %}
+                            <div class="font-weight-bold small">{{ item.total_item }} AED</div>
                         </div>
-                    </div>
-
-                    <div class="totals-box p-3 rounded-lg bg-white shadow-sm">
+                        {% endfor %}
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted small">Subtotal</span>
-                            <span class="font-weight-bold text-dark small">{{ subtotal|floatformat:2 }} AED</span>
+                            <span class="small font-weight-bold">{{ subtotal|floatformat:2 }} AED</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
-                            <span class="text-muted small">Estimate Shipping</span>
+                        <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                            <span class="text-muted small">Shipping</span>
                             {% if total_shipping > 0 %}
-                            <span class="font-weight-bold text-dark small">+{{ total_shipping|floatformat:2 }} AED</span>
+                            <span class="small font-weight-bold">{{ total_shipping|floatformat:2 }} AED</span>
                             {% else %}
-                            <span class="font-weight-bold text-success text-uppercase" style="font-size: 10px;">Free</span>
+                            <span class="small font-weight-bold text-success">FREE</span>
                             {% endif %}
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <strong class="h5 mb-0 font-weight-bold text-dark">Grand Total</strong>
-                            <strong class="text-primary h3 mb-0 font-weight-bold">{{ grand_total|floatformat:2 }} <span class="extra-small font-weight-normal">AED</span></strong>
+                        <div class="d-flex justify-content-between">
+                            <strong class="text-dark">Total</strong>
+                            <strong class="text-primary h5 mb-0" id="pay-total">{{ grand_total|floatformat:2 }} AED</strong>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </section>
 
 <script>
-    function selectPayment(method) {
-        ['card','tabby','tamara','cod'].forEach(function(m){
-            const opt = document.getElementById('opt-'+m);
-            if(opt) opt.classList.remove('selected');
-            const radio = document.querySelector('#opt-'+m+' input');
-            if(radio) radio.checked = false;
-        });
-        
-        const selectedOpt = document.getElementById('opt-'+method);
-        if(selectedOpt) selectedOpt.classList.add('selected');
-        const selectedRadio = document.querySelector('#opt-'+method+' input');
-        if(selectedRadio) selectedRadio.checked = true;
+function selectPayment(method) {
+    ['card','tabby','tamara','cod'].forEach(function(m){
+        document.getElementById('opt-'+m).classList.remove('selected');
+        document.querySelector('#opt-'+m+' input').checked = false;
+    });
+    document.getElementById('opt-'+method).classList.add('selected');
+    document.querySelector('#opt-'+method+' input').checked = true;
 
-        document.getElementById('card-fields').style.display  = method === 'card'  ? '' : 'none';
-        
-        const bnplNotice = document.getElementById('bnpl-notice');
-        if(bnplNotice) bnplNotice.classList.toggle('d-none', !['tabby','tamara'].includes(method));
-        
-        const codNotice = document.getElementById('cod-notice');
-        if(codNotice) codNotice.classList.toggle('d-none',  method !== 'cod');
+    document.getElementById('card-fields').style.display  = method === 'card'  ? '' : 'none';
+    document.getElementById('bnpl-notice').classList.toggle('d-none', !['tabby','tamara'].includes(method));
+    document.getElementById('cod-notice').classList.toggle('d-none',  method !== 'cod');
 
-        const bnplText = document.getElementById('bnpl-text');
-        if(method === 'tabby' && bnplText)  bnplText.textContent = 'Shop now and pay later. Just choose Tabby at checkout to split your purchase into 4 interest-free payments.';
-        if(method === 'tamara' && bnplText) bnplText.textContent = 'Shop now and split your payments into 3 easy installments with Tamara. Completely interest-free.';
-    }
+    if(method === 'tabby')  document.getElementById('bnpl-text').textContent = 'Split into 4 interest-free payments with Tabby';
+    if(method === 'tamara') document.getElementById('bnpl-text').textContent = 'Split into 3 easy payments with Tamara';
+}
 
-    // Card number formatting
-    const cardInput = document.getElementById('cardNum');
-    if(cardInput) {
-        cardInput.addEventListener('input', function(e){
-            var v = e.target.value.replace(/\s+/g,'').replace(/[^0-9]/gi,'');
-            var parts = [];
-            for(var i=0, len=v.length; i<len; i+=4) parts.push(v.substring(i, i+4));
-            e.target.value = parts.length ? parts.join(' ') : v;
-        });
-    }
+// Card number formatting
+document.getElementById('cardNum').addEventListener('input', function(e){
+    var v = e.target.value.replace(/\s+/g,'').replace(/[^0-9]/gi,'');
+    var matches = v.match(/\d{4,16}/g);
+    var match = matches && matches[0] || '';
+    var parts = [];
+    for(var i=0, len=match.length; i<len; i+=4) parts.push(match.substring(i, i+4));
+    e.target.value = parts.length ? parts.join(' ') : v;
+});
 
-    // Form submission processing
-    const paymentForm = document.getElementById('payment-form');
-    if(paymentForm) {
-        paymentForm.onsubmit = function() {
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('btnText').classList.add('d-none');
-            document.getElementById('btnLoader').classList.remove('d-none');
-        };
-    }
+// Total (Server-side rendered grand_total is preferred)
+document.addEventListener('DOMContentLoaded', function() {
+    var grandTotal = {{ grand_total|default:0 }};
+    var el = document.getElementById('pay-total');
+    if(el) el.textContent = grandTotal.toFixed(2) + ' AED';
+});
 </script>
-
-<style>
-    .extra-small { font-size: 0.75rem; }
-    .tracking-wider { letter-spacing: 0.05em; }
-    .order-items-scroll::-webkit-scrollbar { width: 4px; }
-    .order-items-scroll::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
-</style>
 {% endblock %}

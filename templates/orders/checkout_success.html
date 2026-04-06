@@ -2,81 +2,69 @@
 {% load static %}
 
 {% block content %}
-<section class="py-5 mt-5 position-relative overflow-hidden" style="background: rgba(var(--primary-rgb), 0.03);">
+<section class="py-5 mt-5 bg-light">
     <div class="container py-5">
 
-        <!-- Steps - Completion State -->
-        <div class="d-flex justify-content-center mb-5" data-aos="fade-down">
+        <!-- Steps - all complete -->
+        <div class="d-flex justify-content-center mb-5">
             <div class="d-flex align-items-center">
                 <div class="d-flex flex-column align-items-center">
-                    <div class="bg-success text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                        <i class="fas fa-check small"></i>
+                    <div style="width:40px;height:40px;border-radius:50%;background:#28a745;color:#fff;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-check"></i>
                     </div>
-                    <small class="mt-2 text-success font-weight-bold smallest tracking-widest text-uppercase">Identification</small>
+                    <small class="mt-1 text-success font-weight-bold">Billing</small>
                 </div>
-                <div class="mx-3 mb-4 bg-success opacity-50" style="width: 60px; height: 2px;"></div>
+                <div style="width:80px;height:2px;background:#28a745;margin:0 8px;margin-bottom:18px;"></div>
                 <div class="d-flex flex-column align-items-center">
-                    <div class="bg-success text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                        <i class="fas fa-check small"></i>
+                    <div style="width:40px;height:40px;border-radius:50%;background:#28a745;color:#fff;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-check"></i>
                     </div>
-                    <small class="mt-2 text-success font-weight-bold smallest tracking-widest text-uppercase">Execution</small>
+                    <small class="mt-1 text-success font-weight-bold">Payment</small>
                 </div>
-                <div class="mx-3 mb-4 bg-success opacity-50" style="width: 60px; height: 2px;"></div>
+                <div style="width:80px;height:2px;background:#28a745;margin:0 8px;margin-bottom:18px;"></div>
                 <div class="d-flex flex-column align-items-center">
-                    <div class="bg-success text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                        <i class="fas fa-check small"></i>
+                    <div style="width:40px;height:40px;border-radius:50%;background:#28a745;color:#fff;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-check"></i>
                     </div>
-                    <small class="mt-2 text-success font-weight-bold smallest tracking-widest text-uppercase">Confirmation</small>
+                    <small class="mt-1 text-success font-weight-bold">Confirmation</small>
                 </div>
             </div>
         </div>
 
         <div class="row justify-content-center">
-            <div class="col-lg-6 text-center" data-aos="zoom-in" data-aos-delay="200">
-                <div class="premium-card p-5 bg-white border-0 shadow-2xl">
-                    <div class="mb-5">
-                        <div class="bg-success-soft text-success rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 100px; height: 100px;">
-                            <i class="fas fa-check-circle display-3"></i>
+            <div class="col-lg-6 text-center">
+                <div class="card border-0 shadow-sm rounded-lg p-5">
+                    <div class="mb-4">
+                        <div style="width:80px;height:80px;border-radius:50%;background:#28a745;color:#fff;font-size:2rem;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                            <i class="fas fa-check"></i>
                         </div>
                     </div>
-                    <h2 class="display-4 font-weight-bold mb-3 text-dark">Investment Secure!</h2>
-                    <p class="text-muted mb-5 font-weight-light">
-                        Thank you, <span class="font-weight-bold text-dark">{{ order.first_name }}</span>. Your medical procurement has been successfully logged.<br>
-                        A confirmation matrix has been dispatched to <span class="font-weight-bold text-primary">{{ order.email }}</span>.
+                    <h3 class="font-weight-bold mb-2" style="color:var(--primary-blue);">Order Placed!</h3>
+                    <p class="text-muted mb-4">
+                        Thank you, <strong>{{ enquiry.first_name }}</strong>! Your order has been received.<br>
+                        We'll contact you at <strong>{{ enquiry.email }}</strong> to confirm.
                     </p>
-                    
-                    <div class="glassmorphism p-4 border-light mb-5 text-left">
-                        <div class="d-flex justify-content-between mb-3 align-items-center">
-                            <span class="text-muted smallest font-weight-bold text-uppercase tracking-widest">Order Reference</span>
-                            <span class="font-weight-bold text-dark">#{{ order.id }}</span>
+                    <div class="p-3 rounded-lg mb-4" style="background:#f8f9fa;">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Order Reference</span>
+                            <strong>#{{ enquiry.id }}</strong>
                         </div>
-                        <div class="d-flex justify-content-between mb-3 align-items-center">
-                            <span class="text-muted smallest font-weight-bold text-uppercase tracking-widest">Settlement Method</span>
-                            <span class="font-weight-bold text-dark text-uppercase smallest tracking-wide">{{ order.payment_method }}</span>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Payment Method</span>
+                            <strong>{{ payment_method|default:"Card" }}</strong>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted smallest font-weight-bold text-uppercase tracking-widest">Current Status</span>
-                            <span class="badge badge-soft-warning px-3 py-1 font-weight-bold text-uppercase smallest tracking-widest">{{ order.status|title }}</span>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">Status</span>
+                            <span class="badge badge-warning px-3 py-2" style="border-radius:20px;">Processing</span>
                         </div>
                     </div>
-
-                    <div class="d-grid gap-3">
-                        <a href="{% url 'products:product_list' %}" class="btn-theme btn-primary-theme btn-lg btn-block py-4 shadow-lg font-weight-bold">
-                            <i class="fas fa-arrow-left mr-3"></i> Explore Further Solutions
-                        </a>
-                        <p class="mt-4 smallest text-muted font-weight-light">
-                            <i class="fas fa-info-circle mr-2"></i> Our logistics team will contact you within 24 hours for delivery scheduling.
-                        </p>
-                    </div>
+                    <a href="{% url 'products:category_index' %}" class="btn btn-primary btn-block py-3 font-weight-bold"
+                       style="border-radius:30px;background:var(--accent-blue);">
+                        <i class="fas fa-arrow-left mr-2"></i>Continue Shopping
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-<style>
-    .bg-success-soft { background: rgba(40, 167, 69, 0.05); }
-    .badge-soft-warning { background: rgba(255, 193, 7, 0.1); color: #856404; border-radius: 6px; }
-    .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important; }
-</style>
 {% endblock %}

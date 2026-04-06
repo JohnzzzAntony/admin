@@ -34,7 +34,6 @@ DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
     'admin.creativegradientz.com', 
-    'ecom.creativegradientz.com', 
     'creativegradientz.com', 
     'localhost', 
     '127.0.0.1',
@@ -43,7 +42,6 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
 
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
     'https://admin.creativegradientz.com',
-    'https://ecom.creativegradientz.com',
     'https://creativegradientz.com',
     'https://admin-production-dac3.up.railway.app',
     'https://*.up.railway.app'
@@ -128,17 +126,12 @@ TEMPLATES = [
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
-            'builtins': [
-                'core.templatetags.custom_filters',
-            ],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'core.context_processors.theme_context',
                 'core.context_processors.site_settings', # Global access to settings
-                'core.context_processors.page_heroes',   # Page Hero Banner Settings
                 'orders.context_processors.cart_count', # New Cart Counter
             ],
         },
@@ -213,11 +206,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Cloudinary Storage for Media Files in Production
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME', default='dltest'),
-    'API_KEY': env('CLOUDINARY_API_KEY', default='1234567'),
-    'API_SECRET': env('CLOUDINARY_API_SECRET', default='secretkey'),
-}
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
@@ -231,11 +219,11 @@ CKEDITOR_IMAGE_BACKEND = "pillow"
 
 # Jazzmin Admin Theme Configuration
 JAZZMIN_SETTINGS = {
-    "site_title": "Demo Admin",
-    "site_header": "Demo Admin",
-    "site_brand": "Demo",
+    "site_title": "JKR International Admin",
+    "site_header": "JKR Admin",
+    "site_brand": "JKR Joy, Knowhow, Responsibility",
     "site_logo": "assets/logo.png",
-    "welcome_sign": "Welcome to Management System",
+    "welcome_sign": "Welcome to JKR Management System",
     "search_model": ["products.Product", "blog.Post"],
     "show_ui_builder": False,
     "changeform_format": "horizontal_tabs",

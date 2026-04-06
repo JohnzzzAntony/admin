@@ -2,187 +2,145 @@
 {% load static %}
 
 {% block content %}
-<section class="py-5 mt-5">
-    <div class="container py-5">
+<section class="py-5 mt-5 bg-light">
+    <div class="container py-4">
 
-        <!-- Enhanced Checkout Steps -->
-        <div class="row justify-content-center mb-5">
-            <div class="col-md-10 col-lg-8">
-                <div class="d-flex align-items-center justify-content-between position-relative px-4">
-                    <div class="step-line position-absolute w-100" style="height: 2px; background: #eee; top: 20px; left: 0; z-index: 1;">
-                        <div class="progress-bar-fill" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.5s;"></div>
-                    </div>
-                    
-                    <div class="d-flex flex-column align-items-center position-relative" style="z-index: 2;">
-                        <div class="step-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-lg" 
-                             style="width:45px; height:45px; border-radius:50%; font-weight:700; border: 4px solid #fff;">1</div>
-                        <span class="mt-2 small font-weight-bold text-dark">Billing</span>
-                    </div>
-
-                    <div class="d-flex flex-column align-items-center position-relative" style="z-index: 2;">
-                        <div class="step-circle bg-light text-muted d-flex align-items-center justify-content-center" 
-                             style="width:45px; height:45px; border-radius:50%; font-weight:700; border: 4px solid #fff;">2</div>
-                        <span class="mt-2 small font-weight-bold text-muted">Payment</span>
-                    </div>
-
-                    <div class="d-flex flex-column align-items-center position-relative" style="z-index: 2;">
-                        <div class="step-circle bg-light text-muted d-flex align-items-center justify-content-center" 
-                             style="width:45px; height:45px; border-radius:50%; font-weight:700; border: 4px solid #fff;">3</div>
-                        <span class="mt-2 small font-weight-bold text-muted">Confirmation</span>
-                    </div>
+        <!-- Checkout Steps -->
+        <div class="d-flex justify-content-center mb-5">
+            <div class="d-flex align-items-center">
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">1</div>
+                    <small class="mt-1 font-weight-bold text-primary">Billing</small>
+                </div>
+                <div style="width:80px;height:2px;background:#ddd;margin:0 8px;margin-bottom:18px;"></div>
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#ddd;color:#999;display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
+                    <small class="mt-1 text-muted">Payment</small>
+                </div>
+                <div style="width:80px;height:2px;background:#ddd;margin:0 8px;margin-bottom:18px;"></div>
+                <div class="d-flex flex-column align-items-center">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#ddd;color:#999;display:flex;align-items:center;justify-content:center;font-weight:700;">3</div>
+                    <small class="mt-1 text-muted">Confirmation</small>
                 </div>
             </div>
         </div>
 
         <div class="row">
             <!-- Billing Form -->
-            <div class="col-lg-8 mb-4">
-                <div class="premium-card border-0 p-4 p-md-5 bg-white h-100" data-aos="fade-right">
-                    <div class="d-flex align-items-center mb-5">
-                        <div class="icon-box mr-3 bg-light p-3 rounded-circle text-primary">
-                            <i class="fas fa-map-marker-alt fa-lg"></i>
-                        </div>
-                        <h3 class="font-weight-bold mb-0">Billing Details</h3>
+            <div class="col-lg-7 mb-4">
+                <div class="card border-0 shadow-sm rounded-lg">
+                    <div class="card-body p-4 p-md-5">
+                        <h4 class="font-weight-bold mb-4" style="color:var(--primary-blue);">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Billing Address
+                        </h4>
+                        <form method="POST" action="{% url 'orders:checkout_billing' %}">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small">First Name *</label>
+                                    <input type="text" name="first_name" class="form-control rounded-pill px-4 py-3"
+                                           value="{% if form_data.first_name %}{{ form_data.first_name }}{% elif user.is_authenticated %}{{ user.first_name }}{% endif %}" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small">Last Name *</label>
+                                    <input type="text" name="last_name" class="form-control rounded-pill px-4 py-3"
+                                           value="{% if form_data.last_name %}{{ form_data.last_name }}{% elif user.is_authenticated %}{{ user.last_name }}{% endif %}" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small">Email Address *</label>
+                                    <input type="email" name="email" class="form-control rounded-pill px-4 py-3"
+                                           value="{% if form_data.email %}{{ form_data.email }}{% elif user.is_authenticated %}{{ user.email }}{% endif %}" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small">Phone Number *</label>
+                                    <input type="tel" name="phone" class="form-control rounded-pill px-4 py-3"
+                                           placeholder="+971..." value="{{ form_data.phone|default:'' }}" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold small">Company / Department</label>
+                                <input type="text" name="department" class="form-control rounded-pill px-4 py-3"
+                                       value="{{ form_data.department|default:'' }}">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small">Country *</label>
+                                    <input type="text" name="country" class="form-control rounded-pill px-4 py-3"
+                                           value="{{ form_data.country|default:'UAE' }}" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small">City *</label>
+                                    <input type="text" name="city" class="form-control rounded-pill px-4 py-3"
+                                           value="{{ form_data.city|default:'' }}" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold small">Street Address</label>
+                                <input type="text" name="street" class="form-control rounded-pill px-4 py-3"
+                                       value="{{ form_data.street|default:'' }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold small">Order Notes (Optional)</label>
+                                <textarea name="comment" class="form-control px-4 py-3" rows="3"
+                                          style="border-radius:15px;">{{ form_data.comment|default:'' }}</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block py-3 mt-2 font-weight-bold shadow"
+                                    style="border-radius:30px;background:var(--accent-blue);font-size:1.05rem;">
+                                Continue to Payment <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </form>
                     </div>
-
-                    <form method="POST" action="{% url 'orders:checkout_billing' %}" class="premium-form">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label font-weight-bold small text-uppercase tracking-wider">First Name <span class="text-danger">*</span></label>
-                                <input type="text" name="first_name" class="form-control premium-input"
-                                       value="{% if form_data.first_name %}{{ form_data.first_name }}{% elif user.is_authenticated %}{{ user.first_name }}{% endif %}" required>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label font-weight-bold small text-uppercase tracking-wider">Last Name <span class="text-danger">*</span></label>
-                                <input type="text" name="last_name" class="form-control premium-input"
-                                       value="{% if form_data.last_name %}{{ form_data.last_name }}{% elif user.is_authenticated %}{{ user.last_name }}{% endif %}" required>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label font-weight-bold small text-uppercase tracking-wider">Email Address <span class="text-danger">*</span></label>
-                                <input type="email" name="email" class="form-control premium-input"
-                                       value="{% if form_data.email %}{{ form_data.email }}{% elif user.is_authenticated %}{{ user.email }}{% endif %}" required>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label font-weight-bold small text-uppercase tracking-wider">Phone Number <span class="text-danger">*</span></label>
-                                <input type="tel" name="phone" class="form-control premium-input"
-                                       placeholder="+971..." value="{{ form_data.phone|default:'' }}" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label font-weight-bold small text-uppercase tracking-wider">Company / Department</label>
-                            <input type="text" name="department" class="form-control premium-input"
-                                   value="{{ form_data.department|default:'' }}">
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label font-weight-bold small text-uppercase tracking-wider">Country <span class="text-danger">*</span></label>
-                                <input type="text" name="country" class="form-control premium-input"
-                                       value="{{ form_data.country|default:'United Arab Emirates' }}" required>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label font-weight-bold small text-uppercase tracking-wider">City <span class="text-danger">*</span></label>
-                                <input type="text" name="city" class="form-control premium-input"
-                                       value="{{ form_data.city|default:'' }}" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label font-weight-bold small text-uppercase tracking-wider">Street Address <span class="text-danger">*</span></label>
-                            <input type="text" name="street" class="form-control premium-input"
-                                   value="{{ form_data.street|default:'' }}" required>
-                        </div>
-
-                        <div class="mb-5">
-                            <label class="form-label font-weight-bold small text-uppercase tracking-wider">Order Notes (Optional)</label>
-                            <textarea name="comment" class="form-control premium-input" rows="4">{{ form_data.comment|default:'' }}</textarea>
-                        </div>
-
-                        <button type="submit" class="btn-theme btn-primary-theme btn-lg btn-block py-4 mt-2">
-                            Securely Continue to Payment <i class="fas fa-lock ml-2 ml-md-3"></i>
-                        </button>
-                    </form>
                 </div>
             </div>
 
-            <!-- Enhanced Order Summary -->
-            <div class="col-lg-4">
-                <div class="premium-card border-0 p-4 sticky-top bg-light hover-none shadow-none" style="top:120px; border: 1px dashed rgba(0,0,0,0.1) !important;" data-aos="fade-left">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h5 class="font-weight-bold mb-0">Your Order Summary</h5>
-                        <span class="badge badge-primary px-2 py-1 rounded-pill">{{ cart_items|length }} Items</span>
+            <!-- Order Summary Sidebar -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-lg sticky-top" style="top:100px;">
+                    <div class="card-header bg-white border-0 pt-4">
+                        <h5 class="font-weight-bold">Your Order</h5>
                     </div>
-                    
-                    <div class="order-items-scroll pr-2 mb-4" style="max-height: 350px; overflow-y: auto;">
+                    <div class="card-body p-4 pt-0">
                         {% for item in cart_items %}
-                        <div class="d-flex align-items-center mb-4 pb-2 border-bottom border-white">
-                            <div class="position-relative">
-                                <img src="{{ item.product.get_image_url }}" style="width:65px; height:65px; object-fit:contain;" class="premium-card p-1 bg-white mr-3">
-                                <span class="position-absolute badge badge-dark rounded-circle d-flex align-items-center justify-content-center" 
-                                      style="top: -5px; right: 10px; width: 22px; height: 22px; font-size: 10px; z-index: 2;">{{ item.quantity }}</span>
+                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                            <img src="{{ item.product.get_image_url }}" style="width:55px;height:55px;object-fit:contain;border-radius:8px;border:1px solid #eee;" class="mr-3">
+                            <div class="flex-grow-1">
+                                <div class="font-weight-bold small text-dark">{{ item.product.name|truncatechars:35 }}</div>
+                                <div class="text-muted small">Qty: {{ item.quantity }}</div>
                             </div>
-                            <div class="flex-grow-1 overflow-hidden">
-                                <div class="font-weight-bold small text-dark text-truncate">{{ item.product.name }}</div>
-                                <div class="text-muted extra-small">{{ item.sku.title|default:"Standard" }}</div>
-                            </div>
-                            <div class="font-weight-bold text-primary ml-2">{{ item.total_item|floatformat:2 }} <span class="extra-small">AED</span></div>
+                            <div class="font-weight-bold small">{{ item.total_item }} AED</div>
                         </div>
                         {% endfor %}
-                    </div>
-
-                    <div class="totals-box p-3 rounded-lg bg-white shadow-sm">
-                        <div class="d-flex justify-content-between mb-3">
+                        <div class="d-flex justify-content-between mb-2 mt-2">
                             <span class="text-muted small">Subtotal</span>
-                            <span class="font-weight-bold text-dark">{{ subtotal|floatformat:2 }} <span class="small">AED</span></span>
+                            <span class="small font-weight-bold">{{ subtotal|floatformat:2 }} AED</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted small">Shipping Charge</span>
+                        <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                            <span class="text-muted small">Shipping</span>
                             {% if total_shipping > 0 %}
-                            <span class="font-weight-bold text-dark">+{{ total_shipping|floatformat:2 }} <span class="small">AED</span></span>
+                            <span class="small font-weight-bold">{{ total_shipping|floatformat:2 }} AED</span>
                             {% else %}
-                            <span class="font-weight-bold text-success text-uppercase small">Free Shipping</span>
+                            <span class="small font-weight-bold text-success">FREE</span>
                             {% endif %}
                         </div>
-                        <hr class="border-light my-3">
-                        <div class="d-flex justify-content-between align-items-end mt-4">
-                            <div>
-                                <strong class="h4 mb-0 text-dark font-weight-bold">Total</strong>
-                                <p class="extra-small text-muted mb-0 mt-1">Including VAT where applicable</p>
-                            </div>
-                            <strong class="text-primary h2 mb-0 font-weight-bold" id="billing-total">{{ grand_total|floatformat:2 }} <span class="extra-small font-weight-normal">AED</span></strong>
+                        <div class="d-flex justify-content-between">
+                            <strong class="text-dark">Total</strong>
+                            <strong class="text-primary h5 mb-0" id="billing-total">{{ grand_total|floatformat:2 }} AED</strong>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </section>
 
-<style>
-    .premium-input {
-        border-radius: var(--radius);
-        padding: 14px 20px;
-        background: #fdfdfd;
-        border: 1.5px solid #eee;
-        transition: var(--transition);
-        font-size: 0.95rem;
-    }
-    .premium-input:focus {
-        background: #fff;
-        border-color: var(--primary);
-        box-shadow: 0 0 15px rgba(0,0,0,0.03);
-    }
-    .extra-small { font-size: 0.75rem; }
-    .tracking-wider { letter-spacing: 0.05em; }
-    
-    /* Scrollbar Styling */
-    .order-items-scroll::-webkit-scrollbar { width: 4px; }
-    .order-items-scroll::-webkit-scrollbar-track { background: transparent; }
-    .order-items-scroll::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
-</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const grandTotal = parseFloat("{{ grand_total|default:0 }}");
+    const el = document.getElementById('billing-total');
+    if(el) el.textContent = grandTotal.toFixed(2) + ' AED';
+});
+</script>
 {% endblock %}

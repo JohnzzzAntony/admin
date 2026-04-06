@@ -2,44 +2,41 @@
 {% load static %}
 
 {% block content %}
-    <!-- Modern Hero Header -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white jarallax" 
-             style="min-height: 50vh; display: flex; align-items: center; justify-content: center; background: #000;">
-        <div class="position-absolute w-100 h-100" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ page_heroes.about.get_hero_url|default:'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053&auto=format&fit=crop' }}'); background-size: cover; background-position: center; z-index: -1;"></div>
-        <div class="container py-5" data-aos="zoom-out">
-            <h1 class="display-2 font-weight-bold mb-3" style="text-shadow: 0 10px 30px rgba(0,0,0,0.5);">{{ page_heroes.about.title|default:"About Us" }}</h1>
-            {% if page_heroes.about.subtitle %}<p class="lead mb-0 opacity-75 mx-auto" style="max-width: 700px; font-weight: 300; letter-spacing: 1px;">{{ page_heroes.about.subtitle }}</p>{% endif %}
+    <!-- Hero Header -->
+    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white" 
+             style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ page_heroes.about.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
+        <div class="container py-5">
+            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.about.title|default:"About Us" }}</h1>
+            {% if page_heroes.about.subtitle %}<p class="lead" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.about.subtitle }}</p>{% endif %}
         </div>
     </section>
 
-    <!-- About Content Section -->
-    <section class="py-5">
+    <!-- About Section -->
+    <section class="py-5 bg-white">
         <div class="container py-5">
             {% if about_us %}
             <div class="row align-items-center">
-                <div class="col-lg-6 pr-lg-5 mb-5 mb-lg-0" data-aos="fade-right">
-                    <span class="text-primary font-weight-bold text-uppercase tracking-widest mb-3 d-block" style="letter-spacing: 3px;">Reliability & Excellence</span>
-                    <h2 class="display-4 font-weight-bold mb-4">{{ about_us.heading }}</h2>
-                    <div class="lead text-muted mb-4" style="line-height: 1.8; font-weight: 300;">
+                <div class="col-lg-6 pr-lg-5 mb-5 mb-lg-0">
+                    <h2 class="display-4 font-weight-bold mb-4" style="color: var(--primary-blue)">{{ about_us.heading }}</h2>
+                    <div class="lead text-muted mb-4" style="line-height: 1.8;">
                         {{ about_us.content|safe }}
                     </div>
                 </div>
-                
-                <div class="col-lg-6" data-aos="fade-left">
+                <div class="col-lg-6">
                     <div class="row">
                         <div class="col-12 mb-4">
                             {% if mission %}
-                            <div class="premium-card p-5 h-100 bg-primary text-white border-0 shadow-lg">
-                                <h3 class="mb-4 font-weight-bold"><i class="fas fa-bullseye mr-3"></i>Our Mission</h3>
-                                <p class="lead mb-0 opacity-90 font-weight-light">{{ mission.content }}</p>
+                            <div class="card border-0 shadow-lg p-5 h-100" style="border-radius: 30px; background-color: var(--primary-blue); color: #fff;">
+                                <h2 class="mb-4">Our Mission</h2>
+                                <p class="lead">{{ mission.content }}</p>
                             </div>
                             {% endif %}
                         </div>
                         <div class="col-12">
                             {% if vision %}
-                            <div class="premium-card p-5 h-100 bg-white border-0 shadow-lg" style="border-left: 5px solid var(--primary) !important;">
-                                <h3 class="mb-4 font-weight-bold text-primary"><i class="fas fa-eye mr-3"></i>Our Vision</h3>
-                                <p class="lead mb-0 text-muted font-weight-light">{{ vision.content }}</p>
+                            <div class="card border-0 shadow-lg p-5 h-100" style="border-radius: 30px; border: 2px solid var(--primary-blue); color: var(--primary-blue);">
+                                <h2 class="mb-4">Our Vision</h2>
+                                <p class="lead">{{ vision.content }}</p>
                             </div>
                             {% endif %}
                         </div>
@@ -47,13 +44,11 @@
                 </div>
             </div>
             {% else %}
-            <div class="text-center py-5" data-aos="fade-up">
-                <h3 class="font-weight-bold mb-3">Welcome to Demo Store</h3>
-                <p class="text-muted lead">Embarking on a journey of medical excellence. Content coming soon.</p>
-                <a href="/" class="btn-theme btn-primary-theme px-5 py-3 mt-3">Return Home</a>
+            <div class="text-center py-5">
+                <h3>Welcome to JKR International</h3>
+                <p>Please update "About Us" content in the backend.</p>
             </div>
             {% endif %}
         </div>
     </section>
-{% endblock %}
 {% endblock %}

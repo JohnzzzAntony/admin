@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation, FrontendDesign
+from .models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation
 
 @admin.register(StoreLocation)
 class StoreLocationAdmin(admin.ModelAdmin):
@@ -88,29 +88,3 @@ class SocialPostAdmin(admin.ModelAdmin):
     list_display = ('id', 'order')
     list_editable = ('order',)
     fields = (('image', 'image_url'), 'link', 'order')
-
-
-@admin.register(FrontendDesign)
-class FrontendDesignAdmin(admin.ModelAdmin):
-    list_display = ('__str__',)
-    fieldsets = (
-        ('Theme Colors', {
-            'fields': (('primary_color', 'secondary_color', 'accent_color'), ('bg_light', 'bg_dark'), ('text_main', 'text_muted'))
-        }),
-        ('Typography', {
-            'fields': (('body_font_family', 'heading_font_family'), 'base_font_size')
-        }),
-        ('Component Styles', {
-            'fields': (('border_radius', 'button_style'), 'card_shadow', 'glassmorphism')
-        }),
-        ('Motion & Animation', {
-            'fields': (('enable_aos', 'animation_duration'), 'page_transitions')
-        }),
-        ('UI State', {
-            'fields': ('dark_mode_default',)
-        }),
-    )
-
-    def has_add_permission(self, request):
-        # Only allow one configuration object
-        return not FrontendDesign.objects.exists()
