@@ -138,6 +138,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.theme_context',
                 'core.context_processors.site_settings', # Global access to settings
+                'core.context_processors.page_heroes',   # Page Hero Banner Settings
                 'orders.context_processors.cart_count', # New Cart Counter
             ],
         },
