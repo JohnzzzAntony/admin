@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'import_export',
+    'rest_framework', # Added for Category API
 
     # Custom apps
     'accounts',
