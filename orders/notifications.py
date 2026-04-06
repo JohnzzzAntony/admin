@@ -27,18 +27,33 @@ def send_customer_notification(order, is_automated=True):
 
         # 1. Email Channel
         if site_config.enable_email_notifications:
-            try:
-                subject = f"Order #{order_id} Update — {status_label}"
-                send_mail(
-                    subject,
-                    message_body,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [order.email],
-                    fail_silently=False,
-                )
-                logger.info(f"Email sent for order {order_id}")
-            except Exception as e:
-                logger.error(f"Email failure: {e}")
+            import threading
+            
+            def send_async_email(subject, message, to_email):
+                try:
+                    # Resolve from_email - ensure it's a real email, not a config key string
+                    from_email = settings.DEFAULT_FROM_EMAIL
+                    if from_email == 'EMAIL_HOST_USER':
+                        from_email = settings.EMAIL_HOST_USER
+
+                    send_mail(
+                        subject,
+                        message,
+                        from_email,
+                        [to_email],
+                        fail_silently=True, # Critical: never block main thread
+                    )
+                    logger.info(f"Email sent for order {order_id}")
+                except Exception as e:
+                    logger.error(f"Email failure: {e}")
+
+            # Start notification in background
+            email_thread = threading.Thread(
+                target=send_async_email,
+                args=(f"Order #{order_id} Update — {status_label}", message_body, order.email)
+            )
+            email_thread.daemon = True
+            email_thread.start()
 
         # 2. SMS Channel (Stub)
         if site_config.enable_sms_notifications:

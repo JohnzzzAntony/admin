@@ -55,9 +55,9 @@ class AttributeAdmin(admin.ModelAdmin):
 # ─── Product ─────────────────────────────────────────────────────────────────
 
 @admin.register(Product)
-class ProductAdmin(ImportExportModelAdmin):
-    resource_class = ProductResource
+class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'is_active', 'stock_status')
+
     search_fields = ('name', 'meta_title', 'meta_keywords')
     readonly_fields = ('slug', 'product_seo_std_heading', 'product_seo_en_heading', 'product_seo_ar_heading')
     inlines = [ProductImageInline, ProductAttributeValueInline, SKUInline]
@@ -119,62 +119,15 @@ class ProductAdmin(ImportExportModelAdmin):
 # ─── Category ────────────────────────────────────────────────────────────────
 
 @admin.register(Category)
-class CategoryAdmin(ImportExportModelAdmin):
-    resource_class = CategoryResource
+class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent', 'show_on_homepage', 'homepage_order', 'slug')
     list_editable = ('show_on_homepage', 'homepage_order')
     list_filter = ('parent', 'show_on_homepage')
     filter_horizontal = ('attributes',)
-    readonly_fields = ('slug', 'cat_seo_std_heading', 'cat_seo_en_heading', 'cat_seo_ar_heading')
+    readonly_fields = ('slug',)
+    
+    fields = ('parent', 'name', 'slug', 'show_on_homepage', 'homepage_order', 'image', 'image_url', 'icon_svg', 'attributes')
 
-    def cat_seo_std_heading(self, obj):
-        return mark_safe(
-            '<p style="margin:12px 0 4px;font-weight:700;font-size:13px;'
-            'color:#2271b1;border-bottom:2px solid #2271b1;padding-bottom:4px;">'
-            '🌐 Standard (Default)</p>'
-        )
-    cat_seo_std_heading.short_description = ''
-
-    def cat_seo_en_heading(self, obj):
-        return mark_safe(
-            '<p style="margin:20px 0 4px;font-weight:700;font-size:13px;'
-            'color:#1d6fa4;border-bottom:2px solid #1d6fa4;padding-bottom:4px;">'
-            '🇬🇧 English (EN)</p>'
-        )
-    cat_seo_en_heading.short_description = ''
-
-    def cat_seo_ar_heading(self, obj):
-        return mark_safe(
-            '<p style="margin:20px 0 4px;font-weight:700;font-size:13px;'
-            'color:#8b5e3c;border-bottom:2px solid #8b5e3c;padding-bottom:4px;">'
-            '🇸🇦 Arabic (AR)</p>'
-        )
-    cat_seo_ar_heading.short_description = ''
-
-    fieldsets = (
-        ('Category Details', {
-            'fields': ('parent', 'name', 'slug'),
-        }),
-        ('Homepage Configuration', {
-            'fields': (('show_on_homepage', 'homepage_order'),),
-        }),
-        ('Image', {
-            'fields': (('image', 'image_url'), 'icon_svg'),
-        }),
-        ('Attributes', {
-            'fields': ('attributes',),
-        }),
-        ('Search Engines (SEO)', {
-            'fields': (
-                'cat_seo_std_heading',
-                'meta_title', 'meta_description', 'meta_keywords', 'url_alias',
-                'cat_seo_en_heading',
-                'meta_title_en', 'meta_description_en', 'meta_keywords_en', 'url_alias_en',
-                'cat_seo_ar_heading',
-                'meta_title_ar', 'meta_description_ar', 'meta_keywords_ar', 'url_alias_ar',
-            ),
-        }),
-    )
 
 # ─── Offers ──────────────────────────────────────────────────────────────────
 

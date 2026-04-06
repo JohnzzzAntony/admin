@@ -1,11 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
-from products.models import Product
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.urls import reverse
+import stripe
+from products.models import Product, ProductSKU
 from .models import QuoteEnquiry, QuoteItem, CustomerOrder, CustomerOrderItem
 
-
-from products.models import Product, ProductSKU
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def _get_cart_items(request):
     """
@@ -184,50 +188,109 @@ def checkout_payment(request):
     grand_total = subtotal + total_shipping
 
     if request.method == 'POST':
-        payment_method = request.POST.get('payment_method', 'card')
+        import traceback
+        from django.utils import timezone
+        try:
+            payment_method = request.POST.get('payment_method', 'card')
 
-        # Create the CustomerOrder record
-        order = CustomerOrder.objects.create(
-            user=request.user if request.user.is_authenticated else None,
-            is_guest=not request.user.is_authenticated,
-            first_name=billing.get('first_name', ''),
-            last_name=billing.get('last_name', ''),
-            email=billing.get('email', ''),
-            phone=billing.get('phone', ''),
-            department=billing.get('department', ''),
-            country=billing.get('country', ''),
-            city=billing.get('city', ''),
-            street=billing.get('street', ''),
-            comment=billing.get('comment', ''),
-            payment_method=payment_method,
-            status='pending',
-            payment_status='pending',
-            shipping_amount=total_shipping,
-            total_amount=grand_total
-        )
-
-        # Save line items
-        for item in cart_items:
-            product = item['product']
-            CustomerOrderItem.objects.create(
-                order=order,
-                product=product,
-                product_name=f"{product.name} ({item['sku'].title})" if item.get('sku') else product.name,
-                quantity=item['quantity'],
-                regular_price=item.get('regular_price', item['unit_price']),
-                unit_price=item['unit_price'],
-                shipping_charge=item['shipping_item'],
-                total_price=item['total_item']
+            # Create the CustomerOrder record
+            order = CustomerOrder.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                is_guest=not request.user.is_authenticated,
+                first_name=billing.get('first_name', ''),
+                last_name=billing.get('last_name', ''),
+                email=billing.get('email', ''),
+                phone=billing.get('phone', ''),
+                department=billing.get('department', ''),
+                country=billing.get('country', ''),
+                city=billing.get('city', ''),
+                street=billing.get('street', ''),
+                comment=billing.get('comment', ''),
+                payment_method=payment_method,
+                status='pending',
+                payment_status='pending',
+                shipping_amount=total_shipping,
+                total_amount=grand_total
             )
 
-        # Clear cart & billing from session
-        request.session['enquiry_cart'] = {}
-        request.session.pop('checkout_billing', None)
+            # Save line items
+            for item in cart_items:
+                product = item['product']
+                CustomerOrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    product_name=f"{product.name} ({item['sku'].title})" if item.get('sku') else product.name,
+                    quantity=item['quantity'],
+                    regular_price=item.get('regular_price', item['unit_price']),
+                    unit_price=item['unit_price'],
+                    shipping_charge=item['shipping_item'],
+                    total_price=item['total_item']
+                )
 
-        # Store order id for the success page
-        request.session['last_order_id'] = order.id
+            # Clear cart & billing from session
+            request.session['enquiry_cart'] = {}
+            request.session.pop('checkout_billing', None)
 
-        return redirect('orders:checkout_success')
+            # Store order id for the success page
+            request.session['last_order_id'] = order.id
+
+            if payment_method == 'card':
+                # --- STRIPE CHECKOUT INTEGRATION ---
+                line_items = []
+                for item in cart_items:
+                    line_items.append({
+                        'price_data': {
+                            'currency': 'aed',
+                            'product_data': {
+                                'name': item['product'].name,
+                                'description': item['sku'].title if item.get('sku') else "",
+                            },
+                            'unit_amount': int(item['unit_price'] * 100), # in fils
+                        },
+                        'quantity': item['quantity'],
+                    })
+                
+                # Add shipping as a separate line item if > 0
+                if total_shipping > 0:
+                    line_items.append({
+                        'price_data': {
+                            'currency': 'aed',
+                            'product_data': {
+                                'name': 'Shipping Charge',
+                            },
+                            'unit_amount': int(total_shipping * 100),
+                        },
+                        'quantity': 1,
+                    })
+
+                checkout_session = stripe.checkout.Session.create(
+                    payment_method_types=['card'],
+                    line_items=line_items,
+                    mode='payment',
+                    success_url=request.build_absolute_uri(reverse('orders:checkout_success')) + "?session_id={CHECKOUT_SESSION_ID}",
+                    cancel_url=request.build_absolute_uri(reverse('orders:checkout_payment')),
+                    client_reference_id=str(order.id),
+                    customer_email=order.email,
+                )
+                
+                # Save session ID to order
+                order.stripe_session_id = checkout_session.id
+                order.save(update_fields=['stripe_session_id'])
+                
+                return redirect(checkout_session.url, code=303)
+            
+            # For COD or other methods, proceed as before
+            # Clear cart & billing only for non-stripe here (Stripe will clear on success/webhook)
+            request.session['enquiry_cart'] = {}
+            request.session.pop('checkout_billing', None)
+            return redirect('orders:checkout_success')
+
+        except Exception as e:
+            with open('order_error_traceback.log', 'a') as f:
+                f.write(f"\n--- ERROR AT {timezone.now()} ---\n")
+                f.write(traceback.format_exc())
+            messages.error(request, f"❌ Order Processing Failed: {str(e)}")
+            return redirect('orders:checkout_payment')
 
     return render(request, 'orders/checkout_payment.html', {
         'cart_items': cart_items,
@@ -242,13 +305,66 @@ def checkout_payment(request):
 
 def checkout_success(request):
     order_id = request.session.pop('last_order_id', None)
-    if not order_id:
+    session_id = request.GET.get('session_id')
+
+    if not order_id and not session_id:
         return redirect('orders:enquiry_cart')
         
-    order = get_object_or_404(CustomerOrder, id=order_id)
+    if session_id:
+        # If we have a session ID, try to find the order by it
+        order = get_object_or_404(CustomerOrder, stripe_session_id=session_id)
+        # Clear cart for Stripe success (since we didn't clear it in POST)
+        request.session['enquiry_cart'] = {}
+        request.session.pop('checkout_billing', None)
+    else:
+        order = get_object_or_404(CustomerOrder, id=order_id)
+        
     return render(request, 'orders/checkout_success.html', {
         'order': order,
     })
+
+
+@csrf_exempt
+@require_POST
+def stripe_webhook(request):
+    """
+    Highly secured webhook listener for Stripe events.
+    Verifies the signature to ensure only Stripe can call this.
+    """
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    endpoint_secret = getattr(settings, 'STRIPE_WEBHOOK_SECRET', None)
+    event = None
+
+    try:
+        if endpoint_secret:
+            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+        else:
+            # Fallback if secret is not set (less secure, only for debugging)
+            event = stripe.Event.construct_from(request.json(), stripe.api_key)
+    except (ValueError, stripe.error.SignatureVerificationError) as e:
+        return HttpResponse(status=400)
+
+    # Handle the checkout.session.completed event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        
+        # Payment is successful. Update the order status.
+        order_id = session.get('client_reference_id')
+        if order_id:
+            try:
+                order = CustomerOrder.objects.get(id=order_id)
+                order.payment_status = 'paid'
+                order.stripe_payment_id = session.get('payment_intent')
+                order.save()
+                
+                # Note: notifications are already triggered on save() if status changes 
+                # (handled in CustomerOrder.save)
+                
+            except CustomerOrder.DoesNotExist:
+                pass
+
+    return HttpResponse(status=200)
 
 
 # ── Legacy enquiry submit (kept for compatibility) ───────────────────────────

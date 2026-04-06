@@ -128,7 +128,7 @@ class Product(models.Model):
                 'final_price': sale,
                 'regular_price': reg,
                 'discount_amount': reg - sale,
-                'discount_display': f"{self.get_discount_percentage()}% OFF" if sale < reg else None,
+                'discount_display': "SALE" if sale < reg else None,
                 'shipping_charge': 0,
                 'free_shipping': False,
                 'sku': None,
@@ -223,12 +223,13 @@ class ProductSKU(models.Model):
         current_sale_price = self.product.sale_price or regular_price
         
         if not offer:
+            is_discounted = current_sale_price < regular_price
             return {
-                'has_offer': False,
+                'has_offer': is_discounted,
                 'offer': None,
                 'regular_price': regular_price,
                 'final_price': current_sale_price,
-                'discount_display': None,
+                'discount_display': "SALE" if is_discounted else None,
                 'shipping_charge': self.additional_shipping_charge or Decimal('0') if not self.free_shipping else Decimal('0'),
                 'free_shipping': self.free_shipping,
                 'sku': self,

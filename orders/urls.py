@@ -17,6 +17,9 @@ urlpatterns = [
     path('checkout/payment/', views.checkout_payment, name='checkout_payment'),
     path('checkout/success/', views.checkout_success, name='checkout_success'),
 
+    # Stripe Webhook
+    path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
+
     # Legacy
     path('submit-enquiry/', views.submit_enquiry, name='submit_enquiry'),
 ]

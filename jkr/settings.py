@@ -209,8 +209,12 @@ WHITENOISE_MANIFEST_STRICT = False
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cloudinary Storage for Media Files in Production
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# Cloudinary Storage for Media Files in Production, Local in Development.
+if IS_PRODUCTION:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
@@ -266,6 +270,7 @@ JAZZMIN_SETTINGS = {
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='sk_test_12345')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_12345')
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default=None)
 
 import cloudinary
 import cloudinary.uploader
