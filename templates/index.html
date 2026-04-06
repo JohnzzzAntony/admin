@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block content %}
-    <!-- Hero Slider -->
-    <section class="home-slider position-relative overflow-hidden">
+    <!-- Modern Hero Slider -->
+    <section class="home-slider position-relative overflow-hidden mb-0" style="height: 100vh;">
         <div class="swiper main-hero-slider h-100">
             <div class="swiper-wrapper">
                 {% for slider in sliders %}
@@ -13,153 +13,109 @@
                         <source src="{{ slider.get_vid_url }}" type="video/mp4">
                     </video>
                     {% else %}
-                    <div class="position-absolute w-100 h-100" style="background: url('{{ slider.get_bg_url }}'); background-size: cover; background-position: center; z-index: -1;"></div>
+                    <div class="position-absolute w-100 h-100" style="background: url('{{ slider.get_bg_url }}'); background-size: cover; background-position: center; z-index: -1;">
+                        <div class="w-100 h-100" style="background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.2));"></div>
+                    </div>
                     {% endif %}
                     
                     <div class="container h-100 d-flex align-items-center">
-                        <div class="col-lg-8 text-white">
-                            <h4 class="text-uppercase tracking-widest mb-3 animate__animated animate__fadeInDown">{{ slider.subtitle }}</h4>
-                            <h1 class="display-3 font-weight-bold mb-4 animate__animated animate__fadeInUp" style="line-height: 1.1;">{{ slider.title }}</h1>
-                            <div class="animate__animated animate__fadeInUp animate__delay-1s">
-                                <a href="{{ slider.button_link }}" class="btn btn-primary btn-lg px-5 py-3 shadow-lg" style="border-radius: 50px;">{{ slider.button_text }}</a>
+                        <div class="col-lg-7 text-white" data-aos="fade-right">
+                            <span class="text-uppercase tracking-widest mb-3 d-inline-block font-weight-bold" 
+                                  style="color: var(--primary); letter-spacing: 4px; font-size: 0.9rem;">{{ slider.subtitle }}</span>
+                            <h1 class="display-3 font-weight-bold mb-4" style="line-height: 1.1;">{{ slider.title|safe }}</h1>
+                            <p class="lead mb-5 text-white-50 pr-lg-5">{{ slider.description|default:"Experience the peak of quality and innovation." }}</p>
+                            <div class="d-flex flex-wrap align-items-center">
+                                <a href="{% if slider.button_link %}{{ slider.button_link }}{% else %}/products/{% endif %}" 
+                                   class="btn-theme btn-primary-theme btn-lg mr-3 mt-3 px-5 py-3">
+                                    {{ slider.button_text|default:"Shop Now" }} <i class="fa-solid fa-arrow-right-long ml-2"></i>
+                                </a>
+                                
+                                <a href="{% if slider.button_2_link %}{{ slider.button_2_link }}{% else %}/contact/{% endif %}" 
+                                   class="btn-theme btn-outline-light btn-lg mt-3 px-5 py-3" 
+                                   style="border: 1px solid rgba(255,255,255,0.4); backdrop-filter: blur(5px);">
+                                    {{ slider.button_2_text|default:"Enquiry" }}
+                                </a>
+
+                                {% if slider.video_url %}
+                                <a href="{{ slider.video_url }}" class="text-white hover-lift ml-md-4 mt-4 d-flex align-items-center font-weight-bold" data-fancybox>
+                                    <div class="mr-3 d-flex align-items-center justify-content-center" 
+                                         style="width: 50px; height: 50px; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%;">
+                                        <i class="fa-solid fa-play"></i>
+                                    </div>
+                                    Watch Presentation
+                                </a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
                 {% empty %}
                 <div class="swiper-slide h-100 d-flex align-items-center justify-content-center bg-dark text-white">
-                    <h1>Welcome to JKR International</h1>
+                    <div class="text-center">
+                        <h1 class="display-1 font-weight-bold mb-3">JKR PREMIUM</h1>
+                        <p class="lead">Coming Soon...</p>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
             <!-- Slider navigation -->
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next d-none d-md-flex"></div>
+            <div class="swiper-button-prev d-none d-md-flex"></div>
+            <div class="swiper-pagination"></div>
         </div>
     </section>
 
-    <!-- Collections Section (Dynamic Tabs) -->
+    <!-- Stats Bar -->
+    <section class="py-5" style="background: #000; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <div class="row text-center text-white">
+                {% for counter in counters %}
+                <div class="col-md-3 col-6 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="{{ forloop.counter|multiply:100 }}">
+                    <h3 class="display-4 font-weight-bold mb-1" style="color: var(--primary);">{{ counter.value }}</h3>
+                    <p class="text-white-50 text-uppercase small tracking-widest font-weight-bold">{{ counter.title }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Collections Section -->
     {% if collections %}
-    <section class="py-5 bg-light" id="collections">
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <h2 class="section-title">{{ site_settings.hp_collections_title|safe|default:'Exclusive <span class="text-primary">Collections</span>' }}</h2>
-                <p class="lead text-muted mx-auto" style="max-width: 700px;">{{ site_settings.hp_collections_subtitle|default:'Handpicked selection of premium medical equipment and essential supplies.' }}</p>
+    <section class="py-120 bg-light" id="collections">
+        <div class="container">
+            <div class="row align-items-end mb-5 pb-3">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <span class="text-primary font-weight-bold text-uppercase small tracking-widest">Our Selection</span>
+                    <h2 class="section-title mt-2">{{ site_settings.hp_collections_title|safe|default:'Curated <span class="text-primary">Collections</span>' }}</h2>
+                </div>
+                <div class="col-lg-6 text-lg-right" data-aos="fade-left">
+                    <ul class="nav nav-pills d-inline-flex justify-content-center bg-white p-2 shadow-sm rounded-pill" id="collectionTabs" role="tablist">
+                        {% if active_offers_skus %}
+                        <li class="nav-item"><a class="nav-link active rounded-pill px-4" data-toggle="pill" href="#tab-offers">Offers</a></li>
+                        {% endif %}
+                        {% for col in collections %}
+                        <li class="nav-item"><a class="nav-link {% if not active_offers_skus and forloop.first %}active{% endif %} rounded-pill px-4" data-toggle="pill" href="#tab-{{ col.slug }}">{{ col.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
 
-            <!-- Tab Navigation -->
-            <ul class="nav nav-pills justify-content-center mb-5" id="collectionTabs" role="tablist">
-                {% if active_offers_skus %}
-                <li class="nav-item px-2" role="presentation">
-                    <button class="nav-link active font-weight-bold px-4 py-2 shadow-sm" 
-                            id="tab-offers" data-toggle="pill" data-target="#content-offers" 
-                            type="button" role="tab" style="border-radius:30px; border: 1px solid transparent;">
-                        Latest Offers
-                    </button>
-                </li>
-                {% endif %}
-                {% for col in collections %}
-                <li class="nav-item px-2" role="presentation">
-                    <button class="nav-link {% if not active_offers_skus and forloop.first %}active{% endif %} font-weight-bold px-4 py-2 shadow-sm" 
-                            id="tab-{{ col.slug }}" data-toggle="pill" data-target="#content-{{ col.slug }}" 
-                            type="button" role="tab" style="border-radius:30px; border: 1px solid transparent;">
-                        {{ col.name }}
-                    </button>
-                </li>
-                {% endfor %}
-            </ul>
-
-            <!-- Tab Content -->
             <div class="tab-content" id="collectionTabContent">
                 {% if active_offers_skus %}
-                <div class="tab-pane fade show active" id="content-offers" role="tabpanel">
+                <div class="tab-pane fade show active" id="tab-offers">
                     <div class="row">
                         {% for sku in active_offers_skus %}
-                        {% with price_info=sku.get_price_info %}
-                        <div class="col-lg-3 col-md-6 mb-4">
-                            <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden" style="border-radius: 20px;">
-                                <a href="{% url 'products:product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
-                                    <div class="position-relative">
-                                        <img src="{{ sku.product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
-                                        <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
-                                            {{ price_info.discount_display }}
-                                        </span>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem;">{{ sku.product.category.name|upper }}</h6>
-                                        <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ sku.product.name }}</h5>
-                                        {% if sku.title %}
-                                        <p class="small text-muted mb-2"><i class="fas fa-tag mr-1"></i> {{ sku.title }}</p>
-                                        {% endif %}
-                                        
-                                        <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
-                                            <div class="price">
-                                                <div class="d-flex flex-column">
-                                                    <span class="h5 font-weight-bold mb-0 text-primary">{{ price_info.final_price }} AED</span>
-                                                    <del class="small text-muted">{{ price_info.regular_price }} AED</del>
-                                                </div>
-                                            </div>
-                                            <span class="text-primary"><i class="fas fa-plus-circle fa-lg"></i></span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        {% endwith %}
+                            {% include 'includes/sku_card.html' with sku=sku delay=forloop.counter %}
                         {% endfor %}
                     </div>
                 </div>
                 {% endif %}
 
                 {% for col in collections %}
-                <div class="tab-pane fade {% if not active_offers_skus and forloop.first %}show active{% endif %}" 
-                     id="content-{{ col.slug }}" role="tabpanel">
-                    
-                    {% if col.banner %}
-                    <div class="collection-banner mb-5 rounded-lg shadow-sm overflow-hidden" style="height: 250px; border-radius: 25px;">
-                        <img src="{{ col.banner.url }}" class="w-100 h-100" style="object-fit: cover;">
-                    </div>
-                    {% endif %}
-
+                <div class="tab-pane fade {% if not active_offers_skus and forloop.first %}show active{% endif %}" id="tab-{{ col.slug }}">
                     <div class="row">
-                        {% for sku in col.skus.all %}
-                        {% with price_info=sku.get_price_info %}
-                        <div class="col-lg-3 col-md-6 mb-4">
-                            <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden" style="border-radius: 20px;">
-                                <a href="{% url 'products:product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
-                                    <div class="position-relative">
-                                        <img src="{{ sku.product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
-                                        {% if price_info.has_offer %}
-                                        <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
-                                            {{ price_info.discount_display }}
-                                        </span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="card-body p-4">
-                                        <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">{{ sku.product.category.name|upper }}</h6>
-                                        <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ sku.product.name }}</h5>
-                                        {% if sku.title %}
-                                        <p class="small text-muted mb-2"><i class="fas fa-tag mr-1"></i> {{ sku.title }}</p>
-                                        {% endif %}
-                                        
-                                        <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
-                                            <div class="price">
-                                                {% if price_info.has_offer %}
-                                                <div class="d-flex flex-column">
-                                                    <span class="h5 font-weight-bold mb-0 text-primary">{{ price_info.final_price }} AED</span>
-                                                    <del class="small text-muted">{{ price_info.regular_price }} AED</del>
-                                                </div>
-                                                {% else %}
-                                                <span class="h5 font-weight-bold text-dark mb-0">{{ price_info.final_price }} AED</span>
-                                                {% endif %}
-                                            </div>
-                                            <span class="text-primary"><i class="fas fa-plus-circle fa-lg"></i></span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        {% endwith %}
+                        {% for sku in col.skus.all|slice:":8" %}
+                            {% include 'includes/sku_card.html' with sku=sku delay=forloop.counter %}
                         {% endfor %}
                     </div>
                 </div>
@@ -169,360 +125,120 @@
     </section>
     {% endif %}
 
-    <!-- Categories Section (Parent Categories) -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <h2 class="section-title text-center mb-5 pb-3">{{ site_settings.hp_categories_title|safe|default:'Product <span class="text-primary">Categories</span>' }}</h2>
-            <div class="swiper category-slider pb-5">
+    <!-- Immersive Categories Slider -->
+    <section class="py-120 bg-white">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <span class="text-primary font-weight-bold text-uppercase small tracking-widest">Browse by Category</span>
+                <h2 class="section-title mt-2">{{ site_settings.hp_categories_title|safe|default:'Infinite <span class="text-primary">Possibilities</span>' }}</h2>
+            </div>
+            
+            <div class="swiper category-slider pb-5" data-aos="zoom-in" data-aos-delay="200">
                 <div class="swiper-wrapper">
                     {% for category in categories %}
-                    <div class="swiper-slide">
-                        <a href="{% url 'products:category_detail' slug=category.slug %}" class="text-decoration-none">
-                            <div class="category-card text-center transition-all p-4 rounded-circle mx-auto shadow-sm" style="width: 220px; height: 220px; border: 2px solid #f1f1f1; background: #fff; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <img src="{{ category.get_image_url }}" alt="{{ category.name }}" class="img-fluid mb-2" style="max-height: 90px; object-fit: contain;">
-                                <h6 class="text-dark font-weight-bold mb-0">{{ category.name }}</h6>
+                    <div class="swiper-slide h-auto">
+                        <a href="{% url 'products:category_detail' slug=category.slug %}" class="premium-card d-block p-4 text-center text-decoration-none h-100 hover-lift">
+                            <div class="category-icon-bg mb-4 mx-auto d-flex align-items-center justify-content-center" 
+                                 style="width: 120px; height: 120px; background: rgba(0,0,0,0.02); border-radius: 30px;">
+                                <img src="{{ category.get_image_url }}" alt="{{ category.name }}" class="img-fluid" style="max-height: 80px; object-fit: contain;">
                             </div>
+                            <h5 class="text-dark font-weight-bold mb-2">{{ category.name }}</h5>
+                            <span class="small text-muted text-uppercase tracking-widest font-weight-bold">View More</span>
                         </a>
                     </div>
                     {% endfor %}
                 </div>
-                <div class="pt-4 text-center">
-                    <div class="swiper-button-next d-none d-md-block"></div>
-                    <div class="swiper-button-prev d-none d-md-block"></div>
-                </div>
+                <div class="swiper-pagination mt-4"></div>
             </div>
         </div>
     </section>
 
-    <!-- Explore Latest Products Section -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <div class="d-flex justify-content-between align-items-end mb-5">
-                <div>
-                    <h2 class="section-title mb-2">{{ site_settings.hp_latest_products_title|safe|default:'Explore <span class="text-primary">Latest Products</span>' }}</h2>
-                    <p class="lead text-muted">{{ site_settings.hp_latest_products_subtitle|default:'Discover our newest medical innovations and technology.' }}</p>
+    <!-- Latest Innovative Products -->
+    <section class="py-120 bg-light overflow-hidden">
+        <div class="container">
+            <div class="row align-items-center mb-5 pb-3">
+                <div class="col-lg-8" data-aos="fade-right">
+                    <span class="text-primary font-weight-bold text-uppercase small tracking-widest">New Arrivals</span>
+                    <h2 class="section-title mt-2">{{ site_settings.hp_latest_products_title|safe|default:'The Future of <span class="text-primary">Mobility</span>' }}</h2>
                 </div>
-                <a href="{% url 'products:category_index' %}" class="btn btn-link text-primary font-weight-bold mb-2">View All Products <i class="fas fa-chevron-right ml-2"></i></a>
-            </div>
-            <div class="row">
-                {% for product in latest_products %}
-                {% with price_info=product.get_best_price_info %}
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden" style="border-radius: 20px;">
-                        <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
-                            <div class="position-relative">
-                                <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 250px; object-fit: contain; padding: 20px;">
-                                {% if price_info.has_offer %}
-                                <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
-                                    {{ price_info.discount_display }}
-                                </span>
-                                {% endif %}
-                            </div>
-                            <div class="card-body p-4">
-                                <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem;">{{ product.category.name|upper }}</h6>
-                                <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ product.name }}</h5>
-                                <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
-                                    <div class="price">
-                                        {% if price_info.has_offer %}
-                                        <div class="d-flex flex-column">
-                                            <span class="h5 font-weight-bold mb-0 text-primary">{{ price_info.final_price }} AED</span>
-                                            <div class="d-flex align-items-center">
-                                                <del class="small text-muted">{{ price_info.regular_price }} AED</del>
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <span class="h5 font-weight-bold text-dark mb-0">{{ price_info.final_price }} AED</span>
-                                        {% endif %}
-                                    </div>
-                                    <span class="text-primary"><i class="fas fa-plus-circle fa-lg"></i></span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                {% endwith %}
-                {% empty %}
-                <div class="col-12 text-center py-5">
-                    <p class="text-muted">{{ site_settings.hp_latest_products_empty|default:'Stay tuned for our latest medical products.' }}</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-
-    <!-- About Us Section -->
-    {% if about_us %}
-    <section class="py-5" id="about">
-        <div class="container py-5">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h3 class="text-secondary mb-3">About Us</h3>
-                    <h2 class="section-title mb-4">{{ about_us.heading }}</h2>
-                    <div class="text-muted mb-4 lead">
-                        {{ about_us.content|safe }}
-                    </div>
-                    <a href="{% url 'core:about_us' %}" class="btn btn-outline-primary px-4 py-2" style="border-radius: 30px;">Read More</a>
-                </div>
-                <div class="col-lg-6">
-                    <div class="swiper about-slider mt-4">
-                        <div class="swiper-wrapper">
-                            {% for video in about_us.videos.all %}
-                            <div class="swiper-slide">
-                                <div class="position-relative overflow-hidden rounded-lg shadow" style="border-radius: 20px;">
-                                    <img src="{{ video.get_thumb_url }}" class="img-fluid w-100" style="height: 350px; object-fit: cover;">
-                                    <div class="position-absolute d-flex align-items-center justify-content-center" style="top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3);">
-                                        <a href="{{ video.video_url }}" class="text-white" data-fancybox onclick="event.preventDefault(); window.open('{{ video.video_url }}','_blank');">
-                                            <i class="fas fa-play-circle fa-5x"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <div class="swiper-pagination"></div>
-                    </div>
+                <div class="col-lg-4 text-lg-right" data-aos="fade-left">
+                    <a href="{% url 'products:category_index' %}" class="btn-theme btn-primary-theme btn-sm">Explore All</a>
                 </div>
             </div>
-        </div>
-    </section>
-    {% endif %}
-
-    <!-- Milestones/Counters -->
-    <section class="py-5" style="background-color: var(--primary-blue);">
-        <div class="container py-5 text-center text-white">
-            <div class="row">
-                {% for counter in counters %}
-                <div class="col-md-3 mb-4">
-                    <h2 class="display-4 font-weight-bold counter-value">{{ counter.value }}</h2>
-                    <p class="h5">{{ counter.title }}</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-
-    <!-- Partners / We Deal With -->
-    <section class="py-5 bg-light border-top border-bottom">
-        <div class="container py-4">
-            <div class="row align-items-center">
-                <div class="col-lg-3 mb-4 mb-lg-0 pr-lg-5">
-                    <h2 class="font-weight-bold text-dark mb-3" style="font-size: 2.5rem;">{{ site_settings.hp_partners_title|default:'We Deal with,' }}</h2>
-                    <p class="text-muted" style="font-size: 1.1rem; line-height: 1.6;">
-                        {{ site_settings.hp_partners_subtitle|default:"100+ partnerships we've made ensure the quality of products we distribute" }}
-                    </p>
-                </div>
-                <div class="col-lg-9">
-                    <div class="swiper partner-slider">
-                        <div class="swiper-wrapper align-items-center">
-                            {% for partner in partners %}
-                            <div class="swiper-slide text-center">
-                                {% if partner.website_url %}
-                                <a href="{{ partner.website_url }}" target="_blank" class="d-block w-100 h-100 p-2 text-decoration-none">
-                                {% else %}
-                                <div class="w-100 h-100 p-2">
-                                {% endif %}
-                                    <img src="{{ partner.get_logo_url }}" alt="{{ partner.name }}" class="img-fluid" style="max-height: 80px; object-fit: contain; filter: grayscale(100%); transition: all 0.3s ease;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='grayscale(100%)'">
-                                {% if partner.website_url %}
-                                </a>
-                                {% else %}
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section class="py-5 bg-white overflow-hidden" id="services">
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <h3 class="text-primary font-weight-bold mb-2">{{ site_settings.hp_services_overtitle|default:'OUR SERVICES' }}</h3>
-                <h2 class="section-title">{{ site_settings.hp_services_title|default:'Specialized Maintenance Services' }}</h2>
-                <p class="lead text-muted mx-auto" style="max-width: 800px;">
-                    {{ site_settings.hp_services_subtitle|default:'We are dedicated to maintaining the health and effectiveness of your essential diagnostic equipment.' }}
-                </p>
-            </div>
-
-            <div class="row pt-4">
-                {% for svc in services %}
-                <div class="col-lg-4 col-md-6 mb-5">
-                    <div class="service-box p-5 h-100 shadow-sm transition-all border text-center" style="border-radius: 40px;">
-                        <div class="icon-wrapper mb-4 mx-auto d-flex align-items-center justify-content-center shadow-lg" style="width: 100px; height: 100px; border-radius: 30px; background: #fff;">
-                            <img src="{{ svc.get_icon_url }}" alt="{{ svc.title }}" style="width: 50px; height: 50px; object-fit: contain;">
-                        </div>
-                        <h4 class="font-weight-bold mb-3 text-dark">{{ svc.title }}</h4>
-                        <p class="text-muted" style="line-height: 1.8;">{{ svc.description }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-
-    <!-- Mission & Vision (Image 1 Style) -->
-    <section class="py-5 bg-light">
-        <div class="container py-5">
-            {% for mv in mission_vision %}
-            <div class="row align-items-center mb-5 pb-5 {% if forloop.counter|divisibleby:2 %}flex-row-reverse{% endif %}">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h3 class="text-primary font-weight-bold text-uppercase mb-3">{{ mv.get_section_type_display }}</h3>
-                    <h2 class="section-title mb-4">{{ mv.title }}</h2>
-                    <p class="lead text-dark" style="line-height: 1.8;">{{ mv.content }}</p>
-                </div>
-                <div class="col-lg-6">
-                    <div class="p-3 bg-white shadow rounded-lg overflow-hidden" style="border-radius: 30px;">
-                        <img src="{{ mv.get_img_url }}" class="img-fluid w-100" style="object-fit: cover; border-radius: 20px;">
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-
-    <!-- Gallery Section -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <h2 class="section-title text-center mb-5 pb-3">{{ site_settings.hp_gallery_title|safe|default:'Latest <span class="text-primary">Gallery & Updates</span>' }}</h2>
-            <div class="row">
-                {% for item in gallery %}
-                <div class="col-md-3 col-6 mb-4">
-                    <a href="{{ item.get_img_url }}" data-fancybox="main-gallery" class="d-block shadow-sm rounded-lg overflow-hidden transition-all gallery-img-container">
-                        <img src="{{ item.get_img_url }}" alt="{{ item.title }}" class="img-fluid w-100" style="height: 250px; object-fit: cover;">
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-            <div class="text-center mt-5">
-                <a href="{% url 'core:gallery' %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 50px;">Browse All Updates</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section class="py-5 bg-light">
-        <div class="container py-5 text-center">
-            <h4 class="text-primary font-weight-bold mb-3">{{ site_settings.hp_testimonials_overtitle|default:'TESTIMONIALS' }}</h4>
-            <h2 class="section-title mb-5 pb-3">{{ site_settings.hp_testimonials_title|default:'Read what our clients have to share!' }}</h2>
             
-            <div class="swiper testimonial-slider px-4">
-                <div class="swiper-wrapper">
-                    {% for t in testimonials %}
-                    <div class="swiper-slide">
-                        <div class="card border-0 p-5 shadow mx-auto" style="border-radius: 40px; max-width: 800px; background: #fdfdfd;">
-                            <div class="mb-4">
-                                <i class="fas fa-quote-left fa-3x text-light"></i>
-                            </div>
-                            <p class="lead text-dark font-italic mb-5" style="line-height: 1.8;">"{{ t.content }}"</p>
-                            <div class="d-flex align-items-center justify-content-center">
-                                <img src="{{ t.get_img_url }}" class="rounded-circle mr-3" style="width: 70px; height: 70px; object-fit: cover;">
-                                <div class="text-left">
-                                    <h5 class="font-weight-bold mb-0">{{ t.client_name }}</h5>
-                                    <small class="text-muted text-uppercase">{{ t.position }}</small>
-                                    <div class="text-warning mt-1">
-                                        {% for i in "12345"|make_list %}{% if forloop.counter <= t.rating %}<i class="fas fa-star"></i>{% endif %}{% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+            <div class="row">
+                {% for product in latest_products|slice:":4" %}
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|multiply:100 }}">
+                    {% with sku=product.get_primary_sku %}
+                        {% include 'includes/sku_card.html' with sku=sku delay=0 %}
+                    {% endwith %}
                 </div>
-                <div class="swiper-pagination mt-5 position-relative"></div>
+                {% endfor %}
             </div>
         </div>
     </section>
 
-    <!-- Our Clients Section -->
-    <section class="py-5 bg-light">
-        <div class="container py-5">
-            <h2 class="section-title text-center mb-5 pb-4">{{ site_settings.hp_clients_title|default:'Our Clients' }}</h2>
-            
-            <!-- Public Sector -->
-            <div class="mb-5 pb-5 border-bottom">
-                <div class="row align-items-center">
-                    <div class="col-lg-3 mb-4 mb-lg-0">
-                        <h4 class="font-weight-bold mb-2">Public Sector</h4>
-                        <div style="width: 50px; height: 3px; background: var(--primary-blue);"></div>
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="row">
-                            {% for client in public_clients %}
-                            <div class="col-md-2 col-4 mb-4">
-                                <div class="bg-white p-3 rounded-lg shadow-sm text-center">
-                                    <img src="{{ client.get_logo_url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
+    <!-- Services Cards (Glassmorph) -->
+    <section class="py-120 overflow-hidden" id="services" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <span class="text-primary font-weight-bold text-uppercase small tracking-widest">Expert Care</span>
+                <h2 class="section-title mt-2">Our Support Ecosystem</h2>
             </div>
 
-            <!-- Private Sector -->
-            <div>
-                <div class="row align-items-center">
-                    <div class="col-lg-3 mb-4 mb-lg-0">
-                        <h4 class="font-weight-bold mb-2">Private Sector</h4>
-                        <div style="width: 50px; height: 3px; background: var(--primary-blue);"></div>
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="row">
-                            {% for client in private_clients %}
-                            <div class="col-md-2 col-4 mb-4">
-                                <div class="bg-white p-3 rounded-lg shadow-sm text-center">
-                                    <img src="{{ client.get_logo_url }}" alt="{{ client.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain;">
-                                </div>
-                            </div>
-                            {% endfor %}
+            <div class="row mt-5 pt-3">
+                {% for svc in services|slice:":3" %}
+                <div class="col-lg-4 mb-4" data-aos="flip-left" data-aos-delay="{{ forloop.counter|multiply:150 }}">
+                    <div class="premium-card p-5 h-100 text-center hover-lift position-relative overflow-hidden" 
+                         style="background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
+                        <div class="mb-4 mx-auto d-flex align-items-center justify-content-center premium-card shadow-lg p-0" 
+                             style="width: 80px; height: 80px; border-radius: 20px; border-color: rgba(0,0,0,0.05);">
+                            <img src="{{ svc.get_icon_url }}" alt="{{ svc.title }}" style="width: 40px; height: 40px; object-fit: contain;">
                         </div>
+                        <h4 class="font-weight-bold mb-3">{{ svc.title }}</h4>
+                        <p class="text-muted small px-lg-3">{{ svc.description }}</p>
                     </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
     </section>
 
-    <!-- Instagram Section -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <h4 class="text-primary font-weight-bold mb-1">{{ site_settings.hp_social_overtitle|default:'GO SOCIAL WITH US' }}</h4>
-                <p class="h6 text-muted mb-4">{{ site_settings.hp_social_subtitle|default:'Follow our Instagram @jkrinternational' }}</p>
-                <div class="row pt-4">
-                    {% for post in social_posts %}
-                    <div class="col-lg-2 col-md-4 col-6 mb-4">
-                        <a href="{{ post.link }}" target="_blank" class="d-block rounded-lg shadow-sm overflow-hidden instagram-item transition-all position-relative">
-                            <img src="{{ post.get_img_url }}" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
-                            <div class="post-overlay position-absolute d-flex align-items-center justify-content-center" style="top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); opacity:0; transition:all 0.3s ease;">
-                                <i class="fab fa-instagram text-white fa-2x"></i>
-                            </div>
-                        </a>
+    <!-- Partners / Credibility Bar -->
+    <section class="py-5 bg-white border-top border-bottom">
+        <div class="container">
+            <div class="swiper partner-slider">
+                <div class="swiper-wrapper align-items-center">
+                    {% for partner in partners %}
+                    <div class="swiper-slide text-center opacity-50 hover-opacity-100 transition-all">
+                        <img src="{{ partner.get_logo_url }}" alt="{{ partner.name }}" class="img-fluid" style="max-height: 60px; object-fit: contain; filter: grayscale(100%);">
                     </div>
                     {% endfor %}
                 </div>
             </div>
         </div>
     </section>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Hero Slider
+        // Main Hero with Parallax-like effect
         new Swiper('.main-hero-slider', {
             loop: true,
-            autoplay: { delay: 5000, disableOnInteraction: false },
+            effect: 'fade',
+            speed: 1000,
+            autoplay: { delay: 6000, disableOnInteraction: false },
+            pagination: { el: '.swiper-pagination', clickable: true },
             navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
         });
 
         // Category Slider
         new Swiper('.category-slider', {
             slidesPerView: 1,
-            spaceBetween: 20,
-            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            spaceBetween: 30,
+            pagination: { el: '.swiper-pagination', clickable: true },
             breakpoints: {
                 576: { slidesPerView: 2 },
                 768: { slidesPerView: 3 },
@@ -534,7 +250,8 @@
         // Partner Slider
         new Swiper('.partner-slider', {
             slidesPerView: 2,
-            spaceBetween: 30,
+            spaceBetween: 50,
+            loop: true,
             autoplay: { delay: 3000 },
             breakpoints: {
                 576: { slidesPerView: 3 },
@@ -543,17 +260,43 @@
             }
         });
 
-        // Testimonial Slider
-        new Swiper('.testimonial-slider', {
-            loop: true,
-            pagination: { el: '.swiper-pagination', clickable: true },
-            autoplay: { delay: 4000 }
-        });
-
-        // About Slider (Videos)
-        new Swiper('.about-slider', {
-            pagination: { el: '.swiper-pagination', clickable: true }
-        });
+        // Hover opacity for partners
+        $('.partner-slider .swiper-slide').hover(
+            function() { $(this).removeClass('opacity-50').css('filter', 'none'); },
+            function() { $(this).addClass('opacity-50').css('filter', 'grayscale(100%)'); }
+        );
     });
 </script>
+    <!-- Scroll Indicator -->
+    <div class="position-absolute d-none d-md-flex" style="bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 100; flex-direction: column; align-items: center; cursor: pointer;">
+        <span class="text-white small text-uppercase tracking-widest mb-2 opacity-50">Scroll To Explore</span>
+        <div class="scroll-mouse"></div>
+    </div>
+
+    <style>
+        .scroll-mouse {
+            width: 24px;
+            height: 40px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 20px;
+            position: relative;
+        }
+        .scroll-mouse::after {
+            content: '';
+            width: 4px;
+            height: 8px;
+            background: #fff;
+            position: absolute;
+            left: 50%;
+            margin-left: -2px;
+            top: 8px;
+            border-radius: 2px;
+            animation: mouseScroll 2s infinite;
+        }
+        @keyframes mouseScroll {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(15px); }
+        }
+        .tracking-widest { letter-spacing: 0.2em !important; }
+    </style>
 {% endblock %}

@@ -139,18 +139,16 @@ class CreatedAtRangeFilter(admin.SimpleListFilter):
 class CustomerOrderAdmin(admin.ModelAdmin):
     list_display  = (
         'order_number', 
-        'user', 
-        'is_guest', 
-        'customer_tag', 
         'customer_name', 
         'email', 
         'phone',
-        'status', 
+        'status_badge_editable', 
         'items_count', 
+        'payment_status_badge',
         'total_display',
         'created_at',
     )
-    list_editable = ('status',) 
+    list_editable = () # We'll use a custom field for status to make it more elegant 
     list_filter   = (
         'status', 
         'payment_method', 
@@ -211,10 +209,17 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         return _badge(obj.get_payment_status_display(), color)
     payment_status_badge.short_description = "Payment Status"
 
-    def order_status_badge(self, obj):
+    def status_badge_editable(self, obj):
+        """Displays a colored status label that links to the status change section."""
         color = ORDER_STATUS_COLORS.get(obj.status, '#888')
-        return _badge(obj.get_status_display(), color)
-    order_status_badge.short_description = "Order Status"
+        label = obj.get_status_display()
+        return format_html(
+            '<div style="background:{}; color:#fff; padding:5px 12px; border-radius:30px; '
+            'font-size:11px; font-weight:700; text-align:center; display:inline-block; min-width:110px;">{}</div>',
+            color, label
+        )
+    status_badge_editable.short_description = "Order Status"
+    status_badge_editable.admin_order_field = 'status'
 
     def items_count(self, obj):
         return obj.items.count()

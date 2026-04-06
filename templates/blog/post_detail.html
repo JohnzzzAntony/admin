@@ -2,10 +2,12 @@
 {% load static %}
 
 {% block content %}
-    <!-- Hero / Header Section -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-white" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{% if post.featured_image %}{{ post.featured_image.url }}{% else %}https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg{% endif %}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
-        <div class="container py-5 text-center px-4">
-            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ post.title }}</h1>
+    <!-- Hero Section -->
+    <section class="py-5 mt-5 position-relative overflow-hidden text-white jarallax" style="min-height: 50vh; display: flex; align-items: center; justify-content: center; background-color: #000;">
+        <div class="position-absolute w-100 h-100" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{% if post.featured_image %}{{ post.featured_image.url }}{% else %}https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop{% endif %}'); background-size: cover; background-position: center; z-index: -1;"></div>
+        <div class="container py-5 text-center px-4" data-aos="fade-up">
+            <span class="badge badge-primary px-3 py-2 mb-3 text-uppercase font-weight-bold" style="letter-spacing: 2px;"># Health Insights</span>
+            <h1 class="display-3 font-weight-bold mb-0" style="text-shadow: 2px 2px 20px rgba(0,0,0,0.5);">{{ post.title }}</h1>
         </div>
     </section>
 
@@ -21,10 +23,10 @@
     </nav>
 
     <!-- Blog Content Section -->
-    <article class="py-5 bg-white">
+    <article class="py-5">
         <div class="container py-5">
             <div class="row justify-content-center">
-                <div class="col-lg-10 shadow-sm border p-4 p-md-5 bg-white" style="border-radius: 20px;">
+                <div class="col-lg-10 premium-card p-4 p-md-5 bg-white" data-aos="fade-up">
                     <div class="d-flex align-items-center mb-5 text-muted small border-bottom pb-4">
                         <span class="mr-4"><i class="far fa-calendar-alt mr-2 text-primary"></i> {{ post.created_at|date:"F j, Y" }}</span>
                         <span class="badge badge-success px-3 py-1 text-white"># Medical Insights</span>

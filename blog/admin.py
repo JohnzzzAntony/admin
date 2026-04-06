@@ -4,21 +4,19 @@ from django.utils.html import format_html
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'image_tag', 'title', 'is_published', 'created_at')
+    list_display = ('title', 'is_published', 'created_at', 'image_tag')
     list_filter = ('is_published', 'created_at')
     prepopulated_fields = {'slug': ('title',)}
-    search_fields = ('title', 'content', 'excerpt')
+    search_fields = ('title', 'excerpt')
     
+    # We remove problematic fields from list_display if they exist.
+    # We also keep fieldsets simple.
     fieldsets = (
         ('Article Details', {
-            'fields': (('title', 'slug'), ('featured_image', 'is_published'))
+            'fields': ('title', 'slug', 'featured_image', 'is_published')
         }),
         ('Content', {
             'fields': ('excerpt', 'content')
-        }),
-        ('SEO & Discovery', {
-            'classes': ('collapse',),
-            'fields': ('meta_title', 'meta_description'),
         }),
     )
 

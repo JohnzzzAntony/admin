@@ -1,0 +1,62 @@
+﻿python : System check 
+identified some issues:
+At line:1 char:1
++ python manage.py 
+makemigrations 2>&1 | 
+Out-File -FilePath 
+log.txt -En ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (S  
+  ystem check identifie   
+ d some issues::String    
+) [], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+
+WARNINGS:
+?: (ckeditor.W001) 
+django-ckeditor bundles 
+CKEditor 4.22.1 which 
+isn't supported anymore 
+and which does have 
+unfixed security issues, 
+see for example https://ck
+editor.com/cke4/release/CK
+Editor-4.24.0-LTS . You 
+should consider strongly 
+switching to a different 
+editor (maybe CKEditor 5 
+respectively 
+django-ckeditor-5 after 
+checking whether the 
+CKEditor 5 license terms 
+work for you) or switch 
+to the non-free CKEditor 
+4 LTS package. See https:/
+/ckeditor.com/ckeditor-4-s
+upport/ for more on this. 
+(Note! This notice has 
+been added by the 
+django-ckeditor 
+developers and we are not 
+affiliated with CKSource 
+and were not involved in 
+the licensing change, so 
+please refrain from 
+complaining to us. 
+Thanks.)
+Migrations for 'core':
+  core\migrations\0012_alter_sitesettings_fav_text_and_more.py
+    ~ Alter field fav_text on sitesettings
+    ~ Alter field header_subtitle on sitesettings
+    ~ Alter field header_title on sitesettings
+    ~ Alter field instagram_handle on sitesettings
+    ~ Alter field site_name on sitesettings
+Migrations for 'sliders':
+  sliders\migrations\0005_heroslider_button_2_link_heroslider_button_2_text.py
+    + Add field button_2_link to heroslider
+    + Add field button_2_text to heroslider

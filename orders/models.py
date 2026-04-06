@@ -150,9 +150,10 @@ class CustomerOrder(models.Model):
             # 1. Log history
             OrderStatusHistory.objects.create(order=self, status=self.status)
             
-            # 2. Trigger notifications
+            # 2. Trigger notifications in a background thread to prevent blocking the request
+            import threading
             from .notifications import send_customer_notification
-            send_customer_notification(self)
+            threading.Thread(target=send_customer_notification, args=(self,), daemon=True).start()
             
             self.__status = self.status
 

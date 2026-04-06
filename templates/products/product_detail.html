@@ -2,63 +2,66 @@
 {% load static %}
 
 {% block content %}
-    <!-- Hero Header matching Image 2 -->
-    <section class="py-5 mt-5 position-relative text-center text-white" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg'); background-size: cover; background-position: center; min-height: 35vh; display: flex; align-items: center; justify-content: center;">
+    <!-- Modern Product Header -->
+    <div class="py-5 mt-5 position-relative overflow-hidden" style="background: rgba(var(--primary-rgb), 0.03);">
         <div class="container py-4">
-            <h1 class="display-4 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ product.name }}</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-4 small text-uppercase tracking-widest font-weight-bold">
+                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-muted">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}" class="text-muted">Solutions</a></li>
+                    <li class="breadcrumb-item active text-primary" aria-current="page">{{ product.name }}</li>
+                </ol>
+            </nav>
+            <div class="row align-items-end">
+                <div class="col-lg-8" data-aos="fade-up">
+                    <span class="text-primary font-weight-bold text-uppercase smallest tracking-widest mb-2 d-block opacity-75">{{ product.category.name }}</span>
+                    <h1 class="display-3 font-weight-bold mb-0">{{ product.name }}</h1>
+                </div>
+                <div class="col-lg-4 text-lg-right mt-4 mt-lg-0" data-aos="fade-left">
+                    <div class="glassmorphism d-inline-block px-4 py-2 border-0 shadow-sm" style="border-radius: 12px; background: white;">
+                        <span class="text-muted smallest font-weight-bold text-uppercase">Availability: <span class="text-success">In Stock</span></span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Breadcrumbs Section -->
-    <nav aria-label="breadcrumb" class="bg-light py-3 border-bottom">
-        <div class="container">
-            <ol class="breadcrumb bg-transparent p-0 mb-0" style="font-size: 0.9rem;">
-                <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-secondary">Home</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'products:category_index' %}" class="text-secondary">Products</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'products:category_detail' slug=product.category.slug %}" class="text-secondary">{{ product.category.name }}</a></li>
-                <li class="breadcrumb-item active text-dark font-weight-bold" aria-current="page">{{ product.name }}</li>
-            </ol>
-        </div>
-    </nav>
-
-    <!-- Main Content Section -->
-    <section class="py-5 bg-white">
+    <!-- Main Product Section -->
+    <section class="py-5">
         <div class="container py-4">
             <div class="row">
-                <!-- Product Gallery - Dynamic Swiper -->
-                <div class="col-lg-6 mb-5 pr-lg-5">
-                    <div class="product-gallery">
-                        <!-- Main Image Display -->
-                        <div class="swiper product-main-slider mb-3 shadow-sm rounded-lg overflow-hidden border">
+                <!-- Premium Gallery -->
+                <div class="col-lg-6 mb-5 pr-lg-5" data-aos="fade-right">
+                    <div class="product-gallery sticky-top" style="top: 120px;">
+                        <div class="swiper product-main-slider mb-4 premium-card p-0 overflow-hidden bg-white shadow-2xl">
                             <div class="swiper-wrapper">
-                                <!-- Main Primary Image -->
-                                <div class="swiper-slide text-center bg-white d-flex align-items-center justify-content-center" style="height: 450px;">
-                                    <a href="{{ product.get_image_url }}" data-fancybox="gallery">
-                                        <img src="{{ product.get_image_url }}" alt="{{ product.name }}" class="img-fluid" style="max-height: 100%; object-fit: contain;">
+                                <div class="swiper-slide text-center d-flex align-items-center justify-content-center" style="min-height: 500px;">
+                                    <a href="{{ product.get_image_url }}" data-fancybox="gallery" class="w-100 h-100 d-flex align-items-center justify-content-center">
+                                        <img src="{{ product.get_image_url }}" alt="{{ product.name }}" class="img-fluid transition-slow" style="max-height: 85%; object-fit: contain;">
                                     </a>
                                 </div>
-                                <!-- Additional Gallery Images -->
                                 {% for pimg in product.images.all %}
-                                <div class="swiper-slide text-center bg-white d-flex align-items-center justify-content-center" style="height: 450px;">
-                                    <a href="{{ pimg.get_image_url }}" data-fancybox="gallery">
-                                        <img src="{{ pimg.get_image_url }}" alt="{{ product.name }}-{{ forloop.counter }}" class="img-fluid" style="max-height: 100%; object-fit: contain;">
+                                <div class="swiper-slide text-center d-flex align-items-center justify-content-center" style="min-height: 500px;">
+                                    <a href="{{ pimg.get_image_url }}" data-fancybox="gallery" class="w-100 h-100 d-flex align-items-center justify-content-center">
+                                        <img src="{{ pimg.get_image_url }}" alt="{{ product.name }}" class="img-fluid transition-slow" style="max-height: 85%; object-fit: contain;">
                                     </a>
                                 </div>
                                 {% endfor %}
                             </div>
-                            <div class="swiper-button-next"></div>
-                            <div class="swiper-button-prev"></div>
+                            <!-- Swiper Nav -->
+                            <div class="swiper-button-white-shadow swiper-button-next"></div>
+                            <div class="swiper-button-white-shadow swiper-button-prev"></div>
                         </div>
 
-                        <!-- Thumbnails Slider -->
+                        <!-- Thumbs slider -->
                         <div class="swiper product-thumbs-slider">
                             <div class="swiper-wrapper">
-                                <div class="swiper-slide border rounded p-1 cursor-pointer" style="height: 100px; width: 100px;">
-                                    <img src="{{ product.get_image_url }}" class="img-fluid w-100 h-100" style="object-fit: cover;">
+                                <div class="swiper-slide thumb-slide premium-card p-2 cursor-pointer transition-all" style="height: 110px;">
+                                    <img src="{{ product.get_image_url }}" class="img-fluid w-100 h-100 rounded" style="object-fit: contain;">
                                 </div>
                                 {% for pimg in product.images.all %}
-                                <div class="swiper-slide border rounded p-1 cursor-pointer" style="height: 100px; width: 100px;">
-                                    <img src="{{ pimg.get_image_url }}" class="img-fluid w-100 h-100" style="object-fit: cover;">
+                                <div class="swiper-slide thumb-slide premium-card p-2 cursor-pointer transition-all" style="height: 110px;">
+                                    <img src="{{ pimg.get_image_url }}" class="img-fluid w-100 h-100 rounded" style="object-fit: contain;">
                                 </div>
                                 {% endfor %}
                             </div>
@@ -66,130 +69,131 @@
                     </div>
                 </div>
 
-                <!-- Product Content -->
-                <div class="col-lg-6">
-                    <h2 class="font-weight-bold h1 mb-4" style="color:var(--primary-blue)">{{ product.name }}</h2>
-                    
-                    <div class="mb-4">
-                        {% with price_info=product.get_best_price_info %}
-                        {% if price_info.has_offer %}
-                            <div class="d-flex align-items-center mb-2">
-                                <h2 class="font-weight-bold text-dark mb-0 mr-3">{{ price_info.final_price }} AED</h2>
-                                <span class="badge badge-danger px-3 py-2" style="border-radius: 20px; font-size: 0.9rem;">
-                                    {% if price_info.discount_display %}{{ price_info.discount_display }}{% else %}OFFER{% endif %}
-                                </span>
+                <!-- Product Details -->
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="mb-5">
+                        <div class="price-section mb-5">
+                            {% with price_info=product.get_best_price_info %}
+                            <div class="d-flex align-items-center flex-wrap">
+                                <h2 class="display-4 font-weight-bold text-primary mb-0 mr-4">{{ price_info.final_price }} <small class="h5">AED</small></h2>
+                                {% if price_info.has_offer %}
+                                <div class="d-flex flex-column mr-4">
+                                    <del class="text-muted h5 mb-0 opacity-50">{{ price_info.regular_price }} AED</del>
+                                    <span class="text-danger small font-weight-bold mt-1">You save {{ price_info.discount_amount }} AED ({{ price_info.discount_percentage }}%)</span>
+                                </div>
+                                <div class="glassmorphism px-3 py-2 bg-danger text-white rounded-lg shadow-sm">
+                                    <span class="font-weight-bold small"><i class="fas fa-fire mr-2"></i>LIMITED OFFER</span>
+                                </div>
+                                {% endif %}
                             </div>
-                            <div class="d-flex align-items-center">
-                                <h5 class="text-muted mb-0 mr-3"><del>{{ price_info.regular_price }} AED</del></h5>
-                                <span class="text-success font-weight-bold" style="font-size: 1.1rem;">
-                                    (You save: {{ price_info.discount_amount }} AED / {{ price_info.discount_percentage }}%)
-                                </span>
-                            </div>
-                        {% else %}
-                            <h2 class="font-weight-bold text-dark">{{ price_info.final_price }} AED</h2>
-                        {% endif %}
-                        {% endwith %}
-                    </div>
-
-                    <div class="mb-4">
-                        <h4 class="font-weight-bold text-dark border-bottom pb-2 mb-3">Features</h4>
-                        <div class="text-muted product-features" style="line-height: 1.8;">
-                            {{ product.features|safe }}
+                            {% endwith %}
                         </div>
-                    </div>
 
-                    <div class="d-flex my-5">
-                        <a href="{% url 'orders:add_to_cart' product_id=product.id %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 8px; background-color: var(--primary-blue); min-width: 250px;"><i class="fas fa-cart-plus mr-2"></i>Add to Cart</a>
-                        {% if product.brochure %}
-                        <a href="{{ product.brochure.url }}" target="_blank" class="ml-3 btn btn-outline-secondary px-4 py-3" style="border-radius: 8px;"><i class="fa fa-file-pdf text-primary mr-2"></i> Download Brochure</a>
-                        {% endif %}
+                        <!-- Features -->
+                        <div class="mb-5">
+                            <h5 class="font-weight-bold text-dark mb-4 d-flex align-items-center">
+                                <span class="bg-primary p-2 rounded-circle mr-3 text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.8rem;"><i class="fas fa-star"></i></span>
+                                Key Features & Advantages
+                            </h5>
+                            <div class="text-muted lead-small" style="line-height: 2; font-weight: 300;">
+                                {{ product.features|safe }}
+                            </div>
+                        </div>
+
+                        <!-- CTA Area -->
+                        <div class="d-flex flex-wrap align-items-center mb-5 pb-4">
+                            <a href="{% url 'orders:add_to_cart' product_id=product.id %}" class="btn-theme btn-primary-theme btn-lg px-5 py-4 mr-3 mb-3 shadow-2xl">
+                                <i class="fas fa-cart-plus mr-3"></i> Add to Secure Cart
+                            </a>
+                            {% if product.brochure %}
+                            <a href="{{ product.brochure.url }}" target="_blank" class="btn-theme btn-outline-dark px-4 py-4 mb-3 border-light shadow-sm">
+                                <i class="fas fa-file-pdf mr-3"></i> Technical Sheet
+                            </a>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Trust Badges -->
+                        <div class="row pt-5 border-top" style="border-top: 1px solid rgba(0,0,0,0.05) !important;">
+                            <div class="col-sm-6 mb-4">
+                                <div class="premium-card p-4 bg-light border-0 d-flex align-items-center">
+                                    <div class="mr-4 text-primary h3 mb-0"><i class="fas fa-shield-alt"></i></div>
+                                    <div>
+                                        <h6 class="font-weight-bold mb-1">Authentic Guarantee</h6>
+                                        <p class="smallest text-muted mb-0">100% Genuine Medical Hardware</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 mb-4">
+                                <div class="premium-card p-4 bg-light border-0 d-flex align-items-center">
+                                    <div class="mr-4 text-primary h3 mb-0"><i class="fas fa-headset"></i></div>
+                                    <div>
+                                        <h6 class="font-weight-bold mb-1">Expert Support</h6>
+                                        <p class="smallest text-muted mb-0">Direct support from specialists</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Product Accordions -->
-            <div class="row mt-5 pt-4">
-                <div class="col-12">
-                    <div class="accordion" id="productSpecs">
-                        <!-- Product Characteristics (Dynamic Attributes) -->
-                        <div class="card border-0 mb-3 shadow-sm" style="border-radius: 10px; overflow: hidden;">
-                            <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" data-toggle="collapse" data-target="#collapseCharacteristics">
-                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-list-ul mr-3 text-primary"></i> Product Characteristics</h5>
-                                <i class="fas fa-chevron-down text-muted"></i>
-                            </div>
-                            <div id="collapseCharacteristics" class="collapse show" data-parent="#productSpecs">
-                                <div class="card-body bg-white py-4 border-top">
+            <!-- Detailed Specs -->
+            <div class="mt-120 overflow-hidden">
+                <div class="premium-card border-0 shadow-2xl bg-white p-0">
+                    <ul class="nav nav-tabs nav-justified border-0" id="pdTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active py-4 font-weight-bold border-0 rounded-0" data-toggle="tab" href="#tech">TECHNICAL SPECIFICATIONS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-4 font-weight-bold border-0 rounded-0" data-toggle="tab" href="#details">PRODUCT OVERVIEW</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-5">
+                        <div class="tab-pane fade show active" id="tech">
+                            <div class="row">
+                                <div class="col-lg-6 pr-lg-5">
                                     <div class="table-responsive">
-                                        <table class="table table-striped table-hover mb-0">
+                                        <table class="table table-hover table-borderless">
                                             <tbody>
                                                 {% for char in product.characteristics.all %}
-                                                <tr>
-                                                    <th class="border-0 bg-transparent text-secondary" style="width: 30%">{{ char.attribute.name }}</th>
-                                                    <td class="border-0 bg-transparent text-dark font-weight-bold">{{ char.value }}</td>
-                                                </tr>
-                                                {% empty %}
-                                                <tr>
-                                                    <td colspan="2" class="text-muted border-0 small">No specific characteristics listed for this model.</td>
+                                                <tr style="border-bottom: 1px solid #f8f9fa;">
+                                                    <td class="px-0 py-3 text-muted font-weight-light" style="width: 45%;">{{ char.attribute.name }}</td>
+                                                    <td class="px-0 py-3 text-dark font-weight-bold">{{ char.value }}</td>
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Technical Information -->
-                        <div class="card border-0 mb-3 shadow-sm" style="border-radius: 10px; overflow: hidden;">
-                            <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" data-toggle="collapse" data-target="#collapseTechnical">
-                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-tools mr-3 text-primary"></i> Technical Information</h5>
-                                <i class="fas fa-chevron-down text-muted"></i>
-                            </div>
-                            <div id="collapseTechnical" class="collapse" data-parent="#productSpecs">
-                                <div class="card-body bg-white py-4 border-top">
-                                    {{ product.technical_info|safe|default:"<p class='text-muted'>Standard technical specifications apply. Customized according to the patient's needs, sizes and particular requirements.</p>" }}
+                                <div class="col-lg-6 pt-4 pt-lg-0">
+                                    <div class="text-muted p-4 bg-light rounded-xl" style="line-height: 2.2; font-weight: 300;">
+                                        {{ product.technical_info|safe|default:"Engineered to the highest industry standards, this solution combines precision performance with unmatched reliability for clinical environments." }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Overview -->
-                        <div class="card border-0 mb-3 shadow-sm" style="border-radius: 10px; overflow: hidden;">
-                            <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" data-toggle="collapse" data-target="#collapseOverview">
-                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-info-circle mr-3 text-primary"></i> Overview</h5>
-                                <i class="fas fa-chevron-down text-muted"></i>
-                            </div>
-                            <div id="collapseOverview" class="collapse" data-parent="#productSpecs">
-                                <div class="card-body bg-white py-4 border-top">
-                                    {{ product.overview|safe }}
-                                </div>
+                        <div class="tab-pane fade" id="details">
+                            <div class="text-muted lead-small" style="line-height: 2.2; font-weight: 300;">
+                                {{ product.overview|safe }}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Related Products Section -->
+            <!-- Related Products -->
             {% if site_settings.pd_show_related|default:True %}
-            <div class="mt-5 pt-5">
-                <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-2">
-                    <h2 class="font-weight-bold" style="color: var(--primary-blue);">{{ site_settings.pd_related_title|default:"Related Products" }}</h2>
-                    <a href="{% url 'products:category_detail' slug=product.category.slug %}" class="text-secondary font-weight-bold text-decoration-none">View All <i class="fa fa-arrow-right ml-1 small"></i></a>
+            <div class="mt-120" data-aos="fade-up">
+                <div class="d-flex justify-content-between align-items-end mb-5">
+                    <div>
+                        <span class="text-primary font-weight-bold tracking-widest text-uppercase smallest">You may also like</span>
+                        <h2 class="font-weight-bold mt-2 h1">{{ site_settings.pd_related_title|default:"Related Innovations" }}</h2>
+                    </div>
+                    <a href="{% url 'products:product_list' %}" class="btn-theme btn-outline-primary px-5 py-3 shadow-lg">Browse Collection</a>
                 </div>
                 <div class="row">
-                    {% for rp in product.category.products.all %}
-                    {% if rp.id != product.id %}
-                    {% if forloop.counter <= site_settings.pd_related_count|default:4 %}
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card border-0 text-center h-100 shadow-sm category-card transition-all p-3" style="border-radius: 15px;">
-                            <a href="{% url 'products:product_detail' slug=rp.slug %}" class="text-decoration-none">
-                                <img src="{{ rp.get_image_url }}" class="img-fluid mb-3" style="height: 180px; object-fit: contain;">
-                                <h6 class="text-dark font-weight-bold mb-3" style="min-height: 3rem;">{{ rp.name }}</h6>
-                                <span class="btn btn-outline-primary btn-sm btn-block py-2 mb-2" style="border-radius: 10px;"><i class="fas fa-cart-plus mr-1"></i> Add to Cart</span>
-                            </a>
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% endif %}
+                    {% for rp in product.cluster_products|slice:":4" %}
+                        {% include 'includes/sku_card.html' with sku=rp.get_primary_sku delay=forloop.counter|multiply:100 %}
                     {% endfor %}
                 </div>
             </div>
@@ -197,24 +201,33 @@
         </div>
     </section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var thumbsSlider = new Swiper(".product-thumbs-slider", {
-                spaceBetween: 10,
-                slidesPerView: 4,
-                freeMode: true,
-                watchSlidesProgress: true,
-            });
-            var mainSlider = new Swiper(".product-main-slider", {
-                spaceBetween: 10,
-                navigation: {
-                    nextEl: ".swiper-button-next",
-                    prevEl: ".swiper-button-prev",
-                },
-                thumbs: {
-                    swiper: thumbsSlider,
-                },
-            });
+    <style>
+        .swiper-button-white-shadow { background: white !important; width: 50px !important; height: 50px !important; border-radius: 50% !important; box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+        .swiper-button-white-shadow:after { font-size: 1.2rem !important; color: #000 !important; font-weight: bold !important; }
+        .thumb-slide { opacity: 0.5; border: 2px solid transparent !important; }
+        .swiper-slide-thumb-active { opacity: 1 !important; border-color: var(--primary) !important; }
+        #pdTabs .nav-link { background: #f8f9fa; color: #999; letter-spacing: 2px; transition: all 0.3s; }
+        #pdTabs .nav-link.active { background: white !important; color: var(--primary) !important; }
+        #pdTabs .nav-link:hover:not(.active) { background: #eee; }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var thumbsSlider = new Swiper(".product-thumbs-slider", {
+            spaceBetween: 15,
+            slidesPerView: 4,
+            freeMode: true,
+            watchSlidesProgress: true,
         });
-    </script>
+        var mainSlider = new Swiper(".product-main-slider", {
+            spaceBetween: 10,
+            effect: 'fade',
+            fadeEffect: { crossFade: true },
+            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+            thumbs: { swiper: thumbsSlider }
+        });
+    });
+</script>
 {% endblock %}

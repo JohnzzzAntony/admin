@@ -1,91 +1,115 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block content %}
-<section class="py-5 bg-light mt-5">
-    <div class="container-fluid">
-        <div class="row px-xl-5">
-            <!-- Sidebar -->
-            <div class="col-lg-3 col-md-4">
-                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-light pr-3">Filter by Category</span></h5>
-                <div class="bg-white p-4 mb-30 shadow-sm rounded">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item bg-transparent border-bottom px-0">
-                            <a href="{% url 'products:product_list' %}" class="text-dark d-block {% if not current_category %}font-weight-bold{% endif %}">All Categories</a>
+<!-- Premium Page Header -->
+<div class="py-5 mt-5 position-relative overflow-hidden" style="background: rgba(var(--primary-rgb), 0.03);">
+    <div class="container py-4">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb bg-transparent p-0 small text-uppercase tracking-widest font-weight-bold">
+                        <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-muted">Home</a></li>
+                        <li class="breadcrumb-item active text-primary" aria-current="page">
+                            {% if current_category %}{{ current_category.name }}{% else %}Solutions{% endif %}
                         </li>
+                    </ol>
+                </nav>
+                <h1 class="font-weight-bold display-4 mb-2">
+                    {% if current_category %}{{ current_category.name }}{% else %}Innovation Lab{% endif %}
+                </h1>
+                <p class="text-muted lead font-weight-light">Discover our world-class medical solutions.</p>
+            </div>
+            <div class="col-lg-6 text-lg-right mt-4 mt-lg-0" data-aos="fade-left">
+                <form action="{% url 'products:product_list' %}" method="get" class="d-inline-block w-100" style="max-width: 450px;">
+                    <div class="glassmorphism p-2 shadow-lg" style="border-radius: 50px; border: 1px solid rgba(0,0,0,0.05);">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control border-0 bg-transparent px-4" placeholder="Search innovations..." value="{{ request.GET.q|default:'' }}" style="box-shadow: none;">
+                            <div class="input-group-append">
+                                <button class="btn-theme btn-primary-theme rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container py-4">
+        <div class="row">
+            <!-- Premium Sidebar -->
+            <div class="col-lg-3 mb-5" data-aos="fade-up">
+                <div class="premium-card p-4 p-md-5 bg-white border-0 shadow-lg sticky-top" style="top: 120px; z-index: 10;">
+                    <h5 class="font-weight-bold mb-4 pb-3" style="border-bottom: 2px solid #f8f9fa;">Categories</h5>
+                    <div class="nav flex-column product-sidebar-nav">
+                        <a href="{% url 'products:product_list' %}" 
+                           class="nav-link px-0 py-3 d-flex justify-content-between align-items-center transition-all {% if not current_category %}text-primary font-weight-bold{% else %}text-muted{% endif %}">
+                            <span class="d-flex align-items-center"><i class="fas fa-th-large mr-3 opacity-50"></i> All Solutions</span>
+                            <i class="fa fa-chevron-right smallest opacity-50"></i>
+                        </a>
                         {% for cat in categories %}
-                        <li class="list-group-item bg-transparent border-bottom px-0">
-                            <a href="{% url 'products:category_detail' slug=cat.slug %}" class="text-dark d-block {% if current_category == cat %}font-weight-bold text-primary{% endif %}">
+                        <a href="{% url 'products:category_detail' slug=cat.slug %}" 
+                           class="nav-link px-0 py-3 d-flex justify-content-between align-items-center transition-all {% if current_category == cat %}text-primary font-weight-bold{% else %}text-muted{% endif %}">
+                            <span class="d-flex align-items-center">
+                                {% if cat.icon %}<i class="{{ cat.icon }} mr-3 opacity-50"></i>{% else %}<i class="fas fa-microscope mr-3 opacity-50"></i>{% endif %}
                                 {{ cat.name }}
-                            </a>
-                        </li>
+                            </span>
+                            <i class="fa fa-chevron-right smallest opacity-50"></i>
+                        </a>
                         {% endfor %}
-                    </ul>
+                    </div>
+                    
+                    <!-- Support Banner in Sidebar -->
+                    <div class="mt-5 p-4 rounded-xl bg-primary text-white position-relative overflow-hidden" style="border-radius: 20px;">
+                        <div class="position-relative" style="z-index: 1;">
+                            <h6 class="font-weight-bold mb-2">Need Help?</h6>
+                            <p class="smallest mb-3 opacity-75">Talk to our medical specialists today.</p>
+                            <a href="/contact/" class="btn btn-light btn-sm rounded-pill px-3 py-2 font-weight-bold" style="font-size: 0.7rem; color: var(--primary);">Contact Now</a>
+                        </div>
+                        <i class="fas fa-stethoscope position-absolute" style="bottom: -10px; right: -10px; font-size: 4rem; opacity: 0.1;"></i>
+                    </div>
                 </div>
             </div>
             
-            <!-- Products -->
-            <div class="col-lg-9 col-md-8">
-                <div class="row pb-3">
-                    <div class="col-12 pb-1">
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <form action="{% url 'products:product_list' %}" method="get" class="w-50">
-                                <div class="input-group">
-                                    <input type="text" name="q" class="form-control rounded-pill border-0 shadow-sm" placeholder="Search products..." value="{{ request.GET.q }}">
-                                    <button type="submit" class="btn btn-primary rounded-pill ml-2 px-4 shadow-sm">Search</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
+            <!-- Product Grid -->
+            <div class="col-lg-9">
+                <div class="row">
                     {% for product in products %}
-                    <div class="col-lg-4 col-md-6 col-sm-6 pb-4">
-                        <div class="card product-item border-0 mb-4 shadow-sm h-100 rounded-3 overflow-hidden">
-                             <div class="card-header product-img position-relative overflow-hidden bg-transparent border-0 p-0 text-center" style="height:250px;">
-                                 <a href="{% url 'products:product_detail' slug=product.slug %}" class="d-block h-100">
-                                     <img class="img-fluid h-100" src="{{ product.get_image_url }}" alt="{{ product.name }}" style="object-fit: contain;">
-                                 </a>
-                             </div>
-                            <div class="card-body text-center p-0 pt-3 pb-2">
-                                <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-dark text-decoration-none">
-                                    <h6 class="mb-2 text-dark font-weight-medium product-title-hover">{{ product.name }}</h6>
-                                </a>
-                                <div class="d-flex align-items-center justify-content-center mt-2">
-                                    {% with info=product.get_best_price_info %}
-                                    {% if info.has_offer %}
-                                        <h6 class="font-weight-bold text-dark mb-0 mr-2">{{ info.final_price }} AED</h6>
-                                        <small class="text-muted mr-1"><del>{{ info.regular_price }} AED</del></small>
-                                        <small class="text-success ml-2">({{ info.discount_percentage }}% OFF)</small>
-                                    {% else %}
-                                        <h6 class="font-weight-bold text-dark mb-0">{{ info.final_price }} AED</h6>
-                                    {% endif %}
-                                    {% endwith %}
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent border-0 text-center pb-4">
-                                <div class="btn-group w-100">
-                                    <a href="{% url 'products:product_detail' slug=product.slug %}" class="btn btn-sm btn-outline-info rounded-left">View Details</a>
-                                    <a href="{% url 'orders:add_to_cart' product_id=product.pk %}" class="btn btn-sm btn-primary rounded-right"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        {% include 'includes/sku_card.html' with sku=product.get_primary_sku delay=forloop.counter|multiply:50 %}
                     {% empty %}
-                    <div class="col-12 text-center py-5">
-                        <i class="fa fa-search fa-3x text-muted mb-3"></i>
-                        <h4>No products found</h4>
-                        <p class="text-muted">Try adjusting your search or filter criteria.</p>
-                        <a href="{% url 'products:product_list' %}" class="btn btn-primary rounded-pill px-4 mt-2">Clear Filters</a>
+                    <div class="col-12 text-center py-5" data-aos="fade-up">
+                        <div class="premium-card p-5 d-inline-block bg-white shadow-lg border-0" style="max-width: 500px;">
+                            <div class="mb-4 d-flex align-items-center justify-content-center bg-light rounded-circle mx-auto" style="width: 100px; height: 100px;">
+                                <i class="fas fa-search text-primary display-4 mb-0 opacity-50"></i>
+                            </div>
+                            <h3 class="font-weight-bold">No Innovations Found</h3>
+                            <p class="text-muted font-weight-light">We couldn't find any products matching your current search or category filter.</p>
+                            <a href="{% url 'products:product_list' %}" class="btn-theme btn-primary-theme mt-4 px-5">Reset Discovery</a>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
+                
+                <!-- Pagination (Optional) -->
+                {% if is_paginated %}
+                <div class="mt-5 pt-4 d-flex justify-content-center">
+                    <!-- Modern Pagination Here -->
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </section>
 
 <style>
-    .product-title-hover:hover { color: var(--primary-blue) !important; }
-    .product-item:hover { transform: translateY(-5px); transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+    .product-sidebar-nav .nav-link:hover { padding-left: 10px !important; color: var(--primary) !important; }
+    .nav-link { border-bottom: 1px solid #f8f9fa !important; }
+    .nav-link:last-child { border-bottom: none !important; }
 </style>
+{% endblock %}
 {% endblock %}

@@ -20,6 +20,10 @@ class HeroSlider(models.Model):
     
     button_text = models.CharField(max_length=100, default="Shop Now")
     button_link = models.CharField(max_length=255, default="/products/")
+    
+    button_2_text = models.CharField(max_length=100, default="Enquiry")
+    button_2_link = models.CharField(max_length=255, default="/contact/")
+    
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
