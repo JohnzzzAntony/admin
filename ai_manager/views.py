@@ -44,8 +44,12 @@ def ai_process_command(request):
             }, status=500)
 
         genai.configure(api_key=gemini_api_key)
-        # Use a fresh client instance to ensure environment synchronization
-        gemini_client = genai.GenerativeModel('gemini-1.5-flash')
+        try:
+            # Using -latest as an alias for stability across different library versions
+            gemini_client = genai.GenerativeModel('gemini-1.5-flash-latest')
+        except:
+            # Fallback to the rock-solid gemini-pro
+            gemini_client = genai.GenerativeModel('gemini-pro')
 
         # 🚀 Google Gemini Orchestration
         sys_prompt = (
