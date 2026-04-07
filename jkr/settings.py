@@ -188,12 +188,15 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Modern Django 5.2/6.0 Storage Configuration
+# Modern Django 6.0 Storage Configuration
 STORAGES = {
+    # Media Files
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage" if IS_PRODUCTION else "django.core.files.storage.FileSystemStorage",
     },
+    # Static Files
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
@@ -237,10 +240,17 @@ STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='sk_test_12345')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_12345')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default=None)
 
+# Cloudinary Storage Dictionary (Required by django-cloudinary-storage)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME', default='dltest'),
+    'API_KEY': env('CLOUDINARY_API_KEY', default='1234567'),
+    'API_SECRET': env('CLOUDINARY_API_SECRET', default='secretkey'),
+}
+
 cloudinary.config(
-  cloud_name = env('CLOUDINARY_CLOUD_NAME', default='dltest'),
-  api_key = env('CLOUDINARY_API_KEY', default='1234567'),
-  api_secret = env('CLOUDINARY_API_SECRET', default='secretkey')
+  cloud_name = CLOUDINARY_STORAGE['CLOUD_NAME'],
+  api_key = CLOUDINARY_STORAGE['API_KEY'],
+  api_secret = CLOUDINARY_STORAGE['API_SECRET']
 )
 
 SITE_URL = env('SITE_URL', default='http://localhost:8000')
@@ -261,7 +271,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': 'django_errors.log',
+            'filename': os.path.join(BASE_DIR, 'django_errors.log'),
         },
     },
     'loggers': {
