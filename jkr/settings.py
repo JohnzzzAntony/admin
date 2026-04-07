@@ -200,6 +200,10 @@ STORAGES = {
     },
 }
 
+# Legacy Aliases (Required by django-cloudinary-storage and other apps)
+DEFAULT_FILE_STORAGE = STORAGES["default"]["BACKEND"]
+STATICFILES_STORAGE = STORAGES["staticfiles"]["BACKEND"]
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CKEditor Configuration
