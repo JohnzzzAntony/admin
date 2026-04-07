@@ -110,6 +110,16 @@
                 body: JSON.stringify({ prompt: prompt })
             });
 
+            if (!response.ok) {
+                const errorText = await response.text();
+                let errorMessage = "Server Error (" + response.status + ")";
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    errorMessage = errorJson.message || errorMessage;
+                } catch (e) {}
+                throw new Error(errorMessage);
+            }
+
             const data = await response.json();
             processing.style.display = 'none';
 
@@ -125,7 +135,7 @@
             }
         } catch (error) {
             processing.style.display = 'none';
-            appendMessage("❌ Connection problem. Is the server running?", 'ai');
+            appendMessage("❌ ERROR: " + error.message + " (Check if server is on HTTP or HTTPS)", 'ai');
         }
     }
 

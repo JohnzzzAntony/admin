@@ -85,6 +85,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ prompt: prompt })
             });
+            if (!response.ok) {
+                const errText = await response.text();
+                let errMsg = "AI Service Error (" + response.status + ")";
+                try { const eJson = JSON.parse(errText); errMsg = eJson.message || errMsg; } catch(e) {}
+                throw new Error(errMsg);
+            }
             const data = await response.json();
             
             const aiMsg = document.createElement('div');
@@ -94,6 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
             messages.scrollTop = messages.scrollHeight;
         } catch (e) {
             console.error(e);
+            const errDiv = document.createElement('div');
+            errDiv.style.cssText = "background: rgba(220,38,38,0.2); border-left: 3px solid #dc2626; padding: 10px; border-radius: 10px; margin-bottom: 10px; color: #fecaca; font-size: 0.8rem;";
+            errDiv.innerHTML = "❌ " + e.message;
+            messages.appendChild(errDiv);
+            messages.scrollTop = messages.scrollHeight;
         }
     }
 
