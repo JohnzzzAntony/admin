@@ -32,3 +32,9 @@ class CategoryMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'slug']
+
+class ProductListSerializer(serializers.ModelSerializer):
+    category = CategoryMinimalSerializer(read_only=True)
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'slug', 'category', 'image', 'image_url', 'is_active']

@@ -82,7 +82,6 @@ LOGOUT_REDIRECT_URL = 'core:home'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', # For static files
-    'django.middleware.gzip.GZipMiddleware', # For smaller & faster page loads
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -100,13 +99,16 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 IS_PRODUCTION = env.bool('IS_PRODUCTION', default=False)
 if IS_PRODUCTION:
-    CSRF_COOKIE_SECURE = not DEBUG
-    SESSION_COOKIE_SECURE = not DEBUG
-    SECURE_SSL_REDIRECT = not DEBUG
+    # Essential for Railway/Heroku to detect HTTPS via proxy
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_HSTS_SECONDS = 31536000 # 1 Year
+    SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
     SESSION_COOKIE_HTTPONLY = True
     CSRF_COOKIE_HTTPONLY = True
     SECURE_REFERRER_POLICY = 'same-origin'
@@ -141,6 +143,11 @@ if env('DATABASE_URL', default=None):
     DATABASES = {
         'default': env.db()
     }
+    # Ensure SSL is required for production DBs (Neon/Supabase)
+    if IS_PRODUCTION and DATABASES['default'].get('ENGINE') == 'django.db.backends.postgresql':
+        DATABASES['default'].setdefault('OPTIONS', {})
+        DATABASES['default']['OPTIONS']['sslmode'] = 'require'
+    
     DATABASES['default']['CONN_MAX_AGE'] = 600
 else:
     DATABASES = {

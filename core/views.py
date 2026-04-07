@@ -103,3 +103,8 @@ def store_locations_view(request):
         'stores': stores,
         'cities': cities
     })
+from django.http import JsonResponse
+
+def health_check(request):
+    """Simple health check endpoint for monitoring."""
+    return JsonResponse({'status': 'healthy', 'timestamp': timezone.now().isoformat()})

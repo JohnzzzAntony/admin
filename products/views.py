@@ -116,10 +116,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
         category = self.get_object()
         all_cat_ids = [c.id for c in category.get_all_children(include_self=True)]
         
-        from .serializers import ProductListSerializer # Assuming it exists or I'll create it
-        # products = Product.objects.filter(category_id__in=all_cat_ids)
-        # return Response(ProductListSerializer(products, many=True).data)
-        return Response({'category': category.name, 'ids': all_cat_ids, 'info': 'Recursive filtering active'})
+        from .serializers import ProductListSerializer 
+        products = Product.objects.filter(category_id__in=all_cat_ids, is_active=True)
+        return Response(ProductListSerializer(products, many=True).data)
 
     def destroy(self, request, *args, **kwargs):
         """Handle children properly - logic is in on_delete=CASCADE in models.py"""
