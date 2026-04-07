@@ -60,8 +60,12 @@ class Category(models.Model):
     @property
     def get_image_url(self):
         try:
-            if self.image_url: return self.image_url
-            if self.image: return self.image.url
+            # 1. Prioritize uploaded files from the system
+            if self.image:
+                return self.image.url
+            # 2. Fallback to external URL if provided
+            if self.image_url and "placeholder.com" not in self.image_url:
+                return self.image_url
         except Exception:
             pass
         return "https://via.placeholder.com/300"
@@ -142,8 +146,8 @@ class Product(models.Model):
     @property
     def get_image_url(self):
         try:
-            if self.image_url: return self.image_url
             if self.image: return self.image.url
+            if self.image_url: return self.image_url
         except Exception:
             pass
         return "https://via.placeholder.com/600x400"
@@ -242,8 +246,8 @@ class ProductImage(models.Model):
     @property
     def get_image_url(self):
         try:
-            if self.image_url: return self.image_url
             if self.image: return self.image.url
+            if self.image_url: return self.image_url
         except Exception:
             pass
         return "https://via.placeholder.com/600x400"
