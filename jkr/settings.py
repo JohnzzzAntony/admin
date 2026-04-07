@@ -33,16 +33,10 @@ SECRET_KEY = env('SECRET_KEY', default='django-insecure-build-placeholder-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
-    'admin.creativegradientz.com', 
-    'creativegradientz.com', 
-    'localhost', 
-    '127.0.0.1',
-    '192.168.1.227', # Added for local network testing
-    '.up.railway.app'
-])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
+    'https://ecom.creativegradientz.com',
     'https://admin.creativegradientz.com',
     'https://creativegradientz.com',
     'https://admin-production-dac3.up.railway.app',
@@ -188,21 +182,19 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Modern Django 5.2/6.0 Storage Configuration
-# Modern Django 6.0 Storage Configuration
-STORAGES = {
-    # Media Files
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage" if IS_PRODUCTION else "django.core.files.storage.FileSystemStorage",
-    },
-    # Static Files
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
+# Storage Configuration (Classic mode for maximum compatibility with Cloudinary/WhiteNoise)
+if IS_PRODUCTION:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+else:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
-# Legacy Aliases (Required by django-cloudinary-storage and other apps)
-DEFAULT_FILE_STORAGE = STORAGES["default"]["BACKEND"]
-STATICFILES_STORAGE = STORAGES["staticfiles"]["BACKEND"]
+# Modern Django dictionary (fallback)
+STORAGES = {
+    "default": {"BACKEND": DEFAULT_FILE_STORAGE},
+    "staticfiles": {"BACKEND": STATICFILES_STORAGE},
+}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
