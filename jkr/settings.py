@@ -275,7 +275,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'django_errors.log'),
+            'filename': os.path.join('/tmp', 'django_errors.log') if IS_PRODUCTION else os.path.join(BASE_DIR, 'django_errors.log'),
         },
     },
     'loggers': {
