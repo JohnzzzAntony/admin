@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import environ
 import os
+import cloudinary
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -47,8 +48,6 @@ CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
     'https://admin-production-dac3.up.railway.app',
     'https://*.up.railway.app'
 ])
-
-
 
 # Application definition
 
@@ -101,18 +100,15 @@ MIDDLEWARE = [
 ]
 
 # ── Security Hardening ────────────────────────────────────────────────────────
-# https://docs.djangoproject.com/en/6.0/ref/settings/#security
-
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'SAMEORIGIN' # Allow same-origin for admin iframes (jazzmin/ckeditor)
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-# Enable strict SSL security if in production
-IS_PRODUCTION = env('IS_PRODUCTION')
+IS_PRODUCTION = env.bool('IS_PRODUCTION', default=False)
 if IS_PRODUCTION:
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
+    CSRF_COOKIE_SECURE = not DEBUG
+    SESSION_COOKIE_SECURE = not DEBUG
+    SECURE_SSL_REDIRECT = not DEBUG
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_HSTS_SECONDS = 31536000 # 1 Year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -120,9 +116,6 @@ if IS_PRODUCTION:
     SESSION_COOKIE_HTTPONLY = True
     CSRF_COOKIE_HTTPONLY = True
     SECURE_REFERRER_POLICY = 'same-origin'
-    # Ensure site isn't indexed by search engines during staging (optional)
-    # DEBUG = False # Handled by env('DEBUG')
-
 
 ROOT_URLCONF = 'jkr.urls'
 
@@ -147,11 +140,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'jkr.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# Database configuration (Fast Local SQLite for Dev / Cloud Supabase for Production)
 if env('DATABASE_URL', default=None):
     DATABASES = {
         'default': env.db()
@@ -165,41 +156,25 @@ else:
         }
     }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator' },
+    { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator' },
+    { 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator' },
+    { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator' },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Dubai'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -217,10 +192,6 @@ if IS_PRODUCTION:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 else:
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -244,42 +215,23 @@ JAZZMIN_SETTINGS = {
         {"name": "View Site", "url": "/", "new_window": True},
     ],
     "order_with_respect_to": [
-        "products", 
-        "orders", 
-        "core", 
-        "pages", 
-        "contact", 
-        "blog", 
-        "sliders", 
-        "auth"
+        "products", "orders", "core", "pages", "contact", "blog", "sliders", "auth"
     ],
     "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.Group": "fas fa-users",
-        "products.Product": "fas fa-box-open",
-        "products.Category": "fas fa-tags",
-        "products.ProductSKU": "fas fa-barcode",
-        "orders.CustomerOrder": "fas fa-shopping-basket",
-        "core.SiteSettings": "fas fa-cogs",
-        "pages.Page": "fas fa-file-alt",
-        "contact.QuoteEnquiry": "fas fa-envelope-open-text",
-        "blog.Post": "fas fa-newspaper",
+        "auth": "fas fa-users-cog", "auth.user": "fas fa-user", "auth.Group": "fas fa-users",
+        "products.Product": "fas fa-box-open", "products.Category": "fas fa-tags",
+        "products.ProductSKU": "fas fa-barcode", "orders.CustomerOrder": "fas fa-shopping-basket",
+        "core.SiteSettings": "fas fa-cogs", "pages.Page": "fas fa-file-alt",
+        "contact.QuoteEnquiry": "fas fa-envelope-open-text", "blog.Post": "fas fa-newspaper",
         "sliders.Slider": "fas fa-images",
     },
     "custom_css": "admin/css/admin_premium.css",
     "custom_js": "admin/js/ai_agent.js",
 }
 
-# Loaded at top of file
-
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='sk_test_12345')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_12345')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default=None)
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 
 cloudinary.config(
   cloud_name = env('CLOUDINARY_CLOUD_NAME', default='dltest'),
@@ -287,16 +239,32 @@ cloudinary.config(
   api_secret = env('CLOUDINARY_API_SECRET', default='secretkey')
 )
 
-
-# ── Notification and Site Configuration ───────────────────────────────────────
 SITE_URL = env('SITE_URL', default='http://localhost:8000')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default=env('EMAIL_HOST_USER', default='notifications@jkrinternational.com'))
 CURRENCY = env('CURRENCY', default='AED')
 
-# Email Delivery (SMTP)
 EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
 EMAIL_HOST = env('EMAIL_HOST', default='smtp.gmail.com') 
 EMAIL_PORT = env('EMAIL_PORT', cast=int, default=587)
 EMAIL_USE_TLS = env('EMAIL_USE_TLS', cast=bool, default=True)
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'django_errors.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}

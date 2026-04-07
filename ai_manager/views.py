@@ -10,12 +10,18 @@ from django.utils.text import slugify
 from django.conf import settings
 from decimal import Decimal
 
-# --- GPT-4o-mini powered Intelligent Store Manager ---
-# This version uses the official OpenAI SDK and handles multi-turn store management tasks.
+import google.generativeai as genai
 
-client = None
+# --- Multi-Engine Neural Core ---
+openai_client = None
 if os.getenv('OPENAI_API_KEY'):
-    client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+    openai_client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+gemini_client = None
+if os.getenv('GEMINI_API_KEY'):
+    genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+    gemini_client = genai.GenerativeModel('gemini-1.5-flash')
+
 
 @staff_member_required
 def ai_dashboard(request):
@@ -79,14 +85,25 @@ def ai_process_command(request):
             {"role": "user", "content": user_prompt}
         ]
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            tools=tools,
-            tool_choice="auto"
-        )
+        # 🚀 ENGINE SELECTION: Prioritize OpenAI, Fallback to Gemini
+        if openai_client:
+            try:
+                response = openai_client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=messages,
+                    tools=tools,
+                    tool_choice="auto"
+                )
+                response_message = response.choices[0].message
+            except openai.RateLimitError:
+                # Quota exceeded on OpenAI? Try Gemini...
+                if not gemini_client: raise
+                response_message = process_with_gemini(user_prompt)
+        elif gemini_client:
+            response_message = process_with_gemini(user_prompt)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'No AI Engine Configured (OpenAI/Gemini Key missing).'}, status=500)
 
-        response_message = response.choices[0].message
         
         # --- Handle Function Calling (Neural Link) ---
         if response_message.tool_calls:
@@ -121,5 +138,47 @@ def ai_process_command(request):
             'action': None
         })
         
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    except openai.RateLimitError as e:
+        # ⚠️ Specific handling for Quota Exceeded (Error 429)
+        error_msg = ("💳 **AI SERVICE PAUSED**: Your OpenAI API quota has been exceeded or billing details need updating. "
+                     "Please check your plan at [platform.openai.com](https://platform.openai.com/account/billing). "
+                     "The store backend remains fully functional; only the autonomous agent is temporarily offline.")
+        return JsonResponse({'status': 'quota_error', 'message': error_msg}, status=429)
+
+    except openai.OpenAIError as e:
+        # Generic OpenAI Service Errors
+        return JsonResponse({'status': 'error', 'message': f"🤖 **AI INTERRUPT**: {str(e)}"}, status=500)
+
+def process_with_gemini(prompt):
+    """
+    Robust fallback engine using Google's Gemini 1.5 Flash.
+    """
+    class MockResponse:
+        def __init__(self, content, tool_calls=None):
+            self.content = content
+            self.tool_calls = tool_calls
+
+    config = {
+        "temperature": 0.7,
+        "top_p": 0.95,
+        "max_output_tokens": 1024,
+    }
+    
+    # Simple prompt enhancement for tools (Gemini supports native function calling 
+    # but for a quick fallback we'll use a strong system prompt for now).
+    sys_prompt = "You are the JKR Store Manager AI. Respond concisely. If user wants to add a category, say 'ADD_CATEGORY: Name'. If they want an image, say 'IMAGE: Prompt'."
+    res = gemini_client.generate_content(f"{sys_prompt}\n\nUser: {prompt}", generation_config=config)
+    
+    # Simple Parser for tool simulation
+    content = res.text
+    tool_calls = []
+    if "ADD_CATEGORY:" in content:
+        name = content.split("ADD_CATEGORY:")[-1].strip()
+        class ToolCall:
+            def __init__(self, name, args):
+                self.function = type('obj', (object,), {'name': name, 'arguments': json.dumps(args)})
+        tool_calls = [ToolCall("create_category", {"name": name})]
+    
+    return MockResponse(content, tool_calls)
+
+

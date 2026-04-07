@@ -59,8 +59,11 @@ class Category(models.Model):
     
     @property
     def get_image_url(self):
-        if self.image_url: return self.image_url
-        if self.image: return self.image.url
+        try:
+            if self.image_url: return self.image_url
+            if self.image: return self.image.url
+        except Exception:
+            pass
         return "https://via.placeholder.com/300"
 
     def get_all_children(self, include_self=True):
@@ -71,6 +74,13 @@ class Category(models.Model):
         for sub in self.subcategories.filter(is_active=True):
             children.extend(sub.get_all_children(include_self=True))
         return children
+
+    @property
+    def active_subcategories(self):
+        """
+        Returns only the active subcategories for template rendering.
+        """
+        return self.subcategories.filter(is_active=True)
 
     def get_ancestors(self):
         """
@@ -131,8 +141,11 @@ class Product(models.Model):
 
     @property
     def get_image_url(self):
-        if self.image_url: return self.image_url
-        if self.image: return self.image.url
+        try:
+            if self.image_url: return self.image_url
+            if self.image: return self.image.url
+        except Exception:
+            pass
         return "https://via.placeholder.com/600x400"
 
     def save(self, *args, **kwargs):
@@ -228,8 +241,11 @@ class ProductImage(models.Model):
 
     @property
     def get_image_url(self):
-        if self.image_url: return self.image_url
-        if self.image: return self.image.url
+        try:
+            if self.image_url: return self.image_url
+            if self.image: return self.image.url
+        except Exception:
+            pass
         return "https://via.placeholder.com/600x400"
 
 from django.utils import timezone
