@@ -276,8 +276,10 @@ JAZZMIN_SETTINGS = {
         "core.StoreLocation": "fas fa-map-marker-alt",
         "core.SocialPost": "fas fa-share-alt",
     },
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
     "custom_css": "admin/css/admin_premium.css",
-    "custom_js": "admin/js/admin_ux.js", # Changed from ai_agent.js to include UX logic
+    "custom_js": "admin/js/admin_ux.js",
 }
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='sk_test_12345')
