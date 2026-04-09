@@ -429,32 +429,25 @@ textarea, .vLargeTextField {
     cursor: pointer !important;
 }
 
-.btn-remove-media {
-    background: #fee2e2 !important;
-    color: #ef4444 !important;
-    border: 1px solid #fecaca !important;
-    padding: 4px 10px !important;
-    border-radius: 8px !important;
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
+.btn-simple-remove {
+    background: #ff4d4d !important;
+    color: #fff !important;
+    border: none !important;
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 50% !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 6px !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    margin-left: 8px !important;
+    font-size: 10px !important;
     transition: all 0.2s ease !important;
-    text-decoration: none !important;
-    margin-left: 10px !important;
 }
 
-.btn-remove-media:hover {
-    background: #ef4444 !important;
-    color: #fff !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
-}
-
-.btn-remove-media i {
-    font-size: 0.8rem !important;
+.btn-simple-remove:hover {
+    background: #cc0000 !important;
+    transform: scale(1.1) !important;
 }
 
 /* Language Toggle Switch */

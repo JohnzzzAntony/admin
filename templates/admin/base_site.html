@@ -185,102 +185,78 @@
                 }
             }
 
-            // ── 4. Enhanced Instant Removal System (Dedicated Button) ───────────
+            // ── 4. Ultra-Simple Instant Removal ──────────────────────────────────
             function initInstantRemoval() {
-                // Find all containers that have the 'Clear' checkbox (standard Django/Jazzmin)
-                document.querySelectorAll('.file-upload, .clearable-file-input, .field-image .custom-control').forEach(container => {
-                    if (container.querySelector('.btn-remove-media')) return;
+                // Find all containers that might have images (Primary or Gallery)
+                document.querySelectorAll('.file-upload, .custom-file, .clearable-file-input').forEach(container => {
+                    if (container.querySelector('.btn-simple-remove')) return;
 
-                    const row = container.closest('tr, .form-row, div.field-image');
-                    const idField = row?.querySelector('input[type="hidden"][name$="-id"]');
-                    const objectId = idField ? idField.value : null;
-                    
-                    // Look specifically for the "Clear" checkbox
-                    const checkbox = container.querySelector('input[type="checkbox"][id*="clear"], input[type="checkbox"][name$="-DELETE"]');
-                    
-                    if (checkbox && (objectId || checkbox.id === 'image-clear_id')) {
-                        const btn = document.createElement('a');
-                        btn.className = 'btn-remove-media';
-                        btn.innerHTML = '<i class="fas fa-trash"></i> Remove';
-                        btn.href = 'javascript:void(0)';
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn-simple-remove';
+                    btn.innerHTML = '×';
+                    btn.title = 'Remove Instantly';
+
+                    btn.onclick = async function(e) {
+                        e.preventDefault();
+                        const row = container.closest('tr, .form-row, .field-image');
+                        const isPrimary = row?.classList.contains('field-image');
+                        const productId = window.location.pathname.match(/\/(\d+)\/change\//)?.[1];
                         
-                        if (checkbox.id === 'image-clear_id') {
-                             btn.dataset.type = 'primary';
-                        } else {
-                             btn.dataset.type = 'gallery';
-                             btn.dataset.id = objectId;
+                        // Find ID for inlines
+                        const idField = row?.querySelector('input[type="hidden"][name$="-id"]');
+                        const objectId = idField ? idField.value : null;
+
+                        let url = '';
+                        if (isPrimary && productId) url = `/products/api/product/clear-image/${productId}/`;
+                        else if (objectId) url = `/products/api/media/delete/${objectId}/`;
+
+                        if (!url) {
+                            // If it's a new row, just wipe the preview and input
+                            row.querySelectorAll('input[type="file"]').forEach(i => i.value = '');
+                            container.style.opacity = '0.3';
+                            return;
                         }
-                        
-                        // Hide the standard checkbox/label to avoid confusion
-                        checkbox.style.display = 'none';
-                        const label = container.querySelector('label[for="' + checkbox.id + '"]');
-                        if (label) label.style.display = 'none';
 
-                        container.appendChild(btn);
-                    }
+                        if (confirm('Permanently delete this from the server?')) {
+                            try {
+                                const response = await fetch(url, {
+                                    method: 'POST',
+                                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                                });
+                                const data = await response.json();
+                                if (data.status === 'success') {
+                                    if (isPrimary) {
+                                        container.innerHTML = '<span class="text-muted small">Removed. You can now add a new one.</span>';
+                                    } else {
+                                        row.style.transition = 'opacity 0.3s';
+                                        row.style.opacity = '0';
+                                        setTimeout(() => row.remove(), 300);
+                                    }
+                                } else {
+                                    alert('Error: ' + data.message);
+                                }
+                            } catch (err) {
+                                console.error('Delete failed:', err);
+                                alert('Could not connect to server.');
+                            }
+                        }
+                    };
+
+                    container.appendChild(btn);
+                    
+                    // Hide the standard "Clear" checkbox to prevent confusion
+                    const clearCheck = container.querySelector('input[type="checkbox"]');
+                    if (clearCheck) clearCheck.style.display = 'none';
+                    const clearLabel = container.querySelector('label[for="' + clearCheck?.id + '"]');
+                    if (clearLabel) clearLabel.style.display = 'none';
                 });
             }
 
-            // Handle Clicks
-            document.addEventListener('click', async function(e) {
-                const btn = e.target.closest('.btn-remove-media');
-                if (!btn) return;
-                
-                e.preventDefault();
-                
-                const type = btn.dataset.type;
-                let deleteUrl = '';
-                let targetRow = null;
-
-                if (type === 'gallery') {
-                    const objectId = btn.dataset.id;
-                    deleteUrl = `/products/api/media/delete/${objectId}/`;
-                    targetRow = btn.closest('tr, .form-row');
-                } else {
-                    const productId = window.location.pathname.match(/\/(\d+)\/change\//)?.[1];
-                    deleteUrl = `/products/api/product/clear-image/${productId}/`;
-                    targetRow = btn.closest('.form-group, .form-row, div.field-image');
-                }
-
-                if (objectId || type === 'primary') { // Check if we have an item to delete
-                    if (confirm('Permanently remove this image from the server?')) {
-                        try {
-                            const response = await fetch(deleteUrl, {
-                                method: 'POST',
-                                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' }
-                            });
-                            const result = await response.json();
-                            if (result.status === 'success') {
-                                targetRow.style.transition = 'all 0.4s ease';
-                                targetRow.style.opacity = '0';
-                                targetRow.style.transform = 'scale(0.9)';
-                                setTimeout(() => {
-                                    if (type === 'primary') {
-                                        const currentLink = targetRow.querySelector('.file-upload, .custom-file');
-                                        if (currentLink) currentLink.style.display = 'none';
-                                        targetRow.style.opacity = '1';
-                                        targetRow.style.transform = 'none';
-                                        btn.remove();
-                                    } else {
-                                        targetRow.remove();
-                                    }
-                                }, 400);
-                            } else {
-                                alert('Error: ' + result.message);
-                            }
-                        } catch (err) {
-                            alert('Network error. Could not delete image.');
-                        }
-                    }
-                }
-            });
-
+            // Run on load and on dynamic additions
             initInstantRemoval();
-            // Re-run when new rows are added by Django Admin
             document.addEventListener('click', function(e) {
-                if (e.target.closest('.add-row')) {
-                    setTimeout(initInstantRemoval, 200);
-                }
+                if (e.target.closest('.add-row')) setTimeout(initInstantRemoval, 300);
             });
         });
     </script>
