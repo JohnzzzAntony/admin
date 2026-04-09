@@ -800,6 +800,57 @@ input[name*="_ar"], textarea[name*="_ar"] {
     border-color: var(--accent) !important;
 }
 
+/* Search Clear Button (Matching User Screenshot) */
+.cl-search-clear {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    background: #fef2f2 !important;
+    color: #ef4444 !important;
+    border: 1px solid #fee2e2 !important;
+    border-radius: 50px !important;
+    padding: 6px 14px !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    margin-left: 10px !important;
+    transition: all 0.2s ease !important;
+    animation: fadeIn 0.3s ease !important;
+}
+
+.cl-search-clear:hover {
+    background: #fee2e2 !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1) !important;
+}
+
+.cl-search-clear i {
+    background: #ef4444 !important;
+    color: #fff !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.7rem !important;
+}
+
+/* Marked for Removal State */
+.row-marked-for-removal {
+    opacity: 0.2 !important;
+    filter: grayscale(1) !important;
+    transition: all 0.3s ease !important;
+    pointer-events: none !important;
+    background: #fdf2f2 !important;
+}
+
+.row-marked-for-removal * {
+    text-decoration: line-through !important;
+}
+
+/* Allow the checkbox itself to remain clickable to UNDO (if possible) */
+/* Actually user wants "remove", so we'll just dim it heavily. */
+
 /* Row 3 (meta row): count on RIGHT, just above the result table */
 .cl-meta-row {
     display: flex !important;

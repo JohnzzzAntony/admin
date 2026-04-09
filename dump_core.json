@@ -1,0 +1,336 @@
+[
+{
+  "model": "core.sitesettings",
+  "pk": 1,
+  "fields": {
+    "site_name": "JKR INTERNATIONAL",
+    "company_name": "JKR International FZ LLC",
+    "logo": "settings/jkr.jpg",
+    "logo_url": null,
+    "favicon": "settings/cart_wNDr0uU.png",
+    "favicon_url": null,
+    "fav_text": "Demo",
+    "meta_title": "JKR International - Premium Medical Equipment Supplier in UAE",
+    "meta_description": "Leading supplier of medical equipment and healthcare supplies across UAE. Quality products, trusted service.",
+    "email": "info@jkrintl.ae",
+    "phone": "+971 4 123 4567",
+    "whatsapp": "+971 50 123 4567",
+    "branch1_name": "Dubai",
+    "dubai_address": "Business Bay, Sheikh Zayed Road, Dubai, UAE",
+    "branch2_name": "Ras Al Khaima",
+    "abudhabi_address": "Al Marjan island, UAE",
+    "facebook": "https://facebook.com",
+    "instagram": "https://instagram.com",
+    "linkedin": "https://linkedin.com",
+    "twitter": "",
+    "instagram_handle": "@demo_intl",
+    "footer_quick_links_title": "Quick Links",
+    "footer_support_title": "Support",
+    "footer_legal_title": "Legal",
+    "footer_newsletter_title": "Subscribe to our Newsletter",
+    "footer_copyright_text": "All rights reserved.",
+    "enable_email_notifications": true,
+    "enable_sms_notifications": true,
+    "enable_whatsapp_notifications": true
+  }
+},
+{
+  "model": "core.testimonial",
+  "pk": 7,
+  "fields": {
+    "client_name": "Dr. Ahmed Al-Rashidi",
+    "position": "Chief Medical Officer, Dubai Hospital",
+    "content": "MediSupply Pro has been our trusted partner for over 5 years. Their equipment quality and after-sales support are exceptional. Highly recommended for any healthcare institution.",
+    "image": "",
+    "image_url": "https://randomuser.me/api/portraits/men/32.jpg",
+    "rating": 5,
+    "order": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "core.testimonial",
+  "pk": 8,
+  "fields": {
+    "client_name": "Dr. Sarah Johnson",
+    "position": "Head of Radiology, Abu Dhabi Clinic",
+    "content": "The digital X-ray system we purchased exceeded our expectations. Installation was professional and the training provided was comprehensive. Excellent service!",
+    "image": "",
+    "image_url": "https://randomuser.me/api/portraits/women/44.jpg",
+    "rating": 5,
+    "order": 2,
+    "is_active": true
+  }
+},
+{
+  "model": "core.testimonial",
+  "pk": 9,
+  "fields": {
+    "client_name": "Mr. Khalid Hassan",
+    "position": "Hospital Administrator, Sharjah Medical Center",
+    "content": "Prompt delivery, competitive pricing, and genuine products. MediSupply Pro makes procurement of medical equipment straightforward and reliable.",
+    "image": "",
+    "image_url": "https://randomuser.me/api/portraits/men/55.jpg",
+    "rating": 5,
+    "order": 3,
+    "is_active": true
+  }
+},
+{
+  "model": "core.client",
+  "pk": 8,
+  "fields": {
+    "name": "Dubai Health Authority",
+    "logo": "",
+    "logo_url": "https://via.placeholder.com/150x60/114084/ffffff?text=DHA",
+    "icon_svg": "",
+    "category": "Public",
+    "order": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "core.client",
+  "pk": 9,
+  "fields": {
+    "name": "SEHA Abu Dhabi",
+    "logo": "",
+    "logo_url": "https://via.placeholder.com/150x60/005CB9/ffffff?text=SEHA",
+    "icon_svg": "",
+    "category": "Public",
+    "order": 2,
+    "is_active": true
+  }
+},
+{
+  "model": "core.client",
+  "pk": 10,
+  "fields": {
+    "name": "Ministry of Health UAE",
+    "logo": "",
+    "logo_url": "https://via.placeholder.com/150x60/114084/ffffff?text=MoH+UAE",
+    "icon_svg": "",
+    "category": "Public",
+    "order": 3,
+    "is_active": true
+  }
+},
+{
+  "model": "core.client",
+  "pk": 11,
+  "fields": {
+    "name": "Sharjah Health Authority",
+    "logo": "",
+    "logo_url": "https://via.placeholder.com/150x60/005CB9/ffffff?text=SHA",
+    "icon_svg": "",
+    "category": "Public",
+    "order": 4,
+    "is_active": true
+  }
+},
+{
+  "model": "core.client",
+  "pk": 12,
+  "fields": {
+    "name": "NMC Healthcare",
+    "logo": "",
+    "logo_url": "https://via.placeholder.com/150x60/114084/ffffff?text=NMC",
+    "icon_svg": "",
+    "category": "Private",
+    "order": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "core.client",
+  "pk": 13,
+  "fields": {
+    "name": "Aster DM Healthcare",
+    "logo": "",
+    "logo_url": "https://via.placeholder.com/150x60/005CB9/ffffff?text=Aster",
+    "icon_svg": "",
+    "category": "Private",
+    "order": 2,
+    "is_active": true
+  }
+},
+{
+  "model": "core.client",
+  "pk": 14,
+  "fields": {
+    "name": "Burjeel Medical City",
+    "logo": "",
+    "logo_url": "https://via.placeholder.com/150x60/114084/ffffff?text=Burjeel",
+    "icon_svg": "",
+    "category": "Private",
+    "order": 3,
+    "is_active": true
+  }
+},
+{
+  "model": "core.client",
+  "pk": 15,
+  "fields": {
+    "name": "Mediclinic UAE",
+    "logo": "",
+    "logo_url": "https://via.placeholder.com/150x60/005CB9/ffffff?text=Mediclinic",
+    "icon_svg": "",
+    "category": "Private",
+    "order": 4,
+    "is_active": true
+  }
+},
+{
+  "model": "core.socialpost",
+  "pk": 1,
+  "fields": {
+    "image": "",
+    "image_url": "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=400&q=80",
+    "icon_svg": "",
+    "link": "https://instagram.com",
+    "order": 1
+  }
+},
+{
+  "model": "core.socialpost",
+  "pk": 2,
+  "fields": {
+    "image": "",
+    "image_url": "https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=400&q=80",
+    "icon_svg": "",
+    "link": "https://instagram.com",
+    "order": 2
+  }
+},
+{
+  "model": "core.socialpost",
+  "pk": 3,
+  "fields": {
+    "image": "",
+    "image_url": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&q=80",
+    "icon_svg": "",
+    "link": "https://instagram.com",
+    "order": 3
+  }
+},
+{
+  "model": "core.socialpost",
+  "pk": 4,
+  "fields": {
+    "image": "",
+    "image_url": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&q=80",
+    "icon_svg": "",
+    "link": "https://instagram.com",
+    "order": 4
+  }
+},
+{
+  "model": "core.socialpost",
+  "pk": 5,
+  "fields": {
+    "image": "",
+    "image_url": "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=400&q=80",
+    "icon_svg": "",
+    "link": "https://instagram.com",
+    "order": 5
+  }
+},
+{
+  "model": "core.socialpost",
+  "pk": 6,
+  "fields": {
+    "image": "",
+    "image_url": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&q=80",
+    "icon_svg": "",
+    "link": "https://instagram.com",
+    "order": 6
+  }
+},
+{
+  "model": "core.storelocation",
+  "pk": 1,
+  "fields": {
+    "name": "Dubai Mall",
+    "image": "",
+    "image_url": "https://12storeez.store/cdn/shop/files/1R9A8797_1.jpg",
+    "address": "duabai",
+    "city": "duabi",
+    "phone": "343343434343",
+    "map_url": "https://maps.app.goo.gl/V6bnP72QbWSQ6oNf7",
+    "is_active": true,
+    "order": 0
+  }
+},
+{
+  "model": "core.storelocation",
+  "pk": 2,
+  "fields": {
+    "name": "JKR International",
+    "image": "",
+    "image_url": null,
+    "address": "Office No. 104, Al Fardan Holdings Building Opposite Centro Rotana Hotel, Old Air Port Road\r\nAbu Dhabi - United Arab Emirates",
+    "city": "Abu Dhabi",
+    "phone": "971 2 443 7782",
+    "map_url": "https://share.google/jbpygIFVTsb2z41X9",
+    "is_active": true,
+    "order": 1
+  }
+},
+{
+  "model": "core.announcementbar",
+  "pk": 1,
+  "fields": {
+    "text": "Free Delivery",
+    "is_active": true,
+    "background_color": "#0000FF",
+    "text_color": "#ffffff",
+    "closable": true,
+    "start_date": "2026-04-07T21:36:09Z",
+    "end_date": "2026-04-27T21:36:17Z"
+  }
+},
+{
+  "model": "core.designsettings",
+  "pk": 1,
+  "fields": {
+    "primary_color": "#114084",
+    "secondary_color": "#005CB9",
+    "accent_glow_color": "#0081ff",
+    "header_bg_color": "#ffffff",
+    "footer_bg_color": "#1a1a1a",
+    "font_body": "'Montserrat', sans-serif",
+    "font_heading": "'Montserrat', sans-serif",
+    "enable_glassmorphism": true,
+    "enable_neumorphism": true,
+    "enable_ambient_glow": true,
+    "enable_animations": true,
+    "button_style": "soft",
+    "card_style": "glass",
+    "layout_style": "boxed",
+    "dark_mode_enabled": false,
+    "header_title": "Demo",
+    "header_subtitle": "Premium Pride",
+    "hp_collections_title": "Exclusive <span class=\"text-primary\">Collections</span>",
+    "hp_collections_subtitle": "Handpicked selection of premium medical equipment and essential supplies.",
+    "hp_categories_title": "Product <span class=\"text-primary\">Categories</span>",
+    "hp_latest_products_title": "Explore <span class=\"text-primary\">Latest Products</span>",
+    "hp_latest_products_subtitle": "Discover our newest innovations and technology.",
+    "hp_latest_products_empty": "Stay tuned for our latest medical products.",
+    "hp_partners_title": "Our Trusted Clients,",
+    "hp_partners_subtitle": "100+ trusted manufacturing partnerships ensuring the quality of every product we distribute.",
+    "hp_services_overtitle": "OUR SERVICES",
+    "hp_services_title": "Specialized Medical Services",
+    "hp_services_subtitle": "We are dedicated to maintaining the health and effectiveness of your essential diagnostic equipment.",
+    "hp_gallery_title": "Latest <span class=\"text-primary\">Gallery & Updates</span>",
+    "hp_testimonials_overtitle": "Customer Reviews",
+    "hp_testimonials_title": "What our Customores have shared!",
+    "hp_clients_title": "Our Clients",
+    "hp_social_overtitle": "GO SOCIAL WITH US",
+    "hp_social_subtitle": "Follow our Instagram @demo_intl",
+    "pd_related_title": "Related Products",
+    "pd_show_related": true,
+    "pd_related_count": 4,
+    "global_animation_type": "zoom-in"
+  }
+}
+]

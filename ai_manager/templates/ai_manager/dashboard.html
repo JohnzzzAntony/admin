@@ -144,6 +144,28 @@
         actionContent.innerHTML = html;
     }
 
+    // Clear Memory Logic
+    const clearMemoryBtn = document.querySelector('button.btn-outline-light');
+    if (clearMemoryBtn && clearMemoryBtn.textContent.includes('Clear Memory')) {
+        clearMemoryBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear the conversation memory?')) {
+                // Clear the UI
+                chatMessages.innerHTML = '';
+                // Add back the welcome message
+                const welcome = document.createElement('div');
+                welcome.className = 'message ai';
+                welcome.style.maxWidth = '80%';
+                welcome.innerHTML = `
+                    <div style="background: rgba(30, 41, 59, 0.8); padding: 15px 20px; border-radius: 2px 20px 20px 20px; border-left: 3px solid #6366f1;">
+                        Memory cleared. How can I help you from scratch?
+                    </div>
+                `;
+                chatMessages.appendChild(welcome);
+                actionResult.style.display = 'none';
+            }
+        });
+    }
+
     sendBtn.addEventListener('click', sendCommand);
     aiPrompt.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendCommand();

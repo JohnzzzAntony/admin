@@ -128,9 +128,81 @@
                 clActionsWrap.style.cssText = 'display:none !important';
             }
 
-            // ── 2. Remove (EN) suffix from field labels ───────────────────────────
-            document.querySelectorAll('label').forEach(label => {
-                label.innerHTML = label.innerHTML.replace(/\(EN\)/g, '').trim();
+            // ── 2. Changelist: Unified Search & Filter Row ───────────────────────
+            const searchForm = document.querySelector('#changelist-search');
+            if (searchForm) {
+                // a. Create the Search Row
+                const searchRow = document.createElement('div');
+                searchRow.className = 'cl-search-row';
+
+                // b. Style and Enhance the Search Form
+                searchForm.style.maxWidth = '460px';
+                searchForm.style.flex = '1';
+                
+                // Add "Clear" button inside the search row if a query exists
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('q') && urlParams.get('q')) {
+                    const clearBtn = document.createElement('a');
+                    clearBtn.href = window.location.pathname; // Base URL
+                    clearBtn.className = 'cl-search-clear';
+                    clearBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear';
+                    clearBtn.title = 'Clear Search';
+                    searchRow.appendChild(clearBtn);
+                }
+
+                // c. Move all filter selects into the search row
+                const filterContainer = document.querySelector('.changelist-filter');
+                if (filterContainer) {
+                    const filterSelects = filterContainer.querySelectorAll('select');
+                    filterSelects.forEach(sel => {
+                        sel.className = 'cl-filter-select';
+                        searchRow.appendChild(sel);
+                    });
+                    // Hide original filter side-bar
+                    filterContainer.style.display = 'none';
+                }
+
+                // d. Assemble and Insert
+                const contentMain = document.querySelector('#content-main');
+                if (contentMain) {
+                    // Title row transformation (Title + Object Tools)
+                    const titleH1 = document.querySelector('#content > h1');
+                    const objTools = document.querySelector('.object-tools');
+                    if (titleH1 && objTools) {
+                        const titleRow = document.createElement('div');
+                        titleRow.className = 'cl-title-row';
+                        titleH1.parentNode.insertBefore(titleRow, titleH1);
+                        titleRow.appendChild(titleH1);
+                        titleRow.appendChild(objTools);
+                    }
+
+                    // Insert search row after title row
+                    const titleRow = document.querySelector('.cl-title-row');
+                    if (titleRow) {
+                        titleRow.parentNode.insertBefore(searchRow, titleRow.nextSibling);
+                        searchRow.appendChild(searchForm);
+                    }
+                }
+            }
+
+            // ── 4. Inline Clear: Instant Visual Removal ──────────────────────────
+            document.addEventListener('change', function(e) {
+                // Handle image clear checkbox or inline delete checkbox
+                if (e.target.matches('.clearable-file-input input[type="checkbox"], .delete input[type="checkbox"]')) {
+                    const row = e.target.closest('tr, .form-row');
+                    if (row) {
+                        if (e.target.checked) {
+                            row.classList.add('row-marked-for-removal');
+                            // Specifically hide any image preview in this row
+                            const imgs = row.querySelectorAll('img, .product-preview-img');
+                            imgs.forEach(img => img.style.opacity = '0');
+                        } else {
+                            row.classList.remove('row-marked-for-removal');
+                            const imgs = row.querySelectorAll('img, .product-preview-img');
+                            imgs.forEach(img => img.style.opacity = '1');
+                        }
+                    }
+                }
             });
         });
     </script>

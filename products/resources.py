@@ -25,7 +25,8 @@ class ProductResource(resources.ModelResource):
         fields = (
             'id', 'category', 'name', 'slug', 'image_url', 'features', 
             'overview', 'technical_info', 'regular_price', 'sale_price',
-            'meta_title', 'meta_description', 'meta_keywords',
+            'meta_title', 'meta_title_ar', 'meta_description', 'meta_description_ar', 
+            'meta_keywords', 'meta_keywords_ar',
             'sku_id', 'quantity', 'shipping_status', 'weight', 
             'length', 'width', 'height', 'delivery_time',
             'free_shipping', 'additional_shipping_charge',

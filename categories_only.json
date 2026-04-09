@@ -1,0 +1,443 @@
+[
+  {
+    "model": "products.category",
+    "pk": 22,
+    "fields": {
+      "parent": null,
+      "name": "Compression Stockings",
+      "slug": "compression-stockings",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 21,
+      "meta_title": "Compression Stockings - JKR International",
+      "meta_description": "Best Compression Stockings in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 23,
+    "fields": {
+      "parent": null,
+      "name": "Exercise Therapy",
+      "slug": "exercise-therapy",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 20,
+      "meta_title": "Exercise Therapy - JKR International",
+      "meta_description": "Best Exercise Therapy in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 24,
+    "fields": {
+      "parent": null,
+      "name": "Homecare",
+      "slug": "homecare",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 19,
+      "meta_title": "Homecare - JKR International",
+      "meta_description": "Best Homecare in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 25,
+    "fields": {
+      "parent": null,
+      "name": "Hospital Equipment & Furniture",
+      "slug": "hospital-equipment-furniture",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 18,
+      "meta_title": "Hospital Equipment & Furniture - JKR International",
+      "meta_description": "Best Hospital Equipment & Furniture in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 26,
+    "fields": {
+      "parent": null,
+      "name": "Orthopedic Products",
+      "slug": "orthopedic-products",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 17,
+      "meta_title": "Orthopedic Products - JKR International",
+      "meta_description": "Best Orthopedic Products in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 27,
+    "fields": {
+      "parent": null,
+      "name": "Physiotherapy & Rehabilitation",
+      "slug": "physiotherapy-rehabilitation",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 16,
+      "meta_title": "Physiotherapy & Rehabilitation - JKR International",
+      "meta_description": "Best Physiotherapy & Rehabilitation in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 28,
+    "fields": {
+      "parent": null,
+      "name": "Prosthetics & Orthotics",
+      "slug": "prosthetics-orthotics",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 15,
+      "meta_title": "Prosthetics & Orthotics - JKR International",
+      "meta_description": "Best Prosthetics & Orthotics in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 29,
+    "fields": {
+      "parent": null,
+      "name": "Seating & Positioning System",
+      "slug": "seating-positioning-system",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 14,
+      "meta_title": "Seating & Positioning System - JKR International",
+      "meta_description": "Best Seating & Positioning System in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 30,
+    "fields": {
+      "parent": null,
+      "name": "Walking & Standing Aids",
+      "slug": "walking-standing-aids",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 13,
+      "meta_title": "Walking & Standing Aids - JKR International",
+      "meta_description": "Best Walking & Standing Aids in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 31,
+    "fields": {
+      "parent": null,
+      "name": "Wheelchairs",
+      "slug": "wheelchairs",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 12,
+      "meta_title": "Wheelchairs - JKR International",
+      "meta_description": "Best Wheelchairs in UAE with top quality.",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 33,
+    "fields": {
+      "parent": null,
+      "name": "medicine",
+      "slug": "medicine",
+      "description": "",
+      "image": "categories/mis_a7HO2qi.jpg",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 11,
+      "meta_title": "medicine",
+      "meta_description": "medicine",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 35,
+    "fields": {
+      "parent": null,
+      "name": "Watches",
+      "slug": "wat",
+      "description": "",
+      "image": "categories/watch.png",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 10,
+      "meta_title": "watches",
+      "meta_description": "wonderful",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 36,
+    "fields": {
+      "parent": 35,
+      "name": "aplle",
+      "slug": "apple",
+      "description": "",
+      "image": "",
+      "image_url": "https://mentawatches.com/wp-content/uploads/2023/04/IMG_0594.jpg",
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 9,
+      "meta_title": "xaaaa",
+      "meta_description": "ass",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 37,
+    "fields": {
+      "parent": null,
+      "name": "clothes",
+      "slug": "clothes",
+      "description": "",
+      "image": "",
+      "image_url": "https://beoneshopone.com/cdn/shop/files/WTD0050-MLT_3_e1570726-d48a-4dd7-af6e-9a05712b0895.jpg",
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": false,
+      "homepage_order": 8,
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 63,
+    "fields": {
+      "parent": null,
+      "name": "Medical Equipment",
+      "slug": "medical-equipment",
+      "description": "",
+      "image": "",
+      "image_url": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=600",
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 7,
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 64,
+    "fields": {
+      "parent": null,
+      "name": "Consumables",
+      "slug": "consumables",
+      "description": "",
+      "image": "",
+      "image_url": "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=600",
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 6,
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 65,
+    "fields": {
+      "parent": null,
+      "name": "Hospital Furniture",
+      "slug": "hospital-furniture",
+      "description": "",
+      "image": "",
+      "image_url": null,
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 5,
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 66,
+    "fields": {
+      "parent": null,
+      "name": "Home Care",
+      "slug": "home-care",
+      "description": "",
+      "image": "",
+      "image_url": "https://images.unsplash.com/photo-1631549916768-4119cb21fa04?auto=format&fit=crop&q=80&w=600",
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": true,
+      "homepage_order": 4,
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 67,
+    "fields": {
+      "parent": null,
+      "name": "Surgical Supplies",
+      "slug": "surgical-supplies",
+      "description": "",
+      "image": "",
+      "image_url": "https://images.unsplash.com/photo-1581594693702-fbdc51b2ad46?auto=format&fit=crop&q=80&w=600",
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": false,
+      "homepage_order": 3,
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 68,
+    "fields": {
+      "parent": null,
+      "name": "Laboratory",
+      "slug": "laboratory",
+      "description": "",
+      "image": "",
+      "image_url": "https://images.unsplash.com/photo-1612349317150-e413f289d05e?auto=format&fit=crop&q=80&w=600",
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": false,
+      "homepage_order": 2,
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 69,
+    "fields": {
+      "parent": null,
+      "name": "Diagnostic Tools",
+      "slug": "diagnostic-tools",
+      "description": "",
+      "image": "",
+      "image_url": "https://images.unsplash.com/photo-1550624559-4bae04422ddc?auto=format&fit=crop&q=80&w=600",
+      "icon_svg": "",
+      "is_active": true,
+      "created_at": "2026-04-09T18:00:57.674Z",
+      "updated_at": "2026-04-09T18:00:57.777Z",
+      "show_on_homepage": false,
+      "homepage_order": 1,
+      "meta_title": "",
+      "meta_description": "",
+      "meta_keywords": ""
+    }
+  }
+]

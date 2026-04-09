@@ -1,0 +1,146 @@
+[
+{
+  "model": "products.category",
+  "pk": 205,
+  "fields": {
+    "parent": null,
+    "name": "Wheelchairs",
+    "slug": "product-wheelchair",
+    "image": "categories/celesta1.png",
+    "description": "More Mobility and More Joy with our range of  Wheelchairs.\r\n\r\nWe are one of the leading wheelchairs suppliers in the UAE, offering the vast range of every kind i.e. Standard, Active, Electric or Multifunctional Wheelchairs from world known top quality brands.",
+    "is_active": true,
+    "show_on_homepage": true,
+    "homepage_order": 1,
+    "meta_title": "",
+    "meta_description": ""
+  }
+},
+{
+  "model": "products.category",
+  "pk": 213,
+  "fields": {
+    "parent": 205,
+    "name": "Standard Wheelchair",
+    "slug": "Standard-Wheelchair",
+    "image": "",
+    "description": "",
+    "is_active": true,
+    "show_on_homepage": false,
+    "homepage_order": 0,
+    "meta_title": "",
+    "meta_description": ""
+  }
+},
+{
+  "model": "products.category",
+  "pk": 214,
+  "fields": {
+    "parent": 205,
+    "name": "Electric Wheelchair",
+    "slug": "Wheelchair-Electric02",
+    "image": "",
+    "description": "",
+    "is_active": true,
+    "show_on_homepage": false,
+    "homepage_order": 0,
+    "meta_title": "",
+    "meta_description": ""
+  }
+},
+{
+  "model": "products.category",
+  "pk": 215,
+  "fields": {
+    "parent": 205,
+    "name": "Active Wheelchair",
+    "slug": "Active-Wheelchair",
+    "image": "",
+    "description": "",
+    "is_active": true,
+    "show_on_homepage": false,
+    "homepage_order": 0,
+    "meta_title": "",
+    "meta_description": ""
+  }
+},
+{
+  "model": "products.category",
+  "pk": 216,
+  "fields": {
+    "parent": 205,
+    "name": "Pediatric Wheelchair",
+    "slug": "Pediatric-Wheelchair",
+    "image": "",
+    "description": "",
+    "is_active": true,
+    "show_on_homepage": false,
+    "homepage_order": 0,
+    "meta_title": "",
+    "meta_description": ""
+  }
+},
+{
+  "model": "products.category",
+  "pk": 217,
+  "fields": {
+    "parent": 205,
+    "name": "Bariatric Wheelchair",
+    "slug": "Bariatric-Wheelchair",
+    "image": "",
+    "description": "",
+    "is_active": true,
+    "show_on_homepage": false,
+    "homepage_order": 0,
+    "meta_title": "",
+    "meta_description": ""
+  }
+},
+{
+  "model": "products.category",
+  "pk": 218,
+  "fields": {
+    "parent": 205,
+    "name": "Geriatric Wheelchairs",
+    "slug": "Geriatric-Wheelchairs",
+    "image": "",
+    "description": "",
+    "is_active": true,
+    "show_on_homepage": false,
+    "homepage_order": 0,
+    "meta_title": "",
+    "meta_description": ""
+  }
+},
+{
+  "model": "products.category",
+  "pk": 219,
+  "fields": {
+    "parent": 205,
+    "name": "Multifunctional Wheelchair",
+    "slug": "Multifunctional-Wheelchair",
+    "image": "",
+    "description": "",
+    "is_active": true,
+    "show_on_homepage": false,
+    "homepage_order": 0,
+    "meta_title": "",
+    "meta_description": ""
+  }
+},
+{
+  "model": "products.category",
+  "pk": 220,
+  "fields": {
+    "parent": 205,
+    "name": "Wheelchair Cusions",
+    "slug": "Wheelchair-Cusions",
+    "image": "",
+    "description": "",
+    "is_active": true,
+    "show_on_homepage": false,
+    "homepage_order": 2,
+    "meta_title": "",
+    "meta_description": ""
+  }
+}
+]
