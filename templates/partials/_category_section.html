@@ -8,7 +8,7 @@
         </div>
         
         <div class="row">
-            {% for product in section.data.products.all|slice:":8" %}
+            {% for product in section.data.aggregated_products %}
             {% with price_info=product.get_best_price_info %}
             <div class="col-lg-3 col-md-4 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 50 %}">
                 <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">

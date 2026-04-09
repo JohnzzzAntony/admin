@@ -75,7 +75,7 @@ def home(request):
 
     context = {
         'sliders': sliders,
-        'categories': categories,
+        'categories': categories_raw,
         'collections': collections,
         'active_offers_products': active_offers_products,
         'about_us': about_us,
