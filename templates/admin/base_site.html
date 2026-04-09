@@ -190,13 +190,20 @@
                 document.querySelectorAll('.file-upload, .custom-file, .clearable-file-input').forEach(container => {
                     if (container.querySelector('.btn-simple-remove')) return;
 
-                    // 1. Clean up labels ("Change:", "Clear")
+                    // 1. Clean up labels and text nodes ("Change:", "Clear")
+                    // Handle both text nodes and span labels
+                    const labelsToHide = ['Change:', 'Clear'];
                     container.childNodes.forEach(node => {
                         if (node.nodeType === Node.TEXT_NODE) {
-                            if (node.textContent.includes('Change:') || node.textContent.includes('Clear')) {
-                                node.textContent = '';
-                            }
+                            labelsToHide.forEach(l => {
+                                if (node.textContent.includes(l)) node.textContent = '';
+                            });
                         }
+                    });
+                    container.querySelectorAll('span, label').forEach(el => {
+                        labelsToHide.forEach(l => {
+                            if (el.textContent.includes(l)) el.style.display = 'none';
+                        });
                     });
 
                     const btn = document.createElement('button');
@@ -232,7 +239,6 @@
                             if (data.status === 'success') {
                                 if (isPrimary) {
                                     container.innerHTML = '<span class="text-success small"><i class="fas fa-check"></i> Removed. Add new →</span>';
-                                    // Make sure the file input is visible/accessible
                                     const fileInput = row.querySelector('input[type="file"]');
                                     if (fileInput) {
                                         fileInput.style.display = 'inline-block';
