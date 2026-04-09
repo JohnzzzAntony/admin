@@ -10,11 +10,25 @@ def delete_product_media(request, pk):
     if request.method == 'POST':
         try:
             image_obj = get_object_or_404(ProductImage, pk=pk)
-            # Physical file removal
             if image_obj.image:
                 image_obj.image.delete(save=False)
             image_obj.delete()
-            return JsonResponse({'status': 'success', 'message': 'Image and file deleted permanently.'})
+            return JsonResponse({'status': 'success', 'message': 'Gallery image deleted permanently.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)
+
+@staff_member_required
+def clear_primary_product_image(request, pk):
+    """Instantly clears the main image field of a Product via AJAX."""
+    if request.method == 'POST':
+        try:
+            product = get_object_or_404(Product, pk=pk)
+            if product.image:
+                product.image.delete(save=False)
+                product.image = None
+                product.save()
+            return JsonResponse({'status': 'success', 'message': 'Primary image cleared permanently.'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)

@@ -187,19 +187,32 @@
 
             // ── 4. Inline Clear: Instant PERMANENT Removal ──────────────────────
             document.addEventListener('change', async function(e) {
-                // Focus on image clear checkbox (trash icon)
-                if (e.target.matches('.clearable-file-input input[type="checkbox"]')) {
-                    const row = e.target.closest('tr, .form-row');
-                    if (!row || !e.target.checked) return;
+                const target = e.target;
+                
+                // 1. Gallery Inlines Or Primary Image Clear
+                const isGalleryClear = target.matches('.clearable-file-input input[type="checkbox"]');
+                const isPrimaryClear = target.id === 'image-clear_id';
 
-                    // 1. Find the object ID
-                    // Django Inlines have a hidden ID field: name="prefix-index-id"
-                    const idField = row.querySelector('input[type="hidden"][name$="-id"]');
-                    const objectId = idField ? idField.value : null;
+                if ((isGalleryClear || isPrimaryClear) && target.checked) {
+                    let objectId = null;
+                    let deleteUrl = null;
+                    let targetRow = null;
+
+                    if (isGalleryClear) {
+                        targetRow = target.closest('tr, .form-row');
+                        const idField = targetRow?.querySelector('input[type="hidden"][name$="-id"]');
+                        objectId = idField ? idField.value : null;
+                        deleteUrl = `/products/api/media/delete/${objectId}/`;
+                    } else if (isPrimaryClear) {
+                        // Extract product ID from URL: /admin/products/product/123/change/
+                        objectId = window.location.pathname.match(/\/(\d+)\/change\//)?.[1];
+                        deleteUrl = `/products/api/product/clear-image/${objectId}/`;
+                        targetRow = target.closest('.form-group, .form-row, div.field-image');
+                    }
 
                     if (objectId && confirm('Permanently delete this image from the server immediately? (No save required)')) {
                         try {
-                            const response = await fetch(`/products/api/media/delete/${objectId}/`, {
+                            const response = await fetch(deleteUrl, {
                                 method: 'POST',
                                 headers: {
                                     'X-CSRFToken': '{{ csrf_token }}',
@@ -208,35 +221,42 @@
                             });
                             const result = await response.json();
                             if (result.status === 'success') {
-                                // 2. Instant removal from DOM
-                                row.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                                row.style.transform = 'scale(0.8) translateY(-20px)';
-                                row.style.opacity = '0';
-                                setTimeout(() => row.remove(), 400);
+                                if (targetRow) {
+                                    targetRow.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                                    targetRow.style.transform = 'scale(0.9) translateY(-10px)';
+                                    targetRow.style.opacity = '0';
+                                    targetRow.style.filter = 'blur(10px)';
+                                    setTimeout(() => {
+                                        if (isPrimaryClear) {
+                                            // For primary image, we might just want to hide the "current" link and preview
+                                            const currentLink = targetRow.querySelector('.file-upload');
+                                            if (currentLink) currentLink.style.display = 'none';
+                                            targetRow.style.opacity = '1';
+                                            targetRow.style.transform = 'none';
+                                            targetRow.style.filter = 'none';
+                                        } else {
+                                            targetRow.remove();
+                                        }
+                                    }, 500);
+                                }
                             } else {
                                 alert('Error: ' + result.message);
-                                e.target.checked = false; // Reset checkbox
+                                target.checked = false;
                             }
                         } catch (err) {
-                            console.error('Deletion failed:', err);
                             alert('Network error. Could not delete image.');
-                            e.target.checked = false;
+                            target.checked = false;
                         }
-                    } else if (objectId) {
-                        // User cancelled confirm - reset checkbox
-                        e.target.checked = false;
-                    } else if (e.target.checked) {
-                        // If no ID exists (newly added unsaved image), just hide it visually
-                        row.style.opacity = '0.3';
-                        row.classList.add('row-marked-for-removal');
+                    } else {
+                        target.checked = false;
                     }
                 }
                 
-                // Keep the standard visual dimming for generic 'delete' checkboxes (non-media)
-                if (e.target.matches('.delete input[type="checkbox"]')) {
-                    const row = e.target.closest('tr, .form-row');
+                // Generic visual feedback for other DELETE checkboxes
+                if (target.matches('.delete input[type="checkbox"]')) {
+                    const row = target.closest('tr, .form-row');
                     if (row) {
-                        if (e.target.checked) row.classList.add('row-marked-for-removal');
+                        if (target.checked) row.classList.add('row-marked-for-removal');
                         else row.classList.remove('row-marked-for-removal');
                     }
                 }
