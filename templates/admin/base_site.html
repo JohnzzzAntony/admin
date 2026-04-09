@@ -185,80 +185,101 @@
                 }
             }
 
-            // ── 4. Inline Clear: Instant PERMANENT Removal ──────────────────────
-            document.addEventListener('change', async function(e) {
-                const target = e.target;
-                
-                // 1. Gallery Inlines Or Primary Image Clear
-                const isGalleryClear = target.matches('.clearable-file-input input[type="checkbox"]');
-                const isPrimaryClear = target.id === 'image-clear_id';
+            // ── 4. Enhanced Instant Removal System (Dedicated Button) ───────────
+            function initInstantRemoval() {
+                // Find all containers that have the 'Clear' checkbox (standard Django/Jazzmin)
+                document.querySelectorAll('.file-upload, .clearable-file-input, .field-image .custom-control').forEach(container => {
+                    if (container.querySelector('.btn-remove-media')) return;
 
-                if ((isGalleryClear || isPrimaryClear) && target.checked) {
-                    let objectId = null;
-                    let deleteUrl = null;
-                    let targetRow = null;
+                    const row = container.closest('tr, .form-row, div.field-image');
+                    const idField = row?.querySelector('input[type="hidden"][name$="-id"]');
+                    const objectId = idField ? idField.value : null;
+                    
+                    // Look specifically for the "Clear" checkbox
+                    const checkbox = container.querySelector('input[type="checkbox"][id*="clear"], input[type="checkbox"][name$="-DELETE"]');
+                    
+                    if (checkbox && (objectId || checkbox.id === 'image-clear_id')) {
+                        const btn = document.createElement('a');
+                        btn.className = 'btn-remove-media';
+                        btn.innerHTML = '<i class="fas fa-trash"></i> Remove';
+                        btn.href = 'javascript:void(0)';
+                        
+                        if (checkbox.id === 'image-clear_id') {
+                             btn.dataset.type = 'primary';
+                        } else {
+                             btn.dataset.type = 'gallery';
+                             btn.dataset.id = objectId;
+                        }
+                        
+                        // Hide the standard checkbox/label to avoid confusion
+                        checkbox.style.display = 'none';
+                        const label = container.querySelector('label[for="' + checkbox.id + '"]');
+                        if (label) label.style.display = 'none';
 
-                    if (isGalleryClear) {
-                        targetRow = target.closest('tr, .form-row');
-                        const idField = targetRow?.querySelector('input[type="hidden"][name$="-id"]');
-                        objectId = idField ? idField.value : null;
-                        deleteUrl = `/products/api/media/delete/${objectId}/`;
-                    } else if (isPrimaryClear) {
-                        // Extract product ID from URL: /admin/products/product/123/change/
-                        objectId = window.location.pathname.match(/\/(\d+)\/change\//)?.[1];
-                        deleteUrl = `/products/api/product/clear-image/${objectId}/`;
-                        targetRow = target.closest('.form-group, .form-row, div.field-image');
+                        container.appendChild(btn);
                     }
+                });
+            }
 
-                    if (objectId && confirm('Permanently delete this image from the server immediately? (No save required)')) {
+            // Handle Clicks
+            document.addEventListener('click', async function(e) {
+                const btn = e.target.closest('.btn-remove-media');
+                if (!btn) return;
+                
+                e.preventDefault();
+                
+                const type = btn.dataset.type;
+                let deleteUrl = '';
+                let targetRow = null;
+
+                if (type === 'gallery') {
+                    const objectId = btn.dataset.id;
+                    deleteUrl = `/products/api/media/delete/${objectId}/`;
+                    targetRow = btn.closest('tr, .form-row');
+                } else {
+                    const productId = window.location.pathname.match(/\/(\d+)\/change\//)?.[1];
+                    deleteUrl = `/products/api/product/clear-image/${productId}/`;
+                    targetRow = btn.closest('.form-group, .form-row, div.field-image');
+                }
+
+                if (objectId || type === 'primary') { // Check if we have an item to delete
+                    if (confirm('Permanently remove this image from the server?')) {
                         try {
                             const response = await fetch(deleteUrl, {
                                 method: 'POST',
-                                headers: {
-                                    'X-CSRFToken': '{{ csrf_token }}',
-                                    'Content-Type': 'application/json'
-                                }
+                                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' }
                             });
                             const result = await response.json();
                             if (result.status === 'success') {
-                                if (targetRow) {
-                                    targetRow.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                                    targetRow.style.transform = 'scale(0.9) translateY(-10px)';
-                                    targetRow.style.opacity = '0';
-                                    targetRow.style.filter = 'blur(10px)';
-                                    setTimeout(() => {
-                                        if (isPrimaryClear) {
-                                            // For primary image, we might just want to hide the "current" link and preview
-                                            const currentLink = targetRow.querySelector('.file-upload');
-                                            if (currentLink) currentLink.style.display = 'none';
-                                            targetRow.style.opacity = '1';
-                                            targetRow.style.transform = 'none';
-                                            targetRow.style.filter = 'none';
-                                        } else {
-                                            targetRow.remove();
-                                        }
-                                    }, 500);
-                                }
+                                targetRow.style.transition = 'all 0.4s ease';
+                                targetRow.style.opacity = '0';
+                                targetRow.style.transform = 'scale(0.9)';
+                                setTimeout(() => {
+                                    if (type === 'primary') {
+                                        const currentLink = targetRow.querySelector('.file-upload, .custom-file');
+                                        if (currentLink) currentLink.style.display = 'none';
+                                        targetRow.style.opacity = '1';
+                                        targetRow.style.transform = 'none';
+                                        btn.remove();
+                                    } else {
+                                        targetRow.remove();
+                                    }
+                                }, 400);
                             } else {
                                 alert('Error: ' + result.message);
-                                target.checked = false;
                             }
                         } catch (err) {
                             alert('Network error. Could not delete image.');
-                            target.checked = false;
                         }
-                    } else {
-                        target.checked = false;
                     }
                 }
-                
-                // Generic visual feedback for other DELETE checkboxes
-                if (target.matches('.delete input[type="checkbox"]')) {
-                    const row = target.closest('tr, .form-row');
-                    if (row) {
-                        if (target.checked) row.classList.add('row-marked-for-removal');
-                        else row.classList.remove('row-marked-for-removal');
-                    }
+            });
+
+            initInstantRemoval();
+            // Re-run when new rows are added by Django Admin
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.add-row')) {
+                    setTimeout(initInstantRemoval, 200);
                 }
             });
         });
