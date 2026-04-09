@@ -228,21 +228,3 @@ class AnnouncementBarAdmin(admin.ModelAdmin):
         super().delete_model(request, obj)
         messages.error(request, "🗑️ Announcement was removed.")
 
-@admin.register(SearchIndex)
-class SearchIndexAdmin(admin.ModelAdmin):
-    list_display = ('product_name', 'category', 'slug')
-    search_fields = ('product_name', 'keywords')
-    
-    fieldsets = (
-        ('Index Mapping', {
-            'fields': (('product_name', 'slug'), 'category'),
-        }),
-        ('Discovery Keywords', {
-            'fields': ('keywords',),
-        }),
-    )
-
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        messages.success(request, f"🔍 Search Index for '{obj.product_name}' has been updated.")
-

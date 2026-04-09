@@ -87,8 +87,8 @@ class DesignSettings(models.Model):
     global_animation_type = models.CharField(max_length=20, choices=ANIMATION_EFFECTS, default='fade-up')
 
     class Meta:
-        verbose_name = "Design Configuration"
-        verbose_name_plural = "Design Configuration"
+        verbose_name = "Theme Settings"
+        verbose_name_plural = "Theme Settings"
 
     def __str__(self):
         return "Global Design Configuration"

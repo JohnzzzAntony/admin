@@ -1,34 +1,56 @@
+
 {% extends "admin/index.html" %}
 {% load i18n static %}
 
-{% block sidebar %}
-<div id="content-related">
-    <div class="module" id="recent-actions-module" style="display: none;">
-        <h2>{% translate 'Recent actions' %}</h2>
-        <h3>{% translate 'My actions' %}</h3>
-        {% load log %}
-        {% get_admin_log 10 as admin_log for_user user %}
-        {% if not admin_log %}
-        <p>{% translate 'None available' %}</p>
-        {% else %}
-        <ul class="actionlist">
-        {% for entry in admin_log %}
-        <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
-            {% if entry.is_deletion or not entry.get_admin_url %}
-                {{ entry.object_repr }}
-            {% else %}
-                <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
-            {% endif %}
-            <br>
-            {% if entry.content_type %}
-                <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
-            {% else %}
-                <span class="mini quiet">{% translate 'Unknown content' %}</span>
-            {% endif %}
-        </li>
-        {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
-</div>
+{% block content %}
+    {% if dashboard_summary %}
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ dashboard_summary.orders }}</h3>
+                        <p>Total Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ dashboard_summary.revenue }} <small style="font-size: 15px;">AED</small></h3>
+                        <p>Total Revenue</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ dashboard_summary.products }}</h3>
+                        <p>Total Products</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{ dashboard_summary.messages }}</h3>
+                        <p>New Messages</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {{ block.super }}
 {% endblock %}

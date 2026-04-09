@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import Category, Product, ProductImage, Offer, Collection
+from .forms import ProductAdminForm
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
 
@@ -30,15 +31,16 @@ class ProductImageInline(admin.StackedInline):
 
 @admin.register(Product)
 class ProductAdmin(ImportExportModelAdmin):
+    form = ProductAdminForm
     resource_class = ProductResource
     list_display = ('preview', 'name', 'category', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status')
     list_editable = ('show_on_homepage',)
-    
-    def is_active_label(self, obj): return "-"
-    is_active_label.short_description = "Status"
     search_fields = ('name', 'slug', 'sku_id')
     readonly_fields = ('preview', 'sku_id')
     inlines = [ProductImageInline]
+
+    class Media:
+        js = ('admin/js/dynamic_categories.js',)
     
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
@@ -62,8 +64,8 @@ class ProductAdmin(ImportExportModelAdmin):
 
     fieldsets = (
         ('Overview', {
-            'fields': (('name', 'category'), ('slug', 'sku_id'), ('quantity', 'show_on_homepage')),
-            'description': 'Core identity and stock availability.'
+            'fields': (('name', 'parent_category', 'category'), ('slug', 'sku_id'), ('quantity', 'show_on_homepage')),
+            'description': 'Core identity and stock availability. Choose a parent category to see subcategories.'
         }),
         ('Pricing & Shipping', {
             'fields': (('regular_price', 'sale_price'), ('shipping_status', 'delivery_time'), ('free_shipping', 'additional_shipping_charge')),
@@ -99,7 +101,10 @@ class CategoryAdmin(ImportExportModelAdmin):
     resource_class = CategoryResource
     list_display = ('name', 'parent', 'show_on_homepage', 'homepage_order')
     list_editable = ('show_on_homepage', 'homepage_order')
-    list_filter = ('parent', 'show_on_homepage')
+    list_filter = (
+        ('parent', admin.RelatedOnlyFieldListFilter),
+        'show_on_homepage',
+    )
     search_fields = ('name', 'slug')
     autocomplete_fields = ('parent',)
     readonly_fields = ()

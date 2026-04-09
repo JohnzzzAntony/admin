@@ -139,6 +139,7 @@ TEMPLATES = [
                 'core.context_processors.page_heroes', 
                 'orders.context_processors.cart_count', 
                 'products.context_processors.categories', 
+                'core.context_processors.admin_dashboard', 
             ],
         },
     },
@@ -238,18 +239,45 @@ JAZZMIN_SETTINGS = {
         {"name": "View Site", "url": "/", "new_window": True},
     ],
     "order_with_respect_to": [
-        "products", "orders", "core", "pages", "contact", "blog", "sliders", "auth"
+        "orders", "products", "accounts", "sliders", "blog", "pages", "contact", "core", "auth"
     ],
     "icons": {
-        "auth": "fas fa-users-cog", "auth.user": "fas fa-user", "auth.Group": "fas fa-users",
-        "products.Product": "fas fa-box-open", "products.Category": "fas fa-tags",
-        "orders.CustomerOrder": "fas fa-shopping-basket",
-        "core.SiteSettings": "fas fa-cogs", "pages.Page": "fas fa-file-alt",
-        "contact.QuoteEnquiry": "fas fa-envelope-open-text", "blog.Post": "fas fa-newspaper",
-        "sliders.Slider": "fas fa-images",
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        
+        # Store Management
+        "products.Product": "fas fa-box",
+        "products.Category": "fas fa-tags",
+        "products.Collection": "fas fa-layer-group",
+        "products.Offer": "fas fa-percent",
+        
+        # Orders & Customers
+        "orders.CustomerOrder": "fas fa-shopping-cart",
+        "core.Client": "fas fa-users",
+        
+        # Content Management
+        "blog.Post": "fas fa-file-alt",
+        "pages.Page": "fas fa-copy",
+        "core.Testimonial": "fas fa-comment-dots",
+        
+        # Website Design
+        "sliders.HeroSlider": "fas fa-image",
+        "sliders.PromoBanner": "fas fa-ad",
+        "core.AnnouncementBar": "fas fa-bullhorn",
+        "core.DesignSettings": "fas fa-paint-brush",
+        
+        # Communication
+        "contact.ContactFormSubmission": "fas fa-envelope",
+        "contact.NewsletterSubscriber": "fas fa-paper-plane",
+        
+        # Settings
+        "core.SiteSettings": "fas fa-cog",
+        "core.StoreLocation": "fas fa-map-marker-alt",
+        "core.SocialPost": "fas fa-share-alt",
     },
     "custom_css": "admin/css/admin_premium.css",
-    "custom_js": "admin/js/ai_agent.js",
+    "custom_js": "admin/js/admin_ux.js", # Changed from ai_agent.js to include UX logic
 }
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='sk_test_12345')

@@ -33,6 +33,12 @@ def clear_primary_product_image(request, pk):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)
 
+@staff_member_required
+def get_subcategories(request, parent_id):
+    """Returns a list of subcategories for a given parent ID as JSON."""
+    subcategories = Category.objects.filter(parent_id=parent_id).values('id', 'name')
+    return JsonResponse(list(subcategories), safe=False)
+
 def category_index(request):
     """Shows categories in a professional grid. Show all if parents aren't clearly defined."""
     parents = Category.objects.filter(parent__isnull=True)

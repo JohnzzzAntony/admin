@@ -60,8 +60,8 @@ class SiteSettings(models.Model):
 
     def __str__(self): return "Global Site Settings"
     class Meta:
-        verbose_name = "Site Settings"
-        verbose_name_plural = "Site Settings"
+        verbose_name = "Website Settings"
+        verbose_name_plural = "Website Settings"
 
 class Testimonial(models.Model):
     client_name = models.CharField(max_length=100)
@@ -155,6 +155,9 @@ class AnnouncementBar(models.Model):
     end_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self): return self.text
+    class Meta:
+        verbose_name = "Top Bar Message"
+        verbose_name_plural = "Top Bar Messages"
 
 class SearchIndex(models.Model):
     product_name = models.CharField(max_length=255)

@@ -17,6 +17,7 @@ urlpatterns = [
     # Internal Admin APIs
     path('api/media/delete/<int:pk>/', views.delete_product_media, name='delete_product_media'),
     path('api/product/clear-image/<int:pk>/', views.clear_primary_product_image, name='clear_primary_product_image'),
+    path('api/subcategories/<int:parent_id>/', views.get_subcategories, name='get_subcategories'),
     
     re_path(r'^id/(?P<pk>.*)/$', views.product_detail, name='product_detail'),
     path('<slug:slug>/', views.product_detail, name='product_detail'),

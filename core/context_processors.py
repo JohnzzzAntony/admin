@@ -38,3 +38,30 @@ def page_heroes(request):
     return {
         'page_heroes': heroes,
     }
+
+from django.db.models import Sum
+from products.models import Product
+from orders.models import CustomerOrder
+from contact.models import ContactFormSubmission
+
+def admin_dashboard(request):
+    """Provides key metrics for the admin dashboard summary."""
+    if not request.path.startswith('/admin/'):
+        return {}
+    
+    try:
+        total_orders = CustomerOrder.objects.count()
+        total_revenue = CustomerOrder.objects.filter(payment_status='paid').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        total_products = Product.objects.count()
+        new_messages = ContactFormSubmission.objects.filter(is_read=False).count()
+        
+        return {
+            'dashboard_summary': {
+                'orders': total_orders,
+                'revenue': f"{total_revenue:,.2f}",
+                'products': total_products,
+                'messages': new_messages
+            }
+        }
+    except Exception:
+        return {}

@@ -34,7 +34,8 @@ class HeroSlider(models.Model):
     def __str__(self): return self.title
     class Meta:
         ordering = ['order']
-        verbose_name_plural = "Hero Sliders"
+        verbose_name = "Banner"
+        verbose_name_plural = "Banners"
 
 class PromoBanner(models.Model):
     LAYOUT_CHOICES = [

@@ -11,15 +11,24 @@ def home(request):
     sliders = HeroSlider.objects.all().order_by('order')
     
     # Homepage Interleaving Logic
-    categories = Category.objects.filter(show_on_homepage=True).prefetch_related(
-        models.Prefetch('products', queryset=Product.objects.filter(is_active=True, quantity__gt=0))
-    )
-    banners = PromoBanner.objects.filter(is_active=True).prefetch_related('items')
+    categories_raw = Category.objects.filter(show_on_homepage=True)
     
     # Merge and Sort
     homepage_sections = []
-    for cat in categories:
+    for cat in categories_raw:
+        # Aggregated products for this category and all its children
+        all_cat_ids = [c.id for c in cat.get_all_children(include_self=True)]
+        cat_products = Product.objects.filter(
+            category_id__in=all_cat_ids,
+            is_active=True,
+            quantity__gt=0
+        ).distinct().order_by('-id')[:8] # Limit to 8 products per section
+        
+        # Attach aggregated products to the category object for template access
+        cat.aggregated_products = cat_products
         homepage_sections.append({'type': 'category', 'data': cat, 'order': cat.homepage_order})
+    
+    banners = PromoBanner.objects.filter(is_active=True).prefetch_related('items')
     for banner in banners:
         homepage_sections.append({'type': 'banner', 'data': banner, 'order': banner.homepage_order})
     
