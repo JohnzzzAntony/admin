@@ -1,6 +1,23 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from .models import Product, Category
+from django.http import JsonResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from .models import Product, Category, ProductImage
+
+@staff_member_required
+def delete_product_media(request, pk):
+    """Instantly deletes a ProductImage and its physical file via AJAX."""
+    if request.method == 'POST':
+        try:
+            image_obj = get_object_or_404(ProductImage, pk=pk)
+            # Physical file removal
+            if image_obj.image:
+                image_obj.image.delete(save=False)
+            image_obj.delete()
+            return JsonResponse({'status': 'success', 'message': 'Image and file deleted permanently.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)
 
 def category_index(request):
     """Shows categories in a professional grid. Show all if parents aren't clearly defined."""

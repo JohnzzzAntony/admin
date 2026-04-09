@@ -185,22 +185,59 @@
                 }
             }
 
-            // ── 4. Inline Clear: Instant Visual Removal ──────────────────────────
-            document.addEventListener('change', function(e) {
-                // Handle image clear checkbox or inline delete checkbox
-                if (e.target.matches('.clearable-file-input input[type="checkbox"], .delete input[type="checkbox"]')) {
+            // ── 4. Inline Clear: Instant PERMANENT Removal ──────────────────────
+            document.addEventListener('change', async function(e) {
+                // Focus on image clear checkbox (trash icon)
+                if (e.target.matches('.clearable-file-input input[type="checkbox"]')) {
+                    const row = e.target.closest('tr, .form-row');
+                    if (!row || !e.target.checked) return;
+
+                    // 1. Find the object ID
+                    // Django Inlines have a hidden ID field: name="prefix-index-id"
+                    const idField = row.querySelector('input[type="hidden"][name$="-id"]');
+                    const objectId = idField ? idField.value : null;
+
+                    if (objectId && confirm('Permanently delete this image from the server immediately? (No save required)')) {
+                        try {
+                            const response = await fetch(`/products/api/media/delete/${objectId}/`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': '{{ csrf_token }}',
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                            const result = await response.json();
+                            if (result.status === 'success') {
+                                // 2. Instant removal from DOM
+                                row.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                                row.style.transform = 'scale(0.8) translateY(-20px)';
+                                row.style.opacity = '0';
+                                setTimeout(() => row.remove(), 400);
+                            } else {
+                                alert('Error: ' + result.message);
+                                e.target.checked = false; // Reset checkbox
+                            }
+                        } catch (err) {
+                            console.error('Deletion failed:', err);
+                            alert('Network error. Could not delete image.');
+                            e.target.checked = false;
+                        }
+                    } else if (objectId) {
+                        // User cancelled confirm - reset checkbox
+                        e.target.checked = false;
+                    } else if (e.target.checked) {
+                        // If no ID exists (newly added unsaved image), just hide it visually
+                        row.style.opacity = '0.3';
+                        row.classList.add('row-marked-for-removal');
+                    }
+                }
+                
+                // Keep the standard visual dimming for generic 'delete' checkboxes (non-media)
+                if (e.target.matches('.delete input[type="checkbox"]')) {
                     const row = e.target.closest('tr, .form-row');
                     if (row) {
-                        if (e.target.checked) {
-                            row.classList.add('row-marked-for-removal');
-                            // Specifically hide any image preview in this row
-                            const imgs = row.querySelectorAll('img, .product-preview-img');
-                            imgs.forEach(img => img.style.opacity = '0');
-                        } else {
-                            row.classList.remove('row-marked-for-removal');
-                            const imgs = row.querySelectorAll('img, .product-preview-img');
-                            imgs.forEach(img => img.style.opacity = '1');
-                        }
+                        if (e.target.checked) row.classList.add('row-marked-for-removal');
+                        else row.classList.remove('row-marked-for-removal');
                     }
                 }
             });
