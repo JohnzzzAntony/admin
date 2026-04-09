@@ -933,10 +933,91 @@ input[name*="_ar"], textarea[name*="_ar"] {
 }
 
 /* ── Improve cell alignment for toggle columns ── */
-.changelist-form td[class*="field-is_active"],
-.changelist-form td[class*="field-show_on_homepage"],
 .changelist-form td[class*="field-free_shipping"] {
     text-align: center !important;
     padding: 10px 5px !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SELECTOR WIDGET FIX (High Specificity for Jazzmin)
+   ══════════════════════════════════════════════════════════ */
+/* Force selectors to be massive and easy to read */
+div.selector, 
+body.jazzmin-page div.selector, 
+#content-main div.selector {
+    width: 100% !important;
+    max-width: 900px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 30px !important;
+    padding: 20px 0 !important;
+    float: none !important;
+}
+
+div.selector-available, 
+div.selector-chosen,
+body.jazzmin-page .selector-available,
+body.jazzmin-page .selector-chosen {
+    flex: 1 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    float: none !important;
+}
+
+/* The actual list boxes */
+div.selector select,
+#content-main .selector select,
+body.jazzmin-page .selector select {
+    width: 100% !important;
+    height: 450px !important; /* Extremely tall for easy viewing */
+    min-height: 450px !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--border-dark) !important;
+    padding: 12px !important;
+    font-size: 0.95rem !important;
+    box-shadow: var(--neu-shadow-inset) !important;
+    background: #fff !important;
+}
+
+/* Fix for the chooser icons in the middle */
+.selector-chooser {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 15px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.selector-chooser li {
+    list-style: none !important;
+    margin: 0 !important;
+}
+
+.selector-chooser a {
+    background: var(--accent) !important;
+    color: #fff !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2) !important;
+    text-indent: 0 !important;
+    font-size: 1.2rem !important;
+}
+
+.selector-add::after { content: '→' !important; }
+.selector-remove::after { content: '←' !important; }
+
+/* Filter box improvement */
+.selector .selector-filter {
+    width: 100% !important;
+    height: 42px !important;
+    margin-bottom: 12px !important;
+    padding: 0 15px !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: 10px !important;
 }
 

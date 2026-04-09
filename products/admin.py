@@ -147,15 +147,14 @@ class OfferAdmin(admin.ModelAdmin):
     filter_horizontal = ('products',)
 
     fieldsets = (
-        ('Offer Details', {
-            'fields': (('name', 'offer_type'), ('discount_value', 'discount_type')),
+        ('Offer Basics', {
+            'fields': ('name', 'offer_type', 'discount_value')
         }),
-        ('Validity Period', {
-            'fields': (('start_date', 'end_date'),),
+        ('Active Dates', {
+            'fields': ('start_date', 'end_date')
         }),
-        ('Impacted Products', {
+        ('Apply to Products', {
             'fields': ('products',),
-            'description': 'Select which products are eligible for this offer.'
         }),
     )
 
