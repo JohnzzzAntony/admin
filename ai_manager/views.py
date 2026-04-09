@@ -4,12 +4,13 @@ from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from products.models import Category, Product, ProductSKU, ProductImage
+from products.models import Category, Product, ProductImage
 from django.utils.text import slugify
 from django.conf import settings
 from decimal import Decimal
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 @staff_member_required
 def ai_dashboard(request):
@@ -43,13 +44,8 @@ def ai_process_command(request):
                 'message': 'Gemini AI Engine is not configured. GEMINI_API_KEY is missing from environment.'
             }, status=500)
 
-        genai.configure(api_key=gemini_api_key)
-        try:
-            # Using -latest as an alias for stability across different library versions
-            gemini_client = genai.GenerativeModel('gemini-1.5-flash-latest')
-        except:
-            # Fallback to the rock-solid gemini-pro
-            gemini_client = genai.GenerativeModel('gemini-pro')
+        # Initialize New GenAI Client
+        client = genai.Client(api_key=gemini_api_key)
 
         # 🚀 Google Gemini Orchestration
         sys_prompt = (
@@ -60,14 +56,20 @@ def ai_process_command(request):
             "Otherwise, provide a concise and professional business response."
         )
 
-        config = {
-            "temperature": 0.7,
-            "top_p": 0.95,
-            "max_output_tokens": 1024,
-        }
+        # Config for new SDK
+        config = types.GenerateContentConfig(
+            temperature=0.7,
+            top_p=0.95,
+            max_output_tokens=1024,
+            system_instruction=sys_prompt
+        )
         
-        # Call Gemini
-        res = gemini_client.generate_content(f"{sys_prompt}\n\nUser Question: {user_prompt}", generation_config=config)
+        # Call Gemini (New SDK style)
+        res = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents=user_prompt,
+            config=config
+        )
         full_content = res.text
         
         # --- Multi-Path Neural Parsing ---

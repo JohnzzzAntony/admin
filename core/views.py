@@ -1,15 +1,31 @@
 from django.shortcuts import render
 from django.utils import timezone
-from products.models import Category, Product, Collection, ProductSKU
-from sliders.models import HeroSlider
+from django.db import models
+from products.models import Category, Product, Collection
+from sliders.models import HeroSlider, PromoBanner
 from pages.models import AboutUs, MissionVision, Service, Counter, WhyUsCard, Partner, GalleryItem
 from .models import Testimonial, Client, SocialPost, StoreLocation
 
 def home(request):
     """Homepage aggregation view."""
-    sliders = HeroSlider.objects.filter(is_active=True).order_by('order')
-    # Homepage categories: Filtered by 'Show on Homepage' toggle and custom sort order.
-    categories = Category.objects.filter(show_on_homepage=True).order_by('homepage_order')
+    sliders = HeroSlider.objects.all().order_by('order')
+    
+    # Homepage Interleaving Logic
+    categories = Category.objects.filter(show_on_homepage=True).prefetch_related(
+        models.Prefetch('products', queryset=Product.objects.filter(is_active=True, quantity__gt=0))
+    )
+    banners = PromoBanner.objects.filter(is_active=True).prefetch_related('items')
+    
+    # Merge and Sort
+    homepage_sections = []
+    for cat in categories:
+        homepage_sections.append({'type': 'category', 'data': cat, 'order': cat.homepage_order})
+    for banner in banners:
+        homepage_sections.append({'type': 'banner', 'data': banner, 'order': banner.homepage_order})
+    
+    # Sort everything by the order value
+    homepage_sections.sort(key=lambda x: x['order'])
+
     about_us = AboutUs.objects.first()
     
     # Batch Mission/Vision queries to reduce one round-trip
@@ -23,42 +39,38 @@ def home(request):
     partners = Partner.objects.all().order_by('order')
     gallery = GalleryItem.objects.all().order_by('order')[:8]
     
-    testimonials = Testimonial.objects.filter(is_active=True).order_by('order')
-    public_clients = Client.objects.filter(category='Public', is_active=True).order_by('order')
-    private_clients = Client.objects.filter(category='Private', is_active=True).order_by('order')
+    testimonials = Testimonial.objects.all().order_by('order')
+    public_clients = Client.objects.filter(category='Public').order_by('order')
+    private_clients = Client.objects.filter(category='Private').order_by('order')
     social_posts = SocialPost.objects.all().order_by('order')[:6]
     
-    # Optimized latest_products to fetch category and SKUs in bulk
+    # Optimized latest_products
     latest_products = Product.objects.filter(
-        is_active=True,
-        skus__quantity__gt=0,
-        skus__shipping_status='available'
-    ).select_related('category').prefetch_related('skus', 'skus__offers').distinct().order_by('-id')[:4]
-
-    # Fetch SKUs with active offers (Optimized with related items)
-    now = timezone.now()
-    active_offers_skus = ProductSKU.objects.filter(
-        offers__is_active=True,
-        offers__start_date__lte=now,
-        offers__end_date__gte=now,
         quantity__gt=0
-    ).distinct().select_related('product', 'product__category').prefetch_related('offers')
+    ).select_related('category').prefetch_related('offers').order_by('-id')[:4]
 
-    # Homepage Collections: Filter active ones and prefetch related SKUs/Product data.
-    collections = Collection.objects.filter(is_active=True).prefetch_related(
-        'skus__product', 
-        'skus__product__category',
-        'skus__offers'
+    # Fetch Products with active offers (either via Offer model or manual sale_price)
+    now = timezone.now()
+    active_offers_products = Product.objects.filter(
+        (models.Q(offers__start_date__lte=now) & models.Q(offers__end_date__gte=now)) |
+        models.Q(sale_price__lt=models.F('regular_price')),
+        quantity__gt=0
+    ).distinct().select_related('category').prefetch_related('offers')
+
+    # Homepage Collections: Filter active ones and prefetch related Products.
+    collections = Collection.objects.all().prefetch_related(
+        'products', 
+        'products__category',
+        'products__offers'
     )
 
     context = {
         'sliders': sliders,
         'categories': categories,
         'collections': collections,
-        'active_offers_skus': active_offers_skus,
+        'active_offers_products': active_offers_products,
         'about_us': about_us,
-        'mission': mission,
-        'vision': vision,
+        'mission_vision': [mv for mv in [mission, vision] if mv],
         'services': services,
         'counters': counters,
         'why_us': why_us,
@@ -69,6 +81,7 @@ def home(request):
         'private_clients': private_clients,
         'social_posts': social_posts,
         'latest_products': latest_products,
+        'homepage_sections': homepage_sections,
     }
     return render(request, 'index.html', context)
 
@@ -95,9 +108,9 @@ def gallery_view(request):
 
 def store_locations_view(request):
     """Store Locations page with city filtering."""
-    stores = StoreLocation.objects.filter(is_active=True).order_by('order', 'name')
+    stores = StoreLocation.objects.all().order_by('order', 'name')
     # Get unique cities for filter tabs
-    cities = StoreLocation.objects.filter(is_active=True).values_list('city', flat=True).distinct().order_by('city')
+    cities = StoreLocation.objects.all().values_list('city', flat=True).distinct().order_by('city')
     
     return render(request, 'pages/stores.html', {
         'stores': stores,

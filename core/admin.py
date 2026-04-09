@@ -1,6 +1,8 @@
 from django.contrib import admin
-from .models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation
+from .models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation, AnnouncementBar, SearchIndex
 from .design_models import DesignSettings
+
+from django.contrib import messages
 
 @admin.register(StoreLocation)
 class StoreLocationAdmin(admin.ModelAdmin):
@@ -8,67 +10,88 @@ class StoreLocationAdmin(admin.ModelAdmin):
     list_editable = ('is_active', 'order')
     list_filter = ('city', 'is_active')
     search_fields = ('name', 'address', 'city')
-    fields = (('name', 'city'), 'address', ('phone', 'map_url'), ('image', 'image_url'), ('is_active', 'order'))
+    
+    fieldsets = (
+        ('Location Info', {
+            'fields': (('name', 'city'), 'address', 'order'),
+        }),
+        ('Communication & Map', {
+            'fields': (('phone', 'map_url'),),
+        }),
+        ('Branding Image', {
+            'fields': (('image', 'image_url'),),
+        }),
+    )
+    radio_fields = {"is_active": admin.HORIZONTAL}
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        messages.success(request, f"🚀 Store Location '{obj.name}' has been successfully saved.")
+
+    def delete_model(self, request, obj):
+        name = obj.name
+        super().delete_model(request, obj)
+        messages.error(request, f"🗑️ Store Location '{name}' was deleted.")
 
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ('site_name',)
     fieldsets = (
-        ('Branding & Global', {
-            'fields': (('site_name', 'fav_text'), ('logo', 'logo_url'), ('favicon', 'favicon_url'))
+        ('Overview & Branding', {
+            'fields': (('site_name', 'company_name'), ('fav_text', 'logo', 'logo_url'), ('favicon', 'favicon_url')),
+            'description': 'Main site identification and logo assets.'
         }),
-        ('SEO & Meta', {
-            'fields': ('meta_title', 'meta_description')
+        ('SEO Presence', {
+            'fields': ('meta_title', 'meta_description'),
+            'classes': ('collapse',),
         }),
-        ('Communication', {
-            'fields': (('email', 'phone'), 'whatsapp')
+        ('Communication Channels', {
+            'fields': (('email', 'phone', 'whatsapp'),),
         }),
-        ('Branch Addresses', {
-            'fields': (('branch1_name', 'dubai_address'), ('branch2_name', 'abudhabi_address'))
+        ('Physical Presence', {
+            'fields': (('branch1_name', 'dubai_address'), ('branch2_name', 'abudhabi_address')),
         }),
-        ('Footer Content', {
-            'fields': (('footer_quick_links_title', 'footer_support_title'), ('footer_legal_title', 'footer_newsletter_title'), 'footer_copyright_text')
+        ('Footer & Notifications', {
+            'fields': (('footer_quick_links_title', 'footer_support_title', 'footer_legal_title'), ('footer_newsletter_title', 'footer_copyright_text'), ('enable_email_notifications', 'enable_sms_notifications', 'enable_whatsapp_notifications')),
+            'classes': ('collapse',),
         }),
-        ('Social Networking Links', {
-            'fields': (('facebook', 'instagram'), ('linkedin', 'twitter', 'instagram_handle'))
-        }),
-        ('Notification Channels', {
-            'fields': (
-                'enable_email_notifications', 
-                'enable_sms_notifications', 
-                'enable_whatsapp_notifications'
-            )
+        ('Social Links', {
+            'fields': (('facebook', 'instagram', 'linkedin', 'twitter'), 'instagram_handle'),
+            'classes': ('collapse',),
         }),
     )
+    radio_fields = {
+        "enable_email_notifications": admin.HORIZONTAL,
+        "enable_sms_notifications": admin.HORIZONTAL,
+        "enable_whatsapp_notifications": admin.HORIZONTAL,
+    }
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        messages.success(request, "⚙️ Global site settings have been successfully updated.")
 
 @admin.register(DesignSettings)
 class DesignSettingsAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'dark_mode_enabled', 'enable_glassmorphism', 'enable_ambient_glow')
     fieldsets = (
-        ('Theme Colors', {
-            'fields': (('primary_color', 'secondary_color', 'accent_glow_color'),),
-            'description': 'Configure the global color palette. Accent glow is used for ambient background effects.'
+        ('Color Palette', {
+            'fields': (
+                ('primary_color', 'secondary_color', 'accent_glow_color'),
+                ('header_bg_color', 'footer_bg_color'),
+            ),
+            'description': 'Define the visual tone of your store. Use hex codes (e.g. #1a1a1a). Header and footer colors are applied site-wide.'
         }),
         ('Typography', {
             'fields': (('font_body', 'font_heading'),),
-            'description': 'Enter CSS font-family strings (e.g. "Google Font Name", sans-serif).'
         }),
-        ('UI Styling Strategy', {
-            'fields': (
-                ('button_style', 'card_style', 'layout_style'),
-            ),
-            'description': 'Choose the shape of buttons, cards, and overall container layouts across the site.'
+        ('UI Strategy', {
+            'fields': (('button_style', 'card_style', 'layout_style'),),
         }),
-        ('Advanced Visual Effects', {
-            'fields': (
-                ('enable_glassmorphism', 'enable_neumorphism'),
-                'enable_ambient_glow',
-                ('enable_animations', 'global_animation_type'),
-                'dark_mode_enabled'
-            ),
-            'description': 'Toggle premium visual techniques and AOS (Animate on Scroll) transitions.'
+        ('Special Visuals', {
+            'fields': (('enable_glassmorphism', 'enable_neumorphism', 'enable_ambient_glow'), ('enable_animations', 'global_animation_type', 'dark_mode_enabled')),
+            'description': 'Premium effects and dark mode controls.'
         }),
-        ('Home Page Design & Titles', {
+        ('Homepage Content Blocks', {
             'fields': (
                 ('header_title', 'header_subtitle'),
                 ('hp_collections_title', 'hp_collections_subtitle'),
@@ -82,28 +105,144 @@ class DesignSettingsAdmin(admin.ModelAdmin):
                 ('hp_testimonials_overtitle', 'hp_testimonials_title'),
                 'hp_clients_title',
                 ('hp_social_overtitle', 'hp_social_subtitle'),
-            )
+            ),
+            'classes': ('collapse',),
         }),
-        ('Product Detail Page Design', {
-            'fields': (('pd_related_title', 'pd_show_related'), 'pd_related_count')
+        ('Product Display', {
+            'fields': (('pd_related_title', 'pd_show_related', 'pd_related_count'),),
         }),
     )
+    radio_fields = {
+        "enable_glassmorphism": admin.HORIZONTAL,
+        "enable_neumorphism": admin.HORIZONTAL,
+        "enable_ambient_glow": admin.HORIZONTAL,
+        "enable_animations": admin.HORIZONTAL,
+        "dark_mode_enabled": admin.HORIZONTAL,
+        "pd_show_related": admin.HORIZONTAL,
+    }
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        messages.success(request, "🎨 Design settings have been successfully updated.")
 
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
     list_display = ('client_name', 'position', 'rating', 'is_active', 'order')
     list_editable = ('is_active', 'order')
-    fields = ('client_name', 'position', 'content', ('image', 'image_url'), 'rating', 'order', 'is_active')
+    radio_fields = {"is_active": admin.HORIZONTAL}
+    list_filter = ('rating', 'is_active')
+    
+    fieldsets = (
+        ('Client Profile', {
+            'fields': (('client_name', 'position'), ('rating', 'order')),
+        }),
+        ('Content', {
+            'fields': ('content',),
+        }),
+        ('Media', {
+            'fields': (('image', 'image_url'),),
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        messages.success(request, f"💬 Testimonial from '{obj.client_name}' has been saved.")
+
+    def delete_model(self, request, obj):
+        name = obj.client_name
+        super().delete_model(request, obj)
+        messages.error(request, f"🗑️ Testimonial from '{name}' was deleted.")
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'is_active', 'order')
     list_editable = ('category', 'is_active', 'order')
+    radio_fields = {"is_active": admin.HORIZONTAL}
     list_filter = ('category', 'is_active')
-    fields = ('name', ('logo', 'logo_url'), 'icon_svg', 'category', 'order', 'is_active')
+    
+    fieldsets = (
+        ('Client Info', {
+            'fields': (('name', 'category'), 'order'),
+        }),
+        ('Assets (Logo/Icon)', {
+            'fields': (('logo', 'logo_url'), 'icon_svg'),
+            'description': 'Provide either a traditional logo or a custom SVG path.'
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        messages.success(request, f"🤝 Client '{obj.name}' has been successfully saved.")
+
+    def delete_model(self, request, obj):
+        name = obj.name
+        super().delete_model(request, obj)
+        messages.error(request, f"🗑️ Client '{name}' was removed.")
 
 @admin.register(SocialPost)
 class SocialPostAdmin(admin.ModelAdmin):
     list_display = ('id', 'order')
     list_editable = ('order',)
-    fields = (('image', 'image_url'), 'icon_svg', 'link', 'order')
+    
+    fieldsets = (
+        ('Post Configuration', {
+            'fields': (('link', 'order'),),
+        }),
+        ('Media Assets', {
+            'fields': (('image', 'image_url'), 'icon_svg'),
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        messages.success(request, "📸 Social post entry has been saved.")
+
+    def delete_model(self, request, obj):
+        super().delete_model(request, obj)
+        messages.error(request, "🗑️ Social post entry was deleted.")
+
+@admin.register(AnnouncementBar)
+class AnnouncementBarAdmin(admin.ModelAdmin):
+    list_display = ('text', 'start_date', 'end_date', 'closable', 'is_active')
+    list_editable = ('is_active',)
+    radio_fields = {"is_active": admin.HORIZONTAL, "closable": admin.HORIZONTAL}
+    list_filter = ('is_active', 'closable')
+    
+    fieldsets = (
+        ('Banner Message', {
+            'fields': (('text', 'closable', 'is_active'),),
+        }),
+        ('Appearance', {
+            'fields': (('background_color', 'text_color'),),
+        }),
+        ('Schedule', {
+            'fields': (('start_date', 'end_date'),),
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        messages.success(request, f"📢 Announcement '{obj.text[:30]}...' has been updated.")
+
+    def delete_model(self, request, obj):
+        super().delete_model(request, obj)
+        messages.error(request, "🗑️ Announcement was removed.")
+
+@admin.register(SearchIndex)
+class SearchIndexAdmin(admin.ModelAdmin):
+    list_display = ('product_name', 'category', 'slug')
+    search_fields = ('product_name', 'keywords')
+    
+    fieldsets = (
+        ('Index Mapping', {
+            'fields': (('product_name', 'slug'), 'category'),
+        }),
+        ('Discovery Keywords', {
+            'fields': ('keywords',),
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        messages.success(request, f"🔍 Search Index for '{obj.product_name}' has been updated.")
+

@@ -21,7 +21,7 @@ class HeroSlider(models.Model):
     button_text = models.CharField(max_length=100, default="Enquire Now")
     button_link = models.CharField(max_length=255, default="/contact-us/")
     order = models.PositiveIntegerField(default=0)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
 
     def get_bg_url(self):
         if self.image_url: return self.image_url
@@ -35,3 +35,45 @@ class HeroSlider(models.Model):
     class Meta:
         ordering = ['order']
         verbose_name_plural = "Hero Sliders"
+
+class PromoBanner(models.Model):
+    LAYOUT_CHOICES = [
+        ('1_col', '1-Column (Full Width)'),
+        ('2_col', '2-Column (Side by Side)'),
+        ('3_col', '3-Column (Row)'),
+        ('mosaic', 'Mosaic/Grid'),
+    ]
+    SHAPE_CHOICES = [
+        ('rectangular', 'Rectangular'),
+        ('rounded', 'Rounded Corners'),
+        ('pill', 'Pill Shape'),
+    ]
+    
+    name = models.CharField(max_length=100, help_text="Internal name for management.")
+    layout = models.CharField(max_length=20, choices=LAYOUT_CHOICES, default='1_col')
+    shape = models.CharField(max_length=20, choices=SHAPE_CHOICES, default='rounded')
+    homepage_order = models.PositiveIntegerField(default=0, help_text="Order in which this banner appears on homepage.")
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
+    
+    def __str__(self): return f"{self.name} ({self.get_layout_display()})"
+    class Meta:
+        ordering = ['homepage_order']
+        verbose_name = "Promo Banner Section"
+        verbose_name_plural = "Promo Banner Sections"
+
+class BannerItem(models.Model):
+    banner_section = models.ForeignKey(PromoBanner, related_name='items', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='banners/', null=True, blank=True)
+    image_url = models.URLField(blank=True, null=True, help_text="Direct link if image is externally hosted.")
+    link = models.CharField(max_length=255, blank=True, help_text="Link path (e.g., /shop/ or full URL).")
+    title = models.CharField(max_length=255, blank=True, help_text="Optional overlay text.")
+    subtitle = models.CharField(max_length=255, blank=True)
+    order = models.PositiveIntegerField(default=0)
+    
+    def get_image_url(self):
+        if self.image_url: return self.image_url
+        return self.image.url if self.image else ""
+
+    def __str__(self): return f"Item {self.order} for {self.banner_section.name}"
+    class Meta:
+        ordering = ['order']

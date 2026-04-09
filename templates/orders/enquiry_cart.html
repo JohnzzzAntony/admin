@@ -45,9 +45,6 @@
                                                         class="font-weight-bold text-dark text-decoration-none" style="font-size:0.95rem;">
                                                          {{ item.product.name }}
                                                      </a>
-                                                     {% if item.sku.title %}
-                                                     <div class="small text-primary font-weight-bold"><i class="fas fa-tag mr-1"></i> {{ item.sku.title }}</div>
-                                                     {% endif %}
                                                      <div class="small text-muted">{{ item.product.category.name }}</div>
                                                      
                                                      {% if item.is_free_shipping %}
@@ -82,7 +79,7 @@
                                             {{ item.total_item }} AED
                                         </td>
                                         <td class="text-center">
-                                            <a href="{% url 'orders:remove_from_cart' product_id=item.product.id %}?sku={{ item.sku.sku_id }}"
+                                            <a href="{% url 'orders:remove_from_cart' product_id=item.product.id %}"
                                                class="btn btn-sm btn-outline-danger shadow-sm" style="border-radius:50%;width:34px;height:34px;padding:0;line-height:32px;">
                                                 <i class="fas fa-times"></i>
                                             </a>

@@ -27,9 +27,18 @@
             --primary-blue: {{ design_settings.primary_color|default:"#114084" }};
             --accent-blue: {{ design_settings.secondary_color|default:"#005CB9" }};
             --accent-glow: {{ design_settings.accent_glow_color|default:"#0081ff" }};
+            --header-bg: {{ design_settings.header_bg_color|default:"#ffffff" }};
+            --footer-bg: {{ design_settings.footer_bg_color|default:"#1a1a1a" }};
             --white: #ffffff;
             --dark-gray: #4C4D4F;
-            --footer-bg: #1a1a1a;
+            
+            /* Premium Health Mart Palette */
+            --hm-red: #e40707;
+            --hm-black: #000000;
+            --hm-gray: #f8f9fa;
+            --hm-text: #333;
+            --hm-border: #eee;
+            --hm-pill-bg: #f5f5f5;
             
             /* Dynamic admin-controlled typography */
             --font-body: {{ design_settings.font_body|default:"'Montserrat', sans-serif" }};
@@ -43,7 +52,7 @@
             --bg-body: {% if design_settings.dark_mode_enabled %}#121212{% else %}#ffffff{% endif %};
             --text-main: {% if design_settings.dark_mode_enabled %}#f1f1f1{% else %}#333333{% endif %};
             --text-muted-custom: {% if design_settings.dark_mode_enabled %}#aaaaaa{% else %}#6c757d{% endif %};
-            --bg-light-box: {% if design_settings.dark_mode_enabled %}#1e1e1e{% else %}#f1f7ff{% endif %};
+            --bg-light-box: {% if design_settings.dark_mode_enabled %}#1e1e1e{% else %}#ffffff{% endif %};
             --card-bg: {% if design_settings.dark_mode_enabled %}#1a1a1a{% else %}#ffffff{% endif %};
 
             /* Feature-specific variables to avoid inline template tags */
@@ -53,14 +62,30 @@
             --neumorph-shadow-light: {% if design_settings.dark_mode_enabled %}#171717{% else %}#ffffff{% endif %};
             --neumorph-shadow-btn-dark: {% if design_settings.dark_mode_enabled %}#0d0d0d{% else %}rgba(17, 64, 132, 0.4){% endif %};
             --neumorph-shadow-btn-light: {% if design_settings.dark_mode_enabled %}#171717{% else %}rgba(255, 255, 255, 0.4){% endif %};
-            --glass-bg-nav: {% if design_settings.dark_mode_enabled %}rgba(18, 18, 18, 0.8){% else %}rgba(255, 255, 255, 0.8){% endif %};
+            --glass-bg-nav: {% if design_settings.dark_mode_enabled %}rgba(18, 18, 18, 0.8){% else %}#ffffff{% endif %};
             --glass-bg-card: {% if design_settings.dark_mode_enabled %}rgba(30, 30, 30, 0.6){% else %}rgba(255, 255, 255, 0.6){% endif %};
             --glass-border: {% if design_settings.dark_mode_enabled %}rgba(255,255,255,0.05){% else %}rgba(255, 255, 255, 0.8){% endif %};
             --footer-bg-final: {% if design_settings.dark_mode_enabled %}#111111{% else %}var(--footer-bg){% endif %};
             --newsletter-bg: {% if design_settings.dark_mode_enabled %}var(--card-bg){% else %}var(--primary-blue){% endif %};
             --newsletter-btn-bg: {% if design_settings.dark_mode_enabled %}var(--primary-blue){% else %}#0081ff{% endif %};
             --form-border: {% if design_settings.dark_mode_enabled %}#333{% else %}#ced4da{% endif %};
-            --boxed-bg: {% if design_settings.dark_mode_enabled %}#0a0a0a{% else %}#f4f6f9{% endif %};
+            --boxed-bg: {% if design_settings.dark_mode_enabled %}#0a0a0a{% else %}#ffffff{% endif %};
+        }
+
+        /* Centered Section Headings */
+        .section-title, 
+        .home-slider h1, 
+        .home-slider h4,
+        section h2, 
+        section h3,
+        #collections .section-title {
+            text-align: center !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+        section .container > .text-center {
+            width: 100% !important;
         }
         
         body { 
@@ -106,6 +131,26 @@
             color: var(--text-main);
             letter-spacing: -0.5px;
         }
+
+        /* Global Center Alignment for Section Headings */
+        .section-title {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            position: relative;
+            margin-bottom: 3rem;
+            font-weight: 800;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-blue);
+            margin: 1rem auto;
+        }
         
         .section-title span.text-primary {
             background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
@@ -124,207 +169,557 @@
         .bg-light { background-color: var(--bg-light-box) !important; color: var(--text-main) !important; }
         .text-dark { color: var(--text-main) !important; }
 
-        /* Container Layout Control */
-        body.layout-boxed { background-color: var(--boxed-bg); }
-        body.layout-boxed .main-wrapper { 
-            max-width: 1440px; 
-            margin: 0 auto; 
-            background-color: var(--bg-body); 
-            box-shadow: 0 0 50px rgba(0,0,0,0.1); 
-            min-height: 100vh;
+        /* Announcement Slider */
+        #announcement-bar-container {
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1060;
         }
-        body.layout-boxed .navbar { max-width: 1440px; margin: 0 auto; left: 0; right: 0; }
-        
-        .main-wrapper { width: 100%; min-height: 100vh; }
+        #announcement-bar-swiper {
+            height: 100%;
+        }
+        #announcement-bar-swiper .swiper-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        #announcement-bar-container .close-announcement {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            color: currentColor; /* Inherit color from the slide if possible, or use white */
+            opacity: 0.7;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        #announcement-bar-container .close-announcement:hover { opacity: 1; }
 
-        .nav-link { color: var(--text-main) !important; font-weight: 600; font-size: 0.9rem; transition: all 0.3s; }
-        .nav-link:hover { color: var(--primary-blue) !important; }
-        
-        /* Interactive Elements */
-        .btn-primary, .btn-enquiry, .btn-newsletter { 
-            background-color: var(--primary-blue); 
-            color: #fff !important; 
-            border-radius: var(--border-radius-btn); 
-            border: none; 
-            font-weight: 600; 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .btn-primary:hover, .btn-enquiry:hover, .btn-newsletter:hover { 
-            background-color: var(--accent-blue); 
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 92, 185, 0.3);
+        .main-header {
+            background: var(--header-bg);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--hm-border);
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            transition: background-color 0.3s ease;
         }
         
-        /* Neumorphism */
-        body.neumorphism .shadow-sm, 
-        body.neumorphism .card, 
-        body.neumorphism .office-box, 
-        body.neumorphism .newsletter-card, 
-        body.neumorphism .bg-light-box {
-            box-shadow:  8px 8px 16px var(--neumorph-shadow-dark), 
-                        -8px -8px 16px var(--neumorph-shadow-light) !important;
-            background: var(--card-bg) !important; 
-            border: none !important;
-            border-radius: var(--border-radius-card);
-        }
-        body.neumorphism .btn-primary {
-            box-shadow: 4px 4px 8px var(--neumorph-shadow-btn-dark), 
-                       -4px -4px 8px var(--neumorph-shadow-btn-light) !important;
-        }
-        body.neumorphism .btn-primary:active {
-            box-shadow: inset 4px 4px 8px rgba(0,0,0,0.2) !important;
-        }
-
-        /* Glassmorphism */
-        body.glassmorphism .navbar {
-            background: var(--glass-bg-nav) !important;
-            backdrop-filter: blur(20px) !important;
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-        }
-        body.glassmorphism .card, 
-        body.glassmorphism .newsletter-card, 
-        body.glassmorphism .office-box, 
-        body.glassmorphism .bg-light-box {
-            background: var(--glass-bg-card) !important;
-            backdrop-filter: blur(15px) !important;
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border) !important;
-            border-radius: var(--border-radius-card);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        .logo-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
         }
         
-        @media (max-width: 575.98px) {
-            body.glassmorphism .navbar-collapse {
-                backdrop-filter: blur(20px) !important;
-                background: var(--glass-bg-nav) !important;
-            }
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
         }
         
-        .transition-all { transition: all 0.4s ease; }
-        .hover-lift:hover { transform: translateY(-8px); }
-        
-        /* Footer Redesign */
-        .site-footer { 
-            background: var(--footer-bg-final);
-            color: #fff; padding: 100px 0 30px; 
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 50px;
+            overflow: hidden;
+            height: 50px;
+            padding: 4px;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
-        .footer-heading { font-weight: 700; font-size: 1.1rem; margin-bottom: 25px; color: #fff; }
-        .footer-link { color: #aaa; text-decoration: none; font-size: 0.9rem; transition: 0.3s; display: block; margin-bottom: 15px; }
-        .footer-link:hover { color: #fff; transform: translateX(5px); }
-        
-        .newsletter-card { 
-            background: var(--newsletter-bg);
-            padding: 40px; margin-top: -100px; position: relative; z-index: 10;
-        }
-        .newsletter-input { border-radius: var(--border-radius-btn); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 15px 25px; }
-        .newsletter-input::placeholder { color: #ccc; }
-        .btn-newsletter { background: var(--newsletter-btn-bg); }
-        
-        /* Make sure default links inherit correctly */
-        a { transition: color 0.3s; }
-        a:not(.btn):hover { color: var(--accent-blue); text-decoration: none; }
-        
-        /* Form inputs global */
-        .form-control {
-            border-radius: var(--border-radius-btn);
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--form-border);
-        }
-        .form-control:focus {
-            background-color: var(--card-bg);
-            color: var(--text-main);
+        .search-wrapper:hover, .search-wrapper:focus-within {
             border-color: var(--primary-blue);
-            box-shadow: 0 0 0 0.2rem rgba(17, 64, 132, 0.25);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .search-wrapper select {
+            border: none;
+            padding: 0 20px;
+            height: 100%;
+            outline: none !important;
+            color: #444;
+            background: #f8f9fa;
+            font-weight: 600;
+            font-size: 0.82rem;
+            min-width: 140px;
+            cursor: pointer;
+            border-radius: 40px 0 0 40px;
+            margin-right: -1px;
+        }
+        
+        .search-wrapper .divider {
+            width: 1px;
+            height: 24px;
+            background: #eee;
+            margin: 0;
+        }
+        
+        .search-wrapper input {
+            border: none;
+            flex: 1;
+            padding: 0 20px;
+            outline: none !important;
+            font-size: 0.92rem;
+            background: transparent;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .search-btn {
+            background: var(--hm-black);
+            color: #fff;
+            border: none;
+            padding: 0 30px;
+            height: 100%;
+            font-weight: 700;
+            border-radius: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            font-size: 0.75rem;
+        }
+        .search-btn:hover { background: var(--primary-blue); color: #fff; transform: translateY(-1px); }
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .header-icon-link {
+            color: #333;
+            font-size: 1.25rem;
+            position: relative;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .header-icon-link:hover { background: #f8f9fa; color: var(--hm-red); }
+        .header-icon-link .badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: var(--hm-red);
+            color: #fff;
+            font-size: 0.6rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 2px solid #fff;
+        }
+        
+        .hamburger-menu {
+            font-size: 1.4rem;
+            color: #333;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: 0.3s;
+            margin-right: 10px;
+        }
+        .hamburger-menu:hover { background: #f8f9fa; color: var(--hm-red); }
+
+        /* Sub Header / Category Bar */
+        .sub-header {
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 0;
+            position: relative;
+            z-index: 1040;
+        }
+        
+        .category-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        
+        .category-nav > li {
+            position: relative;
+        }
+        
+        .category-nav > li > a {
+            color: #333;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 15px 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .category-nav > li > a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--hm-red);
+            transition: 0.3s;
+            transform: translateX(-50%);
+        }
+        
+        .category-nav > li:hover > a { color: var(--hm-red); }
+        .category-nav > li:hover > a:after { width: 100%; }
+
+        /* Dropdown Styles */
+        .dropdown-menu-custom {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #fff;
+            min-width: 250px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-radius: 0 0 12px 12px;
+            padding: 10px 0;
+            list-style: none;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+            border-top: none;
+            z-index: 1000;
+        }
+        
+        .category-nav li:hover .dropdown-menu-custom {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-menu-custom li {
+            border-bottom: 1px solid #f8f9fa;
+        }
+        .dropdown-menu-custom li:last-child { border-bottom: none; }
+        
+        .dropdown-menu-custom li a {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #444;
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-menu-custom li a:hover {
+            color: var(--hm-red);
+            background: #fff5f5;
+            padding-left: 30px;
+        }
+        .dropdown-menu-custom li a i {
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: 0.3s;
+            transform: translateX(-10px);
+        }
+        .dropdown-menu-custom li a:hover i {
+            opacity: 1;
+            transform: translateX(0);
         }
 
-        /* Hero Slider Height Customization */
-        .home-slider {
-            height: 50vh;
-            min-height: 400px;
+        .header-phone {
+            color: #333;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            padding: 5px 0;
+            transition: 0.3s;
         }
-        @media (max-width: 768px) {
-            .home-slider { height: 45vh; min-height: 350px; }
+        .header-phone i { color: var(--hm-red); }
+        .header-phone:hover { color: var(--hm-red); text-decoration: none; }
+
+        /* Promo Banner Styles */
+        .promo-banner-item {
+            display: block;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+            background: #f8f9fa;
         }
-
-        /* Enhanced Dark Mode Visibility */
-        body.dark-mode .text-dark { color: #f1f1f1 !important; }
-        body.dark-mode .text-muted { color: #aaa !important; }
-        body.dark-mode .bg-light { background-color: #1e1e1e !important; }
-        body.dark-mode .bg-white { background-color: #1a1a1a !important; }
-        body.dark-mode .card { background-color: #1a1a1a !important; color: #f1f1f1 !important; }
-        body.dark-mode .navbar-light .navbar-nav .nav-link { color: rgba(255,255,255,0.8) !important; }
-        body.dark-mode .navbar-light .navbar-nav .nav-link:hover { color: var(--primary-blue) !important; }
-        body.dark-mode .breadcrumb-item a { color: var(--primary-blue) !important; }
-        body.dark-mode .breadcrumb-item.active { color: #888 !important; }
-        body.dark-mode .modal-content { background-color: #1a1a1a; color: #f1f1f1; border: 1px solid #333; }
-        body.dark-mode .table { color: #f1f1f1; }
-        body.dark-mode .table thead th { border-bottom: 2px solid #333; }
-        body.dark-mode .table td { border-top: 1px solid #333; }
-
-        /* 📱 Mobile & Tablet Responsive Power Pack */
-        @media (max-width: 991.98px) {
-            .site-footer { padding: 60px 0 30px; }
-            .newsletter-card { margin-top: -50px; padding: 30px 20px; }
-            .section-padding { padding: 60px 0; }
-            h1, .h1 { font-size: 2.2rem; }
-            h2, .h2 { font-size: 1.8rem; }
+        .promo-banner-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
         }
-
-        @media (max-width: 767.98px) {
-            :root { --border-radius-card: 20px; }
-            .navbar-brand img { height: 40px; }
-            .section-padding { padding: 40px 0; }
-            
-            /* Typography Scaling */
-            h1, .h1 { font-size: 1.85rem; }
-            h2, .h2 { font-size: 1.55rem; }
-            h3, .h3 { font-size: 1.35rem; }
-            
-            /* Component Fixes */
-            .btn { padding: 10px 20px; font-size: 0.9rem; }
-            .card-body { padding: 1.25rem; }
-            
-            /* Form elements */
-            .form-control { font-size: 16px !important; } /* Prevents iOS zoom on focus */
-
-            /* Swiper Navigation hiding for small screens */
-            .swiper-button-next, .swiper-button-prev { display: none !important; }
+        .promo-banner-item:hover img {
+            transform: scale(1.05);
+        }
+        .promo-banner-item.shape-rounded { border-radius: 20px; }
+        .promo-banner-item.shape-pill { border-radius: 50px; }
+        .promo-banner-item.shape-square { border-radius: 0; }
+        
+        .banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.6));
+            color: #fff;
+            transition: 0.3s;
+        }
+        .promo-banner-item:hover .banner-overlay {
+            padding-bottom: 40px;
         }
 
-        @media (max-width: 575.98px) {
-            .container { padding-left: 20px; padding-right: 20px; }
-            .newsletter-card { margin-top: 0; border-radius: 0; }
-            .footer-link { text-align: center; }
-            .footer-heading { text-align: center; margin-top: 20px; }
-            .social-icons { justify-content: center; display: flex; margin-bottom: 20px; }
-            
-            /* Grid adjustments for mobile (2 columns) */
-            .col-mobile-6 { flex: 0 0 50%; max-width: 50%; padding: 0 8px; }
-            
-            /* Center logo on mobile */
-            .navbar { padding: 15px 0 !important; }
-            .navbar-brand { margin-right: 0; }
-            .navbar-toggler { padding: 5px; font-size: 1.2rem; outline: none !important; color: var(--text-main) !important; }
-            
-            /* Premium mobile menu */
-            .navbar-collapse {
-                background: var(--card-bg);
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                padding: 30px;
-                border-bottom: 1px solid rgba(0,0,0,0.05);
-                box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            }
-            .navbar-nav .nav-link { 
-                padding: 15px 0 !important; 
-                font-size: 1.1rem; 
-                font-weight: 500; 
-                border-bottom: 1px solid rgba(0,0,0,0.03);
-            }
+        /* Side Menu (Hamburger Sidebar) */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: #fff;
+            z-index: 2100;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.05);
+            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .side-menu.active { left: 0; }
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 2050;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            backdrop-filter: blur(2px);
+        }
+        .side-menu-overlay.active { 
+            opacity: 1; 
+            visibility: visible; 
+        }
+        
+        .side-menu-header {
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .close-side-menu {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f8f9fa;
+            color: #333;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .close-side-menu:hover { background: #fee2e2; color: var(--hm-red); }
+        
+        .side-menu-body {
+            padding: 20px 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .side-menu-body ul { list-style: none; padding: 0; margin: 0; }
+        .side-menu-body ul li a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 25px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: 0.3s;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+        }
+        .side-menu-body ul li a:hover {
+            background: #fff5f5;
+            color: var(--hm-red);
+            padding-left: 30px;
+            border-left-color: var(--hm-red);
+        }
+        .side-menu-body ul li a i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #888;
+            transition: 0.3s;
+        }
+        .side-menu-body ul li a:hover i {
+            color: var(--hm-red);
+        }
+        .side-menu-body .menu-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: #999;
+            letter-spacing: 1.5px;
+            padding: 20px 25px 10px;
+        }
+
+        @media (max-width: 991px) {
+            .search-container { margin-top: 15px; margin-bottom: 5px; }
+            .sub-header { display: none; }
+            .header-icons { gap: 10px; }
+            .hamburger-menu { margin-right: 5px; }
+        }
+
+        /* ── Footer Styles ───────────────────────────────────────────────── */
+        .site-footer {
+            background-color: var(--footer-bg);
+            color: #ccc;
+            padding: 60px 0 0;
+            position: relative;
+        }
+        .site-footer::before {
+            content: '';
+            display: block;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue), var(--accent-glow));
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        .footer-heading {
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--primary-blue);
+        }
+        .footer-link {
+            display: block;
+            color: #aaa;
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: all 0.25s ease;
+            padding-left: 0;
+        }
+        .footer-link:hover {
+            color: #fff;
+            padding-left: 6px;
+            text-decoration: none;
+        }
+        .newsletter-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 24px;
+        }
+        .newsletter-input {
+            background: rgba(255,255,255,0.08) !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+            color: #fff !important;
+            border-radius: 8px !important;
+        }
+        .newsletter-input::placeholder { color: rgba(255,255,255,0.45); }
+        .newsletter-input:focus {
+            background: rgba(255,255,255,0.12) !important;
+            border-color: var(--primary-blue) !important;
+            box-shadow: 0 0 0 3px rgba(17,64,132,0.3) !important;
+            outline: none;
+        }
+        .btn-newsletter {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 0.88rem;
+            letter-spacing: 0.5px;
+            transition: 0.3s;
+            margin-top: 8px;
+        }
+        .btn-newsletter:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .footer-social a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            color: #ccc;
+            font-size: 0.88rem;
+            transition: 0.3s;
+            margin: 0 4px;
+            text-decoration: none;
+        }
+        .footer-social a:hover {
+            background: var(--primary-blue);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .footer-bottom {
+            background: rgba(0,0,0,0.25);
+            padding: 18px 0;
+            margin-top: 40px;
+        }
+        .footer-bottom p { margin: 0; font-size: 0.82rem; color: rgba(255,255,255,0.4); }
+        @media (max-width: 767px) {
+            .site-footer { padding: 40px 0 0; }
+            .footer-heading { margin-bottom: 14px; }
         }
     </style>
     {% block split_css %}{% endblock %}
@@ -334,63 +729,142 @@
 <div class="main-wrapper">
 
 
-    <!-- Header / Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
+    <!-- Dynamic Announcement Bar Swiper -->
+    {% if announcement_bar_list %}
+    <div id="announcement-bar-container" class="position-relative">
+        <div id="announcement-bar-swiper" class="swiper" style="overflow: hidden;">
+            <div class="swiper-wrapper">
+                {% for bar in announcement_bar_list %}
+                <div class="swiper-slide d-flex align-items-center justify-content-center" 
+                     style="background-color: {{ bar.background_color|default:design_settings.primary_color }}; color: {{ bar.text_color|default:'#ffffff' }}; height: 35px; min-height: 35px; font-size: 0.85rem;">
+                    <span class="mr-2"><i class="fas fa-bullhorn"></i></span>
+                    <span class="announcement-text">{{ bar.text }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="close-announcement" onclick="document.getElementById('announcement-bar-container').style.display='none';" 
+             style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: white; opacity: 0.8; z-index: 100;">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Header -->
+    <header class="main-header">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{% url 'core:home' %}">
-                {% if site_settings.logo %}
-                <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" height="50">
-                {% else %}
-                <span class="font-weight-bold" style="color: var(--primary-blue); font-size: 1.5rem;">{{ design_settings.header_title|default:site_settings.site_name|default:"Demo International" }}</span>
-                {% endif %}
-                <span class="ml-3 small font-weight-bold text-muted d-none d-lg-inline" style="border-left: 1px solid #ddd; padding-left: 15px;">{{ design_settings.header_subtitle|default:"Empowering Your Vision" }}</span>
-            </a>
-            <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#mainNav">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'core:about_us' %}">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'products:category_index' %}">Products</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'core:services' %}">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'core:gallery' %}">Gallery</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'core:store_locations' %}">Stores</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'blog:post_list' %}">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'contact:contact' %}">Contact Us</a></li>
-                </ul>
-                <div class="d-flex align-items-center">
-                    <a href="{% url 'orders:enquiry_cart' %}" class="mr-4 position-relative">
-                        <div class="bg-primary text-white p-2 rounded-circle shadow-sm" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
-                        {% if cart_count > 0 %}
-                        <span class="badge badge-pill badge-danger position-absolute" style="top: -5px; right: -5px; border: 2px solid #fff;">{{ cart_count }}</span>
+            <div class="row align-items-center">
+                <!-- Hamburger & Logo -->
+                <div class="col-6 col-lg-3 d-flex align-items-center">
+                    <div class="hamburger-menu" id="side-menu-trigger">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <a href="{% url 'core:home' %}" class="logo-link">
+                        {% if site_settings.logo %}
+                        <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 55px; width: auto;">
+                        {% elif site_settings.logo_url %}
+                         <img src="{{ site_settings.logo_url }}" alt="{{ site_settings.site_name }}" style="max-height: 55px; width: auto;">
+                        {% else %}
+                        <img src="https://healthmart.ae/wp-content/uploads/2021/04/healthmart-logo-1.png" alt="Health Mart" style="max-height: 50px; width: auto;">
                         {% endif %}
                     </a>
+                </div>
 
-                    <!-- User Account Dropdown -->
-                    {% if user.is_authenticated %}
-                    <div class="dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <div class="bg-light rounded-circle text-primary d-flex align-items-center justify-content-center mr-2" style="width: 35px; height: 35px;">
-                                <i class="fas fa-user small"></i>
+                <!-- Search Container -->
+                <div class="col-12 col-lg-6 order-3 order-lg-2">
+                    <div class="search-container">
+                        <form action="{% url 'products:product_list' %}" method="GET">
+                            <div class="search-wrapper">
+                                <div class="category-dropdown d-none d-md-block">
+                                    <select name="category">
+                                        <option value="">All Categories</option>
+                                        {% for cat in categories %}
+                                        <option value="{{ cat.slug }}">{{ cat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="divider d-none d-md-block"></div>
+                                <input type="text" name="q" placeholder="Search for products" value="{{ request.GET.q }}">
+                                <button type="submit" class="search-btn">search</button>
                             </div>
-                            <span class="d-none d-sm-inline">{{ user.username }}</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow border-0 mt-2" aria-labelledby="userDropdown">
-                            {% if user.is_staff %}
-                            <a class="dropdown-item py-2" href="{% url 'admin:index' %}"><i class="fas fa-cog mr-2"></i> Admin Panel</a>
-                            <div class="dropdown-divider"></div>
-                            {% endif %}
-                            <a class="dropdown-item py-2" href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
-                        </div>
+                        </form>
                     </div>
-                    {% else %}
-                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-sm px-4 mr-2 d-none d-md-inline-block" style="border-radius: 20px;">Login</a>
-                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm px-4 d-none d-md-inline-block" style="border-radius: 20px;">Sign Up</a>
-                    <a href="{% url 'accounts:login' %}" class="nav-link d-md-none"><i class="fas fa-user"></i></a>
+                </div>
+
+                <!-- Icons -->
+                <div class="col-6 col-lg-3 order-2 order-lg-3">
+                    <div class="header-icons justify-content-end">
+                        <a href="{% if not user.is_authenticated %}{% url 'accounts:login' %}{% else %}#{% endif %}" class="header-icon-link">
+                            <i class="far fa-user"></i>
+                        </a>
+                        <a href="#" class="header-icon-link">
+                            <i class="far fa-heart"></i>
+                        </a>
+                        <a href="{% url 'orders:enquiry_cart' %}" class="header-icon-link">
+                            <i class="fas fa-shopping-bag"></i>
+                            {% if cart_count %}<span class="badge">{{ cart_count }}</span>{% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sub Header / Navigation -->
+    <nav class="sub-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <ul class="category-nav">
+                    {% for cat in categories|slice:":8" %}
+                    <li class="{% if cat.active_subcategories or cat.products.all %}has-dropdown{% endif %}">
+                        <a href="{% url 'products:category_detail' slug=cat.slug %}">
+                            {{ cat.name }} 
+                            {% if cat.active_subcategories or cat.products.all %}<i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>{% endif %}
+                        </a>
+                        
+                        <!-- Dynamic Dropdown Content -->
+                        {% if cat.active_subcategories or cat.products.all %}
+                        <ul class="dropdown-menu-custom">
+                            {% if cat.active_subcategories %}
+                                <!-- Subcategories Dropdown -->
+                                {% for sub in cat.active_subcategories %}
+                                <li>
+                                    <a href="{% url 'products:category_detail' slug=sub.slug %}">
+                                        {{ sub.name }}
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            {% elif cat.products.all %}
+                                <!-- Products Mini-List for Categories without Sub-categories -->
+                                <li class="dropdown-header px-3 py-2 text-muted font-weight-bold" style="font-size: 0.7rem; text-transform: uppercase; background: #f8f9fa;">Products</li>
+                                {% for prod in cat.products.all|slice:":6" %}
+                                <li>
+                                    <a href="{% url 'products:product_detail' slug=prod.slug %}" class="py-2">
+                                        {{ prod.name }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                                {% if cat.products.all|length > 6 %}
+                                <li class="border-top mt-1">
+                                    <a href="{% url 'products:category_detail' slug=cat.slug %}" class="text-primary font-weight-bold py-2 text-center" style="font-size: 0.8rem;">View More</a>
+                                </li>
+                                {% endif %}
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                    {% if categories|length > 8 %}
+                    <li>
+                        <a href="{% url 'products:category_index' %}">Others <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+                    </li>
                     {% endif %}
+                </ul>
+                <div class="contact-number">
+                    <a href="tel:{{ site_settings.phone|default:'+971 55 6635772' }}" class="header-phone">
+                        <i class="fas fa-phone-alt"></i> {{ site_settings.phone|default:'+971 55 6635772' }}
+                    </a>
                 </div>
             </div>
         </div>
@@ -398,69 +872,121 @@
 
     {% block content %}{% endblock %}
 
-    <!-- Footer Redesign (Image 1/2 Request) -->
-    <footer class="site-footer mt-5">
+    <!-- Site Footer -->
+    <footer class="site-footer">
         <div class="container">
             <div class="row">
-                <!-- Contact Info Col -->
-                <div class="col-lg-4 mb-5">
+
+                <!-- Brand & Contact Col -->
+                <div class="col-12 col-lg-4 mb-5">
                     {% if site_settings.logo %}
-                    <img src="{{ site_settings.logo.url }}" class="mb-4" height="60" style="filter: brightness(0) invert(1);">
+                    <img src="{{ site_settings.logo.url }}" class="mb-4 d-block" height="55" style="filter: brightness(0) invert(1);">
+                    {% else %}
+                    <h4 class="text-white font-weight-bold mb-4">{{ site_settings.site_name }}</h4>
                     {% endif %}
-                    
-                    <div class="office-box mb-4">
-                        <h6 class="font-weight-bold text-white mb-2">{{ site_settings.branch1_name|default:"Dubai" }} :</h6>
-                        <p class="small text-white-50">{{ site_settings.dubai_address|linebreaksbr }}</p>
+                    <p class="small" style="color:#aaa; line-height:1.8;">{{ site_settings.meta_description|default:"Your trusted medical equipment partner." }}</p>
+
+                    {% if site_settings.dubai_address or site_settings.abudhabi_address %}
+                    <div class="mt-3">
+                        {% if site_settings.dubai_address %}
+                        <div class="mb-3">
+                            <p class="mb-1" style="color:#fff; font-weight:600; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.8px;">{{ site_settings.branch1_name|default:"Dubai" }}</p>
+                            <p class="mb-0" style="color:#aaa; font-size:0.85rem; line-height:1.7;">{{ site_settings.dubai_address|linebreaksbr }}</p>
+                        </div>
+                        {% endif %}
+                        {% if site_settings.abudhabi_address %}
+                        <div>
+                            <p class="mb-1" style="color:#fff; font-weight:600; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.8px;">{{ site_settings.branch2_name|default:"Abu Dhabi" }}</p>
+                            <p class="mb-0" style="color:#aaa; font-size:0.85rem; line-height:1.7;">{{ site_settings.abudhabi_address|linebreaksbr }}</p>
+                        </div>
+                        {% endif %}
                     </div>
-                    <div class="office-box">
-                        <h6 class="font-weight-bold text-white mb-2">{{ site_settings.branch2_name|default:"Abu Dhabi" }} :</h6>
-                        <p class="small text-white-50">{{ site_settings.abudhabi_address|linebreaksbr }}</p>
-                    </div>
+                    {% endif %}
                 </div>
 
-                <!-- Nav Cols -->
+                <!-- Quick Links -->
                 <div class="col-6 col-lg-2 mb-5">
                     <h5 class="footer-heading">{{ site_settings.footer_quick_links_title|default:"Quick Links" }}</h5>
                     <a href="{% url 'core:home' %}" class="footer-link">Home</a>
                     <a href="{% url 'products:category_index' %}" class="footer-link">Products</a>
                     <a href="{% url 'core:services' %}" class="footer-link">Services</a>
-                </div>
-                <div class="col-6 col-lg-2 mb-5">
-                    <h5 class="footer-heading">{{ site_settings.footer_support_title|default:"Support" }}</h5>
-                    <a href="{% url 'core:about_us' %}" class="footer-link">About</a>
-                    <a href="{% url 'contact:contact' %}" class="footer-link">Contact</a>
-                </div>
-                <div class="col-lg-1 d-none d-lg-block">
-                    <h5 class="footer-heading">{{ site_settings.footer_legal_title|default:"Legal" }}</h5>
-                    <a href="{% url 'core:home' %}" class="footer-link">Privacy Policy</a>
+                    <a href="{% url 'blog:post_list' %}" class="footer-link">Blog</a>
                 </div>
 
-                <!-- Newsletter Col -->
-                <div class="col-lg-3 mb-5 pl-lg-4">
+                <!-- Support -->
+                <div class="col-6 col-lg-2 mb-5">
+                    <h5 class="footer-heading">{{ site_settings.footer_support_title|default:"Support" }}</h5>
+                    <a href="{% url 'core:about_us' %}" class="footer-link">About Us</a>
+                    <a href="{% url 'contact:contact' %}" class="footer-link">Contact</a>
+                    <h5 class="footer-heading mt-4">{{ site_settings.footer_legal_title|default:"Legal" }}</h5>
+                    <a href="{% url 'core:home' %}" class="footer-link">Privacy Policy</a>
+                    <a href="{% url 'core:home' %}" class="footer-link">Terms of Use</a>
+                </div>
+
+                <!-- Newsletter & Socials -->
+                <div class="col-12 col-lg-4 mb-5">
                     <div class="newsletter-card">
-                        <h4 class="font-weight-bold text-white mb-3">{{ site_settings.footer_newsletter_title|default:"Subscribe to our Newsletter" }}</h4>
+                        <h5 class="footer-heading" style="margin-bottom:6px;">{{ site_settings.footer_newsletter_title|default:"Stay in the loop" }}</h5>
+                        <p class="small mb-3" style="color:#aaa;">Get the latest products and updates direct to your inbox.</p>
                         <form action="{% url 'contact:subscribe' %}" method="POST">
                             {% csrf_token %}
-                            <div class="form-group mb-3">
-                                <input type="email" name="email" class="form-control newsletter-input w-100" placeholder="Email Address" required>
-                            </div>
-                            <button type="submit" class="btn btn-newsletter w-100">Submit</button>
+                            <input type="email" name="email" class="form-control newsletter-input mb-2" placeholder="Enter your email address" required>
+                            <button type="submit" class="btn btn-newsletter w-100">Subscribe &rarr;</button>
                         </form>
-                        <div class="d-flex justify-content-center mt-4">
-                            {% if site_settings.facebook %}<a href="{{ site_settings.facebook }}" class="text-white mx-3"><i class="fab fa-facebook-f fa-lg"></i></a>{% endif %}
-                            {% if site_settings.instagram %}<a href="{{ site_settings.instagram }}" class="text-white mx-3"><i class="fab fa-instagram fa-lg"></i></a>{% endif %}
-                            {% if site_settings.linkedin %}<a href="{{ site_settings.linkedin }}" class="text-white mx-3"><i class="fab fa-linkedin-in fa-lg"></i></a>{% endif %}
-                            {% if site_settings.twitter %}<a href="{{ site_settings.twitter }}" class="text-white mx-3"><i class="fab fa-twitter fa-lg"></i></a>{% endif %}
-                        </div>
                     </div>
+
+                    {% if site_settings.facebook or site_settings.instagram or site_settings.linkedin or site_settings.twitter %}
+                    <div class="footer-social mt-4">
+                        {% if site_settings.facebook %}<a href="{{ site_settings.facebook }}" title="Facebook"><i class="fab fa-facebook-f"></i></a>{% endif %}
+                        {% if site_settings.instagram %}<a href="{{ site_settings.instagram }}" title="Instagram"><i class="fab fa-instagram"></i></a>{% endif %}
+                        {% if site_settings.linkedin %}<a href="{{ site_settings.linkedin }}" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>{% endif %}
+                        {% if site_settings.twitter %}<a href="{{ site_settings.twitter }}" title="Twitter"><i class="fab fa-twitter"></i></a>{% endif %}
+                    </div>
+                    {% endif %}
                 </div>
+
             </div>
-            
-            <div class="border-top border-secondary pt-4 text-center">
-                <p class="small text-white-50">© {% now "Y" %} {{ site_settings.site_name }}. {{ site_settings.footer_copyright_text|default:"All rights reserved." }}</p>
+        </div>
+
+        <!-- Footer Bottom Bar -->
+        <div class="footer-bottom">
+            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <p>© {% now "Y" %} {{ site_settings.site_name|default:"Demo International" }}. {{ site_settings.footer_copyright_text|default:"All rights reserved." }}</p>
+                <p class="mt-2 mt-md-0">Powered by <span style="color:var(--primary-blue); font-weight:600;">Demo Platform</span></p>
             </div>
         </div>
     </footer>
+    
+    <!-- Side Menu Overlay -->
+    <div class="side-menu-overlay" id="side-menu-overlay"></div>
+    
+    <!-- Side Menu -->
+    <div class="side-menu" id="side-menu">
+        <div class="side-menu-header">
+            <h5 class="mb-0 font-weight-bold">Menu</h5>
+            <div class="close-side-menu" id="side-menu-close">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <div class="side-menu-body">
+            <div class="menu-title">Main Navigation</div>
+            <ul>
+                <li><a href="{% url 'core:home' %}"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="{% url 'core:about_us' %}"><i class="fas fa-info-circle"></i> About Us</a></li>
+                <li><a href="{% url 'products:category_index' %}"><i class="fas fa-th-large"></i> Categories</a></li>
+                <li><a href="{% url 'core:services' %}"><i class="fas fa-tools"></i> Our Services</a></li>
+                <li><a href="{% url 'contact:contact' %}"><i class="fas fa-envelope"></i> Contact Us</a></li>
+            </ul>
+            
+            <div class="menu-title">Product Categories</div>
+            <ul>
+                {% for cat in categories|slice:":12" %}
+                <li><a href="{% url 'products:category_detail' slug=cat.slug %}"><i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i> {{ cat.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
     </div> <!-- /main-wrapper -->
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -529,6 +1055,41 @@
                     observer.observe(counter);
                 });
             }
+            
+            // Side Menu Toggle
+            const sideTrigger = document.getElementById('side-menu-trigger');
+            const sideMenu = document.getElementById('side-menu');
+            const sideOverlay = document.getElementById('side-menu-overlay');
+            const sideClose = document.getElementById('side-menu-close');
+            
+            if (sideTrigger && sideMenu) {
+                sideTrigger.addEventListener('click', () => {
+                    sideMenu.classList.add('active');
+                    sideOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                
+                const closeMenu = () => {
+                    sideMenu.classList.remove('active');
+                    sideOverlay.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                };
+                
+                sideClose.addEventListener('click', closeMenu);
+                sideOverlay.addEventListener('click', closeMenu);
+            }
+            
+            // Announcement Swiper
+            const announcementSwiper = new Swiper('#announcement-bar-swiper', {
+                direction: 'horizontal',
+                loop: true,
+                autoplay: {
+                    delay: 4000,
+                    disableOnInteraction: false,
+                },
+                speed: 800,
+                effect: 'slide'
+            });
         });
     </script>
     {% block scripts %}{% endblock %}

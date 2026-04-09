@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.urls import reverse
 import stripe
-from products.models import Product, ProductSKU
+from products.models import Product
 from .models import QuoteEnquiry, QuoteItem, CustomerOrder, CustomerOrderItem
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -14,56 +14,41 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 def _get_cart_items(request):
     """
     Helper: resolve cart session into list of dicts.
-    Cart stores SKU_ID as the unique key where possible, falls back to product_id if not.
+    Cart stores product.id as the unique key.
     """
     cart = request.session.get('enquiry_cart', {})
     items = []
     total_shipping = 0
-    for item_key, item_data in cart.items():
+    for product_id, item_data in cart.items():
         try:
-            # We first try to see if item_key is a SKU_ID (alnum string)
-            sku = ProductSKU.objects.filter(sku_id=item_key).first()
-            if not sku:
-                # Fallback to product ID if SKU not found
-                product = Product.objects.get(id=int(item_key))
-                sku = product.skus.first() # Assume first SKU for basic products
-            else:
-                product = sku.product
+            product = Product.objects.get(id=int(product_id))
             
-            if not sku: continue
-
             qty = int(item_data.get('quantity', 1))
-            price_info = sku.get_price_info()
+            price_info = product.get_best_price_info()
             
             unit_price = price_info['final_price']
             total_item = round(unit_price * qty, 2)
             
             # Shipping logic
-            shipping_per_unit = 0 if sku.free_shipping else (sku.additional_shipping_charge or 0)
+            shipping_per_unit = 0 if product.free_shipping else (product.additional_shipping_charge or 0)
             shipping_item = round(shipping_per_unit * qty, 2)
             total_shipping += shipping_item
 
             offer_applied = price_info.get('offer')
             bogo_message = None
             if offer_applied and offer_applied.offer_type == 'bogo':
-                # BOGO Logic: Every 2nd item is FREE or "Add 1 Get 1"
-                # If they have 1 in cart, we can suggest adding another, or we can just double it.
-                # Requirement: "should show the other product also as per the offer"
-                # So if they have 1, we show a message or just calculate properly.
                 bogo_message = "BOGO Applied: Buy 1 Get 1 Free"
-                # Effective total: 1 unit price for every 2 items
                 payable_qty = (qty // 2) + (qty % 2)
                 total_item = round(unit_price * payable_qty, 2)
 
             items.append({
                 'product': product,
-                'sku': sku,
                 'quantity': qty,
                 'unit_price': unit_price,
                 'regular_price': price_info['regular_price'],
                 'total_item': total_item,
                 'shipping_item': shipping_item,
-                'is_free_shipping': sku.free_shipping,
+                'is_free_shipping': product.free_shipping,
                 'has_offer': price_info['has_offer'],
                 'offer_name': offer_applied.name if offer_applied else None,
                 'bogo_message': bogo_message,
@@ -89,20 +74,9 @@ def enquiry_cart(request):
 
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    sku_id = request.GET.get('sku')
     
-    sku = None
-    if sku_id:
-        sku = ProductSKU.objects.filter(sku_id=sku_id).first()
-    if not sku:
-        sku = product.skus.first() # Fallback to first SKU
-    
-    if not sku:
-        messages.error(request, "This product has no active variants.")
-        return redirect('products:product_detail', slug=product.slug)
-
     cart = request.session.get('enquiry_cart', {})
-    item_key = sku.sku_id # Store by SKU ID for uniqueness and offer tracking
+    item_key = str(product.id)
     
     if item_key in cart:
         cart[item_key]['quantity'] += 1
@@ -110,18 +84,14 @@ def add_to_cart(request, product_id):
         cart[item_key] = {'quantity': 1}
 
     request.session['enquiry_cart'] = cart
-    messages.success(request, f"✅ {product.name} (Variant: {sku.title or 'Standard'}) added to cart.")
+    messages.success(request, f"✅ {product.name} added to cart.")
     return redirect('orders:enquiry_cart')
 
 
 def remove_from_cart(request, product_id):
-    # Support both product_id (legacy) and SKU ID in URL
-    sku_id = request.GET.get('sku')
     cart = request.session.get('enquiry_cart', {})
     
-    if sku_id and sku_id in cart:
-        del cart[sku_id]
-    elif str(product_id) in cart:
+    if str(product_id) in cart:
         del cart[str(product_id)]
     
     request.session['enquiry_cart'] = cart
@@ -219,7 +189,7 @@ def checkout_payment(request):
                 CustomerOrderItem.objects.create(
                     order=order,
                     product=product,
-                    product_name=f"{product.name} ({item['sku'].title})" if item.get('sku') else product.name,
+                    product_name=product.name,
                     quantity=item['quantity'],
                     regular_price=item.get('regular_price', item['unit_price']),
                     unit_price=item['unit_price'],
@@ -243,7 +213,6 @@ def checkout_payment(request):
                             'currency': 'aed',
                             'product_data': {
                                 'name': item['product'].name,
-                                'description': item['sku'].title if item.get('sku') else "",
                             },
                             'unit_amount': int(item['unit_price'] * 100), # in fils
                         },

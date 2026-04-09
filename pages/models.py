@@ -35,7 +35,7 @@ class AboutUs(models.Model):
     title = models.CharField(max_length=255, default="About Us")
     heading = models.CharField(max_length=255, default="We craft solutions that enhance and Simplify Lives.")
     content = RichTextField()
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     def __str__(self): return f"{self.title} Settings"
     class Meta: verbose_name_plural = "About Us Settings"
 
@@ -86,6 +86,7 @@ class Service(models.Model):
     icon_svg = models.TextField(blank=True, help_text="Paste SVG code here. If provided, it will be used instead of the image/URL.")
     description = models.TextField()
     order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return self.title
     def get_icon_url(self):
@@ -97,6 +98,7 @@ class Counter(models.Model):
     value = models.CharField(max_length=50, help_text="Example: 15, 100+, etc.")
     icon_svg = models.TextField(blank=True, help_text="Paste SVG code here.")
     order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return f"{self.title}: {self.value}"
 
@@ -105,6 +107,7 @@ class WhyUsCard(models.Model):
     description = models.TextField()
     icon_svg = models.TextField(help_text="SVG code for icon", blank=True)
     order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return self.title
 
@@ -119,6 +122,7 @@ class GalleryItem(models.Model):
     image_url = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=100, blank=True)
     order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return self.title or f"Gallery Image {self.id}"
     def get_img_url(self):
@@ -137,6 +141,7 @@ class Partner(models.Model):
     icon_svg = models.TextField(blank=True, help_text="Paste SVG logo code here. Used if provided.")
     website_url = models.URLField(blank=True, help_text="Optional link to partner website")
     order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return self.name
     def get_logo_url(self):

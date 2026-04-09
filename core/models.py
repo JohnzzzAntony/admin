@@ -2,6 +2,7 @@ from django.db import models
 
 class SiteSettings(models.Model):
     site_name = models.CharField(max_length=255, default="Demo International")
+    company_name = models.CharField(max_length=255, blank=True, help_text="Used in the header and copyright.")
     logo = models.ImageField(
         upload_to="settings/", 
         null=True, 
@@ -47,9 +48,9 @@ class SiteSettings(models.Model):
     footer_copyright_text = models.CharField(max_length=255, default="All rights reserved.", blank=True)
     
     # ── Notification Settings ───────────────────────────────────────────────
-    enable_email_notifications    = models.BooleanField(default=True, verbose_name="Enable Email Notifications")
-    enable_sms_notifications      = models.BooleanField(default=False, verbose_name="Enable SMS Notifications")
-    enable_whatsapp_notifications = models.BooleanField(default=False, verbose_name="Enable WhatsApp Notifications")
+    enable_email_notifications    = models.BooleanField(default=True, verbose_name="Email Notifications", choices=((True, 'Enabled'), (False, 'Disabled')))
+    enable_sms_notifications      = models.BooleanField(default=False, verbose_name="SMS Notifications", choices=((True, 'Enabled'), (False, 'Disabled')))
+    enable_whatsapp_notifications = models.BooleanField(default=False, verbose_name="WhatsApp Notifications", choices=((True, 'Enabled'), (False, 'Disabled')))
 
 
 
@@ -75,7 +76,7 @@ class Testimonial(models.Model):
     image_url = models.URLField(blank=True, null=True)
     rating = models.PositiveIntegerField(default=5)
     order = models.PositiveIntegerField(default=0)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return f"Testimonial from {self.client_name}"
     def get_img_url(self):
@@ -95,7 +96,7 @@ class Client(models.Model):
     icon_svg = models.TextField(blank=True, help_text="Paste SVG code for logo here.")
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='Public')
     order = models.PositiveIntegerField(default=0)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return self.name
     def get_logo_url(self):
@@ -131,7 +132,7 @@ class StoreLocation(models.Model):
     city = models.CharField(max_length=100, help_text="e.g. Dubai, Sharjah, Abu Dhabi")
     phone = models.CharField(max_length=50)
     map_url = models.URLField(verbose_name="Google Maps URL", help_text="Link to the location on Google Maps (Get Directions)")
-    is_active = models.BooleanField(default=True, verbose_name="Enabled")
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     order = models.PositiveIntegerField(default=0, verbose_name="Sort Order")
 
     class Meta:
@@ -143,3 +144,22 @@ class StoreLocation(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.city})"
+
+class AnnouncementBar(models.Model):
+    text = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
+    background_color = models.CharField(max_length=50, default="#000000")
+    text_color = models.CharField(max_length=50, default="#ffffff")
+    closable = models.BooleanField(default=True, verbose_name="User Closable", choices=((True, 'Yes'), (False, 'No')))
+    start_date = models.DateTimeField(null=True, blank=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self): return self.text
+
+class SearchIndex(models.Model):
+    product_name = models.CharField(max_length=255)
+    keywords = models.TextField(blank=True)
+    category = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(blank=True)
+
+    def __str__(self): return self.product_name

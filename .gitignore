@@ -35,4 +35,6 @@ logs/
 
 # Sensitive
 .env
+.env.local
+.env.*
 secret_key.txt

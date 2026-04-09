@@ -5,7 +5,19 @@ from django.utils.html import format_html
 @admin.register(PageHero)
 class PageHeroAdmin(admin.ModelAdmin):
     list_display = ('page', 'title', 'hero_preview')
-    fields = ('page', ('hero_image', 'hero_image_url'), 'title', 'subtitle')
+    readonly_fields = ('hero_preview',)
+    
+    fieldsets = (
+        ('Reference', {
+            'fields': ('page',),
+        }),
+        ('Hero Identity', {
+            'fields': (('title', 'subtitle'),),
+        }),
+        ('Imagery', {
+            'fields': (('hero_image', 'hero_image_url'),),
+        }),
+    )
     
     def hero_preview(self, obj):
         url = obj.get_hero_url()
@@ -14,25 +26,54 @@ class PageHeroAdmin(admin.ModelAdmin):
 
 class VideoCardInline(admin.TabularInline):
     model = VideoCard
-    extra = 1
-    fields = ('title', 'video_url', 'thumbnail', 'thumbnail_url', 'order')
+    extra = 0
+    fields = ('title', 'video_url', ('thumbnail', 'thumbnail_url'), 'order')
 
 @admin.register(AboutUs)
 class AboutUsAdmin(admin.ModelAdmin):
     inlines = [VideoCardInline]
+    
+    radio_fields = {"is_active": admin.HORIZONTAL}
+    
+    fieldsets = (
+        ('Brand Story', {
+            'fields': (('title', 'subtitle'), 'is_active', 'content'),
+        }),
+    )
+
     def has_add_permission(self, request):
         return False if self.model.objects.count() > 0 else super().has_add_permission(request)
 
 @admin.register(MissionVision)
 class MissionVisionAdmin(admin.ModelAdmin):
     list_display = ('section_type', 'title')
-    fields = ('section_type', 'title', 'content', ('image', 'image_url'), 'icon_svg')
+    
+    fieldsets = (
+        ('Strategic Goal', {
+            'fields': (('section_type', 'title'),),
+        }),
+        ('Content & Visuals', {
+            'fields': ('content', ('image', 'image_url'), 'icon_svg'),
+        }),
+    )
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('title', 'order', 'image_tag')
-    list_editable = ('order',)
-    fields = (('title', 'order'), ('icon', 'icon_url'), 'icon_svg', 'description')
+    list_display = ('title', 'order', 'is_active', 'image_tag')
+    list_editable = ('order', 'is_active')
+    radio_fields = {"is_active": admin.HORIZONTAL}
+    
+    fieldsets = (
+        ('Service Info', {
+            'fields': (('title', 'order'), 'is_active'),
+        }),
+        ('Appearance', {
+            'fields': (('icon', 'icon_url'), 'icon_svg'),
+        }),
+        ('Narrative', {
+            'fields': ('description',),
+        }),
+    )
     
     def image_tag(self, obj):
         url = obj.get_icon_url()
@@ -41,20 +82,45 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(Counter)
 class CounterAdmin(admin.ModelAdmin):
-    list_display = ('title', 'value', 'order')
-    list_editable = ('value', 'order')
-    fields = (('title', 'value'), 'icon_svg', 'order')
+    list_display = ('title', 'value', 'order', 'is_active')
+    list_editable = ('value', 'order', 'is_active')
+    radio_fields = {"is_active": admin.HORIZONTAL}
+    
+    fieldsets = (
+        ('Statistic', {
+            'fields': (('title', 'value'), 'is_active'),
+        }),
+        ('Configuration', {
+            'fields': ('icon_svg', 'order'),
+        }),
+    )
 
 @admin.register(WhyUsCard)
 class WhyUsCardAdmin(admin.ModelAdmin):
-    list_display = ('title', 'order')
-    list_editable = ('order',)
+    list_display = ('title', 'order', 'is_active')
+    list_editable = ('order', 'is_active')
+    radio_fields = {"is_active": admin.HORIZONTAL}
+    
+    fieldsets = (
+        ('Advantage Card', {
+            'fields': (('title', 'order'), 'is_active', 'description', 'icon_svg'),
+        }),
+    )
 
 @admin.register(GalleryItem)
 class GalleryItemAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'order', 'image_tag')
-    list_editable = ('order', 'category')
-    fields = (('title', 'category', 'order'), ('image', 'image_url'))
+    list_display = ('title', 'category', 'order', 'is_active', 'image_tag')
+    list_editable = ('order', 'category', 'is_active')
+    radio_fields = {"is_active": admin.HORIZONTAL}
+    
+    fieldsets = (
+        ('Metadata', {
+            'fields': (('title', 'category', 'order'), 'is_active'),
+        }),
+        ('Asset', {
+            'fields': (('image', 'image_url'),),
+        }),
+    )
     
     def image_tag(self, obj):
         url = obj.get_img_url()
@@ -63,9 +129,18 @@ class GalleryItemAdmin(admin.ModelAdmin):
 
 @admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'website_url', 'order', 'image_tag')
-    list_editable = ('order',)
-    fields = (('name', 'order'), ('logo', 'logo_url'), 'icon_svg', 'website_url')
+    list_display = ('name', 'website_url', 'order', 'is_active', 'image_tag')
+    list_editable = ('order', 'is_active')
+    radio_fields = {"is_active": admin.HORIZONTAL}
+    
+    fieldsets = (
+        ('Company Details', {
+            'fields': (('name', 'order'), 'is_active', 'website_url'),
+        }),
+        ('Branding', {
+            'fields': (('logo', 'logo_url'), 'icon_svg'),
+        }),
+    )
 
     def image_tag(self, obj):
         url = obj.get_logo_url()

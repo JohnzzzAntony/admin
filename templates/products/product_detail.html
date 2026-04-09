@@ -2,26 +2,8 @@
 {% load static %}
 
 {% block content %}
-    <!-- Hero Header matching Image 2 -->
-    <section class="py-5 mt-5 position-relative text-center text-white" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg'); background-size: cover; background-position: center; min-height: 35vh; display: flex; align-items: center; justify-content: center;">
-        <div class="container py-4">
-            <h1 class="display-4 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ product.name }}</h1>
-        </div>
-    </section>
-
-    <!-- Breadcrumbs Section -->
-    <nav aria-label="breadcrumb" class="bg-light py-3 border-bottom">
-        <div class="container">
-            <ol class="breadcrumb bg-transparent p-0 mb-0" style="font-size: 0.9rem;">
-                <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-secondary">Home</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'products:category_index' %}" class="text-secondary">Products</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'products:category_detail' slug=product.category.slug %}" class="text-secondary">{{ product.category.name }}</a></li>
-                <li class="breadcrumb-item active text-dark font-weight-bold" aria-current="page">{{ product.name }}</li>
-            </ol>
-        </div>
-    </nav>
-
     <!-- Main Content Section -->
+    <section class="py-5 bg-white" style="margin-top: 80px;">
     <section class="py-5 bg-white">
         <div class="container py-4">
             <div class="row">
@@ -32,14 +14,14 @@
                         <div class="swiper product-main-slider mb-3 shadow-sm rounded-lg overflow-hidden border">
                             <div class="swiper-wrapper">
                                 <!-- Main Primary Image -->
-                                <div class="swiper-slide text-center bg-white d-flex align-items-center justify-content-center" style="height: 450px;">
+                                <div class="swiper-slide text-center bg-white d-flex align-items-center justify-content-center" style="height: 350px;">
                                     <a href="{{ product.get_image_url }}" data-fancybox="gallery">
                                         <img src="{{ product.get_image_url }}" alt="{{ product.name }}" class="img-fluid" style="max-height: 100%; object-fit: contain;">
                                     </a>
                                 </div>
                                 <!-- Additional Gallery Images -->
                                 {% for pimg in product.images.all %}
-                                <div class="swiper-slide text-center bg-white d-flex align-items-center justify-content-center" style="height: 450px;">
+                                <div class="swiper-slide text-center bg-white d-flex align-items-center justify-content-center" style="height: 350px;">
                                     <a href="{{ pimg.get_image_url }}" data-fancybox="gallery">
                                         <img src="{{ pimg.get_image_url }}" alt="{{ product.name }}-{{ forloop.counter }}" class="img-fluid" style="max-height: 100%; object-fit: contain;">
                                     </a>
@@ -53,12 +35,12 @@
                         <!-- Thumbnails Slider -->
                         <div class="swiper product-thumbs-slider">
                             <div class="swiper-wrapper">
-                                <div class="swiper-slide border rounded p-1 cursor-pointer" style="height: 100px; width: 100px;">
-                                    <img src="{{ product.get_image_url }}" class="img-fluid w-100 h-100" style="object-fit: cover;">
+                                <div class="swiper-slide border rounded p-1 cursor-pointer" style="height: 80px; width: 80px;">
+                                    <img src="{{ product.get_image_url }}" class="img-fluid w-100 h-100" style="object-fit: contain;">
                                 </div>
                                 {% for pimg in product.images.all %}
-                                <div class="swiper-slide border rounded p-1 cursor-pointer" style="height: 100px; width: 100px;">
-                                    <img src="{{ pimg.get_image_url }}" class="img-fluid w-100 h-100" style="object-fit: cover;">
+                                <div class="swiper-slide border rounded p-1 cursor-pointer" style="height: 80px; width: 80px;">
+                                    <img src="{{ pimg.get_image_url }}" class="img-fluid w-100 h-100" style="object-fit: contain;">
                                 </div>
                                 {% endfor %}
                             </div>
@@ -72,21 +54,21 @@
                     
                     <div class="mb-4">
                         {% with price_info=product.get_best_price_info %}
-                        {% if price_info.has_offer or price_info.regular_price > price_info.final_price %}
-                            <div class="d-flex align-items-center mb-2">
-                                <h2 class="font-weight-bold text-dark mb-0 mr-3">{{ price_info.final_price }} AED</h2>
-                                <span class="badge badge-danger px-3 py-2" style="border-radius: 20px; font-size: 0.9rem;">
-                                    {% if price_info.discount_display %}{{ price_info.discount_display }}{% else %}OFFER{% endif %}
-                                </span>
+                        {% if price_info.has_offer %}
+                            <div class="d-flex align-items-baseline mb-1">
+                                <h1 class="font-weight-bold text-dark mb-0 mr-3">{{ price_info.final_price }} <small class="text-muted" style="font-size: 1rem;">AED</small></h1>
+                                <h4 class="text-muted mb-0"><del>{{ price_info.regular_price }} AED</del></h4>
                             </div>
-                            <div class="d-flex align-items-center">
-                                <h5 class="text-muted mb-0 mr-3"><del>{{ price_info.regular_price }} AED</del></h5>
+                            <div class="d-flex align-items-center mb-4">
+                                <span class="badge badge-success px-3 py-2 mr-3" style="border-radius: 8px; font-size: 1rem; background-color: #28a745;">
+                                    <i class="fas fa-tag mr-1"></i> SAVE {{ price_info.discount_percentage }}%
+                                </span>
                                 <span class="text-success font-weight-bold" style="font-size: 1.1rem;">
-                                    (You save: {{ price_info.discount_amount }} AED)
+                                    (Save {{ price_info.discount_amount }} AED)
                                 </span>
                             </div>
                         {% else %}
-                            <h2 class="font-weight-bold text-dark">{{ price_info.final_price }} AED</h2>
+                            <h1 class="font-weight-bold text-dark">{{ price_info.final_price }} <small class="text-muted" style="font-size: 1rem;">AED</small></h1>
                         {% endif %}
                         {% endwith %}
                     </div>
@@ -111,41 +93,13 @@
             <div class="row mt-5 pt-4">
                 <div class="col-12">
                     <div class="accordion" id="productSpecs">
-                        <!-- Product Characteristics (Dynamic Attributes) -->
-                        <div class="card border-0 mb-3 shadow-sm" style="border-radius: 10px; overflow: hidden;">
-                            <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" data-toggle="collapse" data-target="#collapseCharacteristics">
-                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-list-ul mr-3 text-primary"></i> Product Characteristics</h5>
-                                <i class="fas fa-chevron-down text-muted"></i>
-                            </div>
-                            <div id="collapseCharacteristics" class="collapse show" data-parent="#productSpecs">
-                                <div class="card-body bg-white py-4 border-top">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-hover mb-0">
-                                            <tbody>
-                                                {% for char in product.characteristics.all %}
-                                                <tr>
-                                                    <th class="border-0 bg-transparent text-secondary" style="width: 30%">{{ char.attribute.name }}</th>
-                                                    <td class="border-0 bg-transparent text-dark font-weight-bold">{{ char.value }}</td>
-                                                </tr>
-                                                {% empty %}
-                                                <tr>
-                                                    <td colspan="2" class="text-muted border-0 small">No specific characteristics listed for this model.</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Technical Information -->
                         <div class="card border-0 mb-3 shadow-sm" style="border-radius: 10px; overflow: hidden;">
                             <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" data-toggle="collapse" data-target="#collapseTechnical">
-                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-tools mr-3 text-primary"></i> Technical Information</h5>
+                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-tools mr-3 text-primary"></i> Technical Specifications</h5>
                                 <i class="fas fa-chevron-down text-muted"></i>
                             </div>
-                            <div id="collapseTechnical" class="collapse" data-parent="#productSpecs">
+                            <div id="collapseTechnical" class="collapse show" data-parent="#productSpecs">
                                 <div class="card-body bg-white py-4 border-top">
                                     {{ product.technical_info|safe|default:"<p class='text-muted'>Standard technical specifications apply. Customized according to the patient's needs, sizes and particular requirements.</p>" }}
                                 </div>
@@ -155,7 +109,7 @@
                         <!-- Overview -->
                         <div class="card border-0 mb-3 shadow-sm" style="border-radius: 10px; overflow: hidden;">
                             <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" data-toggle="collapse" data-target="#collapseOverview">
-                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-info-circle mr-3 text-primary"></i> Overview</h5>
+                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-info-circle mr-3 text-primary"></i> Description</h5>
                                 <i class="fas fa-chevron-down text-muted"></i>
                             </div>
                             <div id="collapseOverview" class="collapse" data-parent="#productSpecs">
@@ -170,9 +124,9 @@
 
             <!-- Related Products Section -->
             {% if design_settings.pd_show_related|default:True %}
-            <div class="mt-5 pt-5">
-                <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-2">
-                    <h2 class="font-weight-bold" style="color: var(--primary-blue);">{{ design_settings.pd_related_title|default:"Related Products" }}</h2>
+            <div class="mt-5 pt-5 text-center">
+                <div class="mb-5">
+                    <h2 class="section-title mb-2">{{ design_settings.pd_related_title|default:"Related Products" }}</h2>
                     <a href="{% url 'products:category_detail' slug=product.category.slug %}" class="text-secondary font-weight-bold text-decoration-none">View All <i class="fa fa-arrow-right ml-1 small"></i></a>
                 </div>
                 <div class="row">

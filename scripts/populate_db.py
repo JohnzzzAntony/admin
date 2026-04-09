@@ -9,7 +9,7 @@ sys.path.append('.')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jkr.settings')
 django.setup()
 
-from products.models import Category, Product, ProductSKU, ProductImage
+from products.models import Category, Product, ProductImage
 from pages.models import AboutUs, MissionVision, Service, Counter, WhyUsCard, GalleryItem, Partner
 from core.models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation
 from sliders.models import HeroSlider
@@ -23,12 +23,12 @@ def populate():
     HeroSlider.objects.all().delete()
     SiteSettings.objects.all().delete()
     Partner.objects.all().delete()
+    Product.objects.all().delete() # Also clear products
 
     print("Creating Site Settings...")
     SiteSettings.objects.create(
         site_name="Demo International",
-        header_title="Demo International",
-        header_subtitle="Empowering Your Vision",
+        company_name="Demo International",
         email="info@demointl.com",
         phone="+971 4 251 5383",
         dubai_address="Office No. 2, Lootah Building, Marrakeh St, Umm Al Rammool, Rashidiya, Dubai",
@@ -61,23 +61,21 @@ def populate():
     ]
 
     for title, cat, desc, price, img in products_data:
-        p = Product.objects.create(
+        Product.objects.create(
             category=cat_objs[cat],
             name=title,
             overview=desc,
             regular_price=price,
             image_url=img,
-            is_active=True
-        )
-        ProductSKU.objects.create(
-            product=p,
+            is_active=True,
             sku_id=f"SKU-{title.split()[0].upper()}-001",
             quantity=15,
             unit="pcs",
             weight=1.5, length=10, width=10, height=10,
             additional_shipping_charge=5.00,
             delivery_time="2-3 Days",
-            shipping_status="available"
+            shipping_status="available",
+            free_shipping=False
         )
     
     print("Creating CMS/Homepage Blocks...")

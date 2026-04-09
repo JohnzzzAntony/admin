@@ -1,51 +1,174 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block split_css %}
+<style>
+    /* Swiper Navigation Customization */
+    .swiper-button-next::after, .swiper-button-prev::after {
+        font-size: 16px !important;
+        font-weight: 800;
+        line-height: 1;
+    }
+    
+    .category-slider .swiper-button-next, 
+    .category-slider .swiper-button-prev {
+        transition: all 0.3s ease;
+        opacity: 1 !important;
+        background: #fff !important;
+        color: var(--primary-blue) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border: 1px solid #eee;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .category-next { right: -5px; }
+    .category-prev { left: -5px; }
+    
+    .category-slider .swiper-button-next:hover, 
+    .category-slider .swiper-button-prev:hover {
+        background: var(--primary-blue) !important;
+        color: #fff !important;
+        transform: translateY(-50%) scale(1.1);
+    }
+    
+    .category-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Fill the circle as requested */
+        transition: transform 0.5s ease;
+        display: block;
+        background: #fff;
+    }
+    .category-circle:hover img {
+        transform: scale(1.08);
+    }
+
+    @media (max-width: 1200px) {
+        .category-next { right: 5px; }
+        .category-prev { left: 5px; }
+    }
+
+    @media (max-width: 768px) {
+        .category-slider .swiper-button-next, 
+        .category-slider .swiper-button-prev {
+            width: 36px;
+            height: 36px;
+        }
+    }
+
+    /* Promo Banner Styles */
+    .promo-banner-item {
+        overflow: hidden;
+        position: relative;
+        display: block;
+        transition: transform 0.3s ease-in-out;
+    }
+    .promo-banner-item:hover {
+        transform: translateY(-5px);
+    }
+    .promo-banner-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .shape-rectangular { border-radius: 0; }
+    .shape-rounded { border-radius: 24px; }
+    .shape-pill { border-radius: 500px; }
+
+    /* Mosaic Layout Helpers */
+    .banner-mosaic-large { height: 500px; }
+    .banner-mosaic-small { height: 240px; }
+    
+    @media (max-width: 768px) {
+        .banner-mosaic-large, .banner-mosaic-small { height: 300px; }
+    }
+
+    .banner-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 30px;
+        background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+        color: #fff;
+        z-index: 1;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
     <!-- Hero Slider -->
-    <section class="home-slider position-relative overflow-hidden bg-light" style="height: 50vh; min-height: 380px;">
-        <div class="swiper main-hero-slider h-100 container py-2">
+    <section class="home-slider position-relative overflow-hidden bg-white" style="height: 55vh; min-height: 400px;">
+        <div class="swiper main-hero-slider h-100 container-fluid px-lg-5 py-2">
             <div class="swiper-wrapper">
                 {% for slider in sliders %}
                 <div class="swiper-slide h-100 position-relative">
                     <div class="hero-box h-100 w-100 position-relative overflow-hidden shadow-lg transition-all" style="border-radius: 40px; border: 8px solid #fff;">
-                        {% if slider.video or slider.video_url %}
-                        <video autoplay muted loop playsinline class="position-absolute w-100 h-100" style="object-fit: cover; top: 0; left: 0; z-index: -1;">
-                            <source src="{{ slider.get_vid_url }}" type="video/mp4">
-                        </video>
-                        {% else %}
-                        <div class="position-absolute w-100 h-100" style="background: url('{{ slider.get_bg_url }}'); background-size: cover; background-position: center; z-index: -1;"></div>
-                        {% endif %}
+                        <!-- Absolute Background Image -->
+                        <div class="position-absolute w-100 h-100" style="background: url('{{ slider.get_bg_url }}') center/cover no-repeat; z-index: -2;"></div>
+                        <!-- White Overlay for Readability -->
+                        <div class="position-absolute w-100 h-100" style="background: rgba(255,255,255,0.7); z-index: -1;"></div>
 
-                        <!-- Premium Overlay -->
-                        <div class="position-absolute w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6)); z-index: 0;"></div>
-                        
                         <div class="container h-100 d-flex align-items-center position-relative" style="z-index: 1;">
-                            <div class="col-lg-8 text-white mt-3 pt-lg-2">
-                                <h4 class="text-uppercase tracking-widest mb-3 animate__animated animate__fadeInDown" style="letter-spacing: 3px; font-size: 0.9rem;">{{ slider.subtitle }}</h4>
-                                <h1 class="display-3 font-weight-bold mb-4 animate__animated animate__fadeInUp" style="line-height: 1.1; text-shadow: 2px 2px 15px rgba(0,0,0,0.3);">{{ slider.title }}</h1>
+                            <div class="col-lg-7 mt-3">
+                                <h4 class="text-uppercase tracking-widest mb-3 animate__animated animate__fadeInDown" style="letter-spacing: 3px; font-size: 0.9rem; color: var(--hm-red); font-weight: 700;">{{ slider.subtitle }}</h4>
+                                <h1 class="display-3 font-weight-bold mb-4 animate__animated animate__fadeInUp" style="line-height: 1.1; color: #1a1a1a;">{{ slider.title }}</h1>
                                 <div class="animate__animated animate__fadeInUp animate__delay-1s mt-5">
-                                    <a href="{{ slider.button_link }}" class="btn btn-primary btn-lg px-5 py-3 shadow-lg hover-lift" style="border-radius: 50px; font-weight: 700; letter-spacing: 1px;">{{ slider.button_text }}</a>
+                                    <a href="{{ slider.button_link }}" class="btn btn-primary btn-lg px-5 py-3 shadow-lg hover-lift" style="border-radius: 50px; font-weight: 700; letter-spacing: 1px; background-color: var(--primary-blue); border: none;">{{ slider.button_text }}</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="swiper-slide h-100 d-flex align-items-center justify-content-center bg-dark text-white rounded-lg">
-                    <h1 class="animate__animated animate__pulse animate__infinite">Welcome to Demo International</h1>
+                <div class="swiper-slide h-100 d-flex align-items-center justify-content-center bg-white rounded-lg">
+                    <h1 class="animate__animated animate__pulse animate__infinite text-dark">Welcome to {{ site_settings.site_name }}</h1>
                 </div>
                 {% endfor %}
             </div>
-            <!-- Slider navigation inside the container -->
-            <div class="swiper-button-next" style="color: #fff; right: 40px;"></div>
-            <div class="swiper-button-prev" style="color: #fff; left: 40px;"></div>
+            <!-- Slider navigation -->
+            <div class="swiper-button-next" style="color: #333; right: 60px;"></div>
+            <div class="swiper-button-prev" style="color: #333; left: 60px;"></div>
         </div>
     </section>
 
-    <!-- Collections Section (Dynamic Tabs) -->
+    <!-- Categories Circle Slider -->
+    <section class="py-5 bg-white">
+        <div class="container py-4 position-relative">
+            <div class="swiper category-slider pb-4">
+                <div class="swiper-wrapper">
+                    {% for cat in categories %}
+                    <div class="swiper-slide text-center">
+                        <a href="{% url 'products:category_detail' slug=cat.slug %}" class="text-decoration-none group">
+                            <div class="category-circle mx-auto mb-3 shadow-sm border-8 border-white overflow-hidden hover-lift transition-all" 
+                                 style="width: 140px; height: 140px; border-radius: 50%; background: #f8f9fa;">
+                                <img src="{{ cat.get_image_url }}" alt="{{ cat.name }}" class="w-100 h-100 object-cover">
+                            </div>
+                            <h6 class="font-weight-bold text-dark mb-0" style="font-size: 0.95rem; letter-spacing: 0.5px;">{{ cat.name }}</h6>
+                            <span class="small text-muted">{{ cat.products.count }} Products</span>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Navigation -->
+            <div class="swiper-button-next category-next shadow-sm"></div>
+            <div class="swiper-button-prev category-prev shadow-sm"></div>
+        </div>
+    </section>
+
+    <!-- Exclusive Collections Section -->
     {% if collections %}
-    <section class="py-5 bg-light" id="collections">
+    <section class="py-5 bg-white" id="collections">
         <div class="container py-5">
             <div class="text-center mb-5">
                 <h2 class="section-title">{{ design_settings.hp_collections_title|safe|default:'Exclusive <span class="text-primary">Collections</span>' }}</h2>
@@ -54,7 +177,7 @@
 
             <!-- Tab Navigation -->
             <ul class="nav nav-pills justify-content-center mb-5" id="collectionTabs" role="tablist">
-                {% if active_offers_skus %}
+                {% if active_offers_products %}
                 <li class="nav-item px-2" role="presentation">
                     <button class="nav-link active font-weight-bold px-4 py-2 shadow-sm" 
                             id="tab-offers" data-toggle="pill" data-target="#content-offers" 
@@ -65,7 +188,7 @@
                 {% endif %}
                 {% for col in collections %}
                 <li class="nav-item px-2" role="presentation">
-                    <button class="nav-link {% if not active_offers_skus and forloop.first %}active{% endif %} font-weight-bold px-4 py-2 shadow-sm" 
+                    <button class="nav-link {% if not active_offers_products and forloop.first %}active{% endif %} font-weight-bold px-4 py-2 shadow-sm" 
                             id="tab-{{ col.slug }}" data-toggle="pill" data-target="#content-{{ col.slug }}" 
                             type="button" role="tab" style="border-radius:30px; border: 1px solid transparent;">
                         {{ col.name }}
@@ -76,26 +199,23 @@
 
             <!-- Tab Content -->
             <div class="tab-content" id="collectionTabContent">
-                {% if active_offers_skus %}
+                {% if active_offers_products %}
                 <div class="tab-pane fade show active" id="content-offers" role="tabpanel">
                     <div class="row">
-                        {% for sku in active_offers_skus %}
-                        {% with price_info=sku.get_price_info %}
+                        {% for product in active_offers_products %}
+                        {% with price_info=product.get_best_price_info %}
                         <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                             <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
-                                <a href="{% url 'products:product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
+                                <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
                                     <div class="position-relative">
-                                        <img src="{{ sku.product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
+                                        <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
                                         <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
                                             {{ price_info.discount_display }}
                                         </span>
                                     </div>
                                     <div class="card-body p-4">
-                                        <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem;">{{ sku.product.category.name|upper }}</h6>
-                                        <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ sku.product.name }}</h5>
-                                        {% if sku.title %}
-                                        <p class="small text-muted mb-2"><i class="fas fa-tag mr-1"></i> {{ sku.title }}</p>
-                                        {% endif %}
+                                        <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem;">{{ product.category.name|upper }}</h6>
+                                        <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ product.name }}</h5>
                                         
                                         <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
                                             <div class="price">
@@ -117,7 +237,7 @@
                 {% endif %}
 
                 {% for col in collections %}
-                <div class="tab-pane fade {% if not active_offers_skus and forloop.first %}show active{% endif %}" 
+                <div class="tab-pane fade {% if not active_offers_products and forloop.first %}show active{% endif %}" 
                      id="content-{{ col.slug }}" role="tabpanel">
                     
                     {% if col.banner or col.banner_url %}
@@ -131,13 +251,13 @@
                     {% endif %}
 
                     <div class="row">
-                        {% for sku in col.skus.all %}
-                        {% with price_info=sku.get_price_info %}
+                        {% for product in col.products.all %}
+                        {% with price_info=product.get_best_price_info %}
                         <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                             <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
-                                <a href="{% url 'products:product_detail' slug=sku.product.slug %}?sku={{ sku.sku_id }}" class="text-decoration-none text-dark">
+                                <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
                                     <div class="position-relative">
-                                        <img src="{{ sku.product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
+                                        <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
                                         {% if price_info.has_offer %}
                                         <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
                                             {{ price_info.discount_display }}
@@ -145,11 +265,8 @@
                                         {% endif %}
                                     </div>
                                     <div class="card-body p-4">
-                                        <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">{{ sku.product.category.name|upper }}</h6>
-                                        <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ sku.product.name }}</h5>
-                                        {% if sku.title %}
-                                        <p class="small text-muted mb-2"><i class="fas fa-tag mr-1"></i> {{ sku.title }}</p>
-                                        {% endif %}
+                                        <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">{{ product.category.name|upper }}</h6>
+                                        <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ product.name }}</h5>
                                         
                                         <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
                                             <div class="price">
@@ -178,46 +295,13 @@
     </section>
     {% endif %}
 
-    <!-- Categories Section (Parent Categories) -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <h2 class="section-title text-center mb-5 pb-3">{{ design_settings.hp_categories_title|safe|default:'Product <span class="text-primary">Categories</span>' }}</h2>
-            <div class="swiper category-slider pb-5">
-                <div class="swiper-wrapper">
-                    {% for category in categories %}
-                    <div class="swiper-slide" data-aos="zoom-in" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
-                        <a href="{% url 'products:category_detail' slug=category.slug %}" class="text-decoration-none">
-                            <div class="category-card text-center transition-all p-4 rounded-circle mx-auto shadow-sm hover-lift" style="width: 220px; height: 220px; border: 2px solid #f1f1f1; background: #fff; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                {% if category.icon_svg %}
-                                    <div class="category-icon-svg mb-2" style="max-height: 90px; max-width: 90px; color: var(--primary-blue);">
-                                        {{ category.icon_svg|safe }}
-                                    </div>
-                                {% else %}
-                                    <img src="{{ category.get_image_url }}" alt="{{ category.name }}" class="img-fluid mb-2" style="max-height: 90px; object-fit: contain;">
-                                {% endif %}
-                                <h6 class="text-dark font-weight-bold mb-0">{{ category.name }}</h6>
-                            </div>
-                        </a>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="pt-4 text-center">
-                    <div class="swiper-button-next d-none d-md-block"></div>
-                    <div class="swiper-button-prev d-none d-md-block"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Explore Latest Products Section -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <div class="d-flex justify-content-between align-items-end mb-5">
-                <div>
-                    <h2 class="section-title mb-2">{{ design_settings.hp_latest_products_title|safe|default:'Explore <span class="text-primary">Latest Products</span>' }}</h2>
-                    <p class="lead text-muted">{{ design_settings.hp_latest_products_subtitle|default:'Discover our newest medical innovations and technology.' }}</p>
-                </div>
-                <a href="{% url 'products:category_index' %}" class="btn btn-link text-primary font-weight-bold mb-2">View All Products <i class="fas fa-chevron-right ml-2"></i></a>
+    <!-- Best Seller Products Grid -->
+    {% if latest_products %}
+    <section class="py-5 bg-light">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Best <span class="text-primary">Seller</span> Products</h2>
+                <p class="text-muted">Our most popular medical equipment Handpicked for you</p>
             </div>
             <div class="row">
                 {% for product in latest_products %}
@@ -226,51 +310,56 @@
                     <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
                         <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
                             <div class="position-relative">
-                                <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 250px; object-fit: contain; padding: 20px;">
+                                <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 200px; object-fit: contain; padding: 20px;">
                                 {% if price_info.has_offer %}
                                 <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
                                     {{ price_info.discount_display }}
                                 </span>
                                 {% endif %}
                             </div>
-                            <div class="card-body p-4">
-                                <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem;">{{ product.category.name|upper }}</h6>
-                                <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ product.name }}</h5>
-                                <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
-                                    <div class="price">
-                                        {% if price_info.has_offer %}
-                                        <div class="d-flex flex-column">
-                                            <span class="h5 font-weight-bold mb-0 text-primary">{{ price_info.final_price }} AED</span>
-                                            <div class="d-flex align-items-center">
-                                                <del class="small text-muted">{{ price_info.regular_price }} AED</del>
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <span class="h5 font-weight-bold text-dark mb-0">{{ price_info.final_price }} AED</span>
-                                        {% endif %}
-                                    </div>
-                                    <span class="text-primary"><i class="fas fa-plus-circle fa-lg"></i></span>
+                            <div class="card-body p-3">
+                                <h5 class="font-weight-bold mb-2 text-center" style="font-size: 1rem; height: 2.8rem; overflow: hidden;">{{ product.name }}</h5>
+                                <div class="price text-center mt-2">
+                                    <span class="h6 font-weight-bold text-primary">{{ price_info.final_price }} AED</span>
                                 </div>
                             </div>
                         </a>
                     </div>
                 </div>
                 {% endwith %}
-                {% empty %}
-                <div class="col-12 text-center py-5">
-                    <p class="text-muted">{{ design_settings.hp_latest_products_empty|default:'Stay tuned for our latest medical products.' }}</p>
-                </div>
                 {% endfor %}
             </div>
         </div>
     </section>
+    {% endif %}
 
-    <!-- About Us Section -->
+    <!-- Dynamic Homepage Sections (Categories & Banners) -->
+    {% for section in homepage_sections %}
+        {% if section.type == 'category' %}
+            {% include "partials/_category_section.html" with section=section %}
+        {% elif section.type == 'banner' %}
+            {% include "partials/_banner_section.html" with section=section %}
+        {% endif %}
+
+        {# Place Milestones after exactly the 2nd dynamic section #}
+        {% if forloop.counter == 2 %}
+            {% include "partials/_milestones_section.html" %}
+        {% endif %}
+    {% endfor %}
+
+    {# Ensure Milestones show even if there are less than 2 dynamic sections #}
+    {% if homepage_sections|length < 2 %}
+         {% include "partials/_milestones_section.html" %}
+    {% endif %}
+
+
+
+    <!-- 11. About Us Section -->
     {% if about_us %}
-    <section class="py-5" id="about">
+    <section class="py-5 bg-white" id="about">
         <div class="container py-5">
             <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="col-lg-6 mb-4 mb-lg-0 text-center" data-aos="fade-right">
                     <h3 class="text-secondary mb-3 font-weight-bold" style="letter-spacing: 2px;">ABOUT US</h3>
                     <h2 class="section-title mb-4 font-weight-bolder">{{ about_us.heading }}</h2>
                     <div class="text-muted mb-4 lead" style="line-height: 1.8;">
@@ -302,7 +391,7 @@
     </section>
     {% endif %}
 
-    <!-- Why Choose Us Section -->
+    <!-- 12. Why Choose Us Section -->
     {% if why_us %}
     <section class="py-5 bg-white">
         <div class="container py-5">
@@ -313,7 +402,7 @@
             <div class="row">
                 {% for item in why_us %}
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
-                    <div class="card h-100 border-0 shadow-sm p-4 text-center transition-all hover-lift" style="border-radius: 30px; background: var(--bg-light-box);">
+                    <div class="card h-100 border-0 shadow-sm p-4 text-center transition-all hover-lift" style="border-radius: 30px; background: var(--bg-white-box);">
                         <div class="icon-box mb-4 mx-auto d-flex align-items-center justify-content-center bg-white shadow-sm" style="width: 80px; height: 80px; border-radius: 25px; color: var(--primary-blue);">
                             {% if item.icon_svg %}
                                 <div style="width: 40px; height: 40px;">{{ item.icon_svg|safe }}</div>
@@ -331,29 +420,9 @@
     </section>
     {% endif %}
 
-    <!-- Milestones/Counters -->
-    <section class="py-5" style="background-color: var(--primary-blue);">
-        <div class="container py-5 text-center text-white">
-            <div class="row">
-                {% for counter in counters %}
-                <div class="col-md-3 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
-                    <div class="counter-box p-4 rounded-lg bg-white bg-opacity-10 shadow-sm border border-light border-opacity-25 hover-lift" style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
-                        {% if counter.icon_svg %}
-                        <div class="counter-icon mb-3" style="font-size: 2rem; color: #fff; max-height: 50px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            {{ counter.icon_svg|safe }}
-                        </div>
-                        {% endif %}
-                        <h2 class="display-3 font-weight-bold counter-value mb-2">{{ counter.value }}</h2>
-                        <p class="h5 font-weight-light">{{ counter.title }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
 
     <!-- Partners / We Deal With -->
-    <section class="py-5 bg-light border-top border-bottom">
+    <section class="py-5 bg-white border-top border-bottom">
         <div class="container py-4">
             <div class="row align-items-center">
                 <div class="col-lg-3 mb-4 mb-lg-0 pr-lg-5" data-aos="fade-right">
@@ -428,11 +497,11 @@
     </section>
 
     <!-- Mission & Vision (Image 1 Style) -->
-    <section class="py-5 bg-light">
+    <section class="py-5 bg-white">
         <div class="container py-5">
             {% for mv in mission_vision %}
             <div class="row align-items-center mb-5 pb-5 {% if forloop.counter|divisibleby:2 %}flex-row-reverse{% endif %}">
-                <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="col-lg-6 mb-4 mb-lg-0 text-center">
                     <h3 class="text-primary font-weight-bold text-uppercase mb-3">{{ mv.get_section_type_display }}</h3>
                     <h2 class="section-title mb-4">{{ mv.title }}</h2>
                     <p class="lead text-dark" style="line-height: 1.8;">{{ mv.content }}</p>
@@ -473,7 +542,7 @@
     </section>
 
     <!-- Testimonials Section -->
-    <section class="py-5 bg-light">
+    <section class="py-5 bg-white">
         <div class="container py-5 text-center">
             <h4 class="text-primary font-weight-bold mb-3">{{ design_settings.hp_testimonials_overtitle|default:'TESTIMONIALS' }}</h4>
             <h2 class="section-title mb-5 pb-3">{{ design_settings.hp_testimonials_title|default:'Read what our clients have to share!' }}</h2>
@@ -507,7 +576,7 @@
     </section>
 
     <!-- Our Clients Section -->
-    <section class="py-5 bg-light">
+    <section class="py-5 bg-white">
         <div class="container py-5">
             <h2 class="section-title text-center mb-5 pb-4">{{ design_settings.hp_clients_title|default:'Our Clients' }}</h2>
             
@@ -574,7 +643,7 @@
                     <div class="col-lg-2 col-md-4 col-6 mb-4">
                         <a href="{{ post.link }}" target="_blank" class="d-block rounded-lg shadow-sm overflow-hidden instagram-item transition-all position-relative">
                             {% if post.icon_svg %}
-                            <div class="d-flex align-items-center justify-content-center bg-light" style="height: 180px;">
+                            <div class="d-flex align-items-center justify-content-center bg-white" style="height: 180px;">
                                 {{ post.icon_svg|safe }}
                             </div>
                             {% else %}
@@ -604,14 +673,19 @@
 
         // Category Slider
         new Swiper('.category-slider', {
-            slidesPerView: 1,
-            spaceBetween: 20,
-            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            slidesPerView: 1.5,
+            centeredSlides: false,
+            spaceBetween: 25,
+            grabCursor: true,
+            navigation: { 
+                nextEl: '.category-next', 
+                prevEl: '.category-prev' 
+            },
             breakpoints: {
-                576: { slidesPerView: 2 },
+                480: { slidesPerView: 2 },
                 768: { slidesPerView: 3 },
                 1024: { slidesPerView: 4 },
-                1200: { slidesPerView: 5 }
+                1300: { slidesPerView: 5 }
             }
         });
 

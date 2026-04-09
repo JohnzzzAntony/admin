@@ -24,8 +24,11 @@ env = environ.Env(
     DEBUG=(bool, True),
     IS_PRODUCTION=(bool, False),
 )
-# Take environment variables from .env file
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'), overwrite=True)
+# Take environment variables from .env.local (development) or .env (production)
+if os.path.exists(os.path.join(BASE_DIR, '.env.local')):
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env.local'), overwrite=True)
+else:
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'), overwrite=True)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-build-placeholder-key')
@@ -101,13 +104,19 @@ IS_PRODUCTION = env.bool('IS_PRODUCTION', default=False)
 if IS_PRODUCTION:
     # Essential for Railway/Heroku to detect HTTPS via proxy
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    # Automatically disable SSL redirect for local development even if IS_PRODUCTION is True
+    import sys
+    is_running_locally = any(arg in sys.argv for arg in ['runserver', 'dev'])
+    SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=not is_running_locally)
     
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = not is_running_locally
+    CSRF_COOKIE_SECURE = not is_running_locally
+    
+    if IS_PRODUCTION and not is_running_locally:
+        SECURE_HSTS_SECONDS = 31536000
+        SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+        SECURE_HSTS_PRELOAD = True
+
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SESSION_COOKIE_HTTPONLY = True
     CSRF_COOKIE_HTTPONLY = True
@@ -129,6 +138,7 @@ TEMPLATES = [
                 'core.context_processors.site_settings', 
                 'core.context_processors.page_heroes', 
                 'orders.context_processors.cart_count', 
+                'products.context_processors.categories', 
             ],
         },
     },
@@ -220,6 +230,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to Demo Management System",
     "search_model": ["products.Product", "blog.Post"],
     "show_ui_builder": False,
+    "show_recent_actions": False,
     "changeform_format": "horizontal_tabs",
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
@@ -232,7 +243,7 @@ JAZZMIN_SETTINGS = {
     "icons": {
         "auth": "fas fa-users-cog", "auth.user": "fas fa-user", "auth.Group": "fas fa-users",
         "products.Product": "fas fa-box-open", "products.Category": "fas fa-tags",
-        "products.ProductSKU": "fas fa-barcode", "orders.CustomerOrder": "fas fa-shopping-basket",
+        "orders.CustomerOrder": "fas fa-shopping-basket",
         "core.SiteSettings": "fas fa-cogs", "pages.Page": "fas fa-file-alt",
         "contact.QuoteEnquiry": "fas fa-envelope-open-text", "blog.Post": "fas fa-newspaper",
         "sliders.Slider": "fas fa-images",

@@ -1,211 +1,942 @@
-/* Admin Premium Design System for Jazzmin (AdminLTE 3) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* 
+   Admin Premium Design System
+   Focus: Precise Horizontal Alignment & Premium Visuals
+   Zoom: Optimized for 100% standard desktop view
+*/
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary: #6366f1;
-    --primary-hover: #4f46e5;
-    --sidebar-bg: rgba(15, 23, 42, 0.9);
-    --body-bg: #f8fafc;
-    --card-bg: rgba(255, 255, 255, 0.8);
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --border-color: rgba(226, 232, 240, 0.8);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
-    --radius-xl: 12px;
-    --radius-2xl: 20px;
+    --primary: #1e293b;
+    --primary-light: #64748b;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --body-bg: #f0f4f8; /* Soft grey for Neuomorphism to pop */
+    --card-bg: #f0f4f8;
+    --border-color: #e2e8f0;
+    --border-dark: #cbd5e1;
+    --radius: 8px;
+    --neu-shadow: 2px 2px 5px #d1d9e6, -2px -2px 5px #ffffff;
+    --neu-shadow-inset: inset 1px 1px 3px #d1d9e6, inset -1px -1px 3px #ffffff;
+    --label-spacing: 4px;
+    --input-height: 36px;
+    --row-padding-v: 0.6rem;
+    --row-padding-h: 1.2rem;
 }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Outfit', sans-serif !important;
     background-color: var(--body-bg) !important;
+    color: var(--primary) !important;
+    margin: 0 !important;
 }
 
-/* Glassmorphism Sidebar */
-.main-sidebar {
-    background: var(--sidebar-bg) !important;
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-right: 1px solid var(--glass-border) !important;
-}
+/* Hide Unwanted Elements */
+#recent-actions-column { display: none !important; }
+.changelist-filter { border-left: none !important; background: #fff !important; }
 
-.brand-link {
-    background: transparent !important;
-    border-bottom: 1px solid var(--glass-border) !important;
-    padding: 1.5rem !important;
-}
-
-.brand-text {
-    font-weight: 700 !important;
-    letter-spacing: -0.5px;
-    color: #fff !important;
-}
-
-/* Sidebar Links */
-.nav-sidebar .nav-link {
-    border-radius: 10px !important;
-    margin: 0.2rem 0.8rem !important;
-    padding: 0.8rem 1rem !important;
-    transition: all 0.3s ease !important;
-    color: #cbd5e1 !important;
-    font-weight: 500;
-}
-
-.nav-sidebar .nav-link.active {
-    background: var(--primary) !important;
-    color: #fff !important;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
-}
-
-.nav-sidebar .nav-link:hover:not(.active) {
-    background: rgba(255,255,255,0.05) !important;
-    color: #fff !important;
-    transform: translateX(5px);
-}
-
-/* Top Navbar */
-.main-header {
-    background: rgba(255,255,255,0.7) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-color) !important;
-    padding: 0.5rem 1rem !important;
-}
-
-.navbar-nav .nav-link {
-    color: var(--text-main) !important;
-    font-weight: 500;
-}
-
-/* Dashboard Cards */
-.card {
-    background: var(--card-bg) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--border-color) !important;
-    border-radius: var(--radius-xl) !important;
-    box-shadow: var(--glass-shadow) !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-bottom: 1.5rem;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important;
-}
-
-.card-header {
-    background: transparent !important;
-    border-bottom: 1px solid var(--border-color) !important;
-    padding: 1.25rem !important;
-}
-
-.card-title {
-    font-weight: 700 !important;
-    color: var(--text-main) !important;
-    font-size: 1.1rem !important;
-}
-
-/* Modern Buttons (Neumorphism inspiration) */
-.btn-primary, .btn-info, .btn-success {
-    border-radius: 10px !important;
-    padding: 0.6rem 1.2rem !important;
-    font-weight: 600 !important;
-    border: none !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-}
-
-.btn-primary { background: var(--primary) !important; }
-.btn-primary:hover {
-    background: var(--primary-hover) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2) !important;
-}
-
-/* Tables */
-.table { margin-bottom: 0 !important; }
-.table thead th {
-    background: #f1f5f9 !important;
-    border-bottom: 1px solid var(--border-color) !important;
-    color: var(--text-muted) !important;
-    font-weight: 600 !important;
-    font-size: 0.75rem !important;
-    text-transform: uppercase;
-    padding: 1rem !important;
-}
-
-.table td {
-    padding: 1rem !important;
-    vertical-align: middle !important;
-    border-top: none !important;
-    border-bottom: 1px solid var(--border-color) !important;
-}
-
-/* Form Controls */
-.form-control {
-    border-radius: 8px !important;
-    border: 1px solid #e2e8f0 !important;
-    padding: 0.6rem 1rem !important;
+/* Main Content Container */
+#content {
     background: #fff !important;
-    transition: border-color 0.2s, box-shadow 0.2s !important;
+    padding: 20px 40px !important;
 }
 
-.form-control:focus {
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+#content-main {
+    width: 100% !important;
+    max-width: 1400px;
+    margin: 0 auto !important;
 }
 
-/* Login Page Redesign */
-.login-page {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+/* Fieldset & Card Styling */
+fieldset {
+    border: none !important;
+    border-radius: var(--radius) !important;
+    background: var(--card-bg) !important;
+    margin-bottom: 40px !important;
+    padding: 0 !important;
+    box-shadow: var(--neu-shadow) !important;
+    overflow: hidden !important;
 }
 
-.login-box {
-    width: 450px !important;
+fieldset h2 {
+    background: #f8fafc !important;
+    padding: 1.25rem 1.5rem !important;
+    border-bottom: 1px solid var(--border-dark) !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    color: var(--primary) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 !important;
 }
 
-.login-card-body {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(20px);
-    border-radius: var(--radius-2xl) !important;
-    padding: 3rem !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+/* 
+   THE FIELD ALIGNMENT ENGINE
+   Labels on top, inputs expanded. 
+   Maintains horizontal grouping for side-by-side fields.
+*/
+.form-row {
+    display: flex !important;
+    gap: 0;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 0 !important;
+    background: #fff !important;
 }
 
-.login-logo a {
-    color: #fff !important;
-    font-weight: 800 !important;
-    letter-spacing: -1.5px !important;
-    font-size: 2.5rem !important;
+.form-row:last-child {
+    border-bottom: none !important;
 }
 
-/* Theme switch/Glow effect */
-.content-wrapper {
+/* Each field container inside a row */
+.fieldBox, .form-group {
+    display: flex !important;
+    flex-direction: column !important; /* Label ABOVE input */
+    align-items: flex-start !important;
+    flex: 1 1 0% !important;
+    padding: var(--row-padding-v) var(--row-padding-h) !important;
+    border-right: 1px solid var(--border-color) !important;
+    min-width: 150px;
+}
+
+.fieldBox:last-child, .form-group:last-child {
+    border-right: none !important;
+}
+
+/* Label Styling - Positioned on Top */
+label {
+    display: block !important;
+    width: 100% !important;
+    font-weight: 500 !important;
+    color: var(--primary-light) !important;
+    font-size: 0.88rem !important;
+    margin: 0 0 var(--label-spacing) 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+    float: none !important;
+}
+
+/* Input Container */
+.fieldBox > div,
+.form-group > div {
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Form Elements Styling */
+input[type="text"], 
+input[type="number"], 
+input[type="email"], 
+input[type="url"], 
+input[type="password"],
+input[type="datetime-local"],
+input[type="date"],
+select,
+.vTextField,
+.vURLField {
+    width: 100% !important;
+    height: var(--input-height) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: 8px !important;
+    padding: 0 1.2rem !important;
+    font-family: inherit !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease !important;
+    background: #fff !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    outline: none !important;
+    background: #fff !important;
+}
+
+/* Textarea handling */
+textarea, .vLargeTextField {
+    min-height: 120px !important;
+    padding: 1rem !important;
+    line-height: 1.5 !important;
+}
+
+/* 
+   PREMIUM TOGGLE SWITCH FOR CHECKBOXES 
+   Used for fields like enable/disable or boolean flags.
+*/
+.form-row input[type="checkbox"] {
+    appearance: none !important;
+    width: 48px !important;
+    height: 24px !important;
+    background: #cbd5e1 !important;
+    border-radius: 20px !important;
+    position: relative !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    border: none !important;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1) !important;
+    margin: 0 !important;
+}
+
+.form-row input[type="checkbox"]::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 3px !important;
+    left: 3px !important;
+    width: 18px !important;
+    height: 18px !important;
+    background: #fff !important;
+    border-radius: 50% !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.2) !important;
+}
+
+.form-row input[type="checkbox"]:checked {
+    background: var(--accent) !important; /* Blue color when enabled */
+}
+
+.form-row input[type="checkbox"]:checked::after {
+    left: 27px !important;
+}
+
+/* Specific styling for list view toggles to keep them smaller */
+.changelist-form td[class*="field-"] input[type="checkbox"] {
+    width: 40px !important;
+    height: 20px !important;
+}
+
+.changelist-form td[class*="field-"] input[type="checkbox"]::after {
+    width: 14px !important;
+    height: 14px !important;
+    top: 3px !important;
+    left: 3px !important;
+}
+
+.changelist-form td[class*="field-"] input[type="checkbox"]:checked::after {
+    left: 23px !important;
+}
+
+.vCheckboxLabel {
+    margin-left: 10px !important;
+    font-weight: 600 !important;
+    color: var(--primary) !important;
+    font-size: 0.85rem !important;
+}
+
+/* Selection Style refinements */
+
+/* Related Widget (Add/Edit icons) */
+.related-widget-wrapper {
+    display: flex !important;
+    width: 100% !important;
+    gap: 10px !important;
+}
+
+.related-widget-wrapper select {
+    flex: 1 !important;
+}
+
+/* Remove unwanted related-widget icons */
+.related-widget-wrapper-link {
+    display: none !important;
+}
+
+/* Neuomorphic Buttons */
+.submit-row input, 
+.button, 
+.addlink, 
+.changelink, 
+.deletelink {
+    background: var(--card-bg) !important;
+    color: var(--primary) !important;
+    border: none !important;
+    padding: 0.8rem 1.8rem !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    box-shadow: var(--neu-shadow) !important;
+    transition: all 0.2s ease !important;
+    text-shadow: none !important;
+}
+
+.submit-row input:hover {
+    box-shadow: 2px 2px 5px #d1d9e6, -2px -2px 5px #ffffff !important;
+    transform: translateY(1px);
+}
+
+/* Action Bar Transformation (Hidden by default, used by custom buttons) */
+.actions {
     background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 0 20px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    float: none !important;
 }
 
-body::before {
-    content: '';
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
-    top: -300px;
-    right: -300px;
-    z-index: -1;
+.actions label, .actions select, .actions .button {
+    display: none !important;
+}
+
+.actions .action-counter {
+    font-weight: 600 !important;
+    color: var(--primary-light) !important;
+    font-size: 0.9rem !important;
+}
+
+/* Modern Search Bar (Single Line) */
+#changelist-search {
+    position: relative !important;
+}
+
+#changelist-search input[type="text"] {
+    flex: 1 !important;
+    height: 44px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 10px 0 35px !important;
+    font-size: 0.9rem !important;
+    margin: 0 !important;
+}
+
+#changelist-search::before {
+    content: '🔍';
+    position: absolute;
+    left: 12px;
+    font-size: 1rem;
+    color: var(--primary-light);
+    z-index: 1;
+}
+
+#changelist-search input[type="submit"] {
+    background: var(--accent) !important;
+    color: #fff !important;
+    height: 50px !important;
+    padding: 0 30px !important;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    border: none !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Object Tools (Add / Import / Export) */
+.object-tools {
+    display: flex !important;
+    gap: 15px !important;
+    margin-bottom: 30px !important;
+    padding: 0 !important;
+    float: none !important;
+    list-style: none !important;
+    align-items: center !important;
+}
+
+.object-tools li {
+    margin: 0 !important;
+}
+
+/* Add Category (Primary, Right Aligned) */
+.object-tools li:has(.addlink) {
+    margin-left: auto !important;
+}
+
+.object-tools li a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 46px !important;
+    padding: 0 22px !important;
+    border-radius: 11px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: var(--neu-shadow) !important;
+    background: #fff !important;
+    color: var(--primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.object-tools li a.addlink {
+    background: var(--accent) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+}
+
+.object-tools li a.addlink:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4) !important;
+}
+
+.btn-delete-selected {
+    background: #fee2e2 !important;
+    color: #ef4444 !important;
+    border: 1px solid #fecaca !important;
+    padding: 10px 20px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.btn-delete-selected:hover {
+    background: #ef4444 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+}
+
+.submit-row input.default {
+    background: var(--accent) !important;
+    color: #fff !important;
+    box-shadow: 4px 4px 8px rgba(37, 99, 235, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Media Section Remove Button */
+/* Media Section Remove Button Enhancement */
+.file-upload {
+    padding: 10px 0 !important;
+}
+/* Premium Image Removal Style (Trash Icon) */
+.file-upload {
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    padding: 5px 0 !important;
+}
+
+.file-upload a {
+    font-size: 0.8rem !important;
+    color: var(--accent) !important;
+    display: inline-block !important; /* Restore link but style it */
+}
+
+.clearable-file-input {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-left: auto !important;
+    padding: 4px 8px !important;
+    background: #fef2f2 !important;
+    border: 1px solid #fee2e2 !important;
+    border-radius: 6px !important;
+}
+
+.clearable-file-input label {
+    font-size: 0.75rem !important;
+    color: #ef4444 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+}
+
+.clearable-file-input input[type="checkbox"] {
+    appearance: none !important;
+    width: 18px !important;
+    height: 18px !important;
+    background: #ef4444 !important;
+    border-radius: 4px !important;
+    position: relative !important;
+    cursor: pointer !important;
+}
+
+.clearable-file-input input[type="checkbox"]::after {
+    content: '🗑️' !important; /* Trash icon */
+    font-size: 0.7rem !important;
+    position: absolute;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+/* Language Toggle Switch */
+.language-toggle-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 50px;
+    box-shadow: var(--neu-shadow);
+    margin-bottom: 25px;
+}
+
+.language-toggle-wrapper span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-light);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--accent);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--accent);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+.ar-field-hidden {
+    display: none !important;
+}
+
+/* Breadcrumbs Styling */
+.breadcrumbs {
+    background: transparent !important;
+    padding: 1rem 0 !important;
+    margin-bottom: 20px !important;
+    border: none !important;
+    font-size: 0.9rem !important;
+}
+
+.breadcrumbs a {
+    color: var(--accent) !important;
+    font-weight: 600 !important;
+}
+
+/* RTL Support */
+input[name*="_ar"], textarea[name*="_ar"] {
+    direction: rtl !important;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+    .form-row { flex-wrap: wrap !important; }
+    .fieldBox { flex: 0 0 100% !important; border-right: none !important; }
+}
+
+@media (max-width: 600px) {
+    .fieldBox { flex-direction: column !important; align-items: flex-start !important; }
+    label { width: 100% !important; margin-bottom: 8px !important; }
+}
+/* 
+   NEOMORPHIC SEGMENTED CONTROL / RADIO BUTTONS
+   Transforms radio_fields = { 'field': admin.HORIZONTAL } into premium buttons
+*/
+.radiolist.inline, .radiolist.horizontal {
+    display: inline-flex !important;
+    background: #f1f5f9 !important;
+    padding: 3px !important;
+    border-radius: 50px !important;
+    width: fit-content !important;
+    list-style: none !important;
+    margin: 4px 0 !important;
+    box-shadow: inset 2px 2px 4px #cbd5e1, inset -2px -2px 4px #ffffff !important;
+    overflow: hidden !important;
+    gap: 3px !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+.radiolist.inline label, .radiolist.horizontal label {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 2px 10px !important; /* Smaller padding */
+    margin: 0 !important;
+    border-radius: 20px !important; /* Round/Pill */
+    font-weight: 700 !important;
+    font-size: 0.6rem !important;
+    transition: all 0.2s ease !important;
+    background: transparent !important;
+    min-width: 45px !important;
+    color: #64748b !important;
+    cursor: pointer !important;
+    text-transform: uppercase !important;
+}
+
+.radiolist.inline li:has(input:checked) label, .radiolist.horizontal li:has(input:checked) label {
+    background: #fff !important;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+/* Status specific colors */
+.radiolist li:has(input[value="True"]:checked) label { 
+    color: #fff !important; 
+    background: #10b981 !important; /* Green for Active/Enabled */
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3) !important;
+}
+.radiolist li:has(input[value="False"]:checked) label { 
+    color: #fff !important; 
+    background: #f43f5e !important; /* Red for Removed/Disabled */
+    box-shadow: 0 2px 4px rgba(244, 63, 94, 0.3) !important;
+}
+
+
+/* 
+   LIST VIEW SMALL PREMIUM TOGGLES (Mini Segmented Buttons)
+*/
+.changelist-form td[class*="field-"] input[type="checkbox"] {
+    appearance: none !important;
+    width: 65px !important;
+    height: 26px !important;
+    background: #f1f5f9 !important;
+    border-radius: 50px !important;
+    position: relative !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 2px !important;
+}
+
+.changelist-form td[class*="field-"] input[type="checkbox"]::before {
+    content: 'OFF' !important;
+    position: absolute !important;
+    right: 8px !important;
+    font-size: 0.6rem !important;
+    font-weight: 800 !important;
+    color: #94a3b8 !important;
+    letter-spacing: 0.05em;
+    z-index: 1;
     pointer-events: none;
 }
 
-body::after {
-    content: '';
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.05) 0%, transparent 70%);
-    bottom: -300px;
-    left: -300px;
-    z-index: -1;
-    pointer-events: none;
+.changelist-form td[class*="field-"] input[type="checkbox"]::after {
+    content: '' !important;
+    position: absolute !important;
+    left: 2px !important;
+    width: 20px !important;
+    height: 20px !important;
+    background: #fff !important;
+    border-radius: 50% !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.2) !important;
+    z-index: 2;
 }
+
+.changelist-form td[class*="field-"] input[type="checkbox"]:checked {
+    background: #ebfef5 !important;
+    border-color: #10b981 !important;
+}
+
+.changelist-form td[class*="field-"] input[type="checkbox"]:checked::before {
+    content: 'ON' !important;
+    left: 8px !important;
+    right: auto !important;
+    color: #10b981 !important;
+}
+
+.changelist-form td[class*="field-"] input[type="checkbox"]:checked::after {
+    left: 41px !important;
+    background: #10b981 !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* Specific styling for IS_ACTIVE / REMOVE logic in list view */
+.changelist-form td.field-is_active input[type="checkbox"] {
+    width: 75px !important;
+}
+
+.changelist-form td.field-is_active input[type="checkbox"]::before {
+    content: 'REM' !important; /* "Remove" shortened */
+}
+
+.changelist-form td.field-is_active input[type="checkbox"]:checked::before {
+    content: 'ACT' !important; /* "Active" shortened */
+}
+
+[class*="field-is_active"] input[type="checkbox"]:not(:checked) {
+    background: #fef2f2 !important;
+    border-color: #fca5a5 !important;
+}
+
+[class*="field-is_active"] input[type="checkbox"]:not(:checked)::after {
+    background: #ef4444 !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CHANGELIST PAGE LAYOUT
+   ══════════════════════════════════════════════════════════ */
+
+/* Row 1: Title (left) + Action Buttons (right) */
+.cl-title-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+    margin-bottom: 12px !important;
+    flex-wrap: wrap !important;
+}
+
+.cl-title-row h1 {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    color: var(--primary) !important;
+    flex: 1 !important;
+}
+
+/* Row 2: Search bar + Filter selects, all inline */
+.cl-search-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-bottom: 18px !important;
+    flex-wrap: nowrap !important;
+}
+
+/* The Django search form itself */
+#changelist-search {
+    display: flex !important;
+    align-items: center !important;
+    flex: 1 !important;
+    max-width: 460px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--body-bg) !important;
+    border-radius: 10px !important;
+    box-shadow: var(--neu-shadow-inset) !important;
+    border: 1px solid var(--border-color) !important;
+    overflow: hidden !important;
+}
+
+#changelist-search input[type="text"] {
+    flex: 1 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    height: 40px !important;
+    padding: 0 12px !important;
+    font-size: 0.9rem !important;
+    color: var(--primary) !important;
+    outline: none !important;
+    min-width: 0 !important;
+}
+
+/* Search button — visible at the end of the text box */
+#changelist-search input[type="submit"],
+.cl-search-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 40px !important;
+    padding: 0 20px !important;
+    background: var(--accent) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 0 10px 10px 0 !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    text-transform: uppercase !important;
+    transition: background 0.2s !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+#changelist-search input[type="submit"]:hover,
+.cl-search-btn:hover {
+    background: var(--accent-hover) !important;
+}
+
+/* Inline filter selects */
+.cl-filter-select {
+    height: 40px !important;
+    border: 1px solid var(--border-color) !important;
+    background: var(--body-bg) !important;
+    padding: 0 30px 0 12px !important;
+    border-radius: 10px !important;
+    font-size: 0.84rem !important;
+    font-weight: 600 !important;
+    color: var(--primary) !important;
+    box-shadow: var(--neu-shadow) !important;
+    cursor: pointer !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 10px center !important;
+    min-width: 110px !important;
+    flex-shrink: 0 !important;
+}
+
+.cl-filter-select:focus {
+    outline: none !important;
+    border-color: var(--accent) !important;
+}
+
+/* Row 3 (meta row): count on RIGHT, just above the result table */
+.cl-meta-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    margin-bottom: 8px !important;
+}
+
+.cl-meta-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+/* Selected count pill */
+.cl-count-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 4px 14px !important;
+    background: var(--body-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 50px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    color: var(--primary-light) !important;
+    box-shadow: var(--neu-shadow) !important;
+}
+
+/* Delete selected button */
+.cl-delete-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    height: 34px !important;
+    padding: 0 18px !important;
+    background: #f43f5e !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 50px !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    letter-spacing: 0.03em !important;
+    box-shadow: 0 4px 14px rgba(244,63,94,0.35) !important;
+    transition: all 0.2s !important;
+    animation: fadeIn 0.25s ease-out !important;
+}
+
+.cl-delete-btn:hover {
+    background: #e11d48 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 18px rgba(244,63,94,0.45) !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Object-tools (Import / Export / Add buttons) ── */
+.object-tools {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    flex-shrink: 0 !important;
+}
+
+.object-tools li {
+    margin: 0 !important;
+}
+
+.object-tools a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 38px !important;
+    padding: 0 18px !important;
+    border-radius: 50px !important;
+    font-weight: 600 !important;
+    font-size: 0.78rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    transition: all 0.25s !important;
+    box-shadow: var(--neu-shadow) !important;
+    border: 1px solid var(--border-color) !important;
+    background: var(--body-bg) !important;
+    color: var(--primary-light) !important;
+    text-decoration: none !important;
+}
+
+/* Add Product — accent style */
+.object-tools a.addlink {
+    background: var(--accent) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    box-shadow: 0 6px 16px rgba(37,99,235,0.25) !important;
+}
+
+.object-tools a.addlink:hover {
+    background: var(--accent-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Import/Export subtle */
+.object-tools a.import_link,
+.object-tools a.export_link {
+    background: #fff !important;
+    color: var(--primary-light) !important;
+}
+
+/* Separator before Add button */
+.object-tools li:has(a.addlink) {
+    margin-left: 10px !important;
+    padding-left: 10px !important;
+    border-left: 1px solid var(--border-color) !important;
+}
+
+/* ── Hide the original .actions bar visually \u2014 JS will set display:none after reading ── */
+.actions {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* ── Improve cell alignment for toggle columns ── */
+.changelist-form td[class*="field-is_active"],
+.changelist-form td[class*="field-show_on_homepage"],
+.changelist-form td[class*="field-free_shipping"] {
+    text-align: center !important;
+    padding: 10px 5px !important;
+}
+

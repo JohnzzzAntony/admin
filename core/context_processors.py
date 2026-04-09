@@ -1,10 +1,22 @@
+from django.utils import timezone
+from django.db.models import Q
+from .models import SiteSettings, AnnouncementBar
+from .design_models import DesignSettings
+
 def site_settings(request):
-    from .models import SiteSettings
-    from .design_models import DesignSettings
+    now = timezone.now()
+    
     try:
         settings = SiteSettings.objects.first()
-    except:
+        now = timezone.now()
+        announcements = AnnouncementBar.objects.filter(
+            Q(start_date__isnull=True) | Q(start_date__lte=now)
+        ).filter(
+            Q(end_date__isnull=True) | Q(end_date__gte=now)
+        ).order_by('id')
+    except Exception:
         settings = None
+        announcements = []
         
     try:
         design = DesignSettings.objects.first()
@@ -14,6 +26,7 @@ def site_settings(request):
     return {
         'site_settings': settings,
         'design_settings': design,
+        'announcement_bar_list': announcements,
     }
 
 def page_heroes(request):

@@ -163,8 +163,6 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     search_fields = ('first_name', 'last_name', 'email', 'phone', 'id')
     readonly_fields = (
         'order_number', 'created_at', 'updated_at',
-        'order_summary_heading', 'billing_heading',
-        'payment_heading', 'management_heading',
         'items_total_display',
         'customer_order_tag', 
         'resend_notification_button',
@@ -186,7 +184,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         badge = self.customer_tag(obj)
         return format_html('{} <span style="margin-left:10px;font-size:13px;color:#666;">{}</span>', badge, label)
 
-    customer_order_tag.short_description = "Customer Loyalty Status"
+    customer_order_tag.short_description = "Loyalty Status"
 
     # ── List display helpers ─────────────────────────────────────────────────
 
@@ -227,48 +225,19 @@ class CustomerOrderAdmin(admin.ModelAdmin):
 
     total_display.short_description = "Total"
 
-    # ── Detail page readonly section headings (styled separators) ───────────
-
-    def order_summary_heading(self, obj):
-        if not obj.pk or not obj.created_at:
-            return mark_safe('<div style="background:#f5f5f5;padding:10px 16px;border-radius:8px;margin:8px 0;color:#666;">'
-                             '<strong>📝 New Order Draft</strong></div>')
-        return format_html(
-            '<div style="background:#f0f6ff;border-left:4px solid #2271b1;padding:10px 16px;border-radius:0 8px 8px 0;margin:8px 0;">'
-            '<strong style="color:#2271b1;font-size:13px;">📋 Order #Demo-{} &nbsp;|&nbsp; '
-            'Placed: {}</strong></div>',
-            f"{obj.pk:05d}",
-            obj.created_at.strftime("%d %b %Y, %H:%M")
-        )
-
-    order_summary_heading.short_description = ''
-
-    def billing_heading(self, obj):
-        return mark_safe('<p style="margin:16px 0 4px;font-weight:700;font-size:13px;color:#2271b1;border-bottom:2px solid #2271b1;padding-bottom:4px;">🏠 Billing & Customer Details</p>')
-    billing_heading.short_description = ''
-
-    def payment_heading(self, obj):
-        return mark_safe('<p style="margin:16px 0 4px;font-weight:700;font-size:13px;color:#1d6fa4;border-bottom:2px solid #1d6fa4;padding-bottom:4px;">💳 Payment Information</p>')
-    payment_heading.short_description = ''
-
-    def management_heading(self, obj):
-        return mark_safe('<p style="margin:16px 0 4px;font-weight:700;font-size:13px;color:#1a7a4a;border-bottom:2px solid #1a7a4a;padding-bottom:4px;">⚙️ Order Management</p>')
-    management_heading.short_description = ''
-
     def resend_notification_button(self, obj):
         if not obj.pk: return "-"
         from django.urls import reverse
         url = reverse('admin:resend-notification', args=[obj.pk])
         return format_html(
-            '<div style="margin-top:10px;">'
-            '<a class="button" href="{}" style="background:#1d6fa4;color:#FFF;padding:8px 20px;border-radius:4px;text-decoration:none;font-weight:700;display:inline-block;box-shadow:0 2px 4px rgba(0,0,0,0.1);">'
-            '📨 Resend Multi-Channel Notification</a>'
-            '<p style="font-size:11px;color:#888;margin-top:5px;">This will trigger Email (and optional SMS/WhatsApp) based on global settings.</p>'
+            '<div style="margin-top:5px;">'
+            '<a class="button btn btn-primary" href="{}" style="padding:4px 12px; font-size:12px;">'
+            '📨 Resend Notifications</a>'
             '</div>',
             url
         )
 
-    resend_notification_button.short_description = "Manual Notification Control"
+    resend_notification_button.short_description = "Notifications"
 
     def get_urls(self):
         from django.urls import path
@@ -300,10 +269,8 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         
         try:
             product = Product.objects.get(id=product_id)
-            # Use the robust price logic we implemented earlier
             price_info = product.get_best_price_info()
             
-            # Find a representative SKU for shipping charges
             sku = product.skus.first()
             shipping_charge = 0
             if sku:
@@ -324,29 +291,29 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         items = obj.items.all()
         rows = format_html_join(
             '',
-            '<tr><td style="padding:4px 10px;">{}</td>'
-            '<td style="padding:4px 10px;text-align:center;">{}</td>'
-            '<td style="padding:4px 10px;text-align:right;">{} {}</td>'
-            '<td style="padding:4px 10px;text-align:right;">{} {}</td>'
-            '<td style="padding:4px 10px;text-align:right;font-weight:700;">{} {}</td></tr>',
+            '<tr><td style="padding:8px 10px;">{}</td>'
+            '<td style="padding:8px 10px;text-align:center;">{}</td>'
+            '<td style="padding:8px 10px;text-align:right;">{} {}</td>'
+            '<td style="padding:8px 10px;text-align:right;">{} {}</td>'
+            '<td style="padding:8px 10px;text-align:right;font-weight:700;">{} {}</td></tr>',
             ((i.product_name, i.quantity, i.regular_price, settings.CURRENCY, i.unit_price, settings.CURRENCY, i.total_price, settings.CURRENCY) for i in items)
         )
         return format_html(
-            '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
-            '<thead><tr style="background:#f5f5f5;">'
-            '<th style="padding:6px 10px;text-align:left;">Product</th>'
-            '<th style="padding:6px 10px;text-align:center;">Qty</th>'
-            '<th style="padding:6px 10px;text-align:right;">Regular Price</th>'
-            '<th style="padding:6px 10px;text-align:right;">Sale Price</th>'
-            '<th style="padding:6px 10px;text-align:right;">Subtotal</th></tr></thead>'
+            '<table style="width:100%; border-collapse:collapse; font-size:13px; border:1px solid #eee; border-radius:8px; overflow:hidden;">'
+            '<thead><tr style="background:#f8fafc; border-bottom:1px solid #eee;">'
+            '<th style="padding:10px; text-align:left;">Product</th>'
+            '<th style="padding:10px; text-align:center;">Qty</th>'
+            '<th style="padding:10px; text-align:right;">Regular</th>'
+            '<th style="padding:10px; text-align:right;">Sale</th>'
+            '<th style="padding:10px; text-align:right;">Subtotal</th></tr></thead>'
             '<tbody>{}</tbody>'
             '<tfoot>'
-            '<tr style="border-top: 1px solid #ddd;"><td colspan="4" style="padding:8px 10px;text-align:right;color:#666;">Subtotal</td>'
-            '<td style="padding:8px 10px;text-align:right;color:#666;">{} {}</td></tr>'
-            '<tr><td colspan="4" style="padding:4px 10px;text-align:right;color:#666;">Shipping</td>'
-            '<td style="padding:4px 10px;text-align:right;color:#666;">{} {}</td></tr>'
-            '<tr style="font-weight:700;font-size:15px;"><td colspan="4" style="padding:12px 10px;text-align:right;border-top:2px solid #2271b1;">Grand Total</td>'
-            '<td style="padding:12px 10px;text-align:right;color:#2271b1;border-top:2px solid #2271b1;">{} {}</td></tr>'
+            '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">Items Subtotal</td>'
+            '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
+            '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">Shipping Details</td>'
+            '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
+            '<tr style="background:#f1f5f9; font-weight:700; font-size:15px;"><td colspan="4" style="padding:12px 10px; text-align:right;">Grand Total Amount</td>'
+            '<td style="padding:12px 10px; text-align:right; color:#2563eb;">{} {}</td></tr>'
             '</tfoot>'
             '</table>',
             mark_safe(rows),
@@ -355,45 +322,43 @@ class CustomerOrderAdmin(admin.ModelAdmin):
             obj.total_amount, settings.CURRENCY
         )
 
-    items_total_display.short_description = "Items Summary"
+    items_total_display.short_description = "Detailed Summary"
 
     # ── Fieldsets ────────────────────────────────────────────────────────────
 
     fieldsets = (
-        ('Order Overview', {
-            'fields': ('order_summary_heading',),
+        ('Order Identification', {
+            'fields': (('order_number', 'customer_order_tag'),),
         }),
-        ('Customer Status', {
-            'fields': ('customer_order_tag',),
-        }),
-        ('Billing & Customer Details', {
+        ('Customer Details', {
             'fields': (
-                'billing_heading',
                 ('first_name', 'last_name'),
                 ('email', 'phone'),
-                'department',
-                ('user', 'is_guest'),
+                ('department', 'user', 'is_guest'),
+            ),
+        }),
+        ('Shipping Address', {
+            'fields': (
                 ('country', 'city'),
                 'street',
                 'comment',
             ),
         }),
-        ('Payment', {
+        ('Payment & Financials', {
             'fields': (
-                'payment_heading',
                 ('payment_method', 'payment_status'),
+                ('shipping_amount', 'total_amount'),
             ),
         }),
-        ('Order Management', {
+        ('Order Processing', {
             'fields': (
-                'management_heading',
-                ('status', 'shipping_amount', 'total_amount'),
+                'status',
                 'resend_notification_button',
                 'admin_notes',
                 ('created_at', 'updated_at'),
             ),
         }),
-        ('Items Summary', {
+        ('Items Summary Board', {
             'fields': ('items_total_display',),
         }),
     )

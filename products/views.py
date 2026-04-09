@@ -12,18 +12,17 @@ def category_index(request):
     return render(request, 'products/category_index.html', {'categories': categories})
 
 def product_list(request):
-    """Shows active products with stock, and categories in sidebar."""
+    """Shows all products with stock, and categories in sidebar."""
     parents = Category.objects.filter(parent__isnull=True)
     categories = parents if parents.count() > 1 else Category.objects.all()
 
-    # Optimized queryset with select_related and prefetch_related to avoid N+1 issues
+    # Refactored for flattened Product architecture
     products = Product.objects.filter(
-        is_active=True,
-        skus__quantity__gt=0,
-        skus__shipping_status='available'
+        quantity__gt=0,
+        shipping_status='available'
     ).select_related('category').prefetch_related(
-        'skus', 
-        'skus__offers'
+        'offers', 
+        'images'
     ).distinct().order_by('-id')
     
     query = request.GET.get('q')
@@ -37,32 +36,27 @@ def product_list(request):
 
 def category_detail(request, slug=None, hierarchy_path=None):
     """
-    Highly advanced SEO-friendly category view that supports absolute paths:
-    /category/electronics/mobiles/android-phones
-    Automatically resolves the deepest slug and retrieves all sub-inventory.
+    Highly advanced SEO-friendly category view that supports absolute paths.
     """
     if hierarchy_path:
-        # Resolve the last part of the path as the primary category
         slug = hierarchy_path.strip('/').split('/')[-1]
     
     category = get_object_or_404(Category, slug=slug)
     
-    # 🌐 Hierarchical Product Aggregation
     all_categories_in_branch = category.get_all_children(include_self=True)
     cat_ids = [c.id for c in all_categories_in_branch]
 
     products = Product.objects.filter(
         category_id__in=cat_ids,
-        is_active=True,
-        skus__quantity__gt=0,
-        skus__shipping_status='available'
+        quantity__gt=0,
+        shipping_status='available'
     ).select_related('category').prefetch_related(
-        'skus', 
-        'skus__offers'
+        'offers', 
+        'images'
     ).distinct().order_by('-id')
     
-    # Hierarchical Sidebar Categories
-    roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
+    # Root categories for sidebar
+    roots = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
 
     return render(request, 'products/product_list.html', {
         'current_category': category, 
@@ -77,12 +71,12 @@ def product_detail(request, slug=None, pk=None):
     """SEO-friendly product detail page. Supports both slug and PK for administrative legacy tools."""
     if pk:
         product = get_object_or_404(
-            Product.objects.select_related('category').prefetch_related('skus', 'skus__offers', 'images'), 
+            Product.objects.select_related('category').prefetch_related('offers', 'images'), 
             pk=pk
         )
     else:
         product = get_object_or_404(
-            Product.objects.select_related('category').prefetch_related('skus', 'skus__offers', 'images'), 
+            Product.objects.select_related('category').prefetch_related('offers', 'images'), 
             slug=slug
         )
     return render(request, 'products/product_detail.html', {'product': product})
@@ -106,7 +100,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='tree')
     def get_tree(self, request):
         """Returns the nested category tree structure."""
-        roots = self.get_queryset().filter(parent__isnull=True, is_active=True)
+        roots = self.get_queryset().filter(parent__isnull=True)
         serializer = CategoryTreeSerializer(roots, many=True)
         return Response(serializer.data)
 
@@ -117,7 +111,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         all_cat_ids = [c.id for c in category.get_all_children(include_self=True)]
         
         from .serializers import ProductListSerializer 
-        products = Product.objects.filter(category_id__in=all_cat_ids, is_active=True)
+        products = Product.objects.filter(category_id__in=all_cat_ids)
         return Response(ProductListSerializer(products, many=True).data)
 
     def destroy(self, request, *args, **kwargs):

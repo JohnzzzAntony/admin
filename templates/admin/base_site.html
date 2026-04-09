@@ -6,22 +6,142 @@
 {% block extrahead %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'admin/css/admin_premium.css' %}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // ── 0. Language Toggle (SEO/Multilingual – detail forms only) ──────────
+            const arFields = document.querySelectorAll('.form-row:has([name$="_ar"]), .form-row:has([id$="_ar"])');
+            if (arFields.length > 0) {
+                arFields.forEach(row => row.classList.add('ar-field-hidden'));
+                const wrapper = document.createElement('div');
+                wrapper.className = 'language-toggle-wrapper';
+                wrapper.innerHTML = `
+                    <span>English (Default)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="lang-toggle-input">
+                        <span class="slider"></span>
+                    </label>
+                    <span>Other Languages (AR)</span>
+                `;
+                const contentMain = document.querySelector('#content-main');
+                if (contentMain) contentMain.insertBefore(wrapper, contentMain.firstChild);
+                const toggleInput = document.querySelector('#lang-toggle-input');
+                if (toggleInput) {
+                    toggleInput.onchange = function() {
+                        arFields.forEach(row => {
+                            if (this.checked) row.classList.remove('ar-field-hidden');
+                            else row.classList.add('ar-field-hidden');
+                        });
+                    };
+                }
+            }
+
+            // ── 1. Changelist: Hide .actions bar, inject count pill + Delete button ─
+            // Jazzmin structure: .change-list-actions > .col-12 > .actions > [select + button]
+            const actionsDiv    = document.querySelector('.actions');
+            const clActionsWrap = document.querySelector('.change-list-actions');
+            const changlistForm = document.querySelector('#changelist-form');
+            const resultTable   = document.querySelector('#result_list');
+            const actionSelect  = document.querySelector('.actions select[name="action"]');
+
+            if (clActionsWrap) {
+                // ── Build the meta row ──────────────────────────────────────────
+                const metaRow = document.createElement('div');
+                metaRow.className = 'cl-meta-row';
+
+                const metaRight = document.createElement('div');
+                metaRight.className = 'cl-meta-right';
+
+                // Count pill — always visible
+                const countPill = document.createElement('span');
+                countPill.className = 'cl-count-pill';
+                countPill.textContent = '0 selected';
+                metaRight.appendChild(countPill);
+
+                // Delete button — hidden until items are selected
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'cl-delete-btn';
+                deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete Selected';
+                deleteBtn.style.display = 'none';
+                metaRight.appendChild(deleteBtn);
+
+                metaRow.appendChild(metaRight);
+
+                // Insert the meta row BEFORE the result table (or after actions wrap)
+                if (resultTable && resultTable.parentNode) {
+                    resultTable.parentNode.insertBefore(metaRow, resultTable);
+                } else if (clActionsWrap.parentNode) {
+                    clActionsWrap.parentNode.insertBefore(metaRow, clActionsWrap.nextSibling);
+                }
+
+                // ── Update count when checkboxes change (event delegation) ───
+                function syncCount() {
+                    const n = document.querySelectorAll('.action-select:checked').length;
+                    countPill.textContent = n + ' selected';
+                    deleteBtn.style.display = n > 0 ? 'inline-flex' : 'none';
+                }
+                document.addEventListener('change', function(e) {
+                    if (e.target.matches('.action-select, #action-toggle')) {
+                        setTimeout(syncCount, 30);
+                    }
+                });
+
+                // ── Delete click: submit the form for Django's delete confirmation ──
+                deleteBtn.addEventListener('click', function() {
+                    const checked = document.querySelectorAll('.action-select:checked').length;
+                    if (checked === 0) return;
+                    if (!confirm('Are you sure you want to delete ' + checked + ' selected item(s)? This action cannot be undone.')) return;
+
+                    // Ensure the form exists
+                    if (!changlistForm) return;
+
+                    // Find or create the action select and set it to delete_selected
+                    let sel = changlistForm.querySelector('select[name="action"]');
+                    if (!sel) {
+                        // If original select was destroyed, create a hidden one
+                        sel = document.createElement('select');
+                        sel.name = 'action';
+                        sel.style.display = 'none';
+                        const opt = document.createElement('option');
+                        opt.value = 'delete_selected';
+                        opt.selected = true;
+                        sel.appendChild(opt);
+                        changlistForm.appendChild(sel);
+                    } else {
+                        sel.value = 'delete_selected';
+                    }
+
+                    // Django requires a button with name="index" to be submitted.
+                    // Create a hidden submit button and programmatically click it.
+                    const submitBtn = document.createElement('button');
+                    submitBtn.type = 'submit';
+                    submitBtn.name = 'index';
+                    submitBtn.value = '0';
+                    submitBtn.style.cssText = 'position:absolute;left:-9999px;opacity:0;';
+                    changlistForm.appendChild(submitBtn);
+                    submitBtn.click();
+                });
+
+                // ── Hide original .actions bar and its wrapper ─────────────
+                if (actionsDiv) actionsDiv.style.cssText = 'display:none !important';
+                clActionsWrap.style.cssText = 'display:none !important';
+            }
+
+            // ── 2. Remove (EN) suffix from field labels ───────────────────────────
+            document.querySelectorAll('label').forEach(label => {
+                label.innerHTML = label.innerHTML.replace(/\(EN\)/g, '').trim();
+            });
+        });
+    </script>
     <style>
-        /* Small branding adjustment to change "Django" to "Demo" */
-        #branding h1 {
-            display: flex;
-            align-items: center;
-        }
-        #branding h1::before {
-            content: '🚀';
-            margin-right: 15px;
-            font-size: 1.8rem;
-        }
-        #site-name a {
-            font-family: 'Inter', sans-serif;
-            letter-spacing: -1px;
-            text-transform: capitalize;
-        }
+        #branding h1 { display: flex; align-items: center; }
+        #branding h1::before { content: '🏬'; margin-right: 15px; font-size: 1.8rem; }
+        #site-name a { font-family: 'Outfit', sans-serif; font-weight: 700; letter-spacing: -0.5px; }
+        #content-related { display: none !important; }
+        .colMS { margin-right: 0 !important; }
+        #content { width: 100% !important; background: transparent !important; }
+        .dashboard .module { border: none !important; box-shadow: var(--neu-shadow) !important; border-radius: var(--radius) !important; background: var(--card-bg) !important; }
     </style>
 {% endblock %}
 

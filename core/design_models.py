@@ -5,16 +5,18 @@ class DesignSettings(models.Model):
     primary_color = models.CharField(max_length=20, default="#114084", help_text="Hex code, e.g. #114084")
     secondary_color = models.CharField(max_length=20, default="#005CB9", help_text="Hex code, e.g. #005CB9")
     accent_glow_color = models.CharField(max_length=20, default="#0081ff", help_text="Color for ambient glow effects.")
+    header_bg_color = models.CharField(max_length=20, default="#ffffff", help_text="Background color for the main header bar. e.g. #ffffff")
+    footer_bg_color = models.CharField(max_length=20, default="#1a1a1a", help_text="Background color for the site footer. e.g. #1a1a1a")
     
     # Typography
     font_body = models.CharField(max_length=100, default="'Montserrat', sans-serif", help_text="CSS font-family value")
     font_heading = models.CharField(max_length=100, default="'Montserrat', sans-serif", help_text="CSS font-family value")
     
     # Visual Effects
-    enable_glassmorphism = models.BooleanField(default=False, verbose_name="Enable Glassmorphism")
-    enable_neumorphism = models.BooleanField(default=False, verbose_name="Enable Neumorphism")
-    enable_ambient_glow = models.BooleanField(default=True, verbose_name="Enable Ambient Glow Background")
-    enable_animations = models.BooleanField(default=True, verbose_name="Enable Scroll Animations (AOS)")
+    enable_glassmorphism = models.BooleanField(default=False, verbose_name="Glassmorphism", choices=((True, 'Enabled'), (False, 'Disabled')))
+    enable_neumorphism = models.BooleanField(default=False, verbose_name="Neumorphism", choices=((True, 'Enabled'), (False, 'Disabled')))
+    enable_ambient_glow = models.BooleanField(default=True, verbose_name="Ambient Glow", choices=((True, 'Enabled'), (False, 'Disabled')))
+    enable_animations = models.BooleanField(default=True, verbose_name="Scroll Animations", choices=((True, 'Enabled'), (False, 'Disabled')))
     
     # UI Components
     BUTTON_CHOICES = (
@@ -36,7 +38,7 @@ class DesignSettings(models.Model):
         ('full', 'Full Width Layout'),
     )
     layout_style = models.CharField(max_length=20, choices=LAYOUT_CHOICES, default='full')
-    dark_mode_enabled = models.BooleanField(default=False, verbose_name="Enable Dark Mode")
+    dark_mode_enabled = models.BooleanField(default=False, verbose_name="Dark Mode", choices=((True, 'Enabled'), (False, 'Disabled')))
 
     # ── Header & Global Settings ──────────────────────────────────────────────
     header_title = models.CharField(max_length=255, default="Demo International")
@@ -71,7 +73,7 @@ class DesignSettings(models.Model):
     
     # ── Product Detail Settings ─────────────────────────────────────────────
     pd_related_title = models.CharField(max_length=255, default="Related Products")
-    pd_show_related = models.BooleanField(default=True, verbose_name="Show Related Products")
+    pd_show_related = models.BooleanField(default=True, verbose_name="Related Products", choices=((True, 'Show'), (False, 'Hide')))
     pd_related_count = models.PositiveIntegerField(default=4, verbose_name="Number of Related Products")
 
     # Advanced Animation Controls

@@ -4,23 +4,9 @@ from django.utils import timezone
 from ckeditor.fields import RichTextField
 from decimal import Decimal
 
-class Attribute(models.Model):
-    FIELD_TYPES = (
-        ('text', 'Text Input'),
-        ('number', 'Numeric Value'),
-        ('select', 'Dropdown Menu'),
-    )
-    name = models.CharField(max_length=50)
-    field_type = models.CharField(max_length=10, choices=FIELD_TYPES, default='text')
-    def __str__(self): return self.name
-
-class AttributeOption(models.Model):
-    attribute = models.ForeignKey(Attribute, related_name='options', on_delete=models.CASCADE)
-    value = models.CharField(max_length=100)
-    def __str__(self): return f"{self.attribute.name}: {self.value}"
+# ─── Category ────────────────────────────────────────────────────────────────
 
 class Category(models.Model):
-    # Core Fields
     parent = models.ForeignKey(
         'self', 
         related_name='subcategories', 
@@ -41,55 +27,44 @@ class Category(models.Model):
     )
     image_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted image.")
     icon_svg = models.TextField(blank=True, help_text="Paste SVG icon code here. Used if provided.")
-    attributes = models.ManyToManyField(Attribute, blank=True, related_name='categories')
     
     # Meta / Controls
-    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
-    # Homepage Config
-    show_on_homepage = models.BooleanField(default=False, verbose_name="Show on Homepage")
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
+    show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
     homepage_order   = models.PositiveIntegerField(default=0, verbose_name="Homepage Display Order")
 
-    # SEO — Standard
-    meta_title = models.CharField(max_length=255, blank=True, verbose_name="SEO Title Tag")
-    meta_description = models.TextField(blank=True, verbose_name="SEO Meta Description")
-    meta_keywords = models.CharField(max_length=255, blank=True, verbose_name="SEO Meta Keywords")
+    # SEO Fields (Multilingual)
+    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title (EN)")
+    meta_title_ar = models.CharField(max_length=255, blank=True, verbose_name="Meta Title (AR)")
+    meta_description = models.TextField(blank=True, verbose_name="Meta Description (EN)")
+    meta_description_ar = models.TextField(blank=True, verbose_name="Meta Description (AR)")
+    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords (EN)")
+    meta_keywords_ar = models.TextField(blank=True, verbose_name="Meta Keywords (AR)")
+    
+    # Combined SEO Multilingual (Fallback/Legacy)
+    seo_meta_data = models.JSONField(default=dict, blank=True, help_text="Stores multilingual SEO tags.")
     
     @property
     def get_image_url(self):
         try:
-            # 1. Prioritize uploaded files from the system
-            if self.image:
-                return self.image.url
-            # 2. Fallback to external URL if provided
-            if self.image_url and "placeholder.com" not in self.image_url:
-                return self.image_url
-        except Exception:
-            pass
+            if self.image: return self.image.url
+            if self.image_url and "placeholder.com" not in self.image_url: return self.image_url
+        except Exception: pass
         return "https://via.placeholder.com/300"
 
     def get_all_children(self, include_self=True):
-        """
-        Recursively finds all subcategories under this category.
-        """
         children = [self] if include_self else []
-        for sub in self.subcategories.filter(is_active=True):
+        for sub in self.subcategories.all():
             children.extend(sub.get_all_children(include_self=True))
         return children
 
     @property
     def active_subcategories(self):
-        """
-        Returns only the active subcategories for template rendering.
-        """
-        return self.subcategories.filter(is_active=True)
+        return self.subcategories.all()
 
     def get_ancestors(self):
-        """
-        Returns a list of all parent categories up to the root.
-        """
         ancestors = []
         curr = self.parent
         while curr:
@@ -98,9 +73,6 @@ class Category(models.Model):
         return ancestors
 
     def clean(self):
-        """
-        Prevent circular parent-child relationships.
-        """
         from django.core.exceptions import ValidationError
         if self.parent:
             curr = self.parent
@@ -125,11 +97,8 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "Categories"
         ordering = ['name']
-        indexes = [
-            models.Index(fields=['parent']),
-            models.Index(fields=['slug']),
-        ]
 
+# ─── Product ─────────────────────────────────────────────────────────────────
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
@@ -139,254 +108,157 @@ class Product(models.Model):
         upload_to='products/', 
         null=True, 
         blank=True,
-        help_text="Primary Product Image. Recommended: 1000x1000px. JPG, PNG, WEBP. Max 2MB."
+        help_text="Primary Product Image."
     )
     image_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted image.")
 
-    @property
-    def get_image_url(self):
-        try:
-            if self.image: return self.image.url
-            if self.image_url: return self.image_url
-        except Exception:
-            pass
-        return "https://via.placeholder.com/600x400"
-
-    def save(self, *args, **kwargs):
-        if not self.slug: self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-    
-    features = models.TextField(help_text="One feature per line", blank=True)
-    overview = RichTextField(blank=True, null=True)
-    technical_info = RichTextField(blank=True, null=True)
-    brochure = models.FileField(upload_to='brochures/', null=True, blank=True, help_text="PDF format recommended.")
-    regular_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    # Advanced SEO - Multilingual
-    # Standard/Default
-    meta_title = models.CharField(max_length=255, blank=True, verbose_name="SEO Title Tag")
-    meta_description = models.TextField(blank=True, verbose_name="SEO Meta Description")
-    meta_keywords = models.CharField(max_length=255, blank=True, verbose_name="SEO Meta Keywords")
-    url_alias = models.CharField(max_length=255, blank=True, verbose_name="SEO URL Alias")
-    
-    # English (EN)
-    meta_title_en = models.CharField(max_length=255, blank=True, verbose_name="SEO Title Tag (EN)")
-    meta_description_en = models.TextField(blank=True, verbose_name="SEO Meta Description (EN)")
-    meta_keywords_en = models.CharField(max_length=255, blank=True, verbose_name="SEO Meta Keywords (EN)")
-    url_alias_en = models.CharField(max_length=255, blank=True, verbose_name="SEO URL Alias (EN)")
-    
-    # Arabic (AR)
-    meta_title_ar = models.CharField(max_length=255, blank=True, verbose_name="SEO Title Tag (AR)")
-    meta_description_ar = models.TextField(blank=True, verbose_name="SEO Meta Description (AR)")
-    meta_keywords_ar = models.CharField(max_length=255, blank=True, verbose_name="SEO Meta Keywords (AR)")
-    url_alias_ar = models.CharField(max_length=255, blank=True, verbose_name="SEO URL Alias (AR)")
-    
-    def get_best_price_info(self):
-        """
-        Scans all related SKUs for active offers and returns the best overall pricing dictionary.
-        """
-        all_skus = self.skus.all()
-        if not all_skus:
-            reg = self.regular_price or 0
-            sale = self.sale_price or reg
-            return {
-                'has_offer': sale < reg,
-                'final_price': sale,
-                'regular_price': reg,
-                'discount_amount': reg - sale,
-                'discount_display': "SALE" if sale < reg else None,
-                'shipping_charge': 0,
-                'free_shipping': False,
-                'sku': None,
-                'total_with_shipping': sale
-            }
-        
-        # Get all SKU price infos and sort by lowest final price
-        sku_infos = [sku.get_price_info() for sku in all_skus]
-        best_info = min(sku_infos, key=lambda x: x['final_price'])
-        return best_info
-
-    def get_discount_amount(self):
-        reg = self.regular_price or 0
-        sale = self.sale_price or 0
-        return reg - sale if reg > sale else 0
-    
-    def get_discount_percentage(self):
-        reg = self.regular_price or 0
-        sale = self.sale_price or 0
-        if reg > 0 and sale < reg:
-            return int(round(((reg - sale) / reg) * 100))
-        return 0
-    def is_in_stock(self): return self.skus.filter(quantity__gt=0, shipping_status='available').exists()
-    def __str__(self): return self.name
-
-class ProductAttributeValue(models.Model):
-    product = models.ForeignKey(Product, related_name='characteristics', on_delete=models.CASCADE)
-    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
-    value = models.CharField(max_length=255, default="")
-    def __str__(self): return f"{self.product.name} - {self.attribute.name}: {self.value}"
-
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(
-        upload_to='products/gallery/', 
-        null=True, 
-        blank=True,
-        help_text="Gallery Image. Recommended: 1000x1000px. JPG, PNG, WEBP. Max 2MB."
-    )
-    image_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted image.")
-    order = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        ordering = ['order']
-
-    @property
-    def get_image_url(self):
-        try:
-            if self.image: return self.image.url
-            if self.image_url: return self.image_url
-        except Exception:
-            pass
-        return "https://via.placeholder.com/600x400"
-
-from django.utils import timezone
-
-class ProductSKU(models.Model):
-    product = models.ForeignKey(Product, related_name='skus', on_delete=models.CASCADE)
-    title = models.CharField(max_length=255, blank=True, help_text="e.g. Small, Blue, standard, etc.")
-    sku_id = models.CharField(max_length=50, unique=True, blank=True, help_text="Auto-generated if left blank.")
-    quantity = models.IntegerField(null=True, blank=True)
+    # Inventory & Details
+    sku_id = models.CharField(max_length=50, unique=True, blank=True, verbose_name="SKU ID")
+    quantity = models.IntegerField(default=0, verbose_name="In-Stock Quantity")
     unit = models.CharField(max_length=20, choices=[('pcs', 'Pieces'), ('box', 'Box'), ('set', 'Set')], default='pcs')
     
-    # Dimensions & Weight
-    weight = models.FloatField(help_text="in kg", null=True, blank=True)
-    length = models.FloatField(help_text="in cm", null=True, blank=True)
-    width = models.FloatField(help_text="in cm", null=True, blank=True)
-    height = models.FloatField(help_text="in cm", null=True, blank=True)
+    regular_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
-    # Shipping
-    delivery_time = models.CharField(max_length=100, blank=True)
     shipping_status = models.CharField(max_length=50, choices=[
         ('available', 'In Stock'), ('out_of_stock', 'Out of Stock'), ('pre_order', 'Pre-Order')
     ], default='available')
-    free_shipping = models.BooleanField(default=False)
-    additional_shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="Extra shipping fee in AED")
+    free_shipping = models.BooleanField(default=False, verbose_name="Free Shipping", choices=((True, 'Enabled'), (False, 'Disabled')))
+    additional_shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    delivery_time = models.CharField(max_length=100, blank=True)
 
-    def get_active_offer(self):
+    # Dimensions
+    weight = models.FloatField(null=True, blank=True)
+    length = models.FloatField(null=True, blank=True)
+    width = models.FloatField(null=True, blank=True)
+    height = models.FloatField(null=True, blank=True)
+
+    # Simplified Content
+    features = models.TextField(help_text="Key features (one per line)", blank=True)
+    overview = RichTextField(blank=True, null=True)
+    technical_info = RichTextField(blank=True, null=True, verbose_name="Product Characteristics & Specifications")
+    brochure = models.FileField(upload_to='brochures/', null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
+
+    # SEO Fields (Multilingual)
+    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title (EN)")
+    meta_title_ar = models.CharField(max_length=255, blank=True, verbose_name="Meta Title (AR)")
+    meta_description = models.TextField(blank=True, verbose_name="Meta Description (EN)")
+    meta_description_ar = models.TextField(blank=True, verbose_name="Meta Description (AR)")
+    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords (EN)")
+    meta_keywords_ar = models.TextField(blank=True, verbose_name="Meta Keywords (AR)")
+    
+    # Combined SEO Multilingual (Fallback/Legacy)
+    seo_meta_data = models.JSONField(default=dict, blank=True, help_text="Stores multilingual SEO tags.")
+    
+    @property
+    def get_image_url(self):
+        try:
+            if self.image: return self.image.url
+            if self.image_url: return self.image_url
+        except Exception: pass
+        return "https://via.placeholder.com/600x400"
+
+    def get_best_price_info(self):
+        from django.utils import timezone
+        reg = self.regular_price or 0
+        sale = self.sale_price or reg
+        
+        # Check for active offers if they exist
         now = timezone.now()
-        # Returns the first active offer (highest priority in the future if needed)
-        return self.offers.filter(
-            is_active=True,
+        active_offers = self.offers.filter(
             start_date__lte=now,
             end_date__gte=now
-        ).first()
-
-    def get_price_info(self):
-        """
-        Returns a dictionary of price-related fields: 
-        final_price, regular_price, has_offer, offer_id, etc.
-        """
-        offer = self.get_active_offer()
-        # Default to product's prices
-        regular_price = self.product.regular_price or 0
-        current_sale_price = self.product.sale_price or regular_price
+        )
         
-        if not offer:
-            is_discounted = current_sale_price < regular_price
-            return {
-                'has_offer': is_discounted,
-                'offer': None,
-                'regular_price': regular_price,
-                'final_price': current_sale_price,
-                'discount_display': "SALE" if is_discounted else None,
-                'shipping_charge': self.additional_shipping_charge or Decimal('0') if not self.free_shipping else Decimal('0'),
-                'free_shipping': self.free_shipping,
-                'sku': self,
-                'total_with_shipping': current_sale_price + (self.additional_shipping_charge or Decimal('0') if not self.free_shipping else Decimal('0'))
-            }
+        offer_price = sale
+        for offer in active_offers:
+            current_offer_price = reg
+            if offer.offer_type == 'percentage':
+                current_offer_price = reg * (1 - (offer.discount_value / 100))
+            elif offer.offer_type == 'fixed':
+                current_offer_price = reg - offer.discount_value
+            elif offer.offer_type == 'final':
+                current_offer_price = offer.discount_value
+            
+            if current_offer_price < offer_price:
+                offer_price = current_offer_price
         
-        # Apply offer on top of CURRENT sale_price if it's set, else regular
-        base_to_discount = Decimal(str(current_sale_price))
-        final_price = base_to_discount
-
-        if offer.offer_type == 'percentage':
-            # Calculate: base * (1 - discount/100)
-            multiplier = Decimal('1') - (Decimal(str(offer.discount_value)) / Decimal('100'))
-            final_price = base_to_discount * multiplier
-        elif offer.offer_type == 'fixed':
-            final_price = base_to_discount - Decimal(str(offer.discount_value))
-        elif offer.offer_type == 'final':
-            final_price = Decimal(str(offer.discount_value))
+        final_price = offer_price
+        discount_amount = reg - final_price
+        discount_pct = 0
+        if reg > 0:
+            discount_pct = (discount_amount / reg) * 100
         
-        reg = Decimal(str(regular_price))
-        final = max(Decimal('0'), final_price.quantize(Decimal('0.01')))
-
+        ship = self.additional_shipping_charge or 0 if not self.free_shipping else 0
+        
         return {
-            'has_offer': True,
-            'offer': offer,
-            'regular_price': reg,
-            'final_price': final,
-            'discount_amount': reg - final,
-            'discount_percentage': int(round(((reg - final) / reg) * 100)) if reg > 0 else 0,
-            'discount_display': f"{int(offer.discount_value)}% OFF" if offer.offer_type == 'percentage' else "OFFER",
-            'shipping_charge': self.additional_shipping_charge or Decimal('0') if not self.free_shipping else Decimal('0'),
+            'has_offer': final_price < reg,
+            'final_price': round(final_price, 2),
+            'regular_price': round(reg, 2),
+            'discount_amount': round(discount_amount, 2),
+            'discount_percentage': int(discount_pct),
+            'discount_display': f"{int(discount_pct)}% OFF" if final_price < reg else None,
+            'shipping_charge': ship,
             'free_shipping': self.free_shipping,
-            'sku': self,
-            'total_with_shipping': final + (self.additional_shipping_charge or Decimal('0') if not self.free_shipping else Decimal('0'))
+            'total_with_shipping': round(final_price + ship, 2)
         }
 
+    @property
+    def discount_percentage(self):
+        info = self.get_best_price_info()
+        return info.get('discount_percentage', 0)
+
+    def is_in_stock(self): return self.quantity > 0 and self.shipping_status == 'available'
+    
     def save(self, *args, **kwargs):
+        if not self.slug: self.slug = slugify(self.name)
         if not self.sku_id:
             import random, string
-            # Generate a unique SKU if not provided
-            prefix = slugify(self.product.name)[:10].upper()
-            suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
-            self.sku_id = f"Demo-{prefix}-{suffix}"
-            # Ensure uniqueness
-            while ProductSKU.objects.filter(sku_id=self.sku_id).exists():
-                suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
-                self.sku_id = f"Demo-{prefix}-{suffix}"
+            prefix = slugify(self.name)[:10].upper()
+            self.sku_id = f"PRO-{prefix}-{''.join(random.choices(string.ascii_uppercase + string.digits, k=4))}"
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"{self.product.name} - {self.sku_id}"
+    def __str__(self): return self.name
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='products/gallery/', null=True, blank=True)
+    image_url = models.URLField(blank=True, null=True)
+    order = models.PositiveIntegerField(default=0)
+    class Meta: ordering = ['order']
+    def get_image_url(self):
+        if self.image: return self.image.url
+        return self.image_url or "https://via.placeholder.com/300"
 
 class Offer(models.Model):
     OFFER_TYPES = (
         ('percentage', 'Percentage Discount (%)'),
         ('fixed', 'Fixed Discount Entry (AED)'),
         ('final', 'Final Set Price (AED)'),
-        ('bogo', 'Buy One Get One (BOGO)'),
     )
     name = models.CharField(max_length=100)
     offer_type = models.CharField(max_length=20, choices=OFFER_TYPES, default='percentage')
-    discount_value = models.DecimalField(max_digits=10, decimal_places=2, help_text="Percentage or AED amount")
-    skus = models.ManyToManyField(ProductSKU, related_name='offers', blank=True)
+    discount_value = models.DecimalField(max_digits=10, decimal_places=2)
+    products = models.ManyToManyField(Product, related_name='offers', blank=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"{self.name} ({self.discount_value}{'%' if self.offer_type == 'percentage' else ' AED'})"
+    def __str__(self): return self.name
 
 class Collection(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
-    banner = models.ImageField(upload_to='collections/', null=True, blank=True, help_text="Homepage Banner for this collection.")
-    banner_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted banner image.")
-    skus = models.ManyToManyField(ProductSKU, related_name='collections', blank=True)
-    is_active = models.BooleanField(default=True)
+    banner = models.ImageField(upload_to='collections/', null=True, blank=True)
+    banner_url = models.URLField(blank=True, null=True)
+    products = models.ManyToManyField(Product, related_name='collections', blank=True)
     display_order = models.PositiveIntegerField(default=0)
-
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
+    
     def save(self, *args, **kwargs):
         if not self.slug: self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        ordering = ['display_order']
+    def __str__(self): return self.name
+    class Meta: ordering = ['display_order']

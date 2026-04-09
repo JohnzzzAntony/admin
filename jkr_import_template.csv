@@ -1,0 +1,36 @@
+category,name,slug,image_url,features,overview,technical_info,regular_price,sale_price,meta_title,meta_description,meta_keywords,sku_id,quantity,shipping_status,weight,gallery_image_urls,category_image_url
+Wheelchairs,Premium Manual Wheelchair,premium-manual-wheelchair,https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1520&auto=format&fit=crop,"Lightweight aluminum frame
+Foldable design
+Adjustable footrests
+High-density foam cushion","A high-quality manual wheelchair designed for comfort and durability. Perfect for daily use and travel.","Material: Aluminum
+Weight Capacity: 120kg
+Seat Width: 18 inches
+Total Weight: 14kg",1200,999,Premium Manual Wheelchair - Demo International,High-quality manual wheelchair for clinical and home use. Buy online at Demo International.,"wheelchair, manual wheelchair, mobility aid",SKU-MW-001,50,available,14,https://images.unsplash.com/photo-1544367567-0f2fcb009e0b,https://plus.unsplash.com/premium_photo-1661601614741-9486c47fc728
+Wheelchairs,Electric Power Wheelchair,electric-power-wheelchair,https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=1470&auto=format&fit=crop,"Joystick control
+Rechargeable battery
+Padded armrests
+Anti-tip wheels","Experience freedom with our latest electric power wheelchair. Easy to maneuver in tight spaces.","Battery: 24V 20Ah
+Range: 20km
+Speed: 6km/h
+Motors: 250W x 2",4500,3950,Electric Power Wheelchair - Smart Mobility,Advanced electric wheelchair with long-range battery and ergonomic controls.,"electric wheelchair, power wheelchair, mobility solution",SKU-EW-002,10,available,45,https://images.unsplash.com/photo-1581092160562-40aa08e78837,https://plus.unsplash.com/premium_photo-1661601614741-9486c47fc728
+Hospital Furniture,Adjustable Hospital Bed,adjustable-hospital-bed,https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=1470&auto=format&fit=crop,"Manual or Electric control
+Side rails included
+Lockable wheels
+Washable mattress","Standard hospital bed with multi-position settings for patient comfort and medical care.","Length: 210cm
+Width: 90cm
+Height Range: 45-75cm
+Functions: Head & Leg elevation",3500,2800,Adjustable Hospital Bed - Medical Furniture,Professional hospital beds for clinics and home care. Multi-functional and ergonomic.,"hospital bed, medical bed, home care bed",SKU-HB-003,5,available,85,https://images.unsplash.com/photo-1516549655169-df83a0774514,https://images.unsplash.com/photo-1519494140681-891791d9b4be
+Walking & Standing Aids,Aluminum Folding Walker,aluminum-folding-walker,https://images.unsplash.com/photo-1601429961633-90d565691060?q=80&w=1470&auto=format&fit=crop,"One-button folding mechanism
+Height adjustable
+Non-slip rubber tips
+Lightweight frame","A simple and reliable folding walker to assist with stability and balance.","Height: 75-95cm
+Width: 50cm
+Material: Aluminum
+Weight: 2.5kg",250,199,Aluminum Folding Walker - Basic Mobility,Reliable and lightweight folding walker for daily assistance. Adjusts to your height.,"walker, folding walker, walking aid",SKU-WA-004,100,available,2.5,https://images.unsplash.com/photo-1601429961633-90d565691060,https://images.unsplash.com/photo-1513201099715-b97c276326d9
+Seating & Positioning System,Champion Bariatric Recliner,champion-bariatric-recliner,https://images.unsplash.com/photo-1567113463300-102a7eb3cb26?q=80&w=1470&auto=format&fit=crop,"Extra-wide seat
+High weight capacity
+Luxury padding
+Swing-away arms","Premium recliner chair designed specifically for bariatric patients. Provides ultimate comfort and support.","Weight Capacity: 250kg
+Seat Width: 26 inches
+Frame: Reinforced Steel
+Upholstery: Antimicrobial Vinyl",8500,7900,Champion Bariatric Recliner - Specialized Seating,High-capacity medical recliner for dialysis, oncology, and infusion treatments.,"bariatric recliner, medical chair, infusion chair",SKU-BR-005,2,available,60,https://images.unsplash.com/photo-1567113463300-102a7eb3cb26,https://images.unsplash.com/photo-1540573133985-87b6da6d54a9

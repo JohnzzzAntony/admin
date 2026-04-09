@@ -1,170 +1,203 @@
 from django.contrib import admin
-from django.utils.html import mark_safe
+from django.utils.safestring import mark_safe
+from .models import Category, Product, ProductImage, Offer, Collection
 from import_export.admin import ImportExportModelAdmin
-from .models import Category, Product, ProductSKU, ProductImage, Attribute, AttributeOption, ProductAttributeValue, Offer, Collection
-from .resources import ProductResource, CategoryResource, ProductSKUResource
+from import_export import resources
 
+# ─── Resources for Import/Export ─────────────────────────────────────────────
+
+class CategoryResource(resources.ModelResource):
+    class Meta: model = Category
+
+class ProductResource(resources.ModelResource):
+    class Meta: model = Product
 
 # ─── Inlines ─────────────────────────────────────────────────────────────────
 
-class ProductImageInline(admin.TabularInline):
+class ProductImageInline(admin.StackedInline):
     model = ProductImage
-    extra = 1
-    fields = ('image', 'image_url', 'order')
-
-
-class SKUInline(admin.StackedInline):
-    model = ProductSKU
     extra = 0
-    verbose_name = "Product Variant / SKU"
-    verbose_name_plural = "Product Variants / SKUs"
-    fieldsets = (
-        (None, {
-            'fields': (
-                ('sku_id', 'title'),
-                ('quantity', 'unit'),
-                ('weight', 'length'),
-                ('width', 'height'),
-                ('shipping_status', 'delivery_time'),
-                ('free_shipping', 'additional_shipping_charge'),
-            )
-        }),
-    )
+    fields = (('image', 'image_url'), ('order', 'preview'))
+    readonly_fields = ('preview',)
+    
+    def preview(self, obj):
+        if obj.get_image_url:
+            return mark_safe(f'<img src="{obj.get_image_url}" width="60" style="border-radius:4px;"/>')
+        return "-"
 
-
-class AttributeOptionInline(admin.TabularInline):
-    model = AttributeOption
-    extra = 3
-
-
-class ProductAttributeValueInline(admin.TabularInline):
-    model = ProductAttributeValue
-    extra = 3
-    verbose_name = "Characteristic"
-    verbose_name_plural = "Product Characteristics"
-
-
-# ─── Attribute ────────────────────────────────────────────────────────────────
-
-@admin.register(Attribute)
-class AttributeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'field_type')
-    inlines = [AttributeOptionInline]
-
-
-# ─── Product ─────────────────────────────────────────────────────────────────
+# ─── Main Model Admins ───────────────────────────────────────────────────────
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'is_active', 'stock_status')
-    list_filter = ('category', 'is_active')
-    search_fields = ('name', 'meta_title', 'meta_keywords')
-    autocomplete_fields = ('category',)
-    readonly_fields = ('slug', 'product_seo_std_heading', 'product_seo_en_heading', 'product_seo_ar_heading')
-    inlines = [ProductImageInline, ProductAttributeValueInline, SKUInline]
+class ProductAdmin(ImportExportModelAdmin):
+    resource_class = ProductResource
+    list_display = ('preview', 'name', 'category', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status')
+    list_editable = ('show_on_homepage',)
+    
+    def is_active_label(self, obj): return "-"
+    is_active_label.short_description = "Status"
+    search_fields = ('name', 'slug', 'sku_id')
+    readonly_fields = ('preview', 'sku_id')
+    inlines = [ProductImageInline]
+    
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        from django.contrib import messages
+        messages.success(request, f'✅ Product "{obj.name}" has been successfully saved.')
 
+    def delete_model(self, request, obj):
+        name = obj.name
+        super().delete_model(request, obj)
+        from django.contrib import messages
+        messages.error(request, f'🗑️ Product "{name}" has been removed.')
+
+    def preview(self, obj):
+        if obj.get_image_url:
+            return mark_safe(f'<img src="{obj.get_image_url}" width="45" height="45" style="object-fit:cover; border-radius:50%; border:1px solid #ddd;"/>')
+        return "-"
 
     def stock_status(self, obj):
         return "✅ In Stock" if obj.is_in_stock() else "❌ Out of Stock"
     stock_status.short_description = "Stock"
 
-    def product_seo_std_heading(self, obj):
-        return mark_safe(
-            '<p style="margin:12px 0 4px;font-weight:700;font-size:13px;'
-            'color:#2271b1;border-bottom:2px solid #2271b1;padding-bottom:4px;">'
-            '🌐 Standard (Default)</p>'
-        )
-    product_seo_std_heading.short_description = ''
-
-    def product_seo_en_heading(self, obj):
-        return mark_safe(
-            '<p style="margin:20px 0 4px;font-weight:700;font-size:13px;'
-            'color:#1d6fa4;border-bottom:2px solid #1d6fa4;padding-bottom:4px;">'
-            '🇬🇧 English (EN)</p>'
-        )
-    product_seo_en_heading.short_description = ''
-
-    def product_seo_ar_heading(self, obj):
-        return mark_safe(
-            '<p style="margin:20px 0 4px;font-weight:700;font-size:13px;'
-            'color:#8b5e3c;border-bottom:2px solid #8b5e3c;padding-bottom:4px;">'
-            '🇸🇦 Arabic (AR)</p>'
-        )
-    product_seo_ar_heading.short_description = ''
-
     fieldsets = (
-        ('Product Identification', {
-            'fields': (('category', 'name'), 'slug'),
+        ('Overview', {
+            'fields': (('name', 'category'), ('slug', 'sku_id'), ('quantity', 'show_on_homepage')),
+            'description': 'Core identity and stock availability.'
         }),
-        ('Pricing & Availability', {
-            'fields': (('regular_price', 'sale_price'), 'is_active'),
+        ('Pricing & Shipping', {
+            'fields': (('regular_price', 'sale_price'), ('shipping_status', 'delivery_time'), ('free_shipping', 'additional_shipping_charge')),
+            'classes': ('collapse',),
         }),
-        ('Media & Files', {
-            'fields': (('image', 'image_url'), 'brochure'),
+        ('Dimensions & Weight', {
+            'fields': (('weight', 'unit'), ('length', 'width', 'height')),
+            'classes': ('collapse',),
         }),
         ('Detailed Content', {
-            'fields': ('features', 'overview', 'technical_info'),
+            'fields': ('overview', 'features', 'technical_info'),
         }),
-        ('Search Engines (SEO)', {
+        ('Media Assets', {
+            'fields': (('image', 'image_url'), ('brochure', 'preview')),
+        }),
+        ('Search Optimization', {
             'fields': (
-                'product_seo_std_heading',
-                'meta_title', 'meta_description', 'meta_keywords', 'url_alias',
-                'product_seo_en_heading',
-                'meta_title_en', 'meta_description_en', 'meta_keywords_en', 'url_alias_en',
-                'product_seo_ar_heading',
-                'meta_title_ar', 'meta_description_ar', 'meta_keywords_ar', 'url_alias_ar',
+                ('meta_title', 'meta_title_ar'), 
+                ('meta_description', 'meta_description_ar'), 
+                ('meta_keywords', 'meta_keywords_ar')
             ),
+            'classes': ('collapse',),
         }),
     )
-
-
-# ─── Category ────────────────────────────────────────────────────────────────
+    radio_fields = {
+        "shipping_status": admin.HORIZONTAL,
+        "free_shipping": admin.HORIZONTAL,
+        "show_on_homepage": admin.HORIZONTAL,
+    }
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'parent', 'is_active', 'show_on_homepage', 'homepage_order', 'slug')
-    list_editable = ('is_active', 'show_on_homepage', 'homepage_order')
-    list_filter = ('parent', 'is_active', 'show_on_homepage')
-    search_fields = ('name', 'slug', 'meta_title')
-    filter_horizontal = ('attributes',)
+class CategoryAdmin(ImportExportModelAdmin):
+    resource_class = CategoryResource
+    list_display = ('name', 'parent', 'show_on_homepage', 'homepage_order')
+    list_editable = ('show_on_homepage', 'homepage_order')
+    list_filter = ('parent', 'show_on_homepage')
+    search_fields = ('name', 'slug')
     autocomplete_fields = ('parent',)
-    readonly_fields = ('slug', 'created_at', 'updated_at')
+    readonly_fields = ()
     
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        from django.contrib import messages
+        messages.success(request, f'📂 Category "{obj.name}" has been saved.')
+
+    def delete_model(self, request, obj):
+        name = obj.name
+        super().delete_model(request, obj)
+        from django.contrib import messages
+        messages.error(request, f'🗑️ Category "{name}" was removed.')
+
     fieldsets = (
-        ('Hierarchy & Identification', {
-            'fields': (('parent', 'name'), 'slug', 'description'),
+        ('Hierarchy & Branding', {
+            'fields': (
+                ('name', 'parent'), 
+                ('slug', 'homepage_order'), 
+                'show_on_homepage',
+                'description'
+            ),
         }),
-        ('Visibility & Layout', {
-            'fields': (('is_active', 'show_on_homepage', 'homepage_order'),),
+        ('Media & Icons', {
+            'fields': (('image', 'image_url'), 'icon_svg'),
         }),
-        ('Media & Metadata', {
-            'fields': (('image', 'image_url'), 'icon_svg', 'attributes'),
-        }),
-        ('Audit Info', {
-            'fields': (('created_at', 'updated_at'),),
-        }),
-        ('SEO Optimization', {
-            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
+        ('Search Optimization', {
+            'fields': (
+                ('meta_title', 'meta_title_ar'), 
+                ('meta_description', 'meta_description_ar'), 
+                ('meta_keywords', 'meta_keywords_ar')
+            ),
+            'classes': ('collapse',),
         }),
     )
-
-
-
-# ─── Offers ──────────────────────────────────────────────────────────────────
+    radio_fields = {
+        "show_on_homepage": admin.HORIZONTAL,
+    }
 
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
-    list_display = ('name', 'offer_type', 'discount_value', 'start_date', 'end_date', 'is_active')
-    list_filter = ('offer_type', 'is_active', 'start_date')
+    list_display = ('name', 'offer_type', 'discount_value', 'start_date', 'end_date')
+    list_filter = ('offer_type',)
     search_fields = ('name',)
-    filter_horizontal = ('skus',)
+    filter_horizontal = ('products',)
 
-# ─── Collections ─────────────────────────────────────────────────────────────
+    fieldsets = (
+        ('Offer Details', {
+            'fields': (('name', 'offer_type'), ('discount_value', 'discount_type')),
+        }),
+        ('Validity Period', {
+            'fields': (('start_date', 'end_date'),),
+        }),
+        ('Impacted Products', {
+            'fields': ('products',),
+            'description': 'Select which products are eligible for this offer.'
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        from django.contrib import messages
+        messages.success(request, f'🏷️ Offer "{obj.name}" has been saved.')
+
+    def delete_model(self, request, obj):
+        name = obj.name
+        super().delete_model(request, obj)
+        from django.contrib import messages
+        messages.error(request, f'🗑️ Offer "{name}" was removed.')
 
 @admin.register(Collection)
 class CollectionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_active', 'display_order', 'slug')
-    list_editable = ('is_active', 'display_order')
-    filter_horizontal = ('skus',)
-    readonly_fields = ('slug',)
-    fields = ('name', ('banner', 'banner_url'), 'slug', 'skus', 'is_active', 'display_order')
+    list_display = ('name', 'display_order')
+    list_editable = ('display_order',)
+    filter_horizontal = ('products',)
+    radio_fields = {}
+    
+    fieldsets = (
+        ('Collection Info', {
+            'fields': (('name', 'slug'), ('display_order')),
+        }),
+        ('Branding', {
+            'fields': (('banner', 'banner_url'),),
+        }),
+        ('Products', {
+            'fields': ('products',),
+            'description': 'Manage items belonging to this specific collection.'
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        from django.contrib import messages
+        messages.success(request, f'📦 Collection "{obj.name}" has been saved.')
+
+    def delete_model(self, request, obj):
+        name = obj.name
+        super().delete_model(request, obj)
+        from django.contrib import messages
+        messages.error(request, f'🗑️ Collection "{name}" was removed.')
+
