@@ -1,6 +1,6 @@
 <li class="list-group-item bg-transparent border-0 py-1 pl-{{ depth|default:0 }}">
     <div class="d-flex align-items-center justify-content-between">
-        <a href="{% url 'products:category_detail' slug=node.slug %}" 
+        <a href="{{ node.get_absolute_url }}" 
            class="text-dark d-block {% if current_category == node %}font-weight-bold text-primary text-underline{% endif %} {% if depth == 0 %}category-root-item{% else %}category-sub-item{% endif %}">
            {% if depth > 0 %}<i class="fas fa-chevron-right mr-1 small opacity-50"></i>{% endif %}
            {{ node.name }}

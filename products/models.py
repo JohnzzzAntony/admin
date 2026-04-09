@@ -97,9 +97,17 @@ class Category(models.Model):
             k = k.parent
         return ' > '.join(full_path[::-1])
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        ancestors = self.get_ancestors()
+        if ancestors:
+            path = "/".join([a.slug for a in ancestors] + [self.slug])
+            return reverse('products:category_hierarchy_detail', kwargs={'hierarchy_path': path})
+        return reverse('products:category_detail', kwargs={'slug': self.slug})
+
     class Meta:
         verbose_name_plural = "Categories"
-        ordering = ['name']
+        ordering = ['homepage_order', 'name']
 
 # ─── Product ─────────────────────────────────────────────────────────────────
 

@@ -7,15 +7,38 @@
     <div class="container-fluid mb-4">
         <div class="row px-xl-5">
             <div class="col-12">
+                <!-- Breadcrumbs -->
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb bg-transparent p-0 mb-0">
+                        <li class="breadcrumb-item"><a href="{% url 'products:category_index' %}" class="text-primary">All Categories</a></li>
+                        {% for anc in ancestors %}
+                            <li class="breadcrumb-item"><a href="{{ anc.get_absolute_url }}" class="text-primary">{{ anc.name }}</a></li>
+                        {% endfor %}
+                        <li class="breadcrumb-item active text-dark" aria-current="page">{{ current_category.name }}</li>
+                    </ol>
+                </nav>
+
                 <div class="category-banner position-relative rounded-3 overflow-hidden shadow-sm" style="height: 250px;">
-                    <img src="{{ current_category.get_image_url }}" alt="{{ current_category.name }}" class="w-100 h-100" style="object-fit: cover; filter: brightness(0.7);">
-                    <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white" style="top: 0; left: 0;">
+                    <img src="{{ current_category.get_image_url }}" alt="{{ current_category.name }}" class="w-100 h-100" style="object-fit: cover; filter: brightness(0.6);">
+                    <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white text-center px-3" style="top: 0; left: 0;">
                         <h1 class="display-4 font-weight-bold mb-0 text-shadow">{{ current_category.name }}</h1>
-                        {% if current_category.meta_description %}
-                        <p class="lead text-white-50 mt-2">{{ current_category.meta_description }}</p>
+                        {% if current_category.description %}
+                        <p class="lead mt-2 text-shadow" style="max-width: 800px;">{{ current_category.description }}</p>
                         {% endif %}
                     </div>
                 </div>
+
+                <!-- Subcategories Quick Nav -->
+                {% if current_category.subcategories.all %}
+                <div class="mt-4 d-flex flex-wrap align-items-center">
+                    <span class="text-muted mr-3 font-weight-bold">Subcategories:</span>
+                    {% for sub in current_category.subcategories.all %}
+                        <a href="{{ sub.get_absolute_url }}" class="btn btn-white btn-sm shadow-sm border rounded-pill px-4 py-2 mr-2 mb-2 hover-lift transition-all">
+                            {{ sub.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

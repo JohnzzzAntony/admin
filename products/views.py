@@ -40,12 +40,10 @@ def get_subcategories(request, parent_id):
     return JsonResponse(list(subcategories), safe=False)
 
 def category_index(request):
-    """Shows categories in a professional grid. Show all if parents aren't clearly defined."""
-    parents = Category.objects.filter(parent__isnull=True)
-    if parents.count() <= 1:
+    """Shows top-level categories in a professional grid."""
+    categories = Category.objects.filter(parent__isnull=True)
+    if not categories.exists():
         categories = Category.objects.all()
-    else:
-        categories = parents
     return render(request, 'products/category_index.html', {'categories': categories})
 
 def product_list(request):
