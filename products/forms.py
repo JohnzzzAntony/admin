@@ -19,6 +19,10 @@ class ProductAdminForm(forms.ModelForm):
         self.fields['category'].label = "Sub Category"
         self.fields['category'].required = False
         
+        # Explicit IDs for JavaScript reliability
+        self.fields['category'].widget.attrs['id'] = 'id_category'
+        self.fields['parent_category'].widget.attrs['id'] = 'id_parent_category'
+        
         if self.instance and self.instance.pk and self.instance.category:
             if self.instance.category.parent:
                 self.fields['parent_category'].initial = self.instance.category.parent

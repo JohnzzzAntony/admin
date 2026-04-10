@@ -1,0 +1,50 @@
+
+<div class="permission-menu-container">
+    <div class="permission-menu-list">
+        {% for app, perms in grouped_permissions.items %}
+        <div class="permission-app-section">
+            <div class="permission-app-header" onclick="togglePermissionApp('{{ app|slugify }}')">
+                <span class="app-name">{{ app }}</span>
+                <span class="app-badge">{{ perms|length }} Permissions</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            
+            <div id="section-{{ app|slugify }}" class="permission-app-content hidden">
+                <table class="permission-table">
+                    <thead>
+                        <tr>
+                            <th>Module / Model</th>
+                            <th>Add</th>
+                            <th>Change</th>
+                            <th>Delete</th>
+                            <th>View</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {# Group by Model name within the app #}
+                        {% regroup perms by model as model_list %}
+                        {% for model in model_list %}
+                        <tr>
+                            <td class="model-name"><strong>{{ model.grouper }}</strong></td>
+                            {% for perm in model.list %}
+                                {# Find matching column #}
+                                {% with action=perm.action %}
+                                <td class="perm-checkbox-col">
+                                    <label class="toggle-button">
+                                        <input type="checkbox" name="permissions" value="{{ perm.id }}" 
+                                               {% if perm.selected %}checked{% endif %}>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="perm-label">{{ action }}</span>
+                                </td>
+                                {% endwith %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
