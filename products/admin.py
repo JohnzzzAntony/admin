@@ -72,7 +72,12 @@ class ProductAdmin(ImportExportModelAdmin):
 
     fieldsets = (
         ('Overview', {
-            'fields': (('name', 'parent_category', 'category'), ('slug', 'sku_id'), ('quantity', 'show_on_homepage')),
+            'fields': (
+                ('name', 'sku_id'), 
+                ('parent_category', 'category'),
+                ('slug', 'quantity'),
+                'show_on_homepage'
+            ),
             'description': 'Core identity and stock availability. Choose a parent category to see subcategories.'
         }),
         ('Pricing & Shipping', {
@@ -135,6 +140,11 @@ class CategoryAdmin(ImportExportModelAdmin):
     radio_fields = {
         "show_on_homepage": admin.HORIZONTAL,
     }
+
+    class Media:
+        css = {
+            'all': ('admin/css/subcategory_admin.css',)
+        }
 
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
