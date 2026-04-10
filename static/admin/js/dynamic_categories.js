@@ -12,6 +12,7 @@
 
         parentSelect.on('change', function() {
             const parentId = $(this).val();
+            console.log('Parent category changed:', parentId);
             
             // Clear current subcategories
             subSelect.empty();
@@ -19,18 +20,28 @@
 
             if (!parentId) {
                 subSelect.trigger('change');
+                if (subSelect.data('select2')) subSelect.trigger('change.select2');
                 return;
             }
 
             // Fetch subcategories via AJAX
-            $.getJSON(`/products/api/subcategories/${parentId}/`, function(data) {
+            const apiUrl = `/products/api/subcategories/${parentId}/`;
+            console.log('Fetching subcategories from:', apiUrl);
+
+            $.getJSON(apiUrl, function(data) {
+                console.log('Subcategories received:', data);
                 $.each(data, function(index, item) {
                     subSelect.append(
                         $('<option></option>').val(item.id).html(item.name)
                     );
                 });
-                // Important for Select2/Jazzmin: Update UI after DOM change
+                // Updated for Select2 compatibility
                 subSelect.trigger('change');
+                if (subSelect.data('select2')) {
+                    subSelect.trigger('change.select2');
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('API Error:', textStatus, errorThrown);
             });
         });
     });
