@@ -177,11 +177,34 @@
                     
                     btn.onclick = function() {
                         const row = td.closest('tr');
-                        row.style.transition = 'all 0.3s ease';
-                        row.style.transform = 'translateX(20px)';
-                        row.style.opacity = '0';
+                        const isMediaRow = row.querySelector('input[type="file"]');
+                        
                         checkbox.checked = true; // Mark for deletion on save
-                        setTimeout(() => row.style.display = 'none', 300);
+                        
+                        if (isMediaRow) {
+                            // Slot Recycling for Media
+                            row.querySelectorAll('img, .file-upload, .custom-file-upload').forEach(el => el.style.display = 'none');
+                            row.querySelectorAll('input[type="file"]').forEach(i => i.value = '');
+                            
+                            // Transform the delete cell into a "Cleared" status
+                            btn.style.display = 'none';
+                            const msg = document.createElement('span');
+                            msg.className = 'text-success small';
+                            msg.innerHTML = '<i class="fas fa-check"></i> Cleared. Select new →';
+                            td.appendChild(msg);
+                            
+                            // Find and show the file input if it was hidden
+                            row.querySelectorAll('input[type="file"]').forEach(i => {
+                                i.style.display = 'inline-block';
+                                i.classList.remove('d-none');
+                            });
+                        } else {
+                            // Default Instant Disappear for Data
+                            row.style.transition = 'all 0.3s ease';
+                            row.style.transform = 'translateX(20px)';
+                            row.style.opacity = '0';
+                            setTimeout(() => row.style.display = 'none', 300);
+                        }
                     };
                     
                     td.appendChild(btn);
@@ -229,12 +252,11 @@
                         else if (objectId) url = `/products/api/media/delete/${objectId}/`;
 
                         if (!url) {
-                            row.querySelectorAll('input[type="file"]').forEach(i => i.value = '');
+                            row.querySelectorAll('input').forEach(i => i.value = '');
                             container.style.opacity = '0.3';
                             return;
                         }
 
-                        // NO CONFIRMATION - REMOVE INSTANTLY
                         try {
                             const response = await fetch(url, {
                                 method: 'POST',
@@ -242,19 +264,17 @@
                             });
                             const data = await response.json();
                             if (data.status === 'success') {
-                                if (isPrimary) {
-                                    container.innerHTML = '<span class="text-success small"><i class="fas fa-check"></i> Removed. Add new →</span>';
-                                    const fileInput = row.querySelector('input[type="file"]');
-                                    if (fileInput) {
-                                        fileInput.style.display = 'inline-block';
-                                        fileInput.classList.remove('d-none');
-                                    }
-                                } else {
-                                    row.style.transition = 'all 0.3s ease';
-                                    row.style.transform = 'translateX(20px)';
-                                    row.style.opacity = '0';
-                                    setTimeout(() => row.remove(), 300);
+                                // Transition to "Empty/Add New" state instead of removing the slot
+                                container.innerHTML = '<span class="text-success small"><i class="fas fa-check"></i> Cleared. Select new →</span>';
+                                const fileInput = row.querySelector('input[type="file"]');
+                                if (fileInput) {
+                                    fileInput.style.display = 'inline-block';
+                                    fileInput.classList.remove('d-none');
+                                    fileInput.value = ''; 
                                 }
+                                
+                                // Reset opacity if it was dimmed
+                                container.style.opacity = '1';
                             }
                         } catch (err) { console.error('Delete failed:', err); }
                     };
