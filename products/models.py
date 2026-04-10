@@ -35,16 +35,10 @@ class Category(models.Model):
     show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
     homepage_order   = models.PositiveIntegerField(default=0, verbose_name="Homepage Display Order")
 
-    # SEO Fields (Multilingual)
-    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title (EN)")
-    meta_title_ar = models.CharField(max_length=255, blank=True, verbose_name="Meta Title (AR)")
-    meta_description = models.TextField(blank=True, verbose_name="Meta Description (EN)")
-    meta_description_ar = models.TextField(blank=True, verbose_name="Meta Description (AR)")
-    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords (EN)")
-    meta_keywords_ar = models.TextField(blank=True, verbose_name="Meta Keywords (AR)")
-    
-    # Combined SEO Multilingual (Fallback/Legacy)
-    seo_meta_data = models.JSONField(default=dict, blank=True, help_text="Stores multilingual SEO tags.")
+    # SEO Fields
+    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title")
+    meta_description = models.TextField(blank=True, verbose_name="Meta Description")
+    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords")
     
     @property
     def get_image_url(self):
@@ -105,6 +99,13 @@ class Category(models.Model):
             return reverse('products:category_hierarchy_detail', kwargs={'hierarchy_path': path})
         return reverse('products:category_detail', kwargs={'slug': self.slug})
 
+    @property
+    def total_product_count(self):
+        """Recursive count of products in this category and all its children."""
+        from .models import Product
+        child_ids = [c.id for c in self.get_all_children(include_self=True)]
+        return Product.objects.filter(category_id__in=child_ids, is_active=True).count()
+
     class Meta:
         verbose_name_plural = "Categories"
         ordering = ['homepage_order', 'name']
@@ -155,15 +156,10 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
 
     # SEO Fields (Multilingual)
-    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title (EN)")
-    meta_title_ar = models.CharField(max_length=255, blank=True, verbose_name="Meta Title (AR)")
-    meta_description = models.TextField(blank=True, verbose_name="Meta Description (EN)")
-    meta_description_ar = models.TextField(blank=True, verbose_name="Meta Description (AR)")
-    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords (EN)")
-    meta_keywords_ar = models.TextField(blank=True, verbose_name="Meta Keywords (AR)")
-    
-    # Combined SEO Multilingual (Fallback/Legacy)
-    seo_meta_data = models.JSONField(default=dict, blank=True, help_text="Stores multilingual SEO tags.")
+    # SEO Fields
+    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title")
+    meta_description = models.TextField(blank=True, verbose_name="Meta Description")
+    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords")
     
     @property
     def get_image_url(self):
@@ -226,10 +222,14 @@ class Product(models.Model):
     def is_in_stock(self): return self.quantity > 0 and self.shipping_status == 'available'
     
     def save(self, *args, **kwargs):
-        if not self.slug: self.slug = slugify(self.name)
+        if not self.slug:
+            self.slug = slugify(self.name)
+            if not self.slug: # Fallback for non-latin names
+                self.slug = "product-" + timezone.now().strftime("%Y%m%d%H%M%S")
+        
         if not self.sku_id:
             import random, string
-            prefix = slugify(self.name)[:10].upper()
+            prefix = slugify(self.name)[:10].upper() or "PRO"
             self.sku_id = f"PRO-{prefix}-{''.join(random.choices(string.ascii_uppercase + string.digits, k=4))}"
         super().save(*args, **kwargs)
 

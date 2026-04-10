@@ -154,7 +154,7 @@
                                 <img src="{{ cat.get_image_url }}" alt="{{ cat.name }}" class="w-100 h-100 object-cover">
                             </div>
                             <h6 class="font-weight-bold text-dark mb-0" style="font-size: 0.95rem; letter-spacing: 0.5px;">{{ cat.name }}</h6>
-                            <span class="small text-muted">{{ cat.products.count }} Products</span>
+                            <span class="small text-muted">{{ cat.total_product_count }} Products</span>
                         </a>
                     </div>
                     {% endfor %}

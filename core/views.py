@@ -11,11 +11,17 @@ def home(request):
     sliders = HeroSlider.objects.all().order_by('order')
     
     # Homepage Interleaving Logic
-    categories_raw = Category.objects.filter(show_on_homepage=True)
+    # Homepage sections logic
+    homepage_sections_raw = Category.objects.filter(show_on_homepage=True)
+    
+    # Categories for the circular slider (Top)
+    categories_circles = homepage_sections_raw
+    if not categories_circles.exists():
+        categories_circles = Category.objects.filter(parent__isnull=True)[:10]
     
     # Merge and Sort
     homepage_sections = []
-    for cat in categories_raw:
+    for cat in homepage_sections_raw:
         # Aggregated products for this category and all its children
         all_cat_ids = [c.id for c in cat.get_all_children(include_self=True)]
         cat_products = Product.objects.filter(
@@ -26,7 +32,9 @@ def home(request):
         
         # Attach aggregated products to the category object for template access
         cat.aggregated_products = cat_products
-        homepage_sections.append({'type': 'category', 'data': cat, 'order': cat.homepage_order})
+        
+        if cat_products.exists():
+            homepage_sections.append({'type': 'category', 'data': cat, 'order': cat.homepage_order})
     
     banners = PromoBanner.objects.filter(is_active=True).prefetch_related('items')
     for banner in banners:
@@ -75,7 +83,7 @@ def home(request):
 
     context = {
         'sliders': sliders,
-        'categories': categories_raw,
+        'categories': categories_circles,
         'collections': collections,
         'active_offers_products': active_offers_products,
         'about_us': about_us,

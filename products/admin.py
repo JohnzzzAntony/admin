@@ -41,7 +41,7 @@ class SubCategoryInline(admin.TabularInline):
 class ProductAdmin(ImportExportModelAdmin):
     form = ProductAdminForm
     resource_class = ProductResource
-    list_display = ('preview', 'name', 'category', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status')
+    list_display = ('preview', 'name', 'category_display', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status')
     list_editable = ('show_on_homepage',)
     search_fields = ('name', 'slug', 'sku_id')
     readonly_fields = ('preview', 'sku_id')
@@ -49,22 +49,22 @@ class ProductAdmin(ImportExportModelAdmin):
 
     class Media:
         js = ('admin/js/dynamic_categories.js',)
-    
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        from django.contrib import messages
-        messages.success(request, f'✅ Product "{obj.name}" has been successfully saved.')
-
-    def delete_model(self, request, obj):
-        name = obj.name
-        super().delete_model(request, obj)
-        from django.contrib import messages
-        messages.error(request, f'🗑️ Product "{name}" has been removed.')
 
     def preview(self, obj):
         if obj.get_image_url:
             return mark_safe(f'<img src="{obj.get_image_url}" width="45" height="45" style="object-fit:cover; border-radius:50%; border:1px solid #ddd;"/>')
         return "-"
+
+    def category_display(self, obj):
+        if not obj.category: return "-"
+        if obj.category.parent:
+            return mark_safe(f'<span style="color:#666; font-size:0.85em;">{obj.category.parent.name}</span><br><b>{obj.category.name}</b>')
+        return obj.category.name
+    category_display.short_description = "Category"
+
+    def parent_category(self, obj):
+        return obj.category.parent if obj.category and obj.category.parent else (obj.category if obj.category else "-")
+    parent_category.short_description = "Parent Category"
 
     def stock_status(self, obj):
         return "✅ In Stock" if obj.is_in_stock() else "❌ Out of Stock"
@@ -90,11 +90,7 @@ class ProductAdmin(ImportExportModelAdmin):
             'fields': (('image', 'image_url'), ('brochure', 'preview')),
         }),
         ('Search Optimization', {
-            'fields': (
-                ('meta_title', 'meta_title_ar'), 
-                ('meta_description', 'meta_description_ar'), 
-                ('meta_keywords', 'meta_keywords_ar')
-            ),
+            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
             'classes': ('collapse',),
         }),
     )
@@ -107,59 +103,33 @@ class ProductAdmin(ImportExportModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
     resource_class = CategoryResource
-    list_display = ('name', 'show_on_homepage', 'homepage_order')
+    list_display = ('name', 'show_on_homepage', 'homepage_order', 'parent')
     list_editable = ('show_on_homepage', 'homepage_order')
-    list_filter = ('show_on_homepage',)
+    list_filter = ('show_on_homepage', 'parent')
     search_fields = ('name', 'slug')
     autocomplete_fields = ('parent',)
     inlines = [SubCategoryInline]
-    readonly_fields = ()
+    prepopulated_fields = {"slug": ("name",)}
     
-    def get_queryset(self, request):
-        """Show only root categories in the main list."""
-        qs = super().get_queryset(request)
-        return qs.filter(parent__isnull=True)
-
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        from django.contrib import messages
-        messages.success(request, f'📂 Category "{obj.name}" has been saved.')
-
-    def delete_model(self, request, obj):
-        name = obj.name
-        super().delete_model(request, obj)
-        from django.contrib import messages
-        messages.error(request, f'🗑️ Category "{name}" was removed.')
-
     fieldsets = (
         ('Hierarchy & Branding', {
             'fields': (
                 ('name', 'parent'), 
                 ('slug', 'homepage_order'), 
+                ('image', 'image_url'),
+                'icon_svg',
                 'show_on_homepage',
                 'description'
-            ),
-        }),
-        ('Media & Icons', {
-            'fields': (('image', 'image_url'), 'icon_svg'),
+            )
         }),
         ('Search Optimization', {
-            'fields': (
-                ('meta_title', 'meta_title_ar'), 
-                ('meta_description', 'meta_description_ar'), 
-                ('meta_keywords', 'meta_keywords_ar')
-            ),
+            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
             'classes': ('collapse',),
         }),
     )
     radio_fields = {
         "show_on_homepage": admin.HORIZONTAL,
     }
-
-    class Media:
-        css = {
-            'all': ('admin/css/subcategory_admin.css',)
-        }
 
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):

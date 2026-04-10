@@ -9,32 +9,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            // ── 0. Language Toggle (SEO/Multilingual – detail forms only) ──────────
-            const arFields = document.querySelectorAll('.form-row:has([name$="_ar"]), .form-row:has([id$="_ar"])');
-            if (arFields.length > 0) {
-                arFields.forEach(row => row.classList.add('ar-field-hidden'));
-                const wrapper = document.createElement('div');
-                wrapper.className = 'language-toggle-wrapper';
-                wrapper.innerHTML = `
-                    <span>English (Default)</span>
-                    <label class="switch">
-                        <input type="checkbox" id="lang-toggle-input">
-                        <span class="slider"></span>
-                    </label>
-                    <span>Other Languages (AR)</span>
-                `;
-                const contentMain = document.querySelector('#content-main');
-                if (contentMain) contentMain.insertBefore(wrapper, contentMain.firstChild);
-                const toggleInput = document.querySelector('#lang-toggle-input');
-                if (toggleInput) {
-                    toggleInput.onchange = function() {
-                        arFields.forEach(row => {
-                            if (this.checked) row.classList.remove('ar-field-hidden');
-                            else row.classList.add('ar-field-hidden');
-                        });
-                    };
-                }
-            }
 
             // ── 1. Changelist: Hide .actions bar, inject count pill + Delete button ─
             // Jazzmin structure: .change-list-actions > .col-12 > .actions > [select + button]

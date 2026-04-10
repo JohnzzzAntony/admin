@@ -1,0 +1,15 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/permissions_menu.css' %}">
+<script src="{% static 'admin/js/permissions_menu.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+
+<!-- Hidden storage for raw selector -->
+<div id="permission-ui-helper" style="display:none;"></div>
+{% endblock %}
