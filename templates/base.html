@@ -879,6 +879,24 @@
                         {% endif %}
                     </li>
                     {% endfor %}
+
+                    {% if collections %}
+                    <li class="has-dropdown">
+                        <a href="javascript:void(0)">
+                            Collections <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
+                        </a>
+                        <ul class="dropdown-menu-custom">
+                            {% for col in collections %}
+                            <li>
+                                <a href="{% url 'products:collection_detail' slug=col.slug %}">
+                                    {{ col.name }}
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
                     {% if categories|length > 8 %}
                     <li>
                         <a href="{% url 'products:category_index' %}">Others <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i></a>

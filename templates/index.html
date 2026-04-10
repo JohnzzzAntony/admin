@@ -166,25 +166,6 @@
         </div>
     </section>
 
-    <!-- Dynamic Homepage Sections (Categories & Banners) -->
-    {% for section in homepage_sections %}
-        {% if section.type == 'category' %}
-            {% include "partials/_category_section.html" with section=section %}
-        {% elif section.type == 'banner' %}
-            {% include "partials/_banner_section.html" with section=section %}
-        {% endif %}
-
-        {# Place Milestones after exactly the 2nd dynamic section #}
-        {% if forloop.counter == 2 %}
-            {% include "partials/_milestones_section.html" %}
-        {% endif %}
-    {% endfor %}
-
-    {# Ensure Milestones show even if there are less than 2 dynamic sections #}
-    {% if homepage_sections|length < 2 %}
-         {% include "partials/_milestones_section.html" %}
-    {% endif %}
-
     <!-- Exclusive Collections Section -->
     {% if collections %}
     <section class="py-5 bg-white" id="collections">
@@ -221,7 +202,7 @@
                 {% if active_offers_products %}
                 <div class="tab-pane fade show active" id="content-offers" role="tabpanel">
                     <div class="row">
-                        {% for product in active_offers_products %}
+                        {% for product in active_offers_products|slice:":8" %}
                         {% with price_info=product.get_best_price_info %}
                         <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                             <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
@@ -270,7 +251,7 @@
                     {% endif %}
 
                     <div class="row">
-                        {% for product in col.products.all %}
+                        {% for product in col.products.all|slice:":8" %}
                         {% with price_info=product.get_best_price_info %}
                         <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                             <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
@@ -312,6 +293,25 @@
             </div>
         </div>
     </section>
+    {% endif %}
+
+    <!-- Dynamic Homepage Sections (Categories & Banners) -->
+    {% for section in homepage_sections %}
+        {% if section.type == 'category' %}
+            {% include "partials/_category_section.html" with section=section %}
+        {% elif section.type == 'banner' %}
+            {% include "partials/_banner_section.html" with section=section %}
+        {% endif %}
+
+        {# Place Milestones after exactly the 2nd dynamic section #}
+        {% if forloop.counter == 2 %}
+            {% include "partials/_milestones_section.html" %}
+        {% endif %}
+    {% endfor %}
+
+    {# Ensure Milestones show even if there are less than 2 dynamic sections #}
+    {% if homepage_sections|length < 2 %}
+         {% include "partials/_milestones_section.html" %}
     {% endif %}
 
     <!-- Best Seller Products Grid -->

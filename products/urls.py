@@ -21,6 +21,7 @@ urlpatterns = [
     path('wishlist/toggle/<int:product_id>/', views.toggle_wishlist, name='toggle_wishlist'),
     path('api/subcategories/<int:parent_id>/', views.get_subcategories, name='get_subcategories'),
     
+    path('collection/<slug:slug>/', views.collection_detail, name='collection_detail'),
     re_path(r'^id/(?P<pk>.*)/$', views.product_detail, name='product_detail'),
     path('<slug:slug>/', views.product_detail, name='product_detail'),
 ]

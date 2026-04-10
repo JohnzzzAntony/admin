@@ -3,7 +3,7 @@
 
 {% block content %}
 <section class="py-5 bg-light mt-5">
-    {% if current_category %}
+    {% if current_category or collection %}
     <div class="container-fluid mb-4">
         <div class="row px-xl-5">
             <div class="col-12">
@@ -11,21 +11,39 @@
                 <nav aria-label="breadcrumb" class="mb-3">
                     <ol class="breadcrumb bg-transparent p-0 mb-0">
                         <li class="breadcrumb-item"><a href="{% url 'products:category_index' %}" class="text-primary">All Categories</a></li>
-                        {% for anc in ancestors %}
-                            <li class="breadcrumb-item"><a href="{{ anc.get_absolute_url }}" class="text-primary">{{ anc.name }}</a></li>
-                        {% endfor %}
-                        <li class="breadcrumb-item active text-dark" aria-current="page">{{ current_category.name }}</li>
+                        {% if current_category %}
+                            {% for anc in ancestors %}
+                                <li class="breadcrumb-item"><a href="{{ anc.get_absolute_url }}" class="text-primary">{{ anc.name }}</a></li>
+                            {% endfor %}
+                            <li class="breadcrumb-item active text-dark" aria-current="page">{{ current_category.name }}</li>
+                        {% elif collection %}
+                            <li class="breadcrumb-item active text-dark" aria-current="page">{{ collection.name }} Collection</li>
+                        {% endif %}
                     </ol>
                 </nav>
 
                 <div class="category-banner position-relative rounded-3 overflow-hidden shadow-sm" style="height: 250px;">
-                    <img src="{{ current_category.get_image_url }}" alt="{{ current_category.name }}" class="w-100 h-100" style="object-fit: cover; filter: brightness(0.6);">
-                    <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white text-center px-3" style="top: 0; left: 0;">
-                        <h1 class="display-4 font-weight-bold mb-0 text-shadow">{{ current_category.name }}</h1>
-                        {% if current_category.description %}
-                        <p class="lead mt-2 text-shadow" style="max-width: 800px;">{{ current_category.description }}</p>
+                    {% if current_category %}
+                        <img src="{{ current_category.get_image_url }}" alt="{{ current_category.name }}" class="w-100 h-100" style="object-fit: cover; filter: brightness(0.6);">
+                        <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white text-center px-3" style="top: 0; left: 0;">
+                            <h1 class="display-4 font-weight-bold mb-0 text-shadow">{{ current_category.name }}</h1>
+                            {% if current_category.description %}
+                            <p class="lead mt-2 text-shadow" style="max-width: 800px;">{{ current_category.description }}</p>
+                            {% endif %}
+                        </div>
+                    {% elif collection %}
+                        {% if collection.banner %}
+                            <img src="{{ collection.banner.url }}" alt="{{ collection.name }}" class="w-100 h-100" style="object-fit: cover; filter: brightness(0.6);">
+                        {% elif collection.banner_url %}
+                            <img src="{{ collection.banner_url }}" alt="{{ collection.name }}" class="w-100 h-100" style="object-fit: cover; filter: brightness(0.6);">
+                        {% else %}
+                            <div class="w-100 h-100 bg-primary" style="opacity: 0.8;"></div>
                         {% endif %}
-                    </div>
+                        <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white text-center px-3" style="top: 0; left: 0;">
+                            <h1 class="display-4 font-weight-bold mb-0 text-shadow">{{ collection.name }}</h1>
+                            <p class="lead mt-2 text-shadow" style="max-width: 800px;">Exclusive Curated Collection</p>
+                        </div>
+                    {% endif %}
                 </div>
 
                 <!-- Subcategories Quick Nav -->

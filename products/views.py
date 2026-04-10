@@ -192,3 +192,28 @@ class CategoryViewSet(viewsets.ModelViewSet):
         """Handle children properly - logic is in on_delete=CASCADE in models.py"""
         return super().destroy(request, *args, **kwargs)
 
+from .models import Collection
+def collection_detail(request, slug):
+    """
+    Shows products belonging to a specific collection.
+    """
+    collection = get_object_or_404(Collection, slug=slug, is_active=True)
+    products = collection.products.filter(
+        is_active=True,
+        quantity__gt=0,
+        shipping_status='available'
+    ).select_related('category').prefetch_related(
+        'offers',
+        'images'
+    ).distinct().order_by('-id')
+    
+    # Root categories for sidebar
+    roots = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+
+    return render(request, 'products/product_list.html', {
+        'collection': collection, 
+        'products': products,
+        'categories': roots,
+        'title': collection.name
+    })
+
