@@ -47,8 +47,106 @@ class ProductAdmin(ImportExportModelAdmin):
     readonly_fields = ('preview', 'sku_id')
     inlines = [ProductImageInline]
 
+    def get_urls(self):
+        from django.urls import path
+        urls = super().get_urls()
+        custom_urls = [
+            path('download-demo-excel/', self.admin_site.admin_view(self.download_demo_excel), name='product-demo-excel'),
+            path('download-demo-csv/', self.admin_site.admin_view(self.download_demo_csv), name='product-demo-csv'),
+        ]
+        return custom_urls + urls
+
+    def _get_demo_dataset(self):
+        import tablib
+        resource = self.resource_class()
+        dataset = tablib.Dataset(headers=resource.get_export_headers())
+        
+        # Add sample row 1
+        dataset.append([
+            "", # id
+            "Medical Equipment", # category
+            "Sample Premium Stethoscope", # name
+            "sample-premium-stethoscope", # slug
+            "", # image
+            "https://res.cloudinary.com/demo/image/upload/sample.jpg", # image_url
+            "MED-STETH-001", # sku_id
+            10, # quantity
+            "pcs", # unit
+            550.00, # regular_price
+            495.00, # sale_price
+            "available", # shipping_status
+            True, # free_shipping
+            0.00, # additional_shipping_charge
+            "2-3 business days", # delivery_time
+            0.5, # weight
+            30, # length
+            15, # width
+            5, # height
+            "Professional grade stethoscope for cardiologists.", # features
+            "Superb acoustics; Dual-lumen tubing; Stainless steel chestpiece.", # overview
+            "Weight: 150g; Length: 69cm.", # technical_info
+            "", # brochure
+            "2024-01-01 10:00:00", # created_at
+            True, # show_on_homepage
+            True, # is_active
+            "Best Stethoscope UAE", # meta_title
+            "Buy the best medical stethoscope in Dubai with fast delivery.", # meta_description
+            "stethoscope, medical, cardiology, uae", # meta_keywords
+        ])
+        
+        # Add sample row 2
+        dataset.append([
+            "", # id
+            "Medical Consumables", # category
+            "Digital Blood Pressure Monitor", # name
+            "digital-bp-monitor", # slug
+            "", # image
+            "https://res.cloudinary.com/demo/image/upload/sample_bp.jpg", # image_url
+            "MED-BPM-002", # sku_id
+            5, # quantity
+            "set", # unit
+            320.00, # regular_price
+            280.00, # sale_price
+            "available", # shipping_status
+            False, # free_shipping
+            15.00, # additional_shipping_charge
+            "1-2 business days", # delivery_time
+            0.8, # weight
+            20, # length
+            20, # width
+            15, # height
+            "Automatic digital BP monitor with large display.", # overview
+            "One-touch operation; Irregular heartbeat detection; Memory for 2 users.", # features
+            "Accuracy: +/- 3mmHg.", # technical_info
+            "", # brochure
+            "2024-01-01 11:00:00", # created_at
+            True, # show_on_homepage
+            True, # is_active
+            "Digital BP Monitor Dubai", # meta_title
+            "Reliable blood pressure monitoring at home.", # meta_description
+            "bp monitor, blood pressure, health, uae", # meta_keywords
+        ])
+        return dataset
+
+    def download_demo_excel(self, request):
+        dataset = self._get_demo_dataset()
+        from django.http import HttpResponse
+        response = HttpResponse(dataset.export('xlsx'), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="product_import_demo.xlsx"'
+        return response
+
+    def download_demo_csv(self, request):
+        dataset = self._get_demo_dataset()
+        from django.http import HttpResponse
+        response = HttpResponse(dataset.export('csv'), content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="product_import_demo.csv"'
+        return response
+
     class Media:
-        js = ('admin/js/dynamic_categories.js',)
+        js = (
+            'admin/js/dynamic_categories.js',
+            'admin/js/admin_demo_buttons.js',
+        )
 
     def preview(self, obj):
         if obj.get_image_url:
