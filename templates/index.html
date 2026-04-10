@@ -167,60 +167,12 @@
     </section>
 
     <!-- Exclusive Collections Section -->
-    <!-- Latest Offers Section (Optional, if products exist) -->
-    {% if active_offers_products %}
-    <section class="py-5 bg-white" id="offers-collection">
-        <div class="container py-4">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Latest <span class="text-primary">Offers</span></h2>
-                <p class="lead text-muted mx-auto" style="max-width: 700px;">Exclusive deals on premium medical equipment and essential supplies.</p>
-            </div>
-
-            <div class="row">
-                {% for product in active_offers_products|slice:":4" %}
-                {% with price_info=product.get_best_price_info %}
-                <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
-                    <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
-                        <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
-                            <div class="position-relative">
-                                <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
-                                <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
-                                    {{ price_info.discount_display }}
-                                </span>
-                            </div>
-                            <div class="card-body p-4">
-                                <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem;">{{ product.category.name|upper }}</h6>
-                                <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ product.name }}</h5>
-                                
-                                <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
-                                    <div class="price">
-                                        <div class="d-flex flex-column">
-                                            <span class="h5 font-weight-bold mb-0 text-primary">{{ price_info.final_price }} AED</span>
-                                            <del class="small text-muted">{{ price_info.regular_price }} AED</del>
-                                        </div>
-                                    </div>
-                                    <span class="text-primary"><i class="fas fa-plus-circle fa-lg"></i></span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                {% endwith %}
-                {% endfor %}
-            </div>
-            <div class="text-center mt-5">
-                 <a href="{% url 'products:product_list' %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 50px;">View All Offers</a>
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
     <!-- Curated Collections Sections -->
     {% for col in collections %}
-    <section class="py-5 {% if forloop.counter|divisibleby:2 %}bg-light{% else %}bg-white{% endif %}" id="collection-{{ col.slug }}">
+    <section class="py-5 {% if forloop.counter|divisibleby:2 %}bg-white{% else %}bg-light{% endif %}" id="collection-{{ col.slug }}">
         <div class="container py-4">
             <div class="text-center mb-5">
-                <h2 class="section-title">{{ col.name|slice:":-10" }} <span class="text-primary">{{ col.name|slice:"-10:" }}</span></h2>
+                <h2 class="section-title text-capitalize">{{ col.name }}</h2>
                 <p class="lead text-muted mx-auto" style="max-width: 700px;">Handpicked selection from our {{ col.name }} range.</p>
             </div>
 
@@ -278,6 +230,54 @@
         </div>
     </section>
     {% endfor %}
+
+    <!-- Latest Offers Section (Optional, if products exist) -->
+    {% if active_offers_products %}
+    <section class="py-5 bg-white" id="offers-collection">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Latest <span class="text-primary">Offers</span></h2>
+                <p class="lead text-muted mx-auto" style="max-width: 700px;">Exclusive deals on premium medical equipment and essential supplies.</p>
+            </div>
+
+            <div class="row">
+                {% for product in active_offers_products|slice:":4" %}
+                {% with price_info=product.get_best_price_info %}
+                <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+                    <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
+                        <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
+                            <div class="position-relative">
+                                <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 220px; object-fit: contain; padding: 15px;">
+                                <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
+                                    {{ price_info.discount_display }}
+                                </span>
+                            </div>
+                            <div class="card-body p-4">
+                                <h6 class="text-primary font-weight-bold mb-1" style="font-size: 0.75rem;">{{ product.category.name|upper }}</h6>
+                                <h5 class="font-weight-bold mb-3" style="min-height: 3rem; font-size: 1.1rem; line-height: 1.4;">{{ product.name }}</h5>
+                                
+                                <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
+                                    <div class="price">
+                                        <div class="d-flex flex-column">
+                                            <span class="h5 font-weight-bold mb-0 text-primary">{{ price_info.final_price }} AED</span>
+                                            <del class="small text-muted">{{ price_info.regular_price }} AED</del>
+                                        </div>
+                                    </div>
+                                    <span class="text-primary"><i class="fas fa-plus-circle fa-lg"></i></span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endwith %}
+                {% endfor %}
+            </div>
+            <div class="text-center mt-5">
+                 <a href="{% url 'products:product_list' %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 50px;">View All Offers</a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
     <!-- Dynamic Homepage Sections (Categories & Banners) -->
     {% for section in homepage_sections %}
