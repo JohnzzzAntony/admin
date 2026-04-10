@@ -1,62 +1,239 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Login - Demo International{% endblock %}
-
 {% block content %}
-<div class="row justify-content-center py-5 mt-5">
-    <div class="col-md-5">
-        <div class="card shadow border-0 overflow-hidden" style="border-radius: 12px;">
-            <div class="card-header bg-dark text-white p-4">
-                <h3 class="mb-0 text-center font-weight-bold">Login to Your Account</h3>
-                <p class="text-center text-white-50 small mb-0 mt-2">Welcome back to Demo International</p>
-            </div>
-            <div class="card-body p-5">
-                <!-- Social Login Buttons -->
-                <div class="mb-4">
-                    <a href="{% url 'accounts:social_login' provider='google' %}" class="btn btn-outline-dark btn-block btn-lg d-flex align-items-center justify-content-center shadow-sm" style="border-radius: 8px; border-color: #ddd;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" height="20" class="mr-3">
-                        <span class="small font-weight-bold">Continue with Google</span>
-                    </a>
+<style>
+    :root {
+        --auth-dark: #2d333b;
+        --auth-gray: #f6f8fa;
+        --auth-border: #d0d7de;
+        --auth-orange: #ff6b00;
+        --auth-text-muted: #57606a;
+    }
+
+    .auth-page {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f0f2f5;
+        padding: 40px 20px;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 480px;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .auth-header {
+        background: var(--auth-dark);
+        color: white;
+        padding: 35px 30px;
+        text-align: center;
+    }
+
+    .auth-header h2 {
+        font-weight: 800;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+        color: #fff;
+    }
+
+    .auth-header p {
+        color: rgba(255,255,255,0.7);
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    .auth-body {
+        padding: 40px;
+    }
+
+    .btn-guest {
+        background: white;
+        border: 2px solid var(--auth-orange);
+        color: var(--auth-orange);
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 15px;
+        transition: all 0.2s;
+        text-align: center;
+        display: block;
+        width: 100%;
+        text-decoration: none;
+    }
+    
+    .btn-guest:hover {
+        background: var(--auth-orange);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-google {
+        background: white;
+        border: 1px solid var(--auth-border);
+        color: var(--auth-dark);
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 25px;
+        transition: all 0.2s;
+        width: 100%;
+        text-decoration: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .btn-google:hover {
+        background: #fcfcfc;
+        border-color: #888;
+        color: var(--auth-dark);
+        text-decoration: none;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 25px 0;
+        color: var(--auth-text-muted);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .divider::before, .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid var(--auth-border);
+    }
+
+    .divider:not(:empty)::before { margin-right: 15px; }
+    .divider:not(:empty)::after { margin-left: 15px; }
+
+    .form-group label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--auth-text-muted);
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        background: var(--auth-gray);
+        border: 1px solid transparent;
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-size: 1rem;
+        color: var(--auth-dark);
+        transition: all 0.2s;
+    }
+
+    .form-control-custom:focus {
+        background: white;
+        border-color: var(--auth-dark);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(45, 51, 59, 0.1);
+    }
+
+    .btn-login {
+        background: var(--auth-dark);
+        color: white;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 15px;
+        width: 100%;
+        border: none;
+        margin-top: 15px;
+        transition: all 0.2s;
+        font-size: 1.1rem;
+    }
+
+    .btn-login:hover {
+        background: #1a1e22;
+        transform: translateY(-1px);
+    }
+
+    .btn-create {
+        background: transparent;
+        border: 1px solid var(--auth-dark);
+        color: var(--auth-dark);
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 12px;
+        width: 100%;
+        text-align: center;
+        display: block;
+        text-decoration: none;
+        transition: all 0.2s;
+        margin-top: 10px;
+    }
+    
+    .btn-create:hover {
+        background: var(--auth-dark);
+        color: white;
+        text-decoration: none;
+    }
+
+    .auth-footer-text {
+        text-align: center;
+        color: var(--auth-text-muted);
+        font-size: 0.9rem;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+</style>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Login to Your Account</h2>
+            <p>Welcome back to Demo International</p>
+        </div>
+
+        <div class="auth-body">
+            <!-- Guest Login Button -->
+            <a href="{% url 'accounts:guest_checkout' %}?next={% if next %}{{ next }}{% else %}core:home{% endif %}" class="btn-guest">
+                Guest Login
+            </a>
+
+            <!-- Social Login -->
+            <a href="{% url 'accounts:social_login' provider='google' %}" class="btn-google">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" alt="Google">
+                Continue with Google
+            </a>
+
+            <div class="divider">OR LOGIN WITH EMAIL</div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group mb-4">
+                    <label>USERNAME</label>
+                    <input type="text" name="username" class="form-control-custom" placeholder="Enter username" required>
+                </div>
+                
+                <div class="form-group mb-4">
+                    <label>PASSWORD</label>
+                    <input type="password" name="password" class="form-control-custom" placeholder="Enter password" required>
                 </div>
 
-                <div class="position-relative my-4">
-                    <hr>
-                    <span class="position-absolute px-3 bg-white text-muted small" style="top: -12px; left: 50%; transform: translateX(-50%);">OR LOGIN WITH EMAIL</span>
-                </div>
+                <button type="submit" class="btn-login">Login</button>
+            </form>
 
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="form-group mb-4">
-                        <label class="text-muted small font-weight-bold">USERNAME</label>
-                        <input type="text" name="username" class="form-control form-control-lg border-light" placeholder="Enter username" style="background-color: #f8f9fa;">
-                    </div>
-                    <div class="form-group mb-4">
-                        <label class="text-muted small font-weight-bold">PASSWORD</label>
-                        <input type="password" name="password" class="form-control form-control-lg border-light" placeholder="Enter password" style="background-color: #f8f9fa;">
-                    </div>
-                    {% if next %}
-                        <input type="hidden" name="next" value="{{ next }}">
-                    {% endif %}
-                    <button type="submit" class="btn btn-dark btn-block btn-lg shadow-sm font-weight-bold" style="border-radius: 8px;">Login</button>
-                    
-                    <hr class="my-5">
-                    
-                    <div class="text-center mt-3">
-                        <p class="text-muted">Don't have an account?</p>
-                        <a href="{% url 'accounts:register' %}" class="btn btn-outline-dark btn-block btn-lg font-weight-bold" style="border-radius: 8px;">Create New Account</a>
-                    </div>
-                    
-                    {% if next and 'checkout' in next %}
-                    <div class="text-center mt-4">
-                        <div class="position-relative my-4">
-                            <hr>
-                            <span class="position-absolute px-3 bg-white text-muted small" style="top: -12px; left: 50%; transform: translateX(-50%);">OR</span>
-                        </div>
-                        <a href="{% url 'accounts:guest_checkout' %}?next={{ next }}" class="btn btn-link text-dark font-weight-bold">Continue as Guest</a>
-                    </div>
-                    {% endif %}
-                </form>
+            <div class="auth-footer-text">
+                <p class="mb-2">Don't have an account?</p>
+                <a href="{% url 'accounts:register' %}" class="btn-create">Create New Account</a>
             </div>
         </div>
     </div>
