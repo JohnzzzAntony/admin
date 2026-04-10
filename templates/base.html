@@ -880,23 +880,6 @@
                     </li>
                     {% endfor %}
 
-                    {% if collections %}
-                    <li class="has-dropdown">
-                        <a href="javascript:void(0)">
-                            Collections <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
-                        </a>
-                        <ul class="dropdown-menu-custom">
-                            {% for col in collections %}
-                            <li>
-                                <a href="{% url 'products:collection_detail' slug=col.slug %}">
-                                    {{ col.name }}
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                    {% endif %}
                     {% if categories|length > 8 %}
                     <li>
                         <a href="{% url 'products:category_index' %}">Others <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i></a>
@@ -1019,6 +1002,15 @@
                 <li><a href="{% url 'core:services' %}"><i class="fas fa-tools"></i> Our Services</a></li>
                 <li><a href="{% url 'contact:contact' %}"><i class="fas fa-envelope"></i> Contact Us</a></li>
             </ul>
+
+            {% if collections %}
+            <div class="menu-title">Curated Collections</div>
+            <ul>
+                {% for col in collections %}
+                <li><a href="{% url 'products:collection_detail' slug=col.slug %}"><i class="fas fa-star" style="font-size: 0.7rem;"></i> {{ col.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
             
             <div class="menu-title">Product Categories</div>
             <ul>
