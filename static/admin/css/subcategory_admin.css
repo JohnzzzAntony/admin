@@ -1,53 +1,61 @@
-
 /* Professional Subcategory Inline Alignment */
 
+.inline-group .tabular fieldset.module {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
 .inline-group .tabular fieldset.module table thead th {
-    padding: 12px 10px !important;
-    font-weight: 600;
-    color: #334155;
-    background: #f8fafc;
-    border-bottom: 2px solid #e2e8f0;
-    text-align: left;
+    padding: 15px 12px !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+    background: #f1f5f9 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.025em;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-/* Fix for the Eye Icon column (original_link) */
+/* Row Styling */
+.inline-group .tabular table tr.form-row {
+    transition: background 0.2s ease;
+}
+
+.inline-group .tabular table tr.form-row:hover {
+    background-color: #f8fafc !important;
+}
+
+.inline-group .tabular table td {
+    padding: 12px !important;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle !important;
+}
+
+/* Fix for the Eye Icon column */
 .inline-group .tabular table td.original {
-    width: 40px;
-    padding-top: 20px !important;
-}
-
-/* Adjust column widths */
-.inline-group .tabular table td.field-name input {
-    width: 250px !important;
-    min-width: 200px;
-}
-
-.inline-group .tabular table td.field-slug input {
-    width: 200px !important;
-    min-width: 150px;
-}
-
-.inline-group .tabular table td.field-show_on_homepage {
-    width: 150px !important;
-    text-align: center;
-}
-
-.inline-group .tabular table td.field-homepage_order input {
-    width: 80px !important;
-    text-align: center;
-}
-
-/* Responsive fix for Jazzmin horizontal scroll */
-.inline-group .tabular .module {
-    overflow-x: auto !important;
-}
-
-.inline-group .tabular table {
-    width: 100% !important;
+    width: 60px;
 }
 
 /* Align headers with content */
-.inline-group .tabular table thead th.column-name { width: 250px; }
-.inline-group .tabular table thead th.column-slug { width: 200px; }
-.inline-group .tabular table thead th.column-show_on_homepage { width: 150px; }
-.inline-group .tabular table thead th.column-homepage_order { width: 80px; }
+.inline-group .tabular table thead th.column-name { min-width: 250px; }
+.inline-group .tabular table thead th.column-slug { min-width: 200px; }
+.inline-group .tabular table thead th.column-show_on_homepage { min-width: 150px; text-align: center; }
+.inline-group .tabular table thead th.column-homepage_order { min-width: 100px; text-align: center; }
+
+/* Input Styling */
+.inline-group .tabular table td input[type="text"],
+.inline-group .tabular table td input[type="number"] {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.inline-group .tabular table td input:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    outline: none !important;
+}
