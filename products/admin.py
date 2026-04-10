@@ -156,6 +156,11 @@ class CategoryAdmin(ImportExportModelAdmin):
         "show_on_homepage": admin.HORIZONTAL,
     }
 
+    class Media:
+        css = {
+            'all': ('admin/css/subcategory_admin.css',)
+        }
+
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
     list_display = ('name', 'offer_type', 'discount_value', 'start_date', 'end_date')
