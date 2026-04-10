@@ -159,13 +159,44 @@
                 }
             }
 
-            // ── 4. True-Instant Removal (No Confirmation, Minimal UI) ────────────
+            // ── 4. True-Instant Removal (Universal for all Inlines) ────────────
             function initInstantRemoval() {
+                // A. Handle standard Delete checkboxes in Tabular Inlines
+                document.querySelectorAll('.inline-group .tabular td.delete').forEach(td => {
+                    if (td.querySelector('.btn-inline-remove')) return;
+                    
+                    const checkbox = td.querySelector('input[type="checkbox"]');
+                    if (!checkbox) return;
+                    
+                    checkbox.style.display = 'none'; // Hide ugly checkbox
+                    
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn-inline-remove';
+                    btn.innerHTML = '<span>Remove</span><div class="x-circle">×</div>';
+                    
+                    btn.onclick = function() {
+                        const row = td.closest('tr');
+                        row.style.transition = 'all 0.3s ease';
+                        row.style.transform = 'translateX(20px)';
+                        row.style.opacity = '0';
+                        checkbox.checked = true; // Mark for deletion on save
+                        setTimeout(() => row.style.display = 'none', 300);
+                    };
+                    
+                    td.appendChild(btn);
+                    
+                    // Hide the text "Delete" if present
+                    td.childNodes.forEach(n => {
+                        if (n.nodeType === Node.TEXT_NODE && n.textContent.trim()) n.textContent = '';
+                    });
+                });
+
+                // B. Handle Media/Files (Instant API Deletion)
                 document.querySelectorAll('.file-upload, .custom-file, .clearable-file-input').forEach(container => {
                     if (container.querySelector('.btn-simple-remove')) return;
 
                     // 1. Clean up labels and text nodes ("Change:", "Clear")
-                    // Handle both text nodes and span labels
                     const labelsToHide = ['Change:', 'Clear'];
                     container.childNodes.forEach(node => {
                         if (node.nodeType === Node.TEXT_NODE) {
@@ -238,12 +269,53 @@
 
             // Run on load and on dynamic additions
             initInstantRemoval();
+            $(document).on('formset:added', function() {
+                setTimeout(initInstantRemoval, 100);
+            });
             document.addEventListener('click', function(e) {
                 if (e.target.closest('.add-row')) setTimeout(initInstantRemoval, 300);
             });
         });
     </script>
     <style>
+        /* Premium Removal Button Styling */
+        .btn-inline-remove {
+            display: inline-flex;
+            align-items: center;
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 50px;
+            padding: 4px 6px 4px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #e53e3e;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .btn-inline-remove:hover {
+            background: #feb2b2;
+            border-color: #fc8181;
+            color: #fff;
+        }
+        .btn-inline-remove .x-circle {
+            background: #f56565;
+            color: #fff;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            font-size: 14px;
+            line-height: 1;
+        }
+        .btn-inline-remove:hover .x-circle {
+             background: #c53030;
+        }
+
         #branding h1 { display: flex; align-items: center; }
         #branding h1::before { content: '🏬'; margin-right: 15px; font-size: 1.8rem; }
         #site-name a { font-family: 'Outfit', sans-serif; font-weight: 700; letter-spacing: -0.5px; }
