@@ -43,6 +43,34 @@
 .inline-group .tabular table thead th.column-slug { min-width: 200px; }
 .inline-group .tabular table thead th.column-show_on_homepage { min-width: 150px; text-align: center; }
 .inline-group .tabular table thead th.column-homepage_order { min-width: 100px; text-align: center; }
+/* Fix for Jazzmin/Admin Premium Flex Conflict */
+.inline-group .tabular table tr.form-row {
+    display: table-row !important; /* Restore standard table behavior */
+}
+
+.inline-group .tabular table thead {
+    display: table-header-group !important;
+}
+
+.inline-group .tabular table tbody {
+    display: table-row-group !important;
+}
+
+.inline-group .tabular table td, 
+.inline-group .tabular table th {
+    display: table-cell !important;
+    text-align: left !important;
+    vertical-align: middle !important;
+}
+
+/* Align headers with content */
+.inline-group .tabular table thead th.column-name { min-width: 250px; width: 250px; }
+.inline-group .tabular table thead th.column-slug { min-width: 200px; width: 200px; }
+.inline-group .tabular table thead th.column-show_on_homepage { min-width: 150px; width: 150px; text-align: center !important; }
+.inline-group .tabular table thead th.column-homepage_order { min-width: 100px; width: 100px; text-align: center !important; }
+
+.inline-group .tabular table td.field-name input { width: 100% !important; }
+.inline-group .tabular table td.field-slug input { width: 100% !important; }
 
 /* Input Styling */
 .inline-group .tabular table td input[type="text"],
@@ -52,6 +80,7 @@
     padding: 8px 12px !important;
     transition: all 0.2s;
     font-size: 0.9rem;
+    height: 38px !important;
 }
 
 .inline-group .tabular table td input:focus {
