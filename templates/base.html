@@ -996,29 +996,44 @@
         <div class="side-menu-body">
             <div class="menu-title">Main Navigation</div>
             <ul>
-                <li><a href="{% url 'core:home' %}"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="{% url 'core:about_us' %}"><i class="fas fa-info-circle"></i> About Us</a></li>
-                <li><a href="{% url 'products:category_index' %}"><i class="fas fa-th-large"></i> Categories</a></li>
-                <li><a href="{% url 'core:services' %}"><i class="fas fa-tools"></i> Our Services</a></li>
-                <li><a href="{% url 'contact:contact' %}"><i class="fas fa-envelope"></i> Contact Us</a></li>
-            </ul>
+                <li><a href="{% url 'core:home' %}"><i class="fas fa-home"></i> Shop All Product</a></li>
+                
+                {% if collections %}
+                <li class="has-submenu">
+                    <a href="javascript:void(0)" class="submenu-toggle d-flex align-items-center justify-content-between">
+                        <span><i class="fas fa-info-circle mr-2"></i> Collections</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <ul class="submenu pl-4" style="display: none; list-style: none;">
+                        {% for col in collections %}
+                        <li><a href="{% url 'products:collection_detail' slug=col.slug %}" class="py-2 d-block small">{{ col.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% endif %}
 
-            {% if collections %}
-            <div class="menu-title">Curated Collections</div>
-            <ul>
-                {% for col in collections %}
-                <li><a href="{% url 'products:collection_detail' slug=col.slug %}"><i class="fas fa-star" style="font-size: 0.7rem;"></i> {{ col.name }}</a></li>
-                {% endfor %}
+                <li>
+                    <a href="javascript:void(0)" class="submenu-toggle d-flex align-items-center justify-content-between">
+                        <span><i class="fas fa-th-large mr-2"></i> All Categories</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <ul class="submenu pl-4" style="display: none; list-style: none;">
+                        {% for cat in categories|slice:":8" %}
+                        <li><a href="{% url 'products:category_detail' slug=cat.slug %}" class="py-2 d-block small">{{ cat.name }}</a></li>
+                        {% endfor %}
+                        <li><a href="{% url 'products:category_index' %}" class="py-2 d-block small font-weight-bold">View All Categories</a></li>
+                    </ul>
+                </li>
             </ul>
-            {% endif %}
             
-            <div class="menu-title">Product Categories</div>
+            <div class="menu-title">Product Categories Catalog</div>
             <ul>
                 {% for cat in categories|slice:":12" %}
                 <li><a href="{% url 'products:category_detail' slug=cat.slug %}"><i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i> {{ cat.name }}</a></li>
                 {% endfor %}
             </ul>
-            <div class="menu-title">Account</div>
+
+            <div class="menu-title">Account & Support</div>
             <ul>
                 {% if user.is_authenticated %}
                 <li><a href="#"><i class="fas fa-user-circle"></i> My Profile</a></li>
@@ -1026,8 +1041,8 @@
                 <li><a href="{% url 'accounts:logout' %}" class="text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 {% else %}
                 <li><a href="{% url 'accounts:login' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                <li><a href="{% url 'accounts:register' %}"><i class="fas fa-user-plus"></i> Register</a></li>
                 {% endif %}
+                <li><a href="{% url 'contact:contact' %}"><i class="fas fa-envelope"></i> Contact Us</a></li>
             </ul>
         </div>
     </div>
@@ -1123,6 +1138,24 @@
                 sideClose.addEventListener('click', closeMenu);
                 sideOverlay.addEventListener('click', closeMenu);
             }
+
+            // Submenu Toggle Logic
+            const submenuToggles = document.querySelectorAll('.submenu-toggle');
+            submenuToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const submenu = this.nextElementSibling;
+                    const icon = this.querySelector('.fa-chevron-down');
+                    
+                    if (submenu.style.display === 'block') {
+                        submenu.style.display = 'none';
+                        if (icon) icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        submenu.style.display = 'block';
+                        if (icon) icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
             
             // Announcement Swiper
             const announcementSwiper = new Swiper('#announcement-bar-swiper', {
