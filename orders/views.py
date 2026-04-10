@@ -128,6 +128,15 @@ def checkout_billing(request):
             'city':       request.POST.get('city', ''),
             'street':     request.POST.get('street', ''),
             'comment':    request.POST.get('comment', ''),
+            'trn':        request.POST.get('trn', ''),
+            'billing_same': request.POST.get('billing_address_same_as_shipping') == 'on',
+            'b_first_name': request.POST.get('billing_first_name', ''),
+            'b_last_name':  request.POST.get('billing_last_name', ''),
+            'b_email':      request.POST.get('billing_email', ''),
+            'b_phone':      request.POST.get('billing_phone', ''),
+            'b_country':    request.POST.get('billing_country', ''),
+            'b_city':       request.POST.get('billing_city', ''),
+            'b_street':     request.POST.get('billing_street', ''),
         }
         request.session['checkout_billing'] = billing
         return redirect('orders:checkout_payment')
@@ -167,6 +176,8 @@ def checkout_payment(request):
             order = CustomerOrder.objects.create(
                 user=request.user if request.user.is_authenticated else None,
                 is_guest=not request.user.is_authenticated,
+                
+                # Shipping
                 first_name=billing.get('first_name', ''),
                 last_name=billing.get('last_name', ''),
                 email=billing.get('email', ''),
@@ -176,6 +187,18 @@ def checkout_payment(request):
                 city=billing.get('city', ''),
                 street=billing.get('street', ''),
                 comment=billing.get('comment', ''),
+                
+                # TRN & Billing
+                trn=billing.get('trn'),
+                billing_address_same_as_shipping=billing.get('billing_same', True),
+                billing_first_name=billing.get('b_first_name', ''),
+                billing_last_name=billing.get('b_last_name', ''),
+                billing_email=billing.get('b_email', ''),
+                billing_phone=billing.get('b_phone', ''),
+                billing_country=billing.get('b_country', ''),
+                billing_city=billing.get('b_city', ''),
+                billing_street=billing.get('b_street', ''),
+
                 payment_method=payment_method,
                 status='pending',
                 payment_status='pending',

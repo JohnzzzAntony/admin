@@ -31,7 +31,7 @@
                 <div class="card border-0 shadow-sm rounded-lg">
                     <div class="card-body p-4 p-md-5">
                         <h4 class="font-weight-bold mb-4" style="color:var(--primary-blue);">
-                            <i class="fas fa-map-marker-alt mr-2"></i>Billing Address
+                            <i class="fas fa-truck mr-2"></i>Shipping Address
                         </h4>
                         <form method="POST" action="{% url 'orders:checkout_billing' %}">
                             {% csrf_token %}
@@ -59,11 +59,6 @@
                                            placeholder="+971..." value="{{ form_data.phone|default:'' }}" required>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold small">Company / Department</label>
-                                <input type="text" name="department" class="form-control rounded-pill px-4 py-3"
-                                       value="{{ form_data.department|default:'' }}">
-                            </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label class="font-weight-bold small">Country *</label>
@@ -81,12 +76,71 @@
                                 <input type="text" name="street" class="form-control rounded-pill px-4 py-3"
                                        value="{{ form_data.street|default:'' }}">
                             </div>
+
+                            <hr class="my-4">
+
                             <div class="form-group">
+                                <label class="font-weight-bold small">TRN (Tax Registration Number) - <span class="text-muted">Optional</span></label>
+                                <input type="text" name="trn" class="form-control rounded-pill px-4 py-3"
+                                       placeholder="Enter 15-digit TRN" value="{{ form_data.trn|default:'' }}" maxlength="15">
+                            </div>
+
+                            <div class="form-group mt-4 mb-4">
+                                <div class="custom-control custom-checkbox custom-control-primary">
+                                    <input type="checkbox" class="custom-control-input" id="billing_same" name="billing_address_same_as_shipping" 
+                                           {% if form_data.billing_same is not False %}checked{% endif %}>
+                                    <label class="custom-control-label small font-weight-bold text-dark" for="billing_same" style="cursor:pointer;">
+                                        Billing Address is same as Shipping Address
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="billing-section" style="display: {% if form_data.billing_same is False %}block{% else %}none{% endif %};" class="bg-white p-3 rounded-lg border">
+                                <h5 class="font-weight-bold mb-4" style="color:var(--primary-blue); font-size:1rem;">
+                                    <i class="fas fa-receipt mr-2 text-warning"></i>Separate Billing Address
+                                </h5>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold small">Billing First Name *</label>
+                                        <input type="text" name="billing_first_name" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_first_name|default:'' }}">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold small">Billing Last Name *</label>
+                                        <input type="text" name="billing_last_name" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_last_name|default:'' }}">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold small">Billing Email *</label>
+                                        <input type="email" name="billing_email" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_email|default:'' }}">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold small">Billing Phone *</label>
+                                        <input type="tel" name="billing_phone" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_phone|default:'' }}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="font-weight-bold small">Billing Street Address</label>
+                                    <input type="text" name="billing_street" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_street|default:'' }}">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold small">Billing Country</label>
+                                        <input type="text" name="billing_country" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_country|default:'UAE' }}">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="font-weight-bold small">Billing City</label>
+                                        <input type="text" name="billing_city" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_city|default:'' }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-4">
                                 <label class="font-weight-bold small">Order Notes (Optional)</label>
                                 <textarea name="comment" class="form-control px-4 py-3" rows="3"
                                           style="border-radius:15px;">{{ form_data.comment|default:'' }}</textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block py-3 mt-2 font-weight-bold shadow"
+                            <button type="submit" class="btn btn-primary btn-block py-3 mt-4 font-weight-bold shadow"
                                     style="border-radius:30px;background:var(--accent-blue);font-size:1.05rem;">
                                 Continue to Payment <i class="fas fa-arrow-right ml-2"></i>
                             </button>
@@ -141,6 +195,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const grandTotal = parseFloat("{{ grand_total|default:0 }}");
     const el = document.getElementById('billing-total');
     if(el) el.textContent = grandTotal.toFixed(2) + ' AED';
+
+    const billingToggle = document.getElementById('billing_same');
+    const billingSection = document.getElementById('billing-section');
+
+    if (billingToggle && billingSection) {
+        billingToggle.addEventListener('change', function() {
+            if (this.checked) {
+                billingSection.style.display = 'none';
+            } else {
+                billingSection.style.display = 'block';
+            }
+        });
+    }
 });
 </script>
 {% endblock %}

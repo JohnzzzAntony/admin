@@ -96,6 +96,8 @@ class CustomerOrder(models.Model):
     # ── Billing / Customer ──────────────────────────────────────────────────
     user        = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     is_guest    = models.BooleanField(default=False)
+    
+    # Shipping Address (Primary)
     first_name  = models.CharField(max_length=100)
     last_name   = models.CharField(max_length=100)
     email       = models.EmailField()
@@ -105,6 +107,25 @@ class CustomerOrder(models.Model):
     city        = models.CharField(max_length=100)
     street      = models.CharField(max_length=255, blank=True)
     comment     = models.TextField(blank=True, verbose_name="Customer Notes")
+
+    # TRN (Tax Registration Number)
+    trn = models.CharField(
+        max_length=15, 
+        blank=True, 
+        null=True, 
+        verbose_name="TRN Number", 
+        help_text="UAE TRN (exactly 15 digits)"
+    )
+
+    # Billing Address (Separate)
+    billing_address_same_as_shipping = models.BooleanField(default=True)
+    billing_first_name = models.CharField(max_length=100, blank=True)
+    billing_last_name = models.CharField(max_length=100, blank=True)
+    billing_email = models.EmailField(blank=True)
+    billing_phone = models.CharField(max_length=50, blank=True)
+    billing_country = models.CharField(max_length=100, blank=True)
+    billing_city = models.CharField(max_length=100, blank=True)
+    billing_street = models.CharField(max_length=255, blank=True)
 
     # ── Payment ─────────────────────────────────────────────────────────────
     payment_method  = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default='cod')

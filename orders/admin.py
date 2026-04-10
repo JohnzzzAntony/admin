@@ -2,9 +2,17 @@ from django.contrib import admin, messages
 from django.utils.html import mark_safe, format_html
 from django.conf import settings
 from django.db.models import Q
-from django.conf import settings
 from .models import CustomerOrder, CustomerOrderItem, OrderStatusHistory
-
+from import_export import resources, fields
+from import_export.admin import ImportExportModelAdmin
+from import_export.widgets import ForeignKeyWidget
+from django.http import HttpResponse
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import landscape, A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+from django.utils import timezone
+from datetime import timedelta
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -77,10 +85,6 @@ class OrderStatusHistoryInline(admin.TabularInline):
     
     def status_badge(self, obj):
         color = ORDER_STATUS_COLORS.get(obj.status, '#888')
-        # We need a proper way to get the display name.
-        # Since 'status' is a field in OrderStatusHistory, we can use the main model's choices.
-        # But here 'status' is just a CharField.
-        # Let's map it back or just use the badge helper.
         label = dict(CustomerOrder.ORDER_STATUS_CHOICES).get(obj.status, obj.status)
         return _badge(label, color)
     status_badge.short_description = "Status"
@@ -89,12 +93,7 @@ class OrderStatusHistoryInline(admin.TabularInline):
         return False
 
 
-
-
 # ─── Custom Filters ───────────────────────────────────────────────────────────
-
-from django.utils import timezone
-from datetime import timedelta
 
 class CreatedAtRangeFilter(admin.SimpleListFilter):
     title = 'date ordered'
@@ -126,21 +125,8 @@ class CreatedAtRangeFilter(admin.SimpleListFilter):
             return queryset.filter(created_at__date__gte=now - timedelta(days=30))
         if val == 'this_month':
             return queryset.filter(created_at__year=now.year, created_at__month=now.month)
-        
-        # 'custom' logic is handled by setting the fields in JS
-        # Django handles the 'created_at__gte' and 'created_at__lte' params automatically 
-        # in the URL if they are set correctly.
         return queryset
 
-
-from import_export import resources, fields
-from import_export.admin import ImportExportModelAdmin
-from import_export.widgets import ForeignKeyWidget
-from django.http import HttpResponse
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import landscape, A4
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
 
 # ─── Export Resource ──────────────────────────────────────────────────────────
 
@@ -152,6 +138,7 @@ class CustomerOrderResource(resources.ModelResource):
     full_name = fields.Field(column_name='Customer Name')
     email = fields.Field(attribute='email', column_name='Email')
     phone = fields.Field(attribute='phone', column_name='Phone')
+    trn = fields.Field(attribute='trn', column_name='TRN')
     payment_method_display = fields.Field(column_name='Payment Method')
     payment_status_display = fields.Field(column_name='Payment Status')
     order_status_display = fields.Field(column_name='Order Status')
@@ -161,13 +148,13 @@ class CustomerOrderResource(resources.ModelResource):
 
     class Meta:
         model = CustomerOrder
-        fields = () # Only use defined fields
-        export_order = (
+        fields = (
             'order_number', 'user_name', 'guest_flag', 'loyalty_tag', 
-            'full_name', 'email', 'phone', 'payment_method_display', 
+            'full_name', 'email', 'phone', 'trn', 'payment_method_display', 
             'payment_status_display', 'order_status_display', 
             'items_summary', 'total_with_currency', 'date_created'
         )
+        export_order = fields
 
     def dehydrate_order_number(self, obj):
         return f"#Demo-{obj.pk:05d}"
@@ -207,15 +194,15 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
     
     list_display  = (
         'order_number', 
-        'user',               # ← Added User connection
-        'is_guest',           # ← Added Guest flag
-        'customer_tag',       # ← Added Customer Tag Badge
+        'user', 
+        'is_guest', 
+        'customer_tag',
         'customer_name', 
         'email', 
         'phone',
         'payment_method_badge', 
         'payment_status_badge',
-        'status',              # This is the editable dropdown (colored via JS/CSS)
+        'status',
         'items_count', 
         'total_display',
         'created_at',
@@ -234,10 +221,27 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         'items_total_display',
         'customer_order_tag', 
         'resend_notification_button',
+        'print_invoice_buttons',
     )
     inlines = [CustomerOrderItemInline, OrderStatusHistoryInline]
 
-    # ── Customer Tag helpers ─────────────────────────────────────────────────
+    # ── Custom Methods ───────────────────────────────────────────────────────
+
+    def print_invoice_buttons(self, obj):
+        if not obj.pk: return "-"
+        from django.urls import reverse
+        print_url = reverse('admin:order-print', args=[obj.pk])
+        invoice_url = reverse('admin:order-invoice', args=[obj.pk])
+        return format_html(
+            '<div style="display:flex; gap:12px;">'
+            '<a class="button btn-warning" href="{}" target="_blank" style="background:#ea580c; color:white; padding:10px 25px; font-weight:700; border-radius:12px; transition:0.2s;">'
+            '<i class="fas fa-print"></i> Order Print</a>'
+            '<a class="button btn-primary" href="{}" target="_blank" style="background:#2563eb; color:white; padding:10px 25px; font-weight:700; border-radius:12px; transition:0.2s;">'
+            '<i class="fas fa-file-invoice"></i> Order Invoice</a>'
+            '</div>',
+            print_url, invoice_url
+        )
+    print_invoice_buttons.short_description = "Order Documents"
 
     def customer_tag(self, obj):
         rank = get_order_rank(obj)
@@ -251,15 +255,11 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         label = "First Time Order" if rank == 1 else f"Returning Customer (Order #{rank})"
         badge = self.customer_tag(obj)
         return format_html('{} <span style="margin-left:10px;font-size:13px;color:#666;">{}</span>', badge, label)
-
     customer_order_tag.short_description = "Loyalty Status"
-
-    # ── List display helpers ─────────────────────────────────────────────────
 
     def order_number(self, obj):
         if not obj.pk: return "#NEW"
         return format_html('<strong>#Demo-{}</strong>', f"{obj.pk:05d}")
-
     order_number.short_description = "Order #"
     order_number.admin_order_field = 'id'
 
@@ -271,7 +271,6 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         icon = PAYMENT_METHOD_ICONS.get(obj.payment_method, '💳')
         label = obj.get_payment_method_display()
         return format_html('<span style="font-size:13px;">{} {}</span>', icon, label)
-
     payment_method_badge.short_description = "Payment"
 
     def payment_status_badge(self, obj):
@@ -279,18 +278,12 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         return _badge(obj.get_payment_status_display(), color)
     payment_status_badge.short_description = "Payment Status"
 
-    def order_status_badge(self, obj):
-        color = ORDER_STATUS_COLORS.get(obj.status, '#888')
-        return _badge(obj.get_status_display(), color)
-    order_status_badge.short_description = "Order Status"
-
     def items_count(self, obj):
         return obj.items.count()
     items_count.short_description = "Items"
 
     def total_display(self, obj):
         return format_html('<strong>{} {}</strong>', obj.total_amount, settings.CURRENCY)
-
     total_display.short_description = "Total"
 
     def resend_notification_button(self, obj):
@@ -304,29 +297,7 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
             '</div>',
             url
         )
-
     resend_notification_button.short_description = "Notifications"
-
-    def get_urls(self):
-        from django.urls import path
-        urls = super().get_urls()
-        custom_urls = [
-            path('<int:order_id>/resend-notification/', 
-                 self.admin_site.admin_view(self.resend_notification), 
-                 name='resend-notification'),
-            path('ajax/get-product-price/',
-                 self.admin_site.admin_view(self.get_product_price),
-                 name='ajax-get-product-price'),
-        ]
-        return custom_urls + urls
-
-    def resend_notification(self, request, order_id):
-        from .notifications import send_customer_notification
-        from django.shortcuts import get_object_or_404, redirect
-        order = get_object_or_404(CustomerOrder, pk=order_id)
-        send_customer_notification(order, is_automated=False)
-        self.message_user(request, f"Notifications have been successfully resent for Order #Demo-{order_id:05d}.")
-        return redirect('admin:orders_customerorder_change', order_id)
 
     def get_product_price(self, request):
         from django.http import JsonResponse
@@ -334,23 +305,18 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         product_id = request.GET.get('product_id')
         if not product_id:
             return JsonResponse({'error': 'No product_id provided'}, status=400)
-        
         try:
             product = Product.objects.get(id=product_id)
             price_info = product.get_best_price_info()
-            
-            sku = product.skus.first()
             shipping_charge = 0
-            if sku:
+            if product.skus.exists():
+                sku = product.skus.first()
                 shipping_charge = 0 if sku.free_shipping else (sku.additional_shipping_charge or 0)
-
             return JsonResponse({
                 'unit_price': float(price_info['final_price']),
                 'shipping_charge': float(shipping_charge),
                 'product_name': product.name
             })
-        except Product.DoesNotExist:
-            return JsonResponse({'error': 'Product not found'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
@@ -389,14 +355,46 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
             obj.shipping_amount, settings.CURRENCY,
             obj.total_amount, settings.CURRENCY
         )
-
     items_total_display.short_description = "Detailed Summary"
+
+    def get_urls(self):
+        from django.urls import path
+        urls = super().get_urls()
+        custom_urls = [
+            path('<int:order_id>/resend-notification/', self.admin_site.admin_view(self.resend_notification), name='resend-notification'),
+            path('<int:order_id>/print/', self.admin_site.admin_view(self.print_order), name='order-print'),
+            path('<int:order_id>/invoice/', self.admin_site.admin_view(self.generate_invoice), name='order-invoice'),
+            path('ajax/get-product-price/', self.admin_site.admin_view(self.get_product_price), name='ajax-get-product-price'),
+        ]
+        return custom_urls + urls
+
+    def resend_notification(self, request, order_id):
+        from .notifications import send_customer_notification
+        from django.shortcuts import get_object_or_404, redirect
+        order = get_object_or_404(CustomerOrder, pk=order_id)
+        send_customer_notification(order, is_automated=False)
+        self.message_user(request, f"Notifications have been successfully resent for Order #Demo-{order_id:05d}.")
+        return redirect('admin:orders_customerorder_change', order_id)
+
+    def print_order(self, request, order_id):
+        from django.shortcuts import get_object_or_404, render
+        order = get_object_or_404(CustomerOrder, pk=order_id)
+        return render(request, 'admin/orders/print_order.html', {'order': order, 'site_name': settings.DEMO_SITE_NAME if hasattr(settings, 'DEMO_SITE_NAME') else "Demo International"})
+
+    def generate_invoice(self, request, order_id):
+        from django.shortcuts import get_object_or_404
+        from .utils import create_invoice_pdf
+        order = get_object_or_404(CustomerOrder, pk=order_id)
+        return create_invoice_pdf(order)
 
     # ── Fieldsets ────────────────────────────────────────────────────────────
 
     fieldsets = (
         ('Order Identification', {
-            'fields': (('order_number', 'customer_order_tag'),),
+            'fields': (('order_number', 'customer_order_tag', 'trn'),),
+        }),
+        ('Documents', {
+            'fields': ('print_invoice_buttons',),
         }),
         ('Customer Details', {
             'fields': (
@@ -410,6 +408,16 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
                 ('country', 'city'),
                 'street',
                 'comment',
+            ),
+        }),
+        ('Billing Address', {
+            'classes': ('collapse',),
+            'fields': (
+                'billing_address_same_as_shipping',
+                ('billing_first_name', 'billing_last_name'),
+                ('billing_email', 'billing_phone'),
+                ('billing_country', 'billing_city'),
+                'billing_street',
             ),
         }),
         ('Payment & Financials', {
@@ -437,35 +445,20 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
 
     @admin.action(description="Export Selected Orders as PDF")
     def export_as_pdf(self, request, queryset):
-        """
-        Custom action to export filtered/selected orders to a professional PDF table.
-        Uses reportlab for high-quality production output.
-        """
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="orders_export_{timezone.now().strftime("%Y%m%d")}.pdf"'
-
-        # Create the PDF document with landscape A4
         doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
         elements = []
-        
         styles = getSampleStyleSheet()
-        title = Paragraph(f"Customer Orders Export — {timezone.now().strftime('%Y-%m-%d')}", styles['Title'])
-        elements.append(title)
+        elements.append(Paragraph(f"Customer Orders Export — {timezone.now().strftime('%Y-%m-%d')}", styles['Title']))
         elements.append(Paragraph("<br/>", styles['Normal']))
-
-        # Table Header
-        data = [[
-            'Order #', 'Loyalty', 'Customer', 'Email', 
-            'Pay Method', 'Pay Status', 'Order Status', 'Items', 'Total', 'Date'
-        ]]
-
-        # Table Body
+        data = [['Order #', 'Loyalty', 'Customer', 'Email', 'Pay Method', 'Pay Status', 'Order Status', 'Items', 'Total', 'Date']]
         resource = self.resource_class()
         for obj in queryset:
             data.append([
                 resource.dehydrate_order_number(obj),
                 resource.dehydrate_loyalty_tag(obj),
-                resource.dehydrate_full_name(obj)[:20], # Truncate for PDF width
+                resource.dehydrate_full_name(obj)[:20],
                 obj.email[:25],
                 obj.get_payment_method_display(),
                 obj.get_payment_status_display(),
@@ -474,22 +467,14 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
                 resource.dehydrate_total_with_currency(obj),
                 obj.created_at.strftime("%y-%m-%d")
             ])
-
-        # Style the table
         table = Table(data, repeatRows=1)
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#114084")),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
             ('GRID', (0, 0), (-1, -1), 1, colors.grey),
-            ('FONTSIZE', (0, 1), (-1, -1), 8),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ]))
-        
         elements.append(table)
         doc.build(elements)
         return response

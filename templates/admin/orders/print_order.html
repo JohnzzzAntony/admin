@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order #Demo-{{ order.pk|stringformat:"05d" }} - {{ site_name }}</title>
+    <style>
+        body { font-family: 'Helvetica', 'Arial', sans-serif; color: #333; line-height: 1.5; padding: 40px; }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #114084; padding-bottom: 20px; margin-bottom: 30px; }
+        .header h1 { color: #114084; margin: 0; font-size: 28px; }
+        .info-grid { display: flex; gap: 40px; margin-bottom: 40px; }
+        .info-section { flex: 1; }
+        .info-section h3 { border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 12px; font-size: 16px; text-transform: uppercase; color: #666; }
+        .table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .table th { background: #114084; color: #white; text-align: left; padding: 12px; }
+        .table td { border-bottom: 1px solid #eee; padding: 12px; }
+        .totals { float: right; width: 300px; }
+        .totals-row { display: flex; justify-content: space-between; padding: 8px 0; }
+        .totals-row.grand { font-weight: bold; font-size: 18px; border-top: 1px solid #333; margin-top: 10px; color: #114084; }
+        .footer { margin-top: 100px; text-align: center; color: #999; font-size: 12px; }
+        @media print {
+            .no-print { display: none; }
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="margin-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer; background: #2563eb; color: white; border: none; border-radius: 5px;">Click to Print</button>
+    </div>
+
+    <div class="header">
+        <div>
+            <h1>{{ site_name }}</h1>
+            <p>Order Summary Document</p>
+        </div>
+        <div style="text-align: right;">
+            <h2>Order #Demo-{{ order.pk|stringformat:"05d" }}</h2>
+            <p>Date: {{ order.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-section">
+            <h3>Shipping Details</h3>
+            <strong>{{ order.full_name }}</strong><br>
+            {{ order.street }}<br>
+            {{ order.city }}, {{ order.country }}<br>
+            Phone: {{ order.phone }}<br>
+            Email: {{ order.email }}
+        </div>
+        <div class="info-section">
+            <h3>Billing Details</h3>
+            {% if order.billing_address_same_as_shipping %}
+                Same as shipping
+            {% else %}
+                <strong>{{ order.billing_first_name }} {{ order.billing_last_name }}</strong><br>
+                {{ order.billing_street }}<br>
+                {{ order.billing_city }}, {{ order.billing_country }}<br>
+                Phone: {{ order.billing_phone }}
+            {% endif %}
+            {% if order.trn %}
+                <br><br><strong>TRN:</strong> {{ order.trn }}
+            {% endif %}
+        </div>
+        <div class="info-section">
+            <h3>Order Info</h3>
+            <strong>Payment:</strong> {{ order.get_payment_method_display }}<br>
+            <strong>Payment Status:</strong> {{ order.get_payment_status_display }}<br>
+            <strong>Order Status:</strong> {{ order.get_status_display }}
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr style="color: white;">
+                <th>Product</th>
+                <th style="text-align: center;">Qty</th>
+                <th style="text-align: right;">Price</th>
+                <th style="text-align: right;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.product_name }}</td>
+                <td style="text-align: center;">{{ item.quantity }}</td>
+                <td style="text-align: right;">{{ item.unit_price }} {{ settings.CURRENCY }}</td>
+                <td style="text-align: right;">{{ item.total_price }} {{ settings.CURRENCY }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <div class="totals-row">
+            <span>Subtotal</span>
+            <span>{{ order.total_amount|add:"-order.shipping_amount" }} {{ settings.CURRENCY }}</span>
+        </div>
+        <div class="totals-row">
+            <span>Shipping</span>
+            <span>{{ order.shipping_amount }} {{ settings.CURRENCY }}</span>
+        </div>
+        <div class="totals-row grand">
+            <span>Grand Total</span>
+            <span>{{ order.total_amount }} {{ settings.CURRENCY }}</span>
+        </div>
+    </div>
+
+    <div style="clear: both; margin-top: 40px;">
+        {% if order.comment %}
+        <h3>Customer Notes:</h3>
+        <p>{{ order.comment|linebreaks }}</p>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        <p>Thank you for shopping with {{ site_name }}</p>
+    </div>
+</body>
+</html>
