@@ -1011,19 +1011,6 @@
                     </ul>
                 </li>
                 {% endif %}
-
-                <li>
-                    <a href="javascript:void(0)" class="submenu-toggle d-flex align-items-center justify-content-between">
-                        <span><i class="fas fa-th-large mr-2"></i> All Categories</span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
-                    </a>
-                    <ul class="submenu pl-4" style="display: none; list-style: none;">
-                        {% for cat in categories|slice:":8" %}
-                        <li><a href="{% url 'products:category_detail' slug=cat.slug %}" class="py-2 d-block small">{{ cat.name }}</a></li>
-                        {% endfor %}
-                        <li><a href="{% url 'products:category_index' %}" class="py-2 d-block small font-weight-bold">View All Categories</a></li>
-                    </ul>
-                </li>
             </ul>
             
             <div class="menu-title">Product Categories Catalog</div>
