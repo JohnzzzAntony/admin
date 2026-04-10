@@ -103,13 +103,18 @@ class ProductAdmin(ImportExportModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
     resource_class = CategoryResource
-    list_display = ('name', 'show_on_homepage', 'homepage_order', 'parent')
+    list_display = ('name', 'show_on_homepage', 'homepage_order')
     list_editable = ('show_on_homepage', 'homepage_order')
-    list_filter = ('show_on_homepage', 'parent')
+    list_filter = ('show_on_homepage',)
     search_fields = ('name', 'slug')
     autocomplete_fields = ('parent',)
     inlines = [SubCategoryInline]
     prepopulated_fields = {"slug": ("name",)}
+    
+    def get_queryset(self, request):
+        """Only show root categories in the main list."""
+        qs = super().get_queryset(request)
+        return qs.filter(parent__isnull=True)
     
     fieldsets = (
         ('Hierarchy & Branding', {
