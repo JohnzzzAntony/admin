@@ -322,6 +322,31 @@ def checkout_success(request):
     })
 
 
+def download_invoice(request, order_id):
+    """
+    Public view for customers to download their invoice PDF.
+    Basic security: check if order matches user or is the last order in session.
+    """
+    from .utils import create_invoice_pdf
+    
+    order = get_object_or_404(CustomerOrder, id=order_id)
+    
+    # Security check
+    is_owner = False
+    if request.user.is_authenticated and order.user == request.user:
+        is_owner = True
+    elif request.session.get('last_order_id') == order.id:
+        is_owner = True
+    elif request.GET.get('session_id') == order.stripe_session_id:
+        is_owner = True
+        
+    if not is_owner:
+        messages.error(request, "You are not authorized to download this invoice.")
+        return redirect('core:home')
+        
+    return create_invoice_pdf(order)
+
+
 @csrf_exempt
 @require_POST
 def stripe_webhook(request):

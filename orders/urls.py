@@ -16,6 +16,7 @@ urlpatterns = [
     path('checkout/billing/', views.checkout_billing, name='checkout_billing'),
     path('checkout/payment/', views.checkout_payment, name='checkout_payment'),
     path('checkout/success/', views.checkout_success, name='checkout_success'),
+    path('order/<int:order_id>/invoice/download/', views.download_invoice, name='download_invoice'),
 
     # Stripe Webhook
     path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
