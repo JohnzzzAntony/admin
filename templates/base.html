@@ -87,13 +87,19 @@
         section .container > .text-center {
             width: 100% !important;
         }
-        
+        html, body {
+            overflow-x: hidden !important;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
         body { 
             font-family: var(--font-body); 
             color: var(--text-main); 
             background-color: var(--bg-body);
             transition: background-color 0.4s ease, color 0.4s ease;
-            position: relative;
         }
 
         /* Ambient Premium Background Glow */
@@ -1091,13 +1097,13 @@
                 sideTrigger.addEventListener('click', () => {
                     sideMenu.classList.add('active');
                     sideOverlay.classList.add('active');
-                    document.body.style.overflow = 'hidden';
+                    document.body.style.overflowY = 'hidden';
                 });
                 
                 const closeMenu = () => {
                     sideMenu.classList.remove('active');
                     sideOverlay.classList.remove('active');
-                    document.body.style.overflow = 'auto';
+                    document.body.style.overflowY = 'auto';
                 };
                 
                 sideClose.addEventListener('click', closeMenu);
