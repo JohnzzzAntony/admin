@@ -108,7 +108,7 @@ class ProductAdmin(ImportExportModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
     resource_class = CategoryResource
-    list_display = ('name', 'show_on_homepage', 'homepage_order')
+    list_display = ('name', 'show_on_homepage', 'homepage_order', 'parent', 'is_active')
     list_editable = ('show_on_homepage', 'homepage_order')
     list_filter = ('show_on_homepage',)
     search_fields = ('name', 'slug')
@@ -162,8 +162,12 @@ class OfferAdmin(admin.ModelAdmin):
         }),
         ('Apply to Products', {
             'fields': ('products',),
+            'description': 'Use the selector below to assign this offer to products. Search by name in the filter box.'
         }),
     )
+
+    class Media:
+        css = {'all': ('admin/css/admin_offer.css',)}
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
@@ -192,9 +196,12 @@ class CollectionAdmin(admin.ModelAdmin):
         }),
         ('Products', {
             'fields': ('products',),
-            'description': 'Manage items belonging to this specific collection.'
+            'description': 'Select the products to include in this collection.'
         }),
     )
+
+    class Media:
+        css = {'all': ('admin/css/admin_offer.css',)}
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)

@@ -216,74 +216,98 @@
                 });
 
                 // B. Handle Media/Files (Instant API Deletion)
-                document.querySelectorAll('.file-upload, .custom-file, .clearable-file-input').forEach(container => {
+                // This targets standard Django, Jazzmin, and custom layouts
+                const mediaSelectors = '.file-upload, .custom-file, .clearable-file-input, .field-image, .field-brochure, .form-group input[type="file"]';
+                
+                document.querySelectorAll(mediaSelectors).forEach(el => {
+                    let container = el;
+                    // If we matched the file input, use its parent container
+                    if (el.tagName === 'INPUT') container = el.parentElement;
+                    
                     if (container.querySelector('.btn-simple-remove')) return;
 
-                    // 1. Clean up labels and text nodes ("Change:", "Clear")
-                    const labelsToHide = ['Change:', 'Clear'];
-                    container.childNodes.forEach(node => {
-                        if (node.nodeType === Node.TEXT_NODE) {
-                            labelsToHide.forEach(l => {
-                                if (node.textContent.includes(l)) node.textContent = '';
-                            });
-                        }
-                    });
-                    container.querySelectorAll('span, label').forEach(el => {
-                        labelsToHide.forEach(l => {
-                            if (el.textContent.includes(l)) el.style.display = 'none';
-                        });
-                    });
+                    // Clean up default Django "Clear" checkboxes/labels
+                    container.querySelectorAll('label[for$="-clear_id"]').forEach(l => l.style.display = 'none');
+                    container.querySelectorAll('input[type="checkbox"][name$="-clear"]').forEach(i => i.style.display = 'none');
 
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'btn-simple-remove';
                     btn.innerHTML = '×';
+                    btn.title = 'Remove Instantly';
 
                     btn.onclick = async function(e) {
                         e.preventDefault();
-                        const row = container.closest('tr, .form-row, .field-image');
-                        const isPrimary = row?.classList.contains('field-image');
+                        
+                        // Find the containing row (compatible with standard Admin, Jazzmin, and custom layouts)
+                        const row = container.closest('tr, .form-row, .form-group, .fieldBox, .field-image, .field-brochure');
+                        if (!row) return;
+
+                        const isPrimary = row.classList.contains('field-image') || row.id?.includes('image');
+                        const isBrochure = row.classList.contains('field-brochure') || row.id?.includes('brochure');
                         const productId = window.location.pathname.match(/\/(\d+)\/change\//)?.[1];
-                        const idField = row?.querySelector('input[type="hidden"][name$="-id"]');
+                        
+                        // For inlines (gallery), find the object ID from the hidden ID field
+                        const idField = row.querySelector('input[type="hidden"][name$="-id"]');
                         const objectId = idField ? idField.value : null;
 
                         let url = '';
+                        // Determine the correct API endpoint
                         if (isPrimary && productId) url = `/products/api/product/clear-image/${productId}/`;
+                        else if (isBrochure && productId) url = `/products/api/product/clear-brochure/${productId}/`;
                         else if (objectId) url = `/products/api/media/delete/${objectId}/`;
 
+                        // If the item is not yet saved to the DB, just clear the UI
                         if (!url) {
-                            row.querySelectorAll('input').forEach(i => i.value = '');
-                            container.style.opacity = '0.3';
+                            row.querySelectorAll('input[type="file"]').forEach(i => i.value = '');
+                            row.querySelectorAll('img, .file-upload, .help-inline').forEach(el => el.style.opacity = '0.3');
                             return;
                         }
 
+                        if (!confirm('Permanently remove this file from the server?')) return;
+
                         try {
+                            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}';
                             const response = await fetch(url, {
                                 method: 'POST',
-                                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                                headers: { 
+                                    'X-CSRFToken': csrfToken,
+                                    'Content-Type': 'application/json'
+                                }
                             });
+                            
                             const data = await response.json();
                             if (data.status === 'success') {
-                                // Transition to "Empty/Add New" state instead of removing the slot
-                                container.innerHTML = '<span class="text-success small"><i class="fas fa-check"></i> Cleared. Select new →</span>';
+                                // Transition to "Empty" state
+                                container.innerHTML = '<span class="text-success font-weight-bold small"><i class="fas fa-check"></i> File Removed.</span>';
+                                
+                                // Reset the file input so user can pick a new one
                                 const fileInput = row.querySelector('input[type="file"]');
                                 if (fileInput) {
-                                    fileInput.style.display = 'inline-block';
+                                    fileInput.style.display = 'block';
                                     fileInput.classList.remove('d-none');
                                     fileInput.value = ''; 
                                 }
                                 
-                                // Reset opacity if it was dimmed
-                                container.style.opacity = '1';
+                                // Hide existing links ("Currently:") and previews
+                                row.querySelectorAll('img, .help-inline, .file-upload a, .custom-file-label').forEach(el => {
+                                    el.style.display = 'none';
+                                });
+                            } else {
+                                alert('Could not delete: ' + data.message);
                             }
-                        } catch (err) { console.error('Delete failed:', err); }
+                        } catch (err) { 
+                            console.error('Removal failed:', err);
+                            alert('Network error - check console for details');
+                        }
                     };
 
+                    // Absolute positioning for Bootstrap / Jazzmin inputs
+                    if (container.classList.contains('custom-file') || container.classList.contains('form-group')) {
+                        container.style.position = 'relative';
+                        btn.style.cssText = 'position:absolute; right: -25px; top: 10px; z-index: 1001;';
+                    }
                     container.appendChild(btn);
-                    
-                    // Hide the standard "Clear" checkbox
-                    const clearCheck = container.querySelector('input[type="checkbox"]');
-                    if (clearCheck) clearCheck.style.display = 'none';
                 });
             }
 

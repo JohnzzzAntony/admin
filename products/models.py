@@ -3,6 +3,11 @@ from django.utils.text import slugify
 from django.utils import timezone
 from ckeditor.fields import RichTextField
 from decimal import Decimal
+try:
+    from cloudinary_storage.storage import RawMediaCloudinaryStorage
+    _raw_storage = RawMediaCloudinaryStorage()
+except ImportError:
+    _raw_storage = None
 
 # ─── Category ────────────────────────────────────────────────────────────────
 
@@ -149,7 +154,12 @@ class Product(models.Model):
     features = models.TextField(help_text="Key features (one per line)", blank=True)
     overview = RichTextField(blank=True, null=True)
     technical_info = RichTextField(blank=True, null=True, verbose_name="Product Characteristics & Specifications")
-    brochure = models.FileField(upload_to='brochures/', null=True, blank=True)
+    brochure = models.FileField(
+        upload_to='brochures/',
+        null=True,
+        blank=True,
+        storage=_raw_storage if _raw_storage else None,
+    )
     
     created_at = models.DateTimeField(auto_now_add=True)
     show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
@@ -171,17 +181,22 @@ class Product(models.Model):
 
     def get_best_price_info(self):
         from django.utils import timezone
-        reg = self.regular_price or 0
-        sale = self.sale_price or reg
-        
-        # Check for active offers if they exist
+        # Safely handle None prices - use 0 as minimum base
+        reg = self.regular_price if self.regular_price is not None else 0
+        sale = self.sale_price if self.sale_price is not None else reg
+
+        # Check for active offers
         now = timezone.now()
-        active_offers = self.offers.filter(
-            start_date__lte=now,
-            end_date__gte=now
-        )
-        
+        try:
+            active_offers = self.offers.filter(
+                start_date__lte=now,
+                end_date__gte=now
+            )
+        except Exception:
+            active_offers = []
+
         offer_price = sale
+        best_offer_obj = None
         for offer in active_offers:
             current_offer_price = reg
             if offer.offer_type == 'percentage':
@@ -189,19 +204,20 @@ class Product(models.Model):
             elif offer.offer_type == 'fixed':
                 current_offer_price = reg - offer.discount_value
             elif offer.offer_type == 'final':
-                current_offer_price = offer.discount_value
-            
+                current_offer_price = Decimal(str(offer.discount_value))
+
             if current_offer_price < offer_price:
                 offer_price = current_offer_price
-        
-        final_price = offer_price
+                best_offer_obj = offer
+
+        final_price = max(offer_price, Decimal('0'))  # Never go below 0
         discount_amount = reg - final_price
         discount_pct = 0
         if reg > 0:
             discount_pct = (discount_amount / reg) * 100
-        
-        ship = self.additional_shipping_charge or 0 if not self.free_shipping else 0
-        
+
+        ship = (self.additional_shipping_charge or 0) if not self.free_shipping else 0
+
         return {
             'has_offer': final_price < reg,
             'final_price': round(final_price, 2),
@@ -211,7 +227,8 @@ class Product(models.Model):
             'discount_display': f"{int(discount_pct)}% OFF" if final_price < reg else None,
             'shipping_charge': ship,
             'free_shipping': self.free_shipping,
-            'total_with_shipping': round(final_price + ship, 2)
+            'total_with_shipping': round(final_price + ship, 2),
+            'offer': best_offer_obj,  # The actual Offer object (for cart bogo logic)
         }
 
     @property

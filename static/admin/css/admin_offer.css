@@ -1,0 +1,97 @@
+/**
+ * admin_offer.css
+ * Makes the filter_horizontal widget for Offers/Collections bigger and more usable
+ */
+
+/* ── Offer / Collection product selector ─────────────────────────────────── */
+#id_products_from, #id_products_to {
+    min-height: 350px !important;
+    height: 350px !important;
+    width: 100% !important;
+    font-size: 0.875rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+/* Style individual options */
+#id_products_from option, #id_products_to option {
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin: 1px 0;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+#id_products_from option:hover, #id_products_to option:hover {
+    background: #e0e7ff !important;
+}
+
+/* The selector-chooser wrapper */
+.selector {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.selector-available, .selector-chosen {
+    flex: 1;
+}
+
+.selector-available h2, .selector-chosen h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    padding: 8px 10px;
+    background: #f1f5f9;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+/* Filter input above the list */
+.selector-filter input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+}
+
+.selector-filter input:focus {
+    border-color: #6366f1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+/* Move buttons in middle */
+.selector-chooser {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 8px;
+}
+
+.selector-chooser li button {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.selector-chooser li button:hover {
+    background: #4338ca;
+}
+
+/* Inline product images in list - make rows identifiable */
+.selector-available option::before {
+    content: "🟢 ";
+}

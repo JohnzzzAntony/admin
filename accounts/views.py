@@ -3,19 +3,22 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 
+from .forms import CustomUserCreationForm
+
 def register_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             messages.success(request, f"Welcome {user.username}! Your account has been created.")
             return redirect('core:home')
         else:
-            for error in form.errors.values():
-                messages.error(request, error)
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
 def login_view(request):
@@ -59,7 +62,6 @@ def guest_checkout_view(request):
     return redirect(next_url)
 
 # --- Social Auth with Supabase ---
-from core.supabase_client import supabase
 from django.contrib.auth.models import User
 from django.conf import settings
 
@@ -68,44 +70,66 @@ def social_login(request, provider):
     Initiate a social login via Supabase.
     Redirects user to the social provider's login page.
     """
-    # Build the full callback URL for your local or live site
-    redirect_to = request.build_absolute_uri('/accounts/callback/')
-    
-    # Generate the OAuth login URL
-    result = supabase.auth.get_oauth_url(
-        provider=provider,
-        redirect_to=redirect_to
-    )
-    
-    # Supabase SDK returns a dictionary or object with the URL
-    # or sometimes just the URL string depending on version. 
-    # Usually it's in result.url
-    if hasattr(result, 'url'):
-        return redirect(result.url)
-        
-    return redirect('accounts:login')
+    try:
+        from core.supabase_client import supabase
+        if not supabase:
+            messages.error(request, "Social login is not available right now. Please use email login.")
+            return redirect('accounts:login')
+
+        # Build the full callback URL for your local or live site
+        redirect_to = request.build_absolute_uri('/accounts/callback/')
+
+        # Generate the OAuth login URL
+        result = supabase.auth.sign_in_with_oauth({
+            "provider": provider,
+            "options": {"redirect_to": redirect_to}
+        })
+
+        if hasattr(result, 'url') and result.url:
+            return redirect(result.url)
+
+        messages.error(request, "Could not initiate social login. Please try again.")
+        return redirect('accounts:login')
+
+    except Exception as e:
+        messages.error(request, "Social login is currently unavailable. Please use email login.")
+        return redirect('accounts:login')
 
 def social_callback(request):
     """
-    Handles the return logic from Supabase.
-    Since Supabase stores the session in the client, we need to 
-    synchronize it with Django's internal User object.
+    Handles the return logic from Supabase OAuth.
+    Synchronizes Supabase user with Django's internal User object.
     """
-    # Note: On the backend, we usually get a code/error or just the session
-    # For a purely backend flow, we'd exchange a code here.
-    # If the user is already signed in on Supabase's side, we fetch the email.
-    
-    res = supabase.auth.get_user()
-    if res and res.user:
-        email = res.user.email
-        # Find or create a Django user with this email
-        username = email.split('@')[0]
-        user, created = User.objects.get_or_create(email=email, defaults={'username': username})
-        
-        # Log the user into Django
-        login(request, user)
-        messages.success(request, f"Successfully logged in via {res.user.app_metadata.get('provider', 'Social')}")
-        return redirect('core:home')
-        
-    messages.error(request, "Failed to authenticate with social account.")
-    return redirect('accounts:login')
+    try:
+        from core.supabase_client import supabase
+        if not supabase:
+            messages.error(request, "Authentication failed. Please use email login.")
+            return redirect('accounts:login')
+
+        res = supabase.auth.get_user()
+        if res and res.user:
+            email = res.user.email
+            if not email:
+                raise ValueError("No email returned from social provider.")
+
+            username = email.split('@')[0]
+            # get_or_create with email as unique key
+            user, created = User.objects.get_or_create(
+                email=email,
+                defaults={'username': username, 'first_name': username}
+            )
+
+            if not created and user.username != username:
+                pass  # Existing user, keep their username
+
+            login(request, user)
+            provider = res.user.app_metadata.get('provider', 'Social') if res.user.app_metadata else 'Social'
+            messages.success(request, f"Successfully logged in via {provider.capitalize()}!")
+            return redirect('core:home')
+
+        messages.error(request, "Failed to authenticate. Please try again.")
+        return redirect('accounts:login')
+
+    except Exception as e:
+        messages.error(request, "Authentication failed. Please use email & password login.")
+        return redirect('accounts:login')

@@ -25,10 +25,26 @@ def clear_primary_product_image(request, pk):
         try:
             product = get_object_or_404(Product, pk=pk)
             if product.image:
+                # Use storage delete to ensure Cloudinary/S3 file is removed
                 product.image.delete(save=False)
                 product.image = None
-                product.save()
+                product.save(update_fields=['image'])
             return JsonResponse({'status': 'success', 'message': 'Primary image cleared permanently.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)
+
+@staff_member_required
+def clear_brochure(request, pk):
+    """Instantly clears the brochure file of a Product via AJAX."""
+    if request.method == 'POST':
+        try:
+            product = get_object_or_404(Product, pk=pk)
+            if product.brochure:
+                product.brochure.delete(save=False)
+                product.brochure = None
+                product.save(update_fields=['brochure'])
+            return JsonResponse({'status': 'success', 'message': 'Brochure cleared permanently.'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)
@@ -51,18 +67,21 @@ def product_list(request):
     parents = Category.objects.filter(parent__isnull=True)
     categories = parents if parents.count() > 1 else Category.objects.all()
 
-    # Refactored for flattened Product architecture
+    # Only show active, in-stock products
     products = Product.objects.filter(
+        is_active=True,
         quantity__gt=0,
         shipping_status='available'
     ).select_related('category').prefetch_related(
-        'offers', 
+        'offers',
         'images'
     ).distinct().order_by('-id')
     
     query = request.GET.get('q')
     if query:
-        products = products.filter(Q(name__icontains=query) | Q(overview__icontains=query))
+        products = products.filter(
+            Q(name__icontains=query) | Q(overview__icontains=query) | Q(sku_id__icontains=query)
+        )
     
     return render(request, 'products/product_list.html', {
         'categories': categories,
@@ -83,10 +102,11 @@ def category_detail(request, slug=None, hierarchy_path=None):
 
     products = Product.objects.filter(
         category_id__in=cat_ids,
+        is_active=True,
         quantity__gt=0,
         shipping_status='available'
     ).select_related('category').prefetch_related(
-        'offers', 
+        'offers',
         'images'
     ).distinct().order_by('-id')
     

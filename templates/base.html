@@ -794,12 +794,26 @@
                 <!-- Icons -->
                 <div class="col-6 col-lg-3 order-2 order-lg-3">
                     <div class="header-icons justify-content-end">
-                        <a href="{% if not user.is_authenticated %}{% url 'accounts:login' %}{% else %}#{% endif %}" class="header-icon-link">
-                            <i class="far fa-user"></i>
-                        </a>
-                        <a href="#" class="header-icon-link">
-                            <i class="far fa-heart"></i>
-                        </a>
+                        <div class="dropdown d-inline-block">
+                            <a href="#" class="header-icon-link" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="far fa-user"></i>
+                                {% if user.is_authenticated %}
+                                <span class="d-none d-lg-inline ml-2 small font-weight-bold" style="font-size: 0.75rem;">{{ user.username|truncatechars:10 }}</span>
+                                {% endif %}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow border-0 mt-2" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 200px;">
+                                {% if user.is_authenticated %}
+                                    <div class="dropdown-header font-weight-bold text-dark mb-1">Hi, {{ user.username }}!</div>
+                                    <a class="dropdown-item py-2" href="#"><i class="fas fa-user-circle mr-2 text-muted"></i> My Profile</a>
+                                    <a class="dropdown-item py-2" href="{% url 'orders:enquiry_cart' %}"><i class="fas fa-history mr-2 text-muted"></i> My Orders</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item py-2 text-danger" href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
+                                {% else %}
+                                    <a class="dropdown-item py-2 font-weight-bold" href="{% url 'accounts:login' %}"><i class="fas fa-sign-in-alt mr-2 text-muted"></i> Login</a>
+                                    <a class="dropdown-item py-2" href="{% url 'accounts:register' %}"><i class="fas fa-user-plus mr-2 text-muted"></i> Create Account</a>
+                                {% endif %}
+                            </div>
+                        </div>
                         <a href="{% url 'orders:enquiry_cart' %}" class="header-icon-link">
                             <i class="fas fa-shopping-bag"></i>
                             {% if cart_count %}<span class="badge">{{ cart_count }}</span>{% endif %}
@@ -983,6 +997,17 @@
                 {% for cat in categories|slice:":12" %}
                 <li><a href="{% url 'products:category_detail' slug=cat.slug %}"><i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i> {{ cat.name }}</a></li>
                 {% endfor %}
+            </ul>
+            <div class="menu-title">Account</div>
+            <ul>
+                {% if user.is_authenticated %}
+                <li><a href="#"><i class="fas fa-user-circle"></i> My Profile</a></li>
+                <li><a href="{% url 'orders:enquiry_cart' %}"><i class="fas fa-history"></i> My Orders</a></li>
+                <li><a href="{% url 'accounts:logout' %}" class="text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                {% else %}
+                <li><a href="{% url 'accounts:login' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li><a href="{% url 'accounts:register' %}"><i class="fas fa-user-plus"></i> Register</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

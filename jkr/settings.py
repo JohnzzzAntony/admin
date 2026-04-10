@@ -205,9 +205,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Storage Configuration (Classic mode for maximum compatibility with Cloudinary/WhiteNoise)
 if IS_PRODUCTION:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Raw storage for non-image files (PDFs, docs, brochures etc.)
+    RAW_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
     STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 else:
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    RAW_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Modern Django dictionary (fallback)

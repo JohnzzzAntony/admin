@@ -69,10 +69,12 @@ def home(request):
     # Fetch Products with active offers (either via Offer model or manual sale_price)
     now = timezone.now()
     active_offers_products = Product.objects.filter(
-        (models.Q(offers__start_date__lte=now) & models.Q(offers__end_date__gte=now)) |
-        models.Q(sale_price__lt=models.F('regular_price')),
-        quantity__gt=0
-    ).distinct().select_related('category').prefetch_related('offers')
+        is_active=True,
+        quantity__gt=0,
+    ).filter(
+        models.Q(offers__start_date__lte=now, offers__end_date__gte=now) |
+        models.Q(sale_price__isnull=False, sale_price__lt=models.F('regular_price'))
+    ).distinct().select_related('category').prefetch_related('offers', 'images')
 
     # Homepage Collections: Filter active ones and prefetch related Products.
     collections = Collection.objects.all().prefetch_related(
