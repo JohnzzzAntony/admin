@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="py-5 bg-light" style="margin-top: 80px;">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <h1 class="display-4 font-weight-bold mb-2">My <span class="text-primary">Wishlist</span></h1>
+            <p class="lead text-muted">Your favorite products saved for later</p>
+            <div class="mx-auto" style="width: 60px; height: 3px; background: var(--primary-blue); border-radius: 2px;"></div>
+        </div>
+
+        <div class="row">
+            {% for product in products %}
+            <div class="col-lg-3 col-md-4 col-6 mb-4" id="wishlist-item-{{ product.id }}">
+                <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
+                    <div class="position-relative">
+                        <!-- Remove from Wishlist Button -->
+                        <button onclick="toggleWishlist({{ product.id }}, this); document.getElementById('wishlist-item-{{ product.id }}').style.display='none';" 
+                                class="wishlist-btn position-absolute" 
+                                style="top: 15px; right: 15px; z-index: 10; background: white; border: none; width: 35px; height: 35px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: var(--hm-red); transition: 0.3s; display: flex; align-items: center; justify-content: center; outline: none; cursor: pointer;">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <a href="{% url 'products:product_detail' slug=product.slug %}">
+                            <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 200px; object-fit: contain; padding: 20px;">
+                        </a>
+                    </div>
+                    <div class="card-body p-3 text-center">
+                        <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
+                            <h5 class="font-weight-bold mb-3" style="font-size: 1rem; height: 2.8rem; overflow: hidden;">{{ product.name }}</h5>
+                        </a>
+                        <div class="price mb-3">
+                            {% with price_info=product.get_best_price_info %}
+                                <span class="h6 font-weight-bold text-primary">{{ price_info.final_price }} AED</span>
+                                {% if price_info.has_offer %}
+                                <br><del class="small text-muted">{{ price_info.regular_price }} AED</del>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        <a href="{% url 'orders:add_to_cart' product_id=product.id %}" class="btn btn-primary btn-block py-2" style="border-radius: 10px;">
+                            <i class="fas fa-cart-plus mr-1"></i> Add to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="mb-4">
+                    <i class="far fa-heart fa-4x text-muted" style="opacity: 0.3;"></i>
+                </div>
+                <h3>Your wishlist is empty</h3>
+                <p class="text-muted mb-4">You haven't added any products to your wishlist yet.</p>
+                <a href="{% url 'products:product_list' %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 12px;">Start Shopping</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

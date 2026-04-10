@@ -79,11 +79,16 @@
                         </div>
                     </div>
 
-                    <div class="d-flex flex-column flex-sm-row my-5">
+                    <div class="d-flex flex-column flex-sm-row my-5 align-items-center">
                         <a href="{% url 'orders:add_to_cart' product_id=product.id %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold mb-3 mb-sm-0" style="border-radius: 8px; background-color: var(--primary-blue); min-width: 250px;"><i class="fas fa-cart-plus mr-2"></i>Add to Cart</a>
-                        {% if product.brochure %}
-                        <a href="{{ product.brochure.url }}" target="_blank" class="ml-sm-3 btn btn-outline-secondary px-4 py-3" style="border-radius: 8px;"><i class="fa fa-file-pdf text-primary mr-2"></i> Download Brochure</a>
-                        {% endif %}
+                        
+                        <!-- Wishlist Button -->
+                        <button onclick="toggleWishlist({{ product.id }}, this)" 
+                                class="ml-sm-3 btn btn-outline-secondary px-4 py-3 d-flex align-items-center justify-content-center wishlist-detail-btn" 
+                                style="border-radius: 8px; min-width: 65px; height: 56px; border: 2px solid #f0f0f0; background: #fff; transition: 0.3s; outline:none; cursor:pointer;">
+                            <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart" 
+                               style="font-size: 1.4rem; {% if product.id in wishlist_ids %}color: var(--hm-red);{% endif %}"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -133,7 +138,14 @@
                     {% if rp.id != product.id %}
                     {% if forloop.counter <= design_settings.pd_related_count|default:4 %}
                     <div class="col-lg-3 col-md-6 col-6 mb-4">
-                        <div class="card border-0 text-center h-100 shadow-sm category-card transition-all p-3" style="border-radius: 15px;">
+                        <div class="card border-0 text-center h-100 shadow-sm category-card transition-all p-3 position-relative" style="border-radius: 15px;">
+                            <!-- Wishlist Heart -->
+                            <button onclick="toggleWishlist({{ rp.id }}, this)" 
+                                    class="wishlist-btn position-absolute" 
+                                    style="top: 10px; right: 10px; z-index: 10; background: white; border: none; width: 30px; height: 30px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: #888; transition: 0.3s; display: flex; align-items: center; justify-content: center; outline: none; cursor: pointer;">
+                                <i class="{% if rp.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart" 
+                                   style="font-size: 0.9rem; {% if rp.id in wishlist_ids %}color: var(--hm-red);{% endif %}"></i>
+                            </button>
                             <a href="{% url 'products:product_detail' slug=rp.slug %}" class="text-decoration-none">
                                 <img src="{{ rp.get_image_url }}" class="img-fluid mb-3" style="height: 180px; object-fit: contain;">
                                 <h6 class="text-dark font-weight-bold mb-3" style="min-height: 3rem;">{{ rp.name }}</h6>

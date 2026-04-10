@@ -310,9 +310,16 @@
                     <div class="card h-100 border-0 shadow-sm transition-all overflow-hidden hover-lift" style="border-radius: 20px;">
                         <a href="{% url 'products:product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
                             <div class="position-relative">
+                                <!-- Wishlist Heart -->
+                                <button onclick="toggleWishlist({{ product.id }}, this)" 
+                                        class="wishlist-btn position-absolute" 
+                                        style="top: 15px; right: 15px; z-index: 10; background: white; border: none; width: 35px; height: 35px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: #888; transition: 0.3s; display: flex; align-items: center; justify-content: center; outline: none; cursor: pointer;">
+                                    <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart" 
+                                       style="{% if product.id in wishlist_ids %}color: var(--hm-red);{% endif %}"></i>
+                                </button>
                                 <img src="{{ product.get_image_url }}" class="card-img-top" style="height: 200px; object-fit: contain; padding: 20px;">
                                 {% if price_info.has_offer %}
-                                <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; right: 15px; border-radius: 8px;">
+                                <span class="badge badge-danger position-absolute p-2 shadow-sm" style="top: 15px; left: 15px; border-radius: 8px;">
                                     {{ price_info.discount_display }}
                                 </span>
                                 {% endif %}

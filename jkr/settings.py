@@ -139,6 +139,7 @@ TEMPLATES = [
                 'core.context_processors.page_heroes', 
                 'orders.context_processors.cart_count', 
                 'products.context_processors.categories', 
+                'products.context_processors.wishlist_data', 
                 'core.context_processors.admin_dashboard', 
             ],
         },

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from .models import Category, Product, ProductImage, Offer, Collection
+from .models import Category, Product, ProductImage, Offer, Collection, Wishlist
 from .forms import ProductAdminForm
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
@@ -190,7 +190,7 @@ class ProductAdmin(ImportExportModelAdmin):
             'fields': ('overview', 'features', 'technical_info'),
         }),
         ('Media Assets', {
-            'fields': (('image', 'image_url'), ('brochure', 'preview')),
+            'fields': (('image', 'image_url'),),
         }),
         ('Search Optimization', {
             'fields': ('meta_title', 'meta_description', 'meta_keywords'),
@@ -312,3 +312,8 @@ class CollectionAdmin(admin.ModelAdmin):
         from django.contrib import messages
         messages.error(request, f'🗑️ Collection "{name}" was removed.')
 
+@admin.register(Wishlist)
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product', 'added_at')
+    list_filter = ('user', 'added_at')
+    search_fields = ('user__username', 'product__name')

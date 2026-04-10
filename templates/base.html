@@ -820,6 +820,10 @@
                                 {% endif %}
                             </div>
                         </div>
+                        <a href="{% url 'products:wishlist' %}" class="header-icon-link mr-2">
+                            <i class="far fa-heart"></i>
+                            <span class="badge" id="wishlist-badge" style="{% if not wishlist_count %}display:none;{% endif %} background: var(--primary-blue);">{{ wishlist_count }}</span>
+                        </a>
                         <a href="{% url 'orders:enquiry_cart' %}" class="header-icon-link">
                             <i class="fas fa-shopping-bag"></i>
                             {% if cart_count %}<span class="badge">{{ cart_count }}</span>{% endif %}
@@ -1122,6 +1126,48 @@
                 effect: 'slide'
             });
         });
+        // Wishlist Toggle Logic
+        window.toggleWishlist = function(productId, btnElement) {
+            if (!{{ user.is_authenticated|yesno:"true,false" }}) {
+                window.location.href = "{% url 'accounts:login' %}?next=" + window.location.pathname;
+                return;
+            }
+
+            const url = `/products/wishlist/toggle/${productId}/`;
+            const icon = btnElement.querySelector('i');
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    icon.classList.add('animate__animated', 'animate__heartBeat');
+                    icon.style.color = 'var(--hm-red)';
+                } else if (data.status === 'removed') {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    icon.classList.remove('animate__animated', 'animate__heartBeat');
+                    icon.style.color = '';
+                }
+
+                // Update Badge
+                const badge = document.getElementById('wishlist-badge');
+                if (badge) {
+                    badge.innerText = data.count;
+                    badge.style.display = data.count > 0 ? 'flex' : 'none';
+                }
+                
+                // Optional: Show Toast if you have one
+            })
+            .catch(error => console.error('Error toggling wishlist:', error));
+        };
     </script>
     {% block scripts %}{% endblock %}
 </body>

@@ -155,12 +155,6 @@ class Product(models.Model):
     features = models.TextField(help_text="Key features (one per line)", blank=True)
     overview = RichTextField(blank=True, null=True)
     technical_info = RichTextField(blank=True, null=True, verbose_name="Product Characteristics & Specifications")
-    brochure = models.FileField(
-        upload_to='brochures/',
-        null=True,
-        blank=True,
-        storage=_raw_storage if _raw_storage else None,
-    )
     
     created_at = models.DateTimeField(auto_now_add=True)
     show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
@@ -291,3 +285,17 @@ class Collection(models.Model):
         super().save(*args, **kwargs)
     def __str__(self): return self.name
     class Meta: ordering = ['display_order']
+
+class Wishlist(models.Model):
+    from django.conf import settings
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wishlist')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='wishlisted_by')
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+        verbose_name = "Wishlist Item"
+        verbose_name_plural = "Wishlist Items"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name}"

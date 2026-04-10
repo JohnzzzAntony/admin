@@ -88,6 +88,13 @@
                     <div class="col-lg-4 col-md-6 col-sm-6 col-6 pb-4">
                         <div class="card product-item border-0 mb-4 shadow-sm h-100 rounded-3 overflow-hidden">
                              <div class="card-header product-img position-relative overflow-hidden bg-transparent border-0 p-0 text-center" style="height:250px;">
+                                 <!-- Wishlist Heart -->
+                                 <button onclick="toggleWishlist({{ product.id }}, this)" 
+                                         class="wishlist-btn position-absolute" 
+                                         style="top: 15px; right: 15px; z-index: 10; background: white; border: none; width: 35px; height: 35px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: #888; transition: 0.3s; display: flex; align-items: center; justify-content: center; outline: none; cursor: pointer;">
+                                     <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart" 
+                                        style="{% if product.id in wishlist_ids %}color: var(--hm-red);{% endif %}"></i>
+                                 </button>
                                  <a href="{% url 'products:product_detail' slug=product.slug %}" class="d-block h-100">
                                      <img class="img-fluid h-100" src="{{ product.get_image_url }}" alt="{{ product.name }}" style="object-fit: contain;">
                                  </a>

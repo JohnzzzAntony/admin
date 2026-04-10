@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
-from .models import Product, Category, ProductImage
+from django.contrib.auth.decorators import login_required
+from .models import Product, Category, ProductImage, Wishlist
 
 @staff_member_required
 def delete_product_media(request, pk):
@@ -34,17 +35,35 @@ def clear_primary_product_image(request, pk):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)
 
-@staff_member_required
-def clear_brochure(request, pk):
-    """Instantly clears the brochure file of a Product via AJAX."""
+@login_required
+def wishlist_view(request):
+    """Displays the user's favorited products."""
+    wishlist_items = Wishlist.objects.filter(user=request.user).select_related('product').prefetch_related(
+        'product__offers', 'product__images', 'product__category'
+    ).order_by('-added_at')
+    
+    products = [item.product for item in wishlist_items]
+    
+    return render(request, 'products/wishlist.html', {
+        'products': products
+    })
+
+@login_required
+def toggle_wishlist(request, product_id):
+    """Toggles a product in the user's wishlist via AJAX."""
     if request.method == 'POST':
         try:
-            product = get_object_or_404(Product, pk=pk)
-            if product.brochure:
-                product.brochure.delete(save=False)
-                product.brochure = None
-                product.save(update_fields=['brochure'])
-            return JsonResponse({'status': 'success', 'message': 'Brochure cleared permanently.'})
+            product = get_object_or_404(Product, pk=product_id)
+            wishlist_item, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+            
+            if not created:
+                wishlist_item.delete()
+                # Get updated count
+                count = Wishlist.objects.filter(user=request.user).count()
+                return JsonResponse({'status': 'removed', 'count': count, 'message': 'Removed from wishlist.'})
+            
+            count = Wishlist.objects.filter(user=request.user).count()
+            return JsonResponse({'status': 'added', 'id': product.id, 'count': count, 'message': 'Added to wishlist!'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)
