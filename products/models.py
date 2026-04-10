@@ -143,6 +143,7 @@ class Product(models.Model):
     free_shipping = models.BooleanField(default=False, verbose_name="Free Shipping", choices=((True, 'Enabled'), (False, 'Disabled')))
     additional_shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     delivery_time = models.CharField(max_length=100, blank=True)
+    tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=5.00, verbose_name="VAT (%)")
 
     # Dimensions
     weight = models.FloatField(null=True, blank=True)

@@ -179,7 +179,7 @@ class ProductAdmin(ImportExportModelAdmin):
             'description': 'Core identity and stock availability. Choose a parent category to see subcategories.'
         }),
         ('Pricing & Shipping', {
-            'fields': (('regular_price', 'sale_price'), ('shipping_status', 'delivery_time'), ('free_shipping', 'additional_shipping_charge')),
+            'fields': (('regular_price', 'sale_price'), ('shipping_status', 'delivery_time'), ('tax_percentage', 'free_shipping', 'additional_shipping_charge')),
             'classes': ('collapse',),
         }),
         ('Dimensions & Weight', {

@@ -222,6 +222,7 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         'customer_order_tag', 
         'resend_notification_button',
         'print_invoice_buttons',
+        'tax_amount',
     )
     inlines = [CustomerOrderItemInline, OrderStatusHistoryInline]
 
@@ -346,6 +347,8 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
             '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
             '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">Shipping Details</td>'
             '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
+            '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">VAT (Tax)</td>'
+            '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
             '<tr style="background:#f1f5f9; font-weight:700; font-size:15px;"><td colspan="4" style="padding:12px 10px; text-align:right;">Grand Total Amount</td>'
             '<td style="padding:12px 10px; text-align:right; color:#2563eb;">{} {}</td></tr>'
             '</tfoot>'
@@ -423,7 +426,7 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         ('Payment & Financials', {
             'fields': (
                 ('payment_method', 'payment_status'),
-                ('shipping_amount', 'total_amount'),
+                ('shipping_amount', 'tax_amount', 'total_amount'),
             ),
         }),
         ('Order Processing', {

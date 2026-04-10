@@ -83,17 +83,19 @@ def create_invoice_pdf(order):
     elements.append(Spacer(1, 10))
 
     # 5. Totals
+    subtotal = sum(i.total_price for i in order.items.all())
     totals_data = [
-        ['', 'Subtotal:', f"{sum(i.total_price for i in order.items.all())} {settings.CURRENCY}"],
+        ['', 'Subtotal:', f"{subtotal} {settings.CURRENCY}"],
         ['', 'Shipping:', f"{order.shipping_amount} {settings.CURRENCY}"],
+        ['', 'VAT (Tax):', f"{order.tax_amount} {settings.CURRENCY}"],
         ['', 'Grand Total:', f"{order.total_amount} {settings.CURRENCY}"]
     ]
     totals_table = Table(totals_data, colWidths=[4*inch, 1.25*inch, 1.25*inch])
     totals_table.setStyle(TableStyle([
         ('ALIGN', (1,0), (1,-1), 'RIGHT'),
         ('ALIGN', (2,0), (2,-1), 'RIGHT'),
-        ('FONTNAME', (1,2), (2,2), 'Helvetica-Bold'),
-        ('LINEABOVE', (1,2), (2,2), 1, colors.black),
+        ('FONTNAME', (1,3), (2,3), 'Helvetica-Bold'),
+        ('LINEABOVE', (1,3), (2,3), 1, colors.black),
     ]))
     elements.append(totals_table)
     

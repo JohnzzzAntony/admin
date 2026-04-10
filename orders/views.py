@@ -143,12 +143,14 @@ def checkout_billing(request):
 
     form_data = request.session.get('checkout_billing', {})
     subtotal = sum(item['total_item'] for item in cart_items)
+    total_tax = sum((item['total_item'] * item['product'].tax_percentage / 100) for item in cart_items)
     return render(request, 'orders/checkout_billing.html', {
         'cart_items': cart_items,
         'form_data': form_data,
         'subtotal': subtotal,
+        'total_tax': total_tax,
         'total_shipping': total_shipping,
-        'grand_total': subtotal + total_shipping
+        'grand_total': subtotal + total_shipping + total_tax
     })
 
 
@@ -164,7 +166,8 @@ def checkout_payment(request):
         return redirect('orders:checkout_billing')
 
     subtotal = sum(item['total_item'] for item in cart_items)
-    grand_total = subtotal + total_shipping
+    total_tax = sum((item['total_item'] * item['product'].tax_percentage / 100) for item in cart_items)
+    grand_total = subtotal + total_shipping + total_tax
 
     if request.method == 'POST':
         import traceback
@@ -203,6 +206,7 @@ def checkout_payment(request):
                 status='pending',
                 payment_status='pending',
                 shipping_amount=total_shipping,
+                tax_amount=total_tax,
                 total_amount=grand_total
             )
 
@@ -216,6 +220,7 @@ def checkout_payment(request):
                     quantity=item['quantity'],
                     regular_price=item.get('regular_price', item['unit_price']),
                     unit_price=item['unit_price'],
+                    tax_percentage=product.tax_percentage,
                     shipping_charge=item['shipping_item'],
                     total_price=item['total_item']
                 )
@@ -288,6 +293,7 @@ def checkout_payment(request):
         'cart_items': cart_items,
         'billing': billing,
         'subtotal': subtotal,
+        'total_tax': total_tax,
         'total_shipping': total_shipping,
         'grand_total': grand_total
     })

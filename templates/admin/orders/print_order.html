@@ -94,15 +94,19 @@
     <div class="totals">
         <div class="totals-row">
             <span>Subtotal</span>
-            <span>{{ order.total_amount|add:"-order.shipping_amount" }} {{ settings.CURRENCY }}</span>
+            <span>{{ order.total_amount|add:"-order.shipping_amount"|add:"-order.tax_amount"|floatformat:2 }} {{ settings.CURRENCY }}</span>
+        </div>
+        <div class="totals-row">
+            <span>VAT (Tax)</span>
+            <span>{{ order.tax_amount|floatformat:2 }} {{ settings.CURRENCY }}</span>
         </div>
         <div class="totals-row">
             <span>Shipping</span>
-            <span>{{ order.shipping_amount }} {{ settings.CURRENCY }}</span>
+            <span>{{ order.shipping_amount|floatformat:2 }} {{ settings.CURRENCY }}</span>
         </div>
         <div class="totals-row grand">
             <span>Grand Total</span>
-            <span>{{ order.total_amount }} {{ settings.CURRENCY }}</span>
+            <span>{{ order.total_amount|floatformat:2 }} {{ settings.CURRENCY }}</span>
         </div>
     </div>
 
