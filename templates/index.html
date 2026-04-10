@@ -166,6 +166,25 @@
         </div>
     </section>
 
+    <!-- Dynamic Homepage Sections (Categories & Banners) -->
+    {% for section in homepage_sections %}
+        {% if section.type == 'category' %}
+            {% include "partials/_category_section.html" with section=section %}
+        {% elif section.type == 'banner' %}
+            {% include "partials/_banner_section.html" with section=section %}
+        {% endif %}
+
+        {# Place Milestones after exactly the 2nd dynamic section #}
+        {% if forloop.counter == 2 %}
+            {% include "partials/_milestones_section.html" %}
+        {% endif %}
+    {% endfor %}
+
+    {# Ensure Milestones show even if there are less than 2 dynamic sections #}
+    {% if homepage_sections|length < 2 %}
+         {% include "partials/_milestones_section.html" %}
+    {% endif %}
+
     <!-- Exclusive Collections Section -->
     {% if collections %}
     <section class="py-5 bg-white" id="collections">
