@@ -133,10 +133,78 @@ class CreatedAtRangeFilter(admin.SimpleListFilter):
         return queryset
 
 
+from import_export import resources, fields
+from import_export.admin import ImportExportModelAdmin
+from import_export.widgets import ForeignKeyWidget
+from django.http import HttpResponse
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import landscape, A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+
+# ─── Export Resource ──────────────────────────────────────────────────────────
+
+class CustomerOrderResource(resources.ModelResource):
+    order_number = fields.Field(column_name='Order #')
+    user_name = fields.Field(attribute='user', column_name='User', widget=ForeignKeyWidget(settings.AUTH_USER_MODEL, 'username'))
+    guest_flag = fields.Field(attribute='is_guest', column_name='Is Guest')
+    loyalty_tag = fields.Field(column_name='Loyalty Tag')
+    full_name = fields.Field(column_name='Customer Name')
+    email = fields.Field(attribute='email', column_name='Email')
+    phone = fields.Field(attribute='phone', column_name='Phone')
+    payment_method_display = fields.Field(column_name='Payment Method')
+    payment_status_display = fields.Field(column_name='Payment Status')
+    order_status_display = fields.Field(column_name='Order Status')
+    items_summary = fields.Field(column_name='Items')
+    total_with_currency = fields.Field(column_name='Total')
+    date_created = fields.Field(column_name='Created At')
+
+    class Meta:
+        model = CustomerOrder
+        fields = () # Only use defined fields
+        export_order = (
+            'order_number', 'user_name', 'guest_flag', 'loyalty_tag', 
+            'full_name', 'email', 'phone', 'payment_method_display', 
+            'payment_status_display', 'order_status_display', 
+            'items_summary', 'total_with_currency', 'date_created'
+        )
+
+    def dehydrate_order_number(self, obj):
+        return f"#Demo-{obj.pk:05d}"
+
+    def dehydrate_loyalty_tag(self, obj):
+        rank = get_order_rank(obj)
+        return "New" if rank == 1 else f"Repeat {rank}"
+
+    def dehydrate_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+    def dehydrate_payment_method_display(self, obj):
+        return obj.get_payment_method_display()
+
+    def dehydrate_payment_status_display(self, obj):
+        return obj.get_payment_status_display()
+
+    def dehydrate_order_status_display(self, obj):
+        return obj.get_status_display()
+
+    def dehydrate_items_summary(self, obj):
+        return ", ".join([f"{item.product_name} (x{item.quantity})" for item in obj.items.all()])
+
+    def dehydrate_total_with_currency(self, obj):
+        return f"{obj.total_amount} {settings.CURRENCY}"
+
+    def dehydrate_date_created(self, obj):
+        return obj.created_at.strftime("%Y-%m-%d %H:%M")
+
+
 # ─── Customer Order ────────────────────────────────────────────────────────────
 
 @admin.register(CustomerOrder)
-class CustomerOrderAdmin(admin.ModelAdmin):
+class CustomerOrderAdmin(ImportExportModelAdmin):
+    resource_class = CustomerOrderResource
+    actions = ['export_as_pdf']
+    
     list_display  = (
         'order_number', 
         'user',               # ← Added User connection
@@ -366,3 +434,62 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     class Media:
         css = {'all': ('admin/css/admin_orders.css',)}
         js = ('admin/js/admin_orders.js',)
+
+    @admin.action(description="Export Selected Orders as PDF")
+    def export_as_pdf(self, request, queryset):
+        """
+        Custom action to export filtered/selected orders to a professional PDF table.
+        Uses reportlab for high-quality production output.
+        """
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="orders_export_{timezone.now().strftime("%Y%m%d")}.pdf"'
+
+        # Create the PDF document with landscape A4
+        doc = SimpleDocTemplate(response, pagesize=landscape(A4), rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
+        elements = []
+        
+        styles = getSampleStyleSheet()
+        title = Paragraph(f"Customer Orders Export — {timezone.now().strftime('%Y-%m-%d')}", styles['Title'])
+        elements.append(title)
+        elements.append(Paragraph("<br/>", styles['Normal']))
+
+        # Table Header
+        data = [[
+            'Order #', 'Loyalty', 'Customer', 'Email', 
+            'Pay Method', 'Pay Status', 'Order Status', 'Items', 'Total', 'Date'
+        ]]
+
+        # Table Body
+        resource = self.resource_class()
+        for obj in queryset:
+            data.append([
+                resource.dehydrate_order_number(obj),
+                resource.dehydrate_loyalty_tag(obj),
+                resource.dehydrate_full_name(obj)[:20], # Truncate for PDF width
+                obj.email[:25],
+                obj.get_payment_method_display(),
+                obj.get_payment_status_display(),
+                obj.get_status_display(),
+                str(obj.items.count()),
+                resource.dehydrate_total_with_currency(obj),
+                obj.created_at.strftime("%y-%m-%d")
+            ])
+
+        # Style the table
+        table = Table(data, repeatRows=1)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#114084")),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 9),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        
+        elements.append(table)
+        doc.build(elements)
+        return response
