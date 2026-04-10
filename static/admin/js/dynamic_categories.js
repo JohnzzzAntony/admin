@@ -17,7 +17,10 @@
             subSelect.empty();
             subSelect.append('<option value="">---------</option>');
 
-            if (!parentId) return;
+            if (!parentId) {
+                subSelect.trigger('change');
+                return;
+            }
 
             // Fetch subcategories via AJAX
             $.getJSON(`/products/api/subcategories/${parentId}/`, function(data) {
@@ -26,6 +29,8 @@
                         $('<option></option>').val(item.id).html(item.name)
                     );
                 });
+                // Important for Select2/Jazzmin: Update UI after DOM change
+                subSelect.trigger('change');
             });
         });
     });

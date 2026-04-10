@@ -20,12 +20,20 @@ class ProductImageInline(admin.StackedInline):
     extra = 0
     fields = (('image', 'image_url'), ('order', 'preview'))
     readonly_fields = ('preview',)
-    
     def preview(self, obj):
         url = obj.get_image_url() if hasattr(obj, 'get_image_url') else None
         if url:
             return mark_safe(f'<img src="{url}" width="60" style="border-radius:4px;"/>')
         return "-"
+
+class SubCategoryInline(admin.TabularInline):
+    model = Category
+    fk_name = 'parent'
+    extra = 0
+    verbose_name = "Sub Category"
+    verbose_name_plural = "Sub Categories"
+    fields = ('name', 'slug', 'show_on_homepage', 'homepage_order')
+    prepopulated_fields = {"slug": ("name",)}
 
 # ─── Main Model Admins ───────────────────────────────────────────────────────
 
@@ -99,16 +107,19 @@ class ProductAdmin(ImportExportModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
     resource_class = CategoryResource
-    list_display = ('name', 'parent', 'show_on_homepage', 'homepage_order')
+    list_display = ('name', 'show_on_homepage', 'homepage_order')
     list_editable = ('show_on_homepage', 'homepage_order')
-    list_filter = (
-        ('parent', admin.RelatedOnlyFieldListFilter),
-        'show_on_homepage',
-    )
+    list_filter = ('show_on_homepage',)
     search_fields = ('name', 'slug')
     autocomplete_fields = ('parent',)
+    inlines = [SubCategoryInline]
     readonly_fields = ()
     
+    def get_queryset(self, request):
+        """Show only root categories in the main list."""
+        qs = super().get_queryset(request)
+        return qs.filter(parent__isnull=True)
+
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         from django.contrib import messages

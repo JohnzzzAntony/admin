@@ -112,7 +112,7 @@ class Category(models.Model):
 # ─── Product ─────────────────────────────────────────────────────────────────
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, null=True, blank=True)
     image = models.ImageField(
