@@ -996,7 +996,8 @@
         <div class="side-menu-body">
             <div class="menu-title">Main Navigation</div>
             <ul>
-                <li><a href="{% url 'core:home' %}"><i class="fas fa-home"></i> Shop All Product</a></li>
+                <li><a href="{% url 'products:product_list' %}"><i class="fas fa-home"></i> Shop All Product</a></li>
+                <li><a href="{% url 'products:brand_list' %}"><i class="fas fa-tags"></i> Shop by Brands</a></li>
                 
                 {% if collections %}
                 <li class="has-submenu">

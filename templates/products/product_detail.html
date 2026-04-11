@@ -49,7 +49,13 @@
 
                 <!-- Product Content -->
                 <div class="col-lg-6">
-                    <h2 class="font-weight-bold h1 mb-4" style="color:var(--primary-blue)">{{ product.name }}</h2>
+                    <h2 class="font-weight-bold h1 mb-2" style="color:var(--primary-blue)">{{ product.name }}</h2>
+                    {% if product.brand %}
+                    <div class="mb-3">
+                        <span class="text-muted">Brand:</span> 
+                        <a href="{{ product.brand.get_absolute_url }}" class="text-primary font-weight-bold ml-1">{{ product.brand.name }}</a>
+                    </div>
+                    {% endif %}
                     
                     <div class="mb-4">
                         {% with price_info=product.get_best_price_info %}

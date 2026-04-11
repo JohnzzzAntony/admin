@@ -166,7 +166,35 @@
         </div>
     </section>
 
-    <!-- Exclusive Collections Section -->
+    <!-- Brands Section -->
+    <section class="py-5 bg-light">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Shop by <span class="text-primary">Brands</span></h2>
+                <p class="lead text-muted mx-auto" style="max-width: 700px;">Highly trusted medical equipment brands from all over the world.</p>
+            </div>
+            
+            <div class="swiper brand-slider">
+                <div class="swiper-wrapper align-items-center">
+                    {% for brand in brands %}
+                    <div class="swiper-slide text-center">
+                        <a href="{{ brand.get_absolute_url }}" class="d-block p-3">
+                            <div class="brand-item-box bg-white shadow-sm p-4 rounded-4 d-flex align-items-center justify-content-center transition-all hover-lift" style="height: 120px;">
+                                <img src="{{ brand.get_image_url }}" alt="{{ brand.name }}" class="img-fluid" style="max-height: 80px; object-fit: contain;">
+                            </div>
+                            <p class="mt-3 font-weight-bold text-dark small mb-0">{{ brand.name }}</p>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-pagination mt-4 position-relative"></div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'products:brand_list' %}" class="btn btn-outline-primary rounded-pill px-4">View All Brands</a>
+            </div>
+        </div>
+    </section>
     <!-- Curated Collections Sections -->
     {% for col in collections %}
     <section class="py-5 {% if forloop.counter|divisibleby:2 %}bg-white{% else %}bg-light{% endif %}" id="collection-{{ col.slug }}">
@@ -716,6 +744,20 @@
             loop: true,
             pagination: { el: '.swiper-pagination', clickable: true },
             autoplay: { delay: 4000 }
+        });
+
+        // Brand Slider
+        new Swiper('.brand-slider', {
+            slidesPerView: 2,
+            spaceBetween: 20,
+            autoplay: { delay: 3500 },
+            pagination: { el: '.swiper-pagination', clickable: true },
+            breakpoints: {
+                576: { slidesPerView: 3 },
+                768: { slidesPerView: 4 },
+                1024: { slidesPerView: 5 },
+                1300: { slidesPerView: 6 }
+            }
         });
 
         // About Slider (Videos)

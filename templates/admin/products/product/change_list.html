@@ -1,0 +1,16 @@
+{% extends "import_export/change_list_import_export.html" %}
+{% load i18n admin_urls %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a href="download-demo-excel/" class="btn btn-sm btn-outline-success font-weight-bold" style="border-radius:30px; margin-left: 5px;">
+            <i class="fas fa-file-excel mr-1"></i> Demo Excel
+        </a>
+    </li>
+    <li>
+        <a href="download-demo-csv/" class="btn btn-sm btn-outline-info font-weight-bold" style="border-radius:30px; margin-left: 5px;">
+            <i class="fas fa-file-csv mr-1"></i> Demo CSV
+        </a>
+    </li>
+{% endblock %}

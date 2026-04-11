@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.db import models
-from products.models import Category, Product, Collection
+from products.models import Category, Product, Collection, Brand
 from sliders.models import HeroSlider, PromoBanner
 from pages.models import AboutUs, MissionVision, Service, Counter, WhyUsCard, Partner, GalleryItem
 from .models import Testimonial, Client, SocialPost, StoreLocation
@@ -83,6 +83,10 @@ def home(request):
         'products__offers'
     )
 
+    brands = Brand.objects.filter(show_on_homepage=True)
+    if not brands.exists():
+        brands = Brand.objects.all()[:10]
+
     context = {
         'sliders': sliders,
         'categories': categories_circles,
@@ -101,6 +105,7 @@ def home(request):
         'social_posts': social_posts,
         'latest_products': latest_products,
         'homepage_sections': homepage_sections,
+        'brands': brands,
     }
     return render(request, 'index.html', context)
 

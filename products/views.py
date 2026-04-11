@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from .models import Product, Category, ProductImage, Wishlist
+from .models import Product, Category, ProductImage, Wishlist, Brand
 
 @staff_member_required
 def delete_product_media(request, pk):
@@ -215,5 +215,32 @@ def collection_detail(request, slug):
         'products': products,
         'categories': roots,
         'title': collection.name
+    })
+
+def brand_list(request):
+    """Shows all active brands."""
+    brands = Brand.objects.filter(is_active=True)
+    return render(request, 'products/brand_list.html', {'brands': brands})
+
+def brand_detail(request, slug):
+    """Shows products for a specific brand."""
+    brand = get_object_or_404(Brand, slug=slug, is_active=True)
+    products = Product.objects.filter(
+        brand=brand,
+        is_active=True,
+        quantity__gt=0,
+        shipping_status='available'
+    ).select_related('category', 'brand').prefetch_related(
+        'offers',
+        'images'
+    ).distinct().order_by('-id')
+    
+    roots = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+    
+    return render(request, 'products/product_list.html', {
+        'current_brand': brand,
+        'products': products,
+        'categories': roots,
+        'title': f"Products by {brand.name}"
     })
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from .models import Category, Product, ProductImage, Offer, Collection, Wishlist
+from .models import Category, Product, ProductImage, Offer, Collection, Wishlist, Brand
 from .forms import ProductAdminForm
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
@@ -41,11 +41,13 @@ class SubCategoryInline(admin.TabularInline):
 class ProductAdmin(ImportExportModelAdmin):
     form = ProductAdminForm
     resource_class = ProductResource
-    list_display = ('preview', 'name', 'category_display', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status')
-    list_editable = ('show_on_homepage',)
-    search_fields = ('name', 'slug', 'sku_id')
+    list_display = ('preview', 'name', 'brand', 'category_display', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status')
+    list_editable = ('show_on_homepage', 'brand')
+    search_fields = ('name', 'slug', 'sku_id', 'brand__name')
+    list_filter = ('brand', 'category', 'show_on_homepage', 'is_active')
     readonly_fields = ('preview', 'sku_id')
     inlines = [ProductImageInline]
+    change_list_template = "admin/products/product/change_list.html"
 
     def get_urls(self):
         from django.urls import path
@@ -166,7 +168,6 @@ class ProductAdmin(ImportExportModelAdmin):
     class Media:
         js = (
             'admin/js/dynamic_categories.js',
-            'admin/js/admin_demo_buttons.js',
         )
 
     def preview(self, obj):
@@ -223,6 +224,7 @@ class ProductAdmin(ImportExportModelAdmin):
         "free_shipping": admin.HORIZONTAL,
         "show_on_homepage": admin.HORIZONTAL,
     }
+    autocomplete_fields = ('brand', 'category')
 
 @admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
@@ -265,12 +267,19 @@ class CategoryAdmin(ImportExportModelAdmin):
             'all': ('admin/css/subcategory_admin.css',)
         }
 
+@admin.register(Brand)
+class BrandAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'show_on_homepage', 'is_active')
+    list_editable = ('show_on_homepage', 'is_active')
+    search_fields = ('name',)
+    prepopulated_fields = {"slug": ("name",)}
+
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
     list_display = ('name', 'offer_type', 'discount_value', 'start_date', 'end_date')
     list_filter = ('offer_type',)
     search_fields = ('name',)
-    filter_horizontal = ('products',)
+    filter_horizontal = ('products', 'categories', 'brands')
 
     fieldsets = (
         ('Offer Basics', {
@@ -279,9 +288,13 @@ class OfferAdmin(admin.ModelAdmin):
         ('Active Dates', {
             'fields': ('start_date', 'end_date')
         }),
-        ('Apply to Products', {
+        ('Bulk Assignment', {
+            'fields': ('categories', 'brands'),
+            'description': 'Select categories or brands to apply this offer to all their products automatically.'
+        }),
+        ('Individual Products', {
             'fields': ('products',),
-            'description': 'Use the selector below to assign this offer to products. Search by name in the filter box.'
+            'description': 'Use the selector below to assign this offer to specific products manually.'
         }),
     )
 

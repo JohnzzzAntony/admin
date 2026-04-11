@@ -115,10 +115,41 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
         ordering = ['homepage_order', 'name']
 
+# ─── Brand ──────────────────────────────────────────────────────────────────
+
+class Brand(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, blank=True)
+    logo = models.ImageField(
+        upload_to='brands/', 
+        null=True, 
+        blank=True,
+        help_text="Brand Logo. Recommended: 300x120px. PNG, WEBP."
+    )
+    logo_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted logo.")
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
+    show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display")
+
+    def save(self, *args, **kwargs):
+        if not self.slug: self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def get_image_url(self):
+        if self.logo: return self.logo.url
+        return self.logo_url or "https://via.placeholder.com/300x120?text=Brand"
+
+    def __str__(self): return self.name
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('products:brand_detail', kwargs={'slug': self.slug})
+
 # ─── Product ─────────────────────────────────────────────────────────────────
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, null=True, blank=True)
+    brand = models.ForeignKey(Brand, related_name='products', on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, null=True, blank=True)
     image = models.ImageField(
@@ -182,11 +213,25 @@ class Product(models.Model):
 
         # Check for active offers
         now = timezone.now()
+        
+        # 1. Direct Offers
+        offers_query = Q(products=self)
+        
+        # 2. Category Bulk Offers (including ancestors)
+        if self.category:
+            ancestor_ids = [a.id for a in self.category.get_ancestors()] + [self.category.id]
+            offers_query |= Q(categories__id__in=ancestor_ids)
+            
+        # 3. Brand Bulk Offers
+        if self.brand:
+            offers_query |= Q(brands=self.brand)
+
         try:
-            active_offers = self.offers.filter(
+            active_offers = Offer.objects.filter(
+                offers_query,
                 start_date__lte=now,
                 end_date__gte=now
-            )
+            ).distinct()
         except Exception:
             active_offers = []
 
@@ -266,7 +311,9 @@ class Offer(models.Model):
     name = models.CharField(max_length=100)
     offer_type = models.CharField(max_length=20, choices=OFFER_TYPES, default='percentage')
     discount_value = models.DecimalField(max_digits=10, decimal_places=2)
-    products = models.ManyToManyField(Product, related_name='offers', blank=True)
+    products = models.ManyToManyField(Product, related_name='offers', blank=True, help_text="Individual product assignment.")
+    categories = models.ManyToManyField(Category, related_name='bulk_offers', blank=True, help_text="Apply to all products in these categories (and subcategories).")
+    brands = models.ManyToManyField(Brand, related_name='bulk_offers', blank=True, help_text="Apply to all products of these brands.")
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     def __str__(self): return self.name

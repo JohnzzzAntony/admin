@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="py-5 bg-light mt-5">
+    <div class="container-fluid mb-4">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb bg-transparent p-0 mb-0">
+                        <li class="breadcrumb-item"><a href="/" class="text-primary">Home</a></li>
+                        <li class="breadcrumb-item active text-dark" aria-current="page">Shop by Brands</li>
+                    </ol>
+                </nav>
+                <div class="text-center mb-5">
+                    <h1 class="display-4 font-weight-bold text-dark mb-3">Shop by Brands</h1>
+                    <p class="lead text-muted mx-auto" style="max-width: 700px;">
+                        Explore our wide range of products from the industry's most trusted and prestigious brands.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row px-xl-5">
+            {% for brand in brands %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <a href="{{ brand.get_absolute_url }}" class="text-decoration-none">
+                    <div class="card brand-card h-100 border-0 shadow-sm rounded-4 overflow-hidden text-center p-4 transition-all">
+                        <div class="brand-logo-container mb-3 d-flex align-items-center justify-content-center" style="height: 120px;">
+                            <img src="{{ brand.get_image_url }}" alt="{{ brand.name }}" class="img-fluid brand-logo">
+                        </div>
+                        <h5 class="brand-name text-dark font-weight-bold mb-1">{{ brand.name }}</h5>
+                        <p class="text-muted small mb-0">{{ brand.products.count }} Products</p>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                <h4>No brands available yet</h4>
+                <p class="text-muted">Check back soon for new brand additions.</p>
+                <a href="{% url 'products:product_list' %}" class="btn btn-primary rounded-pill px-4">Browse All Products</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    .brand-card {
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    .brand-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+        border-color: var(--primary-color);
+    }
+    .brand-logo {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        filter: grayscale(100%);
+        opacity: 0.7;
+        transition: 0.3s ease;
+    }
+    .brand-card:hover .brand-logo {
+        filter: grayscale(0%);
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    .brand-name {
+        transition: 0.3s;
+    }
+    .brand-card:hover .brand-name {
+        color: var(--primary-color) !important;
+    }
+    .transition-all {
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+</style>
+{% endblock %}

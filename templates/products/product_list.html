@@ -18,6 +18,9 @@
                             <li class="breadcrumb-item active text-dark" aria-current="page">{{ current_category.name }}</li>
                         {% elif collection %}
                             <li class="breadcrumb-item active text-dark" aria-current="page">{{ collection.name }} Collection</li>
+                        {% elif current_brand %}
+                            <li class="breadcrumb-item"><a href="{% url 'products:brand_list' %}" class="text-primary">Brands</a></li>
+                            <li class="breadcrumb-item active text-dark" aria-current="page">{{ current_brand.name }}</li>
                         {% endif %}
                     </ol>
                 </nav>
@@ -42,6 +45,20 @@
                         <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white text-center px-3" style="top: 0; left: 0;">
                             <h1 class="display-4 font-weight-bold mb-0 text-shadow">{{ collection.name }}</h1>
                             <p class="lead mt-2 text-shadow" style="max-width: 800px;">Exclusive Curated Collection</p>
+                        </div>
+                    {% elif current_brand %}
+                        {% if current_brand.logo %}
+                            <img src="{{ current_brand.logo.url }}" alt="{{ current_brand.name }}" class="w-100 h-100" style="object-fit: cover; filter: brightness(0.6);">
+                        {% elif current_brand.logo_url %}
+                            <img src="{{ current_brand.logo_url }}" alt="{{ current_brand.name }}" class="w-100 h-100" style="object-fit: cover; filter: brightness(0.6);">
+                        {% else %}
+                            <div class="w-100 h-100 bg-secondary" style="opacity: 0.8;"></div>
+                        {% endif %}
+                        <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white text-center px-3" style="top: 0; left: 0;">
+                            <h1 class="display-4 font-weight-bold mb-0 text-shadow">{{ current_brand.name }}</h1>
+                            {% if current_brand.description %}
+                            <p class="lead mt-2 text-shadow" style="max-width: 800px;">{{ current_brand.description }}</p>
+                            {% endif %}
                         </div>
                     {% endif %}
                 </div>

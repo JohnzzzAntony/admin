@@ -15,6 +15,9 @@ urlpatterns = [
     path('category/<slug:slug>/', views.category_detail, name='category_detail'),
     path('category/<path:hierarchy_path>/', views.category_detail, name='category_hierarchy_detail'),
     
+    path('brands/', views.brand_list, name='brand_list'),
+    path('brand/<slug:slug>/', views.brand_detail, name='brand_detail'),
+    
     # Internal Admin APIs
     path('api/media/delete/<int:pk>/', views.delete_product_media, name='delete_product_media'),
     path('api/product/clear-image/<int:pk>/', views.clear_primary_product_image, name='clear_primary_product_image'),
