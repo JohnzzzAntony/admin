@@ -27,8 +27,12 @@ admin.site.unregister(User)
 class UserAdmin(UserFriendlyPermissionMixin, BaseUserAdmin):
     """
     Refined User Management with high-readability permissions.
-    """
-    filter_horizontal = ()
+    filter_horizontal = ('groups', 'user_permissions')
+
+    class Media:
+        css = {
+            'all': ('admin/css/admin_offer.css',)
+        }
     
     # We remove the get_form override that was adding select2 since we have a custom widget now
     def get_form(self, request, obj=None, **kwargs):
@@ -44,4 +48,9 @@ class GroupAdmin(UserFriendlyPermissionMixin, BaseGroupAdmin):
     """
     Refined Group Management with filtered permissions.
     """
-    filter_horizontal = ()
+    filter_horizontal = ('permissions',)
+
+    class Media:
+        css = {
+            'all': ('admin/css/admin_offer.css',)
+        }
