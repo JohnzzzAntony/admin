@@ -59,10 +59,19 @@ class ProductAdmin(ImportExportModelAdmin):
     def _get_demo_dataset(self):
         import tablib
         resource = self.resource_class()
-        dataset = tablib.Dataset(headers=resource.get_export_headers())
         
-        # Add sample row 1
-        dataset.append([
+        # Get actual headers from the resource
+        headers = resource.get_export_headers()
+        dataset = tablib.Dataset(headers=headers)
+        
+        # Mapping values to headers to avoid index confusion
+        # Fields: id, category, name, slug, image, image_url, sku_id, quantity, unit, 
+        # regular_price, sale_price, shipping_status, free_shipping, 
+        # additional_shipping_charge, delivery_time, tax_percentage, 
+        # weight, length, width, height, features, overview, technical_info, 
+        # created_at, show_on_homepage, is_active, meta_title, meta_description, meta_keywords
+        
+        sample_row_1 = [
             "", # id
             "Medical Equipment", # category
             "Sample Premium Stethoscope", # name
@@ -78,24 +87,23 @@ class ProductAdmin(ImportExportModelAdmin):
             True, # free_shipping
             0.00, # additional_shipping_charge
             "2-3 business days", # delivery_time
+            5.00, # tax_percentage (VAT %)
             0.5, # weight
             30, # length
             15, # width
             5, # height
             "Professional grade stethoscope for cardiologists.", # features
-            "Superb acoustics; Dual-lumen tubing; Stainless steel chestpiece.", # overview
-            "Weight: 150g; Length: 69cm.", # technical_info
-            "", # brochure
+            "<p>Superb acoustics; Dual-lumen tubing; Stainless steel chestpiece.</p>", # overview
+            "<p>Weight: 150g; Length: 69cm.</p>", # technical_info
             "2024-01-01 10:00:00", # created_at
             True, # show_on_homepage
             True, # is_active
             "Best Stethoscope UAE", # meta_title
             "Buy the best medical stethoscope in Dubai with fast delivery.", # meta_description
             "stethoscope, medical, cardiology, uae", # meta_keywords
-        ])
+        ]
         
-        # Add sample row 2
-        dataset.append([
+        sample_row_2 = [
             "", # id
             "Medical Consumables", # category
             "Digital Blood Pressure Monitor", # name
@@ -111,21 +119,34 @@ class ProductAdmin(ImportExportModelAdmin):
             False, # free_shipping
             15.00, # additional_shipping_charge
             "1-2 business days", # delivery_time
+            5.00, # tax_percentage (VAT %)
             0.8, # weight
             20, # length
             20, # width
             15, # height
-            "Automatic digital BP monitor with large display.", # overview
-            "One-touch operation; Irregular heartbeat detection; Memory for 2 users.", # features
-            "Accuracy: +/- 3mmHg.", # technical_info
-            "", # brochure
+            "Automatic digital BP monitor with large display.", # features
+            "<p>One-touch operation; Irregular heartbeat detection; Memory for 2 users.</p>", # overview
+            "<p>Accuracy: +/- 3mmHg.</p>", # technical_info
             "2024-01-01 11:00:00", # created_at
             True, # show_on_homepage
             True, # is_active
             "Digital BP Monitor Dubai", # meta_title
             "Reliable blood pressure monitoring at home.", # meta_description
             "bp monitor, blood pressure, health, uae", # meta_keywords
-        ])
+        ]
+        
+        # Verify length matches headers
+        if len(sample_row_1) == len(headers):
+            dataset.append(sample_row_1)
+            dataset.append(sample_row_2)
+        else:
+            # Fallback or log error if mismatch
+            # This helps prevent 500 errors if model changes
+            print(f"DEBUG: Dataset header mismatch! Expected {len(headers)}, got {len(sample_row_1)}")
+            # Even if mismatch, try to append what we have if length is equal to some common set
+            dataset.append(sample_row_1[:len(headers)])
+            dataset.append(sample_row_2[:len(headers)])
+            
         return dataset
 
     def download_demo_excel(self, request):
