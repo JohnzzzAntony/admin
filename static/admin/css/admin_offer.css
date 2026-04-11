@@ -4,39 +4,47 @@
  */
 
 /* ── Offer / Collection product selector ─────────────────────────────────── */
-#id_products_from, #id_products_to {
-    min-height: 350px !important;
-    height: 350px !important;
+/* ── Bulk Assignment Selectors (Products, Categories, Brands) ──────────────── */
+.selector select {
+    min-height: 400px !important;
+    height: 400px !important;
     width: 100% !important;
-    font-size: 0.875rem;
+    min-width: 380px !important; /* Increased width to prevent truncated text */
+    font-size: 0.9rem;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
-    padding: 6px;
+    padding: 8px;
+    background: #ffffff;
 }
 
 /* Style individual options */
-#id_products_from option, #id_products_to option {
-    padding: 6px 10px;
+.selector select option {
+    padding: 8px 12px;
     border-radius: 4px;
-    margin: 1px 0;
+    margin: 2px 0;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: all 0.2s ease;
+    white-space: normal; /* Allow some text wrapping if needed, though mostly for width */
 }
 
-#id_products_from option:hover, #id_products_to option:hover {
-    background: #e0e7ff !important;
+.selector select option:hover {
+    background: #eff6ff !important;
+    color: #1e40af;
 }
 
 /* The selector-chooser wrapper */
 .selector {
     display: flex;
-    gap: 12px;
-    align-items: flex-start;
+    flex-wrap: wrap; /* NEW: Allow stacking if missing space */
+    gap: 15px;
+    align-items: center;
     width: 100%;
+    margin-bottom: 20px;
 }
 
 .selector-available, .selector-chosen {
     flex: 1;
+    min-width: 380px; /* Force minimum size for the columns */
 }
 
 .selector-available h2, .selector-chosen h2 {
@@ -72,8 +80,26 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 8px;
-    padding: 0 8px;
+    gap: 10px;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
+
+/* On small screens where they stack, rotate buttons or adjust layout */
+@media (max-width: 900px) {
+    .selector {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .selector-chooser {
+        flex-direction: row;
+        justify-content: center;
+    }
+    .selector-available, .selector-chosen {
+        min-width: 100%;
+    }
 }
 
 .selector-chooser li button {
@@ -92,6 +118,13 @@
 }
 
 /* Inline product images in list - make rows identifiable */
+/* Inline indicators - make rows identifiable */
 .selector-available option::before {
-    content: "🟢 ";
+    content: "🔵 ";
+    font-size: 0.7rem;
+}
+
+.selector-chosen option::before {
+    content: "✅ ";
+    font-size: 0.7rem;
 }

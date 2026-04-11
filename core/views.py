@@ -83,9 +83,7 @@ def home(request):
         'products__offers'
     )
 
-    brands = Brand.objects.filter(show_on_homepage=True)
-    if not brands.exists():
-        brands = Brand.objects.all()[:10]
+    brands = Brand.objects.filter(show_on_homepage=True, is_active=True)
 
     context = {
         'sliders': sliders,

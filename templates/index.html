@@ -167,6 +167,7 @@
     </section>
 
     <!-- Brands Section -->
+    {% if brands %}
     <section class="py-5 bg-light">
         <div class="container py-4">
             <div class="text-center mb-5">
@@ -195,6 +196,7 @@
             </div>
         </div>
     </section>
+    {% endif %}
     <!-- Curated Collections Sections -->
     {% for col in collections %}
     <section class="py-5 {% if forloop.counter|divisibleby:2 %}bg-white{% else %}bg-light{% endif %}" id="collection-{{ col.slug }}">
