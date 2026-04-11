@@ -1134,19 +1134,31 @@ body.jazzmin-page .selector select {
 .inline-group .tabular td, 
 .inline-group .tabular th {
     width: auto !important;
-    min-width: 150px !important;
+    min-width: 180px !important; /* Increase width for inputs */
+    text-align: left !important;
 }
 
+/* Order column should be smaller */
 .inline-group .tabular th.column-order,
 .inline-group .tabular td.field-order {
-    min-width: 80px !important;
-    max-width: 100px !important;
+    min-width: 100px !important;
+    width: 100px !important;
 }
 
+/* Delete column should be aligned */
 .inline-group .tabular th.column-delete,
 .inline-group .tabular td.delete {
     min-width: 80px !important;
-    text-align: center !important;
+    width: 80px !important;
+    text-align: left !important; /* Force left to match logic */
+}
+
+/* Hide the "Original" text which pushes headers */
+.inline-group .tabular th.original, 
+.inline-group .tabular td.original {
+    width: 0 !important;
+    padding: 0 !important;
+    min-width: 0 !important;
 }
 
 .inline-group .tabular td.original p {
