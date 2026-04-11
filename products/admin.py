@@ -15,10 +15,10 @@ class ProductResource(resources.ModelResource):
 
 # ─── Inlines ─────────────────────────────────────────────────────────────────
 
-class ProductImageInline(admin.StackedInline):
+class ProductImageInline(admin.TabularInline):
     model = ProductImage
-    extra = 0
-    fields = (('image', 'image_url'), ('order', 'preview'))
+    extra = 1
+    fields = ('image', 'image_url', 'order', 'preview')
     readonly_fields = ('preview',)
     def preview(self, obj):
         url = obj.get_image_url() if hasattr(obj, 'get_image_url') else None

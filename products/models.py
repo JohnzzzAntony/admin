@@ -208,8 +208,8 @@ class Product(models.Model):
 
     def get_best_price_info(self):
         from django.utils import timezone
-        # Safely handle None prices - use 0 as minimum base
-        reg = self.regular_price if self.regular_price is not None else 0
+        # Safely handle None prices - use Decimal for consistency
+        reg = self.regular_price if self.regular_price is not None else Decimal('0.00')
         sale = self.sale_price if self.sale_price is not None else reg
 
         # Check for active offers
@@ -300,7 +300,10 @@ class ProductImage(models.Model):
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']
     def get_image_url(self):
-        if self.image: return self.image.url
+        try:
+            if self.image: return self.image.url
+        except Exception:
+            pass
         return self.image_url or "https://via.placeholder.com/300"
 
 class Offer(models.Model):
