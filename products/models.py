@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.utils.text import slugify
 from django.utils import timezone
 from ckeditor.fields import RichTextField
