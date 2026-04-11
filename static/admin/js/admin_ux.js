@@ -51,15 +51,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 3. Clearable File Input Improvements & Dynamic Previews
     function improveClearableFileInputs() {
-        const containers = document.querySelectorAll('.file-upload, .clearable-file-input, .field-image, .field-logo, .field-banner');
+        // Target all file-related containers (Both standard fields and inlines)
+        const selector = '.file-upload, .clearable-file-input, .field-image, .field-logo, .field-banner, .field-image_url, td.field-image, td.column-image';
+        const containers = document.querySelectorAll(selector);
     
         containers.forEach(container => {
             if (container.dataset.enhanced === 'true') return;
-            container.dataset.enhanced = 'true';
-
-            const clearCheckbox = container.querySelector('input[type="checkbox"][name$="-clear"]');
+            
             const fileInput = container.querySelector('input[type="file"]');
             if (!fileInput) return;
+            
+            container.dataset.enhanced = 'true';
+            const clearCheckbox = container.querySelector('input[type="checkbox"][name$="-clear"]');
     
             // 1. Setup Preview Container
             const previewWrapper = document.createElement('div');
@@ -73,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
             closeBtn.type = 'button';
             closeBtn.className = 'admin-preview-close';
             closeBtn.innerHTML = '&times;';
-            closeBtn.style.cssText = 'position:absolute; top:-10px; right:-10px; width:28px; height:28px; background:#ef4444; color:#fff; border:none; border-radius:50%; cursor:pointer; font-weight:700; font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;';
+            closeBtn.style.cssText = 'position:absolute; top:-10px; right:-10px; width:28px; height:28px; background:#ef4444; color:#fff; border:none; border-radius:50%; cursor:pointer; font-weight:700; font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s; z-index:10;';
             
             previewWrapper.appendChild(previewImg);
             previewWrapper.appendChild(closeBtn);
@@ -93,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentNodes.forEach(el => {
                    if (el.nodeType === Node.TEXT_NODE) el.textContent = '';
                    else if (el.tagName === 'A') el.style.display = 'none';
-                   else if (el.tagName === 'BR') el.remove();
                 });
             }
 
@@ -130,10 +132,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // 6. Handle original clear label if it exists
             const clearLabel = container.querySelector('label[for="' + (clearCheckbox ? clearCheckbox.id : '') + '"]');
             if (clearLabel) {
-                clearLabel.style.display = 'none'; // Hide it as we have our own close btn
+                clearLabel.style.display = 'none';
             }
         });
     }
 
     improveClearableFileInputs();
+
+    // Re-run whenever a new formset row is added
+    $(document).on('formset:added', function() {
+        setTimeout(improveClearableFileInputs, 100);
+    });
 });

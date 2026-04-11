@@ -1116,19 +1116,37 @@ body.jazzmin-page .selector select {
    ══════════════════════════════════════════════════════════ */
 .inline-group .tabular thead th {
     text-align: left !important;
-    padding: 12px 15px !important;
-    font-size: 0.8rem !important;
+    padding: 12px 10px !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    color: var(--primary) !important;
+    background: #f8fafc !important;
+    border-bottom: 2px solid #e2e8f0 !important;
 }
 
 .inline-group .tabular tbody td {
-    padding: 15px !important;
+    padding: 12px 10px !important;
     vertical-align: middle !important;
+    text-align: left !important;
 }
 
-/* Fix for the screenshot: image and image_url headers should be left aligned to match inputs */
-.inline-group .tabular thead th.column-image,
-.inline-group .tabular thead th.column-image_url {
-    text-align: left !important;
+/* Specific column targeting for alignment */
+.inline-group .tabular td, 
+.inline-group .tabular th {
+    width: auto !important;
+    min-width: 150px !important;
+}
+
+.inline-group .tabular th.column-order,
+.inline-group .tabular td.field-order {
+    min-width: 80px !important;
+    max-width: 100px !important;
+}
+
+.inline-group .tabular th.column-delete,
+.inline-group .tabular td.delete {
+    min-width: 80px !important;
+    text-align: center !important;
 }
 
 .inline-group .tabular td.original p {
