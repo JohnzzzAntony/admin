@@ -412,21 +412,59 @@ textarea, .vLargeTextField {
 }
 
 .clearable-file-input {
-    display: inline-flex !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
     align-items: center !important;
-    gap: 8px !important;
-    margin-left: auto !important;
-    padding: 4px 8px !important;
-    background: #fef2f2 !important;
-    border: 1px solid #fee2e2 !important;
+    gap: 12px !important;
+    padding: 10px 15px !important;
+    background: #fff !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    box-shadow: var(--neu-shadow-inset) !important;
+}
+
+/* Hide the technical checkbox, but keep it functional */
+.clearable-file-input input[type="checkbox"] {
+    display: none !important;
+}
+
+/* Style the "Currently" link part */
+.clearable-file-input a {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: var(--accent) !important;
+    background: #f1f5f9 !important;
+    padding: 4px 10px !important;
     border-radius: 6px !important;
 }
 
+/* Style the Clear button (label) */
 .clearable-file-input label {
-    font-size: 0.75rem !important;
+    order: 2 !important;
+    background: #fee2e2 !important;
     color: #ef4444 !important;
-    margin: 0 !important;
+    padding: 6px 14px !important;
+    border-radius: 8px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
     cursor: pointer !important;
+    margin: 0 !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid #fecaca !important;
+}
+
+.clearable-file-input label:hover {
+    background: #ef4444 !important;
+    color: #fff !important;
+}
+
+/* The File Input (Add button part) */
+.clearable-file-input input[type="file"] {
+    order: 3 !important;
+    font-size: 0.85rem !important;
+    color: var(--primary-light) !important;
 }
 
 .btn-simple-remove {
