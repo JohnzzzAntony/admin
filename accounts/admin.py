@@ -27,6 +27,7 @@ admin.site.unregister(User)
 class UserAdmin(UserFriendlyPermissionMixin, BaseUserAdmin):
     """
     Refined User Management with high-readability permissions.
+    """
     filter_horizontal = ('groups', 'user_permissions')
 
     class Media:
