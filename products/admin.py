@@ -18,13 +18,7 @@ class ProductResource(resources.ModelResource):
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
-    fields = ('image', 'image_url', 'order', 'preview')
-    readonly_fields = ('preview',)
-    def preview(self, obj):
-        url = obj.get_image_url() if hasattr(obj, 'get_image_url') else None
-        if url:
-            return mark_safe(f'<img src="{url}" width="60" style="border-radius:4px;"/>')
-        return "-"
+    fields = ('image', 'image_url', 'order')
 
 class SubCategoryInline(admin.TabularInline):
     model = Category

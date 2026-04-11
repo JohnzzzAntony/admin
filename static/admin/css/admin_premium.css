@@ -1110,3 +1110,45 @@ body.jazzmin-page .selector select {
     border-radius: 10px !important;
 }
 
+/* ══════════════════════════════════════════════════════════
+   TABULAR INLINE ALIGNMENT
+   Ensure headers align with fields
+   ══════════════════════════════════════════════════════════ */
+.inline-group .tabular thead th {
+    text-align: left !important;
+    padding: 12px 15px !important;
+    font-size: 0.8rem !important;
+}
+
+.inline-group .tabular tbody td {
+    padding: 15px !important;
+    vertical-align: middle !important;
+}
+
+/* Fix for the screenshot: image and image_url headers should be left aligned to match inputs */
+.inline-group .tabular thead th.column-image,
+.inline-group .tabular thead th.column-image_url {
+    text-align: left !important;
+}
+
+.inline-group .tabular td.original p {
+    display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DYNAMIC IMAGE PREVIEW (ADMIN UX)
+   ══════════════════════════════════════════════════════════ */
+.admin-preview-wrapper:hover .admin-preview-close {
+    transform: scale(1.1);
+    background: #dc2626 !important;
+}
+
+.admin-preview-wrapper img {
+    transition: transform 0.2s ease;
+}
+
+.admin-preview-wrapper:hover img {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+

@@ -49,12 +49,55 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 3. Clearable File Input Improvements
+    // 3. Clearable File Input Improvements & Dynamic Previews
     function improveClearableFileInputs() {
-        const containers = document.querySelectorAll('.file-upload, .clearable-file-input');
+        const containers = document.querySelectorAll('.file-upload, .clearable-file-input, .field-image, .field-logo, .field-banner');
     
         containers.forEach(container => {
-            // Remove "Change:" text immediately on load
+            if (container.dataset.enhanced === 'true') return;
+            container.dataset.enhanced = 'true';
+
+            const clearCheckbox = container.querySelector('input[type="checkbox"][name$="-clear"]');
+            const fileInput = container.querySelector('input[type="file"]');
+            if (!fileInput) return;
+    
+            // 1. Setup Preview Container
+            const previewWrapper = document.createElement('div');
+            previewWrapper.className = 'admin-preview-wrapper';
+            previewWrapper.style.cssText = 'position:relative; display:inline-block; margin-top:10px; display:none;';
+            
+            const previewImg = document.createElement('img');
+            previewImg.style.cssText = 'width:120px; height:120px; object-fit:cover; border-radius:12px; border:2px solid #e2e8f0; box-shadow:0 4px 6px rgba(0,0,0,0.1);';
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.type = 'button';
+            closeBtn.className = 'admin-preview-close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.style.cssText = 'position:absolute; top:-10px; right:-10px; width:28px; height:28px; background:#ef4444; color:#fff; border:none; border-radius:50%; cursor:pointer; font-weight:700; font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;';
+            
+            previewWrapper.appendChild(previewImg);
+            previewWrapper.appendChild(closeBtn);
+            container.appendChild(previewWrapper);
+
+            // 2. Handle Existing File (Currently)
+            const currentNodes = Array.from(container.childNodes).filter(n =>
+                (n.nodeType === Node.TEXT_NODE && (n.textContent.includes('Currently:') || n.textContent.includes('Change:'))) ||
+                (n.nodeName === 'A' && n.href)
+            );
+            
+            const existingLink = container.querySelector('a');
+            if (existingLink && (existingLink.href.match(/\.(jpg|jpeg|png|gif|webp)$/i) || existingLink.textContent.match(/\.(jpg|jpeg|png|gif|webp)$/i))) {
+                previewImg.src = existingLink.href;
+                previewWrapper.style.display = 'inline-block';
+                // Hide existing text/links
+                currentNodes.forEach(el => {
+                   if (el.nodeType === Node.TEXT_NODE) el.textContent = '';
+                   else if (el.tagName === 'A') el.style.display = 'none';
+                   else if (el.tagName === 'BR') el.remove();
+                });
+            }
+
+            // 3. Label Cleanup (Hide "Change:")
             const allNodes = Array.from(container.childNodes);
             allNodes.forEach(node => {
                 if (node.nodeType === Node.TEXT_NODE && (node.textContent.includes('Change:') || node.textContent.includes('change:'))) {
@@ -62,58 +105,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            const clearCheckbox = container.querySelector('input[type="checkbox"][name$="-clear"]');
-            const fileInput = container.querySelector('input[type="file"]');
-            if (!clearCheckbox || !fileInput) return;
-    
-            // Find the clear button/label
-            const clearLabel =
-                container.querySelector('label[for="' + clearCheckbox.id + '"]') ||
-                container.querySelector('.btn-danger') ||
-                container.querySelector('.clear-btn');
-    
-            // Gather "currently" nodes: text nodes + the file link
-            const currentNodes = Array.from(container.childNodes).filter(n =>
-                (n.nodeType === Node.TEXT_NODE && (
-                    n.textContent.includes('Currently:') ||
-                    n.textContent.includes('Change:')
-                )) ||
-                (n.nodeName === 'A' && n.href)
-            );
-    
-            // Build the replacement upload button
-            const uploadBtn = document.createElement('label');
-            uploadBtn.htmlFor = fileInput.id || '';
-            uploadBtn.className = 'btn btn-primary btn-sm mt-1';
-            uploadBtn.style.display = 'none';
-            uploadBtn.style.cursor = 'pointer';
-            uploadBtn.textContent = '➕ Add New File';
-            container.appendChild(uploadBtn);
-    
-            // Wire up the clear button
+            // 4. File Input change (New Upload)
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        previewWrapper.style.display = 'inline-block';
+                        fileInput.style.display = 'none';
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            // 5. Close Button logic
+            closeBtn.addEventListener('click', function() {
+                previewWrapper.style.display = 'none';
+                previewImg.src = '';
+                fileInput.value = '';
+                fileInput.style.display = 'inline-block';
+                if (clearCheckbox) clearCheckbox.checked = true;
+            });
+            
+            // 6. Handle original clear label if it exists
+            const clearLabel = container.querySelector('label[for="' + (clearCheckbox ? clearCheckbox.id : '') + '"]');
             if (clearLabel) {
-                clearLabel.addEventListener('click', function () {
-                    // 1. Hide the "Currently: <filename>" section
-                    currentNodes.forEach(el => {
-                        if (el.nodeType === Node.TEXT_NODE) el.textContent = '';
-                        else el.style.display = 'none';
-                    });
-    
-                    // 2. Hide the clear button itself
-                    clearLabel.style.display = 'none';
-    
-                    // 3. Check the hidden checkbox so Django knows to clear
-                    clearCheckbox.checked = true;
-    
-                    // 4. Reset any previously chosen file
-                    fileInput.value = '';
-    
-                    // 5. Show the upload button instantly
-                    uploadBtn.style.display = 'inline-block';
-                    
-                    // Force hide original file input to be replaced by our premium button if needed
-                    fileInput.style.display = 'none';
-                });
+                clearLabel.style.display = 'none'; // Hide it as we have our own close btn
             }
         });
     }
