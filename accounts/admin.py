@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin as BaseGroupAdmin
 from django.contrib.auth.models import User, Group, Permission
-from .widgets import PermissionMenuWidget
 
 # ── MIXIN: User-Friendly Permissions ──────────────────────────────────────────
 
@@ -15,7 +14,7 @@ class UserFriendlyPermissionMixin:
         if db_field.name in ["permissions", "user_permissions"]:
             # Filter the queryset to exclude internal system apps
             kwargs["queryset"] = Permission.objects.exclude(content_type__app_label__in=self.SYSTEM_APPS)
-            kwargs["widget"] = PermissionMenuWidget
+            # Use standard widget so filter_horizontal works correctly with our CSS
             return super().formfield_for_manytomany(db_field, request, **kwargs)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
