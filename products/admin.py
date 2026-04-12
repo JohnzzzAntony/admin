@@ -263,10 +263,30 @@ class CategoryAdmin(ImportExportModelAdmin):
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'show_on_homepage', 'is_active')
-    list_editable = ('show_on_homepage', 'is_active')
+    list_display = ('brand_logo', 'name', 'show_on_homepage', 'is_active', 'order')
+    list_editable = ('show_on_homepage', 'is_active', 'order')
     search_fields = ('name',)
     prepopulated_fields = {"slug": ("name",)}
+    
+    fieldsets = (
+        ('Brand Identity', {
+            'fields': (('name', 'slug'), 'order', 'is_active'),
+        }),
+        ('Visuals & Branding', {
+            'fields': (('logo', 'logo_url'), 'description'),
+            'description': 'Upload a brand logo or provide an external URL.'
+        }),
+        ('Homepage Appearance', {
+            'fields': ('show_on_homepage',),
+            'description': 'Toggle visibility in the "We Deal With" section on the homepage.'
+        }),
+    )
+    radio_fields = {"is_active": admin.HORIZONTAL, "show_on_homepage": admin.HORIZONTAL}
+
+    def brand_logo(self, obj):
+        url = obj.get_image_url()
+        return format_html('<img src="{}" style="height:35px; border-radius:4px; object-fit:contain; background:#f8fafc; padding:2px;" />', url) if url else "-"
+    brand_logo.short_description = 'Logo'
 
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):

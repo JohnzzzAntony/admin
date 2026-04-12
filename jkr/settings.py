@@ -243,7 +243,7 @@ JAZZMIN_SETTINGS = {
         {"name": "View Site", "url": "/", "new_window": True},
     ],
     "order_with_respect_to": [
-        "orders", "products", "accounts", "sliders", "blog", "pages", "contact", "core", "auth"
+        "products", "sliders", "orders", "accounts", "blog", "pages", "contact", "core", "auth"
     ],
     "icons": {
         "auth": "fas fa-users-cog",
@@ -255,6 +255,7 @@ JAZZMIN_SETTINGS = {
         "products.Category": "fas fa-tags",
         "products.Collection": "fas fa-layer-group",
         "products.Offer": "fas fa-percent",
+        "products.Brand": "fas fa-copyright",
         
         # Orders & Customers
         "orders.CustomerOrder": "fas fa-shopping-cart",

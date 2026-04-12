@@ -59,13 +59,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const fileInput = container.querySelector('input[type="file"]');
             const urlInput = container.querySelector('input[type="url"], input[name$="image_url"]');
+            const clearCheckbox = container.querySelector('input[type="checkbox"][name$="-clear"]');
             
             if (!fileInput && !urlInput) return;
             container.dataset.enhanced = 'true';
 
-            const clearCheckbox = container.querySelector('input[type="checkbox"][name$="-clear"]');
-    
-            // 1. Setup Preview Container
+            // 1. Setup Preview Container (Hidden by default)
             const previewWrapper = document.createElement('div');
             previewWrapper.className = 'admin-preview-wrapper';
             previewWrapper.style.cssText = 'position:relative; display:flex; flex-direction:column; align-items:flex-start; margin-top:10px; display:none;';
@@ -88,80 +87,75 @@ document.addEventListener('DOMContentLoaded', function() {
             container.appendChild(previewWrapper);
 
             // 2. Hide ugly default parts and create "Choose" button
+            let chooseBtn = null;
             if (fileInput) {
                 fileInput.style.display = 'none';
-                const chooseBtn = document.createElement('label');
+                clearCheckbox && (clearCheckbox.style.display = 'none');
+                
+                chooseBtn = document.createElement('label');
                 chooseBtn.htmlFor = fileInput.id;
-                chooseBtn.className = 'btn btn-sm btn-outline-primary';
-                chooseBtn.style.cssText = 'cursor:pointer; display:inline-block; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem;';
-                chooseBtn.innerHTML = '<i class="fas fa-image"></i> Choose Image';
+                chooseBtn.className = 'btn btn-sm btn-light border';
+                chooseBtn.style.cssText = 'cursor:pointer; display:inline-block; padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight:600;';
+                chooseBtn.innerHTML = '<i class="fas fa-plus-circle mr-1"></i> Upload Image';
                 container.appendChild(chooseBtn);
-                container.dataset.chooseBtn = 'true';
             }
 
-            // 3. Handle Existing File
-            const existingLink = container.querySelector('a');
-            if (existingLink && existingLink.href.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-                previewImg.src = existingLink.href;
-                fileNameLabel.textContent = existingLink.textContent.split('/').pop();
-                previewWrapper.style.display = 'flex';
-                if (container.querySelector('label[class*="btn-outline-primary"]')) {
-                    container.querySelector('label[class*="btn-outline-primary"]').style.display = 'none';
+            // Function to update visibility
+            function updateVisibility(hasImage, src, labelText) {
+                if (hasImage) {
+                    previewImg.src = src;
+                    fileNameLabel.textContent = labelText;
+                    previewWrapper.style.display = 'flex';
+                    if (chooseBtn) chooseBtn.style.display = 'none';
+                } else {
+                    previewWrapper.style.display = 'none';
+                    previewImg.src = '';
+                    if (chooseBtn) chooseBtn.style.display = 'inline-block';
+                    if (clearCheckbox) clearCheckbox.checked = true;
                 }
-                // Hide Django standard text
+            }
+
+            // 3. Initial State Check
+            const existingLink = container.querySelector('a');
+            if (existingLink && existingLink.href.match(/\.(jpg|jpeg|png|gif|webp|svg)/i)) {
+                updateVisibility(true, existingLink.href, existingLink.textContent.split('/').pop());
+                
+                // Remove messy Django text
                 container.childNodes.forEach(n => {
                     if (n.nodeType === Node.TEXT_NODE && (n.textContent.includes('Currently:') || n.textContent.includes('Change:'))) n.textContent = '';
-                    if (n.tagName === 'A' || n.tagName === 'BR') n.style.display = 'none';
+                    if (n.tagName === 'A' || n.tagName === 'BR' || n.tagName === 'SPAN') {
+                       if (n !== previewWrapper && !previewWrapper.contains(n)) n.style.display = 'none';
+                    }
                 });
             } else if (urlInput && urlInput.value) {
-                // Initial URL preview
-                previewImg.src = urlInput.value;
-                fileNameLabel.textContent = 'From URL';
-                previewWrapper.style.display = 'flex';
+                updateVisibility(true, urlInput.value, 'External URL');
             }
 
-            // 4. File Input change
-            if (fileInput) {
-                fileInput.addEventListener('change', function() {
-                    if (this.files && this.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            previewImg.src = e.target.result;
-                            fileNameLabel.textContent = fileInput.files[0].name;
-                            previewWrapper.style.display = 'flex';
-                            const btn = container.querySelector('label[class*="btn-outline-primary"]');
-                            if (btn) btn.style.display = 'none';
-                        };
-                        reader.readAsDataURL(this.files[0]);
-                    }
-                });
-            }
-
-            // 5. URL Input change
-            if (urlInput) {
-                urlInput.addEventListener('input', function() {
-                    if (this.value && this.value.match(/\.(jpg|jpeg|png|gif|webp)/i)) {
-                        previewImg.src = this.value;
-                        fileNameLabel.textContent = 'From URL';
-                        previewWrapper.style.display = 'flex';
-                    }
-                });
-            }
-
-            // 6. Close Button logic
-            closeBtn.addEventListener('click', function() {
-                previewWrapper.style.display = 'none';
-                previewImg.src = '';
-                if (fileInput) {
-                    fileInput.value = '';
-                    const btn = container.querySelector('label[class*="btn-outline-primary"]');
-                    if (btn) btn.style.display = 'inline-block';
+            // 4. Input Handlers
+            fileInput && fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => updateVisibility(true, e.target.result, fileInput.files[0].name);
+                    reader.readAsDataURL(this.files[0]);
+                    if (clearCheckbox) clearCheckbox.checked = false;
                 }
+            });
+
+            urlInput && urlInput.addEventListener('input', function() {
+                if (this.value && this.value.match(/\.(jpg|jpeg|png|gif|webp|svg)/i)) {
+                    updateVisibility(true, this.value, 'From URL');
+                } else if (!this.value) {
+                    updateVisibility(false);
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                updateVisibility(false);
+                if (fileInput) fileInput.value = '';
                 if (urlInput) urlInput.value = '';
-                if (clearCheckbox) clearCheckbox.checked = true;
             });
             
-            // 7. Cleanup standard clear label
+            // Final removal of any leftover clear labels
             const clearLabel = container.querySelector('label[for="' + (clearCheckbox ? clearCheckbox.id : '') + '"]');
             if (clearLabel) clearLabel.style.display = 'none';
         });
@@ -169,8 +163,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     improveClearableFileInputs();
 
-    // Re-run whenever a new formset row is added
-    $(document).on('formset:added', function() {
-        setTimeout(improveClearableFileInputs, 100);
-    });
+    // Re-run whenever a new formset row is added (using django.jQuery)
+    if (window.django && django.jQuery) {
+        django.jQuery(document).on('formset:added', function() {
+            setTimeout(improveClearableFileInputs, 100);
+        });
+    }
 });

@@ -59,8 +59,8 @@ class PromoBanner(models.Model):
     def __str__(self): return f"{self.name} ({self.get_layout_display()})"
     class Meta:
         ordering = ['homepage_order']
-        verbose_name = "Promo Banner Section"
-        verbose_name_plural = "Promo Banner Sections"
+        verbose_name = "Promo Section"
+        verbose_name_plural = "Promo Sections"
 
 class BannerItem(models.Model):
     banner_section = models.ForeignKey(PromoBanner, related_name='items', on_delete=models.CASCADE)
