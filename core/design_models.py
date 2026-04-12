@@ -86,6 +86,22 @@ class DesignSettings(models.Model):
     )
     global_animation_type = models.CharField(max_length=20, choices=ANIMATION_EFFECTS, default='fade-up')
 
+    # Counter Specific Animations
+    COUNTER_ANIMATION_CHOICES = (
+        ('runner', 'Progressive Runner (Count-up)'),
+        ('fade', 'Simple Fade-in (No Counting)'),
+        ('zoom', 'Zoom-in Count (Speedy)'),
+    )
+    counter_animation_style = models.CharField(max_length=20, choices=COUNTER_ANIMATION_CHOICES, default='runner', verbose_name="Counter Animation Style")
+    
+    COUNTER_SPEED_CHOICES = (
+        (3000, 'Conservative (3s)'),
+        (2000, 'Standard (2s)'),
+        (1000, 'Fast (1s)'),
+        (500, 'Instant (0.5s)'),
+    )
+    counter_animation_speed = models.PositiveIntegerField(choices=COUNTER_SPEED_CHOICES, default=2000, verbose_name="Counter Animation Duration (ms)")
+
     class Meta:
         verbose_name = "Theme Settings"
         verbose_name_plural = "Theme Settings"

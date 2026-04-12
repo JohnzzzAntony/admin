@@ -88,8 +88,12 @@ class DesignSettingsAdmin(admin.ModelAdmin):
             'fields': (('button_style', 'card_style', 'layout_style'),),
         }),
         ('Special Visuals', {
-            'fields': (('enable_glassmorphism', 'enable_neumorphism', 'enable_ambient_glow'), ('enable_animations', 'global_animation_type', 'dark_mode_enabled')),
-            'description': 'Premium effects and dark mode controls.'
+            'fields': (
+                ('enable_glassmorphism', 'enable_neumorphism', 'enable_ambient_glow'), 
+                ('enable_animations', 'global_animation_type', 'dark_mode_enabled'),
+                ('counter_animation_style', 'counter_animation_speed'),
+            ),
+            'description': 'Premium effects, dark mode, and counter animation controls.'
         }),
         ('Homepage Content Blocks', {
             'fields': (
@@ -119,6 +123,7 @@ class DesignSettingsAdmin(admin.ModelAdmin):
         "enable_animations": admin.HORIZONTAL,
         "dark_mode_enabled": admin.HORIZONTAL,
         "pd_show_related": admin.HORIZONTAL,
+        "counter_animation_style": admin.HORIZONTAL,
     }
 
     def save_model(self, request, obj, form, change):

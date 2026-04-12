@@ -10,7 +10,7 @@
                         {{ counter.icon_svg|safe }}
                     </div>
                     {% endif %}
-                    <h1 class="display-3 font-weight-bold counter-value mb-2 text-dark">{{ counter.value }}</h1>
+                    <h1 class="display-3 font-weight-bold counter-value mb-2 text-dark" data-count="{{ counter.value }}">0</h1>
                     <p class="h5 font-weight-bold text-primary">{{ counter.title }}</p>
                 </div>
             </div>
@@ -18,3 +18,69 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const counters = document.querySelectorAll('.counter-value');
+        const animationStyle = "{{ design_settings.counter_animation_style|default:'runner' }}";
+        const duration = {{ design_settings.counter_animation_speed|default:2000 }};
+
+        const animateCounters = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const finalValue = counter.getAttribute('data-count');
+                    const target = parseInt(finalValue.replace(/[^0-9]/g, '')) || 0;
+                    
+                    if (animationStyle === 'fade') {
+                        // Just show the final value
+                        counter.innerText = finalValue;
+                        counter.style.opacity = '0';
+                        counter.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 800, fill: 'forwards' });
+                    } 
+                    else if (animationStyle === 'zoom') {
+                        // Fast Zoom count
+                        counter.animate([
+                            { transform: 'scale(0.5)', opacity: 0 },
+                            { transform: 'scale(1.1)', opacity: 1, offset: 0.8 },
+                            { transform: 'scale(1)', opacity: 1 }
+                        ], { duration: 600, easing: 'ease-out' });
+                        counter.innerText = finalValue;
+                    }
+                    else {
+                        // Default: Progressive Runner (Count-up)
+                        let startTime = null;
+                        const step = (currentTime) => {
+                            if (!startTime) startTime = currentTime;
+                            const progress = Math.min((currentTime - startTime) / duration, 1);
+                            const currentCount = Math.floor(progress * target);
+                            
+                            counter.innerText = currentCount.toLocaleString();
+                            
+                            if (progress < 1) {
+                                window.requestAnimationFrame(step);
+                            } else {
+                                counter.innerText = finalValue;
+                            }
+                        };
+                        
+                        if (target > 0) {
+                            window.requestAnimationFrame(step);
+                        } else {
+                            counter.innerText = finalValue;
+                        }
+                    }
+                    
+                    observer.unobserve(counter);
+                }
+            });
+        };
+
+        const observerOptions = {
+            threshold: 0.2
+        };
+
+        const observer = new IntersectionObserver(animateCounters, observerOptions);
+        counters.forEach(counter => observer.observe(counter));
+    });
+</script>
