@@ -723,9 +723,71 @@
             margin-top: 40px;
         }
         .footer-bottom p { margin: 0; font-size: 0.82rem; color: rgba(255,255,255,0.4); }
-        @media (max-width: 767px) {
-            .site-footer { padding: 40px 0 0; }
-            .footer-heading { margin-bottom: 14px; }
+        /* Mobile-Specific Premium Optimization */
+        @media (max-width: 768px) {
+            /* Compact Layout */
+            .container { padding-left: 15px; padding-right: 15px; }
+            section { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+            .py-5 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+
+            /* Very Small Product Tiles */
+            .card { border-radius: 18px !important; margin-bottom: 12px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important; }
+            .card-img-top { height: 140px !important; padding: 12px !important; }
+            .card-body { padding: 12px !important; }
+            .card-body h5, .card-body h6 { 
+                font-size: 0.85rem !important; 
+                line-height: 1.3 !important;
+                height: auto !important; 
+                min-height: 0 !important; 
+                margin-bottom: 6px !important;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .price .h5, .price .h6 { font-size: 0.9rem !important; }
+            .wishlist-btn { width: 30px !important; height: 30px !important; top: 10px !important; right: 10px !important; font-size: 0.75rem !important; }
+            .badge { font-size: 0.65rem !important; padding: 4px 8px !important; top: 10px !important; left: 10px !important; }
+            
+            /* Compact Category Slider */
+            .category-circle { width: 100px !important; height: 100px !important; margin-bottom: 10px !important; border-width: 4px !important; }
+            .category-slider h6 { font-size: 0.8rem !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
+            .category-slider span.small { font-size: 0.7rem !important; opacity: 0.8; }
+
+            /* Milestone Counter Boxes */
+            .counter-box { padding: 20px 10px !important; border-radius: 20px !important; }
+            .display-3.counter-value { font-size: 2rem !important; }
+            .counter-value + p { font-size: 0.85rem !important; }
+            .counter-icon { font-size: 1.8rem !important; margin-bottom: 10px !important; }
+
+            /* Banners Optimization */
+            .collection-banner { height: 180px !important; border-radius: 20px !important; }
+            .banner-mosaic-large, .banner-mosaic-small { height: 200px !important; border-radius: 20px !important; }
+            .banner-overlay { padding: 20px !important; }
+            .banner-overlay h2 { font-size: 1.3rem !important; }
+            .banner-overlay p { font-size: 0.85rem !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+            /* Typography & Section Titles */
+            .section-title { font-size: 1.6rem !important; margin-bottom: 2rem !important; }
+            .section-title::after { width: 40px !important; height: 3px !important; margin: 0.8rem auto !important; }
+            p.lead { font-size: 0.95rem !important; line-height: 1.5 !important; margin-bottom: 1.5rem !important; }
+            
+            /* Brands */
+            .brand-item-box { height: 90px !important; padding: 15px !important; border-radius: 18px !important; }
+            .brand-slider p { font-size: 0.75rem !important; }
+            
+            /* Search Bar Optimization */
+            .search-container { margin-top: 5px !important; }
+            .search-wrapper { height: 44px !important; border-radius: 12px !important; }
+            .search-wrapper input { font-size: 0.85rem !important; padding: 0 15px !important; }
+            .search-btn { padding: 0 15px !important; font-size: 0.7rem !important; border-radius: 0 10px 10px 0 !important; }
+            
+            /* Sidebar Menu Small Icons */
+            .side-menu-body ul li a { padding: 12px 20px !important; font-size: 0.85rem !important; }
+            .side-menu-body .menu-title { padding: 15px 20px 8px !important; font-size: 0.65rem !important; }
+            
+            /* General Helpers */
+            .hover-lift:hover { transform: none !important; }
         }
     </style>
     {% block split_css %}{% endblock %}
