@@ -239,6 +239,8 @@ JAZZMIN_SETTINGS = {
     "changeform_format": "horizontal_tabs",
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Brands", "model": "products.Brand"},
+        {"name": "Promo Sections", "model": "sliders.PromoBanner"},
         {"name": "AI Store Manager", "url": "/ai-manager/dashboard/", "new_window": False},
         {"name": "View Site", "url": "/", "new_window": True},
     ],
