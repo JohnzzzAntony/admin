@@ -37,7 +37,7 @@ class AboutUsAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Brand Story', {
-            'fields': (('title', 'subtitle'), 'is_active', 'content'),
+            'fields': (('title', 'heading'), 'is_active', 'content'),
         }),
     )
 
