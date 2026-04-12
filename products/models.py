@@ -129,8 +129,9 @@ class Brand(models.Model):
     )
     logo_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted logo.")
     description = models.TextField(blank=True)
-    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
-    show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display")
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
+    show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
+    order = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
         if not self.slug: self.slug = slugify(self.name)
