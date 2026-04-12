@@ -11,16 +11,22 @@ class UserFriendlyPermissionMixin:
     SYSTEM_APPS = ['admin', 'contenttypes', 'sessions', 'messages', 'staticfiles', 'auth']
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name in ["permissions", "user_permissions"]:
-            # Filter the queryset to exclude internal system apps
-            kwargs["queryset"] = Permission.objects.exclude(content_type__app_label__in=self.SYSTEM_APPS)
-            # Use standard widget so filter_horizontal works correctly with our CSS
-            return super().formfield_for_manytomany(db_field, request, **kwargs)
+        try:
+            if db_field.name in ["permissions", "user_permissions"]:
+                # Filter the queryset to exclude internal system apps
+                kwargs["queryset"] = Permission.objects.exclude(content_type__app_label__in=self.SYSTEM_APPS)
+        except Exception:
+            pass # Fallback to default if queryset filtering fails for any reason
+            
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 # ── CUSTOM ADMINS ──────────────────────────────────────────────────────────────
 
-admin.site.unregister(User)
+# Wrapped in try-except to prevent startup crash if unregister/register order is tricky
+try:
+    admin.site.unregister(User)
+except Exception:
+    pass
 
 @admin.register(User)
 class UserAdmin(UserFriendlyPermissionMixin, BaseUserAdmin):
@@ -34,14 +40,20 @@ class UserAdmin(UserFriendlyPermissionMixin, BaseUserAdmin):
             'all': ('admin/css/admin_offer.css',)
         }
     
-    # We remove the get_form override that was adding select2 since we have a custom widget now
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        if 'groups' in form.base_fields:
-            form.base_fields['groups'].widget.attrs['class'] = 'select2'
+        # Safety check for 'groups' field which is often absent in 'Add User' forms or specific views
+        if hasattr(form, 'base_fields') and 'groups' in form.base_fields:
+            try:
+                form.base_fields['groups'].widget.attrs['class'] = 'select2'
+            except Exception:
+                pass
         return form
 
-admin.site.unregister(Group)
+try:
+    admin.site.unregister(Group)
+except Exception:
+    pass
 
 @admin.register(Group)
 class GroupAdmin(UserFriendlyPermissionMixin, BaseGroupAdmin):

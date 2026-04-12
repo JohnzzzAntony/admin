@@ -231,8 +231,11 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
     def print_invoice_buttons(self, obj):
         if not obj.pk: return "-"
         from django.urls import reverse
-        print_url = reverse('admin:order-print', args=[obj.pk])
-        invoice_url = reverse('admin:order-invoice', args=[obj.pk])
+        try:
+            print_url = reverse('admin:order-print', args=[obj.pk])
+            invoice_url = reverse('admin:order-invoice', args=[obj.pk])
+        except Exception:
+            return "Error: Custom admin URLs not registered."
         return format_html(
             '<div style="display:flex; gap:12px;">'
             '<a class="button btn-warning" href="{}" target="_blank" style="background:#ea580c; color:white; padding:10px 25px; font-weight:700; border-radius:12px; transition:0.2s;">'
@@ -309,17 +312,17 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         try:
             product = Product.objects.get(id=product_id)
             price_info = product.get_best_price_info()
-            shipping_charge = 0
-            if product.skus.exists():
-                sku = product.skus.first()
-                shipping_charge = 0 if sku.free_shipping else (sku.additional_shipping_charge or 0)
+            
+            # Use Product fields directly instead of missing 'skus' attribute
+            shipping_charge = 0 if product.free_shipping else (product.additional_shipping_charge or 0)
+            
             return JsonResponse({
                 'unit_price': float(price_info['final_price']),
                 'shipping_charge': float(shipping_charge),
                 'product_name': product.name
             })
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': f"Price Error: {str(e)}"}, status=500)
 
     def items_total_display(self, obj):
         from django.utils.html import format_html_join
@@ -354,9 +357,9 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
             '</tfoot>'
             '</table>',
             mark_safe(rows),
-            sum(i.total_price for i in items), settings.CURRENCY,
-            obj.shipping_amount, settings.CURRENCY,
-            obj.total_amount, settings.CURRENCY
+            sum(i.total_price for i in items) if items else 0, settings.CURRENCY,
+            obj.shipping_amount or 0, settings.CURRENCY,
+            obj.total_amount or 0, settings.CURRENCY
         )
     items_total_display.short_description = "Detailed Summary"
 

@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.utils.text import slugify
 from django.utils import timezone
 from ckeditor.fields import RichTextField
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 try:
     from cloudinary_storage.storage import RawMediaCloudinaryStorage
     _raw_storage = RawMediaCloudinaryStorage()
@@ -137,7 +137,9 @@ class Brand(models.Model):
         super().save(*args, **kwargs)
 
     def get_image_url(self):
-        if self.logo: return self.logo.url
+        try:
+            if self.logo: return self.logo.url
+        except Exception: pass
         return self.logo_url or "https://via.placeholder.com/300x120?text=Brand"
 
     def __str__(self): return self.name
@@ -240,12 +242,16 @@ class Product(models.Model):
         best_offer_obj = None
         for offer in active_offers:
             current_offer_price = reg
-            if offer.offer_type == 'percentage':
-                current_offer_price = reg * (1 - (offer.discount_value / 100))
-            elif offer.offer_type == 'fixed':
-                current_offer_price = reg - offer.discount_value
-            elif offer.offer_type == 'final':
-                current_offer_price = Decimal(str(offer.discount_value))
+            try:
+                discount = Decimal(str(offer.discount_value)) if offer.discount_value else Decimal('0')
+                if offer.offer_type == 'percentage':
+                    current_offer_price = reg * (1 - (discount / 100))
+                elif offer.offer_type == 'fixed':
+                    current_offer_price = reg - discount
+                elif offer.offer_type == 'final':
+                    current_offer_price = discount
+            except (TypeError, ValueError, InvalidOperation):
+                continue
 
             if current_offer_price < offer_price:
                 offer_price = current_offer_price
@@ -286,9 +292,13 @@ class Product(models.Model):
                 self.slug = "product-" + timezone.now().strftime("%Y%m%d%H%M%S")
         
         if not self.sku_id:
-            import random, string
+            import random, string, time
             prefix = slugify(self.name)[:10].upper() or "PRO"
-            self.sku_id = f"PRO-{prefix}-{''.join(random.choices(string.ascii_uppercase + string.digits, k=4))}"
+            # Increase entropy to 8 chars and add timestamp component to ensure uniqueness
+            timestamp = str(int(time.time()))[-4:]
+            rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            self.sku_id = f"{prefix}-{timestamp}-{rand_str}"
+        
         super().save(*args, **kwargs)
 
     def __str__(self): return self.name

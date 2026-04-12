@@ -218,7 +218,7 @@ class ProductAdmin(ImportExportModelAdmin):
         "free_shipping": admin.HORIZONTAL,
         "show_on_homepage": admin.HORIZONTAL,
     }
-    autocomplete_fields = ('brand', 'category')
+    autocomplete_fields = ('brand',)
 
 @admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
