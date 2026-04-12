@@ -1112,8 +1112,12 @@ body.jazzmin-page .selector select {
 
 /* ══════════════════════════════════════════════════════════
    TABULAR INLINE ALIGNMENT
-   Ensure headers align with fields
+   Ensure headers align with fields and NO SCROLL
    ══════════════════════════════════════════════════════════ */
+.inline-group .tabular {
+    overflow-x: hidden !important; /* Eliminate scroll */
+}
+
 .inline-group .tabular thead th {
     text-align: left !important;
     padding: 12px 10px !important;
@@ -1122,35 +1126,40 @@ body.jazzmin-page .selector select {
     color: var(--primary) !important;
     background: #f8fafc !important;
     border-bottom: 2px solid #e2e8f0 !important;
+    white-space: nowrap !important;
 }
 
 .inline-group .tabular tbody td {
     padding: 12px 10px !important;
     vertical-align: middle !important;
     text-align: left !important;
+    border-bottom: 1px solid #f1f5f9 !important;
 }
 
-/* Specific column targeting for alignment */
-.inline-group .tabular td, 
-.inline-group .tabular th {
-    width: auto !important;
-    min-width: 180px !important; /* Increase width for inputs */
-    text-align: left !important;
+/* Precise widths for a single-frame layout */
+.inline-group .tabular th.column-image,
+.inline-group .tabular td.field-image {
+    width: 25% !important;
+    min-width: 200px !important;
 }
 
-/* Order column should be smaller */
+.inline-group .tabular th.column-image_url,
+.inline-group .tabular td.field-image_url {
+    width: 45% !important;
+    min-width: 300px !important;
+}
+
 .inline-group .tabular th.column-order,
 .inline-group .tabular td.field-order {
-    min-width: 100px !important;
-    width: 100px !important;
+    width: 10% !important;
+    min-width: 80px !important;
 }
 
-/* Delete column should be aligned */
 .inline-group .tabular th.column-delete,
 .inline-group .tabular td.delete {
+    width: 10% !important;
     min-width: 80px !important;
-    width: 80px !important;
-    text-align: left !important; /* Force left to match logic */
+    text-align: left !important;
 }
 
 /* Hide the "Original" text which pushes headers */
@@ -1163,6 +1172,14 @@ body.jazzmin-page .selector select {
 
 .inline-group .tabular td.original p {
     display: none !important;
+}
+
+/* Transform standard file inputs into a clean area */
+input[type="file"] {
+    max-width: 100% !important;
+    font-size: 0.8rem !important;
+    padding: 5px !important;
+    border-radius: 8px !important;
 }
 
 /* ══════════════════════════════════════════════════════════
