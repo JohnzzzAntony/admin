@@ -41,7 +41,7 @@ class ProductAdmin(ImportExportModelAdmin):
     list_filter = ('brand', 'category', 'show_on_homepage', 'is_active')
     readonly_fields = ('preview', 'sku_id')
     inlines = [ProductImageInline]
-    change_list_template = "admin/products/product/change_list.html"
+    # change_list_template = "admin/products/product/change_list.html"
 
     def get_urls(self):
         from django.urls import path
