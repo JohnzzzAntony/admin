@@ -32,9 +32,9 @@ class SubCategoryInline(admin.TabularInline):
 # ─── Main Model Admins ───────────────────────────────────────────────────────
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    # form = ProductAdminForm
-    # resource_class = ProductResource
+class ProductAdmin(ImportExportModelAdmin):
+    form = ProductAdminForm
+    resource_class = ProductResource
     list_display = ('preview', 'name', 'brand', 'category_display', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status')
     list_editable = ('show_on_homepage', 'brand')
     search_fields = ('name', 'slug', 'sku_id', 'brand__name')
