@@ -1183,110 +1183,113 @@ input[type="file"] {
 }
 
 /* ══════════════════════════════════════════════════════════
-   DYNAMIC IMAGE PREVIEW (ADMIN UX)
+   ADMIN CHANGE LIST: PREMIUM ROW STYLE (MATCHING USER REQ)
    ══════════════════════════════════════════════════════════ */
+.results table tbody tr {
+    transition: all 0.2s ease !important;
+    border-bottom: 1px solid #edf2f7 !important;
+}
+
+.results table tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+/* Make the Name primary and blue */
+.results table tbody tr th.field-name a,
+.results table tbody tr td.field-name a {
+    color: #007bff !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    padding: 10px 0 !important;
+}
+
+.results table tbody tr th.field-name a:hover {
+    color: #0056b3 !important;
+}
+
+/* Align image to the far right */
+.results table thead th.column-preview,
+.results table thead th.column-brand_logo,
+.results table thead th.column-category_image {
+    text-align: right !important;
+}
+
+.results table tbody td.field-preview,
+.results table tbody td.field-brand_logo,
+.results table tbody td.field-category_image {
+    text-align: right !important;
+    padding-right: 20px !important;
+}
+
+.admin-list-img {
+    height: 80px !important;
+    width: auto !important;
+    max-width: 140px !important;
+    border-radius: 12px !important;
+    object-fit: cover !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: transform 0.3s ease !important;
+}
+
 /* ══════════════════════════════════════════════════════════
-   DYNAMIC IMAGE PREVIEW (ADMIN UX)
+   ADMIN CHANGE FORM: FIELD ALIGNMENT (IMAGE ON RIGHT)
    ══════════════════════════════════════════════════════════ */
-.admin-preview-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 10px;
-    z-index: 1;
-    animation: fadeInAdmin 0.3s ease-out;
+/* Target rows containing images in the change form */
+.form-row.field-image, 
+.form-row.field-logo, 
+.form-row.field-banner,
+.form-row.field-image_url,
+.form-row.field-logo_url {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 20px !important;
+    background: #fff !important;
+    border-bottom: 1px solid #f1f5f9 !important;
 }
 
-@keyframes fadeInAdmin {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+.form-row.field-image div, 
+.form-row.field-logo div,
+.form-row.field-banner div {
+    flex: 1 !important;
 }
 
-.admin-preview-img {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 3px solid #fff;
-    background: #f8fafc;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+/* Align the label and input group */
+.form-row.field-image label,
+.form-row.field-logo label {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: var(--primary) !important;
+    margin-bottom: 10px !important;
 }
 
-.admin-preview-wrapper:hover .admin-preview-img {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.15);
+/* Style the external preview (if we add one) or current link */
+.form-row.field-image .file-upload a,
+.form-row.field-image .file-upload img {
+    order: 2 !important;
+    margin-left: auto !important;
 }
 
-.admin-preview-label {
-    font-size: 0.72rem;
-    color: #64748b;
-    margin-top: 8px;
-    font-weight: 600;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    background: #f1f5f9;
-    padding: 2px 8px;
-    border-radius: 4px;
+/* Ensure the upload button/input stays accessible */
+.form-row.field-image .file-upload {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
 }
 
-.admin-preview-close {
-    position: absolute;
-    top: -8px;
-    left: 108px;
-    width: 26px;
-    height: 26px;
-    background: #ef4444;
-    color: #fff;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    cursor: pointer;
-    font-weight: 900;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-    padding: 0;
-    line-height: 1;
+/* Clean up the default Django "Currently" link text */
+.file-upload {
+    font-size: 0.9rem !important;
+    color: #64748b !important;
 }
 
-.admin-preview-close:hover {
-    background: #dc2626 !important;
-    transform: scale(1.15) rotate(90deg);
-}
-
-.admin-choose-btn {
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: #fff;
-    color: var(--primary);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    transition: all 0.2s ease;
-}
-
-.admin-choose-btn i {
-    color: var(--accent);
-    font-size: 1rem;
-}
-
-.admin-choose-btn:hover {
-    background: #f8fafc;
-    border-color: var(--accent);
-    color: var(--accent);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+.file-upload a {
+    color: #007bff !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
 }
 
 

@@ -36,7 +36,7 @@ class SubCategoryInline(admin.TabularInline):
 class ProductAdmin(ImportExportModelAdmin):
     form = ProductAdminForm
     resource_class = ProductResource
-    list_display = ('preview', 'name', 'brand', 'category_display', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status')
+    list_display = ('name', 'category_display', 'brand', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status', 'preview')
     list_editable = ('show_on_homepage', 'brand')
     search_fields = ('name', 'slug', 'sku_id', 'brand__name')
     list_filter = ('brand', 'category', 'show_on_homepage', 'is_active')
@@ -166,8 +166,9 @@ class ProductAdmin(ImportExportModelAdmin):
         )
 
     def preview(self, obj):
-        if obj.get_image_url:
-            return mark_safe(f'<img src="{obj.get_image_url}" width="45" height="45" style="object-fit:cover; border-radius:50%; border:1px solid #ddd;"/>')
+        url = obj.get_image_url
+        if url:
+            return mark_safe(f'<img src="{url}" class="admin-list-img" />')
         return "-"
 
     def category_display(self, obj):
@@ -224,13 +225,20 @@ class ProductAdmin(ImportExportModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
     resource_class = CategoryResource
-    list_display = ('name', 'show_on_homepage', 'homepage_order', 'parent', 'is_active')
+    list_display = ('name', 'show_on_homepage', 'homepage_order', 'parent', 'is_active', 'category_image')
     list_editable = ('show_on_homepage', 'homepage_order')
     list_filter = ('show_on_homepage',)
     search_fields = ('name', 'slug')
     autocomplete_fields = ('parent',)
     inlines = [SubCategoryInline]
     prepopulated_fields = {"slug": ("name",)}
+
+    def category_image(self, obj):
+        url = obj.get_image_url()
+        if url:
+            return mark_safe(f'<img src="{url}" class="admin-list-img" />')
+        return "-"
+    category_image.short_description = "Image"
     
     def get_queryset(self, request):
         """Only show root categories in the main list."""
@@ -264,7 +272,7 @@ class CategoryAdmin(ImportExportModelAdmin):
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('brand_logo', 'name', 'show_on_homepage', 'is_active', 'order')
+    list_display = ('name', 'show_on_homepage', 'is_active', 'order', 'brand_logo')
     list_editable = ('show_on_homepage', 'is_active', 'order')
     search_fields = ('name',)
     prepopulated_fields = {"slug": ("name",)}
@@ -286,7 +294,9 @@ class BrandAdmin(admin.ModelAdmin):
 
     def brand_logo(self, obj):
         url = obj.get_image_url()
-        return format_html('<img src="{}" style="height:35px; border-radius:4px; object-fit:contain; background:#f8fafc; padding:2px;" />', url) if url else "-"
+        if url:
+            return mark_safe(f'<img src="{url}" class="admin-list-img" />')
+        return "-"
     brand_logo.short_description = 'Logo'
 
 @admin.register(Offer)
@@ -329,8 +339,15 @@ class OfferAdmin(admin.ModelAdmin):
 
 @admin.register(Collection)
 class CollectionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'display_order')
+    list_display = ('name', 'display_order', 'banner_preview')
     list_editable = ('display_order',)
+    
+    def banner_preview(self, obj):
+        url = obj.get_image_url()
+        if url:
+            return mark_safe(f'<img src="{url}" class="admin-list-img" />')
+        return "-"
+    banner_preview.short_description = 'Banner'
     filter_horizontal = ('products',)
     radio_fields = {}
     
