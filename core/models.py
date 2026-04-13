@@ -54,9 +54,13 @@ class SiteSettings(models.Model):
 
 
 
-    def get_logo_url(self):
-        if self.logo_url: return self.logo_url
-        return self.logo.url if self.logo else "/static/assets/logo.png"
+    @property
+    def get_image_url(self):
+        try:
+            if self.logo: return self.logo.url
+            if self.logo_url: return self.logo_url
+        except Exception: pass
+        return "/static/assets/logo.png"
 
     def __str__(self): return "Global Site Settings"
     class Meta:
@@ -79,9 +83,13 @@ class Testimonial(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return f"Testimonial from {self.client_name}"
-    def get_img_url(self):
-        if self.image_url: return self.image_url
-        return self.image.url if self.image else "https://via.placeholder.com/100"
+    @property
+    def get_image_url(self):
+        try:
+            if self.image: return self.image.url
+            if self.image_url: return self.image_url
+        except Exception: pass
+        return "https://via.placeholder.com/100"
 
 class Client(models.Model):
     CATEGORY_CHOICES = (('Public', 'Public Sector'), ('Private', 'Private Sector'))
@@ -99,9 +107,13 @@ class Client(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return self.name
-    def get_logo_url(self):
-        if self.logo_url: return self.logo_url
-        return self.logo.url if self.logo else "https://via.placeholder.com/150x60"
+    @property
+    def get_image_url(self):
+        try:
+            if self.logo: return self.logo.url
+            if self.logo_url: return self.logo_url
+        except Exception: pass
+        return "https://via.placeholder.com/150x60"
 
 class SocialPost(models.Model):
     image = models.ImageField(
@@ -115,9 +127,13 @@ class SocialPost(models.Model):
     link = models.URLField(blank=True)
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']
-    def get_img_url(self):
-        if self.image_url: return self.image_url
-        return self.image.url if self.image else "https://via.placeholder.com/400"
+    @property
+    def get_image_url(self):
+        try:
+            if self.image: return self.image.url
+            if self.image_url: return self.image_url
+        except Exception: pass
+        return "https://via.placeholder.com/400"
 
 class StoreLocation(models.Model):
     name = models.CharField(max_length=200)
@@ -138,9 +154,13 @@ class StoreLocation(models.Model):
     class Meta:
         ordering = ['order', 'name']
 
+    @property
     def get_image_url(self):
-        if self.image_url: return self.image_url
-        return self.image.url if self.image else "https://via.placeholder.com/600x400"
+        try:
+            if self.image: return self.image.url
+            if self.image_url: return self.image_url
+        except Exception: pass
+        return "https://via.placeholder.com/600x400"
 
     def __str__(self):
         return f"{self.name} ({self.city})"

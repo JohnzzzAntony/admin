@@ -6,10 +6,16 @@ from django.contrib import messages
 
 @admin.register(StoreLocation)
 class StoreLocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'city', 'phone', 'is_active', 'order')
+    list_display = ('preview', 'name', 'city', 'phone', 'is_active', 'order')
+    list_display_links = ('preview', 'name')
     list_editable = ('is_active', 'order')
     list_filter = ('city', 'is_active')
     search_fields = ('name', 'address', 'city')
+
+    def preview(self, obj):
+        from django.utils.safestring import mark_safe
+        return mark_safe(f'<img src="{obj.get_image_url}" width="50" height="35" style="object-fit:cover; border-radius:4px; border:1px solid #ddd;" />')
+    preview.short_description = "Image"
     
     fieldsets = (
         ('Location Info', {
@@ -132,10 +138,16 @@ class DesignSettingsAdmin(admin.ModelAdmin):
 
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
-    list_display = ('client_name', 'position', 'rating', 'is_active', 'order')
+    list_display = ('preview', 'client_name', 'position', 'rating', 'is_active', 'order')
+    list_display_links = ('preview', 'client_name')
     list_editable = ('is_active', 'order')
     radio_fields = {"is_active": admin.HORIZONTAL}
     list_filter = ('rating', 'is_active')
+
+    def preview(self, obj):
+        from django.utils.safestring import mark_safe
+        return mark_safe(f'<img src="{obj.get_image_url}" width="40" height="40" style="border-radius:50%; object-fit:cover; border:1px solid #ddd;" />')
+    preview.short_description = "Photo"
     
     fieldsets = (
         ('Client Profile', {
@@ -160,10 +172,16 @@ class TestimonialAdmin(admin.ModelAdmin):
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'is_active', 'order')
+    list_display = ('preview', 'name', 'category', 'is_active', 'order')
+    list_display_links = ('preview', 'name')
     list_editable = ('category', 'is_active', 'order')
     radio_fields = {"is_active": admin.HORIZONTAL}
     list_filter = ('category', 'is_active')
+
+    def preview(self, obj):
+        from django.utils.safestring import mark_safe
+        return mark_safe(f'<img src="{obj.get_image_url}" width="60" height="30" style="object-fit:contain; border:1px solid #eee; padding:2px; background:#fff; border-radius:4px;" />')
+    preview.short_description = "Logo"
     
     fieldsets = (
         ('Client Info', {
@@ -186,8 +204,14 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(SocialPost)
 class SocialPostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'order')
+    list_display = ('preview', 'link', 'order')
+    list_display_links = ('preview', 'link')
     list_editable = ('order',)
+
+    def preview(self, obj):
+        from django.utils.safestring import mark_safe
+        return mark_safe(f'<img src="{obj.get_image_url}" width="40" height="40" style="object-fit:cover; border-radius:4px; border:1px solid #ddd;" />')
+    preview.short_description = "Preview"
     
     fieldsets = (
         ('Post Configuration', {

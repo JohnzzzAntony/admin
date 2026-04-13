@@ -12,7 +12,7 @@ class HeroSliderAdmin(admin.ModelAdmin):
     radio_fields = {"is_active": admin.HORIZONTAL}
 
     def preview(self, obj):
-        url = obj.get_bg_url()
+        url = obj.get_image_url
         if url:
             return format_html('<img src="{}" style="width: 100px; height:60px; object-fit: cover; border-radius:4px;" />', url)
         elif obj.get_vid_url():

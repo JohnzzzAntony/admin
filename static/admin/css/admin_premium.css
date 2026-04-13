@@ -1237,47 +1237,105 @@ input[type="file"] {
 /* ══════════════════════════════════════════════════════════
    ADMIN CHANGE FORM: FIELD ALIGNMENT (IMAGE ON RIGHT)
    ══════════════════════════════════════════════════════════ */
-/* Target rows containing images in the change form */
-.form-row.field-image, 
-.form-row.field-logo, 
-.form-row.field-banner,
-.form-row.field-image_url,
-.form-row.field-logo_url {
+/* Target rows containing images or URLs in the change form - Comprehensive Selectors */
+.form-row[class*="field-image"], 
+.form-row[class*="field-logo"], 
+.form-row[class*="field-banner"],
+.form-row[class*="field-favicon"],
+.form-row[class*="field-screenshot"],
+.form-row[class*="field-thumbnail"],
+.form-row[class*="field-icon"],
+.form-row[class*="field-hero_image"],
+.form-row[class*="field-featured_image"],
+.form-row[class*="field-img"],
+.form-row[class*="field-pic"],
+.form-row.field-profile_picture,
+.form-row[class*="field-avatar"] {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 20px !important;
+    padding: 22px 25px !important;
     background: #fff !important;
     border-bottom: 1px solid #f1f5f9 !important;
+    gap: 20px !important;
 }
 
-.form-row.field-image div, 
-.form-row.field-logo div,
-.form-row.field-banner div {
+/* Hide Redundant Django Labels for Clean File Upload */
+.file-upload label[for*="-clear_id"],
+.file-upload a[href*="/media/"],
+.file-upload br {
+    display: none !important;
+}
+
+/* Maintain the "Currently:" text but make it subtle if needed, or hide it */
+.file-upload {
+    font-size: 0 !important; /* Hide "Currently:" text and other stray text */
+    color: transparent !important;
+}
+
+/* Only show the file input (The "Choose File" button) */
+.file-upload input[type="file"] {
+    font-size: 0.85rem !important;
+    color: var(--primary-light) !important;
+    display: block !important;
+}
+
+/* Ensure inner divs take full width but allow preview on right */
+.form-row[class*="field-"] > div {
     flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-/* Align the label and input group */
-.form-row.field-image label,
-.form-row.field-logo label {
-    font-size: 1.1rem !important;
-    font-weight: 700 !important;
-    color: var(--primary) !important;
-    margin-bottom: 10px !important;
-}
-
-/* Style the external preview (if we add one) or current link */
-.form-row.field-image .file-upload a,
-.form-row.field-image .file-upload img {
-    order: 2 !important;
-    margin-left: auto !important;
-}
-
-/* Ensure the upload button/input stays accessible */
-.form-row.field-image .file-upload {
+/* Specific flex direction for file-upload to keep it inline-ish but organized */
+.file-upload {
     display: flex !important;
     align-items: center !important;
-    width: 100% !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+/* Hide the "Currently:" label text but keep the link if necessary, 
+   or hide the whole "Currently" block if we trust our preview. 
+   User said "remove the existing feature", usually that means the default Django UI. */
+.file-upload {
+    font-size: 0.85rem !important;
+    color: #94a3b8 !important;
+}
+
+/* Style labels consistently */
+.form-row label {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    margin-bottom: 8px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* High-Fidelity Instant Preview Thumbnail */
+.instant-admin-preview {
+    height: 120px !important;
+    width: auto !important;
+    max-width: 200px !important;
+    border-radius: 12px !important;
+    object-fit: contain !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    border: 2px solid #fff !important;
+    background: #f8fafc !important;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    margin-left: 20px !important;
+    flex-shrink: 0 !important;
+    animation: previewSlideIn 0.4s ease-out !important;
+}
+
+@keyframes previewSlideIn {
+    from { opacity: 0; transform: translateX(20px) scale(0.9); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.instant-admin-preview:hover {
+    transform: scale(1.05) !important;
 }
 
 /* Clean up the default Django "Currently" link text */

@@ -50,9 +50,9 @@ class Category(models.Model):
     def get_image_url(self):
         try:
             if self.image: return self.image.url
-            if self.image_url and "placeholder.com" not in self.image_url: return self.image_url
+            if self.image_url: return self.image_url
         except Exception: pass
-        return "https://via.placeholder.com/300"
+        return "https://via.placeholder.com/512"
 
     def get_all_children(self, include_self=True):
         children = [self] if include_self else []
@@ -141,8 +141,9 @@ class Brand(models.Model):
     def get_image_url(self):
         try:
             if self.logo: return self.logo.url
+            if self.logo_url: return self.logo_url
         except Exception: pass
-        return self.logo_url or "https://via.placeholder.com/300x120?text=Brand"
+        return "https://via.placeholder.com/300x120?text=Brand"
 
     def __str__(self): return self.name
 
@@ -315,8 +316,9 @@ class ProductImage(models.Model):
     def get_image_url(self):
         try:
             if self.image: return self.image.url
+            if self.image_url: return self.image_url
         except Exception: pass
-        return self.image_url or "https://via.placeholder.com/300"
+        return "https://via.placeholder.com/300"
 
 class Offer(models.Model):
     OFFER_TYPES = (

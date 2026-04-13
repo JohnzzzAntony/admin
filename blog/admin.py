@@ -12,7 +12,7 @@ class PostAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Article Details', {
-            'fields': (('title', 'slug'), 'featured_image')
+            'fields': (('title', 'slug'), ('featured_image', 'featured_image_url'))
         }),
         ('Content', {
             'fields': ('excerpt', 'content')
@@ -24,8 +24,9 @@ class PostAdmin(admin.ModelAdmin):
     )
 
     def image_tag(self, obj):
-        if obj.featured_image:
-            return format_html('<img src="{}" style="width: 60px; height:45px; object-fit: cover; border-radius: 4px;" />', obj.featured_image.url)
+        url = obj.get_image_url
+        if url:
+            return format_html('<img src="{}" style="width: 60px; height:45px; object-fit: cover; border-radius: 4px;" />', url)
         return "-"
     image_tag.short_description = 'Preview'
 

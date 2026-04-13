@@ -20,7 +20,7 @@ class PageHeroAdmin(admin.ModelAdmin):
     )
     
     def hero_preview(self, obj):
-        url = obj.get_hero_url()
+        url = obj.get_image_url
         return format_html('<img src="{}" style="height:50px; width: 120px; object-fit: cover; border-radius: 5px;" />', url) if url else "-"
     hero_preview.short_description = 'Hero Preview'
 
@@ -76,7 +76,7 @@ class ServiceAdmin(admin.ModelAdmin):
     )
     
     def image_tag(self, obj):
-        url = obj.get_icon_url()
+        url = obj.get_image_url
         return format_html('<img src="{}" style="width: 45px; height:45px; border-radius: 5px; object-fit: contain;" />', url) if url else "-"
     image_tag.short_description = 'Icon'
 
@@ -123,7 +123,7 @@ class GalleryItemAdmin(admin.ModelAdmin):
     )
     
     def image_tag(self, obj):
-        url = obj.get_img_url()
+        url = obj.get_image_url
         return format_html('<img src="{}" style="width: 60px; height:45px; border-radius: 5px; object-fit: cover;" />', url) if url else "-"
     image_tag.short_description = 'Image'
 
@@ -143,6 +143,6 @@ class PartnerAdmin(admin.ModelAdmin):
     )
 
     def image_tag(self, obj):
-        url = obj.get_logo_url()
+        url = obj.get_image_url
         return format_html('<img src="{}" style="height:45px; object-fit:contain; max-width: 120px;" />', url) if url else "-"
     image_tag.short_description = 'Logo'

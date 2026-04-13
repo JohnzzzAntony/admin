@@ -23,9 +23,13 @@ class HeroSlider(models.Model):
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
 
-    def get_bg_url(self):
-        if self.image_url: return self.image_url
-        return self.image.url if self.image else ""
+    @property
+    def get_image_url(self):
+        try:
+            if self.image: return self.image.url
+            if self.image_url: return self.image_url
+        except Exception: pass
+        return "https://via.placeholder.com/1920x800"
 
     def get_vid_url(self):
         if self.video_url: return self.video_url
@@ -73,8 +77,11 @@ class BannerItem(models.Model):
     
     @property
     def get_image_url(self):
-        if self.image_url: return self.image_url
-        return self.image.url if self.image else ""
+        try:
+            if self.image: return self.image.url
+            if self.image_url: return self.image_url
+        except Exception: pass
+        return "https://via.placeholder.com/600x400"
 
     def __str__(self): return f"Item {self.order} for {self.banner_section.name}"
     class Meta:

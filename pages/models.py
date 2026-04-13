@@ -22,11 +22,13 @@ class PageHero(models.Model):
     title = models.CharField(max_length=255, blank=True, help_text="Main title on the hero section.")
     subtitle = models.TextField(blank=True, help_text="Subtitle or description below the title.")
     
-    def get_hero_url(self):
+    @property
+    def get_image_url(self):
         try:
             if self.hero_image: return self.hero_image.url
+            if self.hero_image_url: return self.hero_image_url
         except Exception: pass
-        return self.hero_image_url or "https://via.placeholder.com/1920x600"
+        return "https://via.placeholder.com/1920x600"
 
     def __str__(self): return self.get_page_display()
     class Meta:
@@ -54,11 +56,13 @@ class VideoCard(models.Model):
     thumbnail_url = models.URLField(blank=True, null=True, help_text="Alternative external link for thumbnail.")
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']
-    def get_thumb_url(self):
+    @property
+    def get_image_url(self):
         try:
             if self.thumbnail: return self.thumbnail.url
+            if self.thumbnail_url: return self.thumbnail_url
         except Exception: pass
-        return self.thumbnail_url or "https://via.placeholder.com/400x250"
+        return "https://via.placeholder.com/400x250"
 
 class MissionVision(models.Model):
     SECTION_TYPES = (('mission', 'Mission'), ('vision', 'Vision'), ('values', 'Values'))
@@ -74,11 +78,13 @@ class MissionVision(models.Model):
     icon_svg = models.TextField(blank=True, help_text="Paste SVG code here.")
     section_type = models.CharField(max_length=20, choices=SECTION_TYPES, unique=True)
     def __str__(self): return self.get_section_type_display()
-    def get_img_url(self):
+    @property
+    def get_image_url(self):
         try:
             if self.image: return self.image.url
+            if self.image_url: return self.image_url
         except Exception: pass
-        return self.image_url or "https://via.placeholder.com/600x400"
+        return "https://via.placeholder.com/600x400"
 
 class Service(models.Model):
     title = models.CharField(max_length=255)
@@ -95,11 +101,13 @@ class Service(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return self.title
-    def get_icon_url(self):
+    @property
+    def get_image_url(self):
         try:
             if self.icon: return self.icon.url
+            if self.icon_url: return self.icon_url
         except Exception: pass
-        return self.icon_url or "https://via.placeholder.com/64"
+        return "https://via.placeholder.com/64"
 
 class Counter(models.Model):
     title = models.CharField(max_length=100)
@@ -133,11 +141,13 @@ class GalleryItem(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return self.title or f"Gallery Image {self.id}"
-    def get_img_url(self):
+    @property
+    def get_image_url(self):
         try:
             if self.image: return self.image.url
+            if self.image_url: return self.image_url
         except Exception: pass
-        return self.image_url or "https://via.placeholder.com/600x400"
+        return "https://via.placeholder.com/600x400"
 
 class Partner(models.Model):
     name = models.CharField(max_length=255)
@@ -154,8 +164,10 @@ class Partner(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     class Meta: ordering = ['order']
     def __str__(self): return self.name
-    def get_logo_url(self):
+    @property
+    def get_image_url(self):
         try:
             if self.logo: return self.logo.url
+            if self.logo_url: return self.logo_url
         except Exception: pass
-        return self.logo_url or "https://via.placeholder.com/200x80"
+        return "https://via.placeholder.com/200x80"
