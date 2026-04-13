@@ -1271,46 +1271,52 @@ input[type="file"] {
 
 
 /* Hide Redundant Django Labels for Clean File Upload */
+.file-upload {
+    font-size: 0 !important;
+    color: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    flex-wrap: wrap !important;
+    padding: 10px 0 !important;
+}
+
+/* Hide labels, text nodes, links, and clear checkboxes within file-upload */
+.file-upload a,
 .file-upload label[for*="-clear_id"],
-.file-upload a[href*="/media/"],
-.file-upload br {
+.file-upload br,
+.file-upload span.clearablefileinput {
     display: none !important;
 }
 
-/* Maintain the "Currently:" text but make it subtle if needed, or hide it */
-.file-upload {
-    font-size: 0 !important; /* Hide "Currently:" text and other stray text */
-    color: transparent !important;
-}
-
-/* Only show the file input (The "Choose File" button) */
+/* Re-show the actual file input button */
 .file-upload input[type="file"] {
     font-size: 0.85rem !important;
-    color: var(--primary-light) !important;
-    display: block !important;
+    color: #475569 !important;
+    content: "Choose New";
+    display: inline-block !important;
+    cursor: pointer !important;
 }
 
-/* Ensure inner divs take full width but allow preview on right */
+/* Specific styling for the row containing images */
+.form-row[class*="field-"] {
+    display: flex !important;
+    align-items: center !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 15px 0 !important;
+}
+
 .form-row[class*="field-"] > div {
     flex: 1 !important;
     display: flex !important;
-    flex-direction: column !important;
-}
-
-/* Specific flex direction for file-upload to keep it inline-ish but organized */
-.file-upload {
-    display: flex !important;
+    flex-direction: row !important; /* Side by side Label and Content */
     align-items: center !important;
-    flex-wrap: wrap !important;
-    gap: 10px !important;
+    gap: 20px !important;
 }
 
-/* Hide the "Currently:" label text but keep the link if necessary, 
-   or hide the whole "Currently" block if we trust our preview. 
-   User said "remove the existing feature", usually that means the default Django UI. */
-.file-upload {
-    font-size: 0.85rem !important;
-    color: #94a3b8 !important;
+.form-row label {
+    flex: 0 0 160px !important; /* Fixed width for consistency */
+    margin-bottom: 0 !important;
 }
 
 /* Style labels consistently */
@@ -1333,15 +1339,14 @@ input[type="file"] {
 }
 
 .instant-admin-preview {
-    height: 120px !important;
-    width: auto !important;
-    max-width: 200px !important;
-    border-radius: 12px !important;
-    object-fit: contain !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    height: 80px !important;
+    width: 80px !important;
+    border-radius: 8px !important;
+    object-fit: cover !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
     border: 2px solid #fff !important;
     background: #f8fafc !important;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    transition: transform 0.2s ease !important;
     display: block !important;
 }
 
@@ -1382,16 +1387,6 @@ input[type="file"] {
     transform: scale(1.05) !important;
 }
 
-/* Clean up the default Django "Currently" link text */
-.file-upload {
-    font-size: 0.9rem !important;
-    color: #64748b !important;
-}
-
-.file-upload a {
-    color: #007bff !important;
-    font-weight: 600 !important;
-    text-decoration: none !important;
-}
+/* Remove legacy leftover styles */
 
 

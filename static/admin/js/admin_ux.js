@@ -46,6 +46,10 @@
                 
                 const previewImg = document.createElement('img');
                 previewImg.className = 'instant-admin-preview';
+                previewImg.style.height = '80px';
+                previewImg.style.width = '80px';
+                previewImg.style.borderRadius = '8px';
+                previewImg.style.objectFit = 'cover';
                 container.appendChild(previewImg);
                 
                 const removeBtn = document.createElement('button');
@@ -89,8 +93,8 @@
 
         // Initial State (Existing images)
         if (input.type === 'file') {
-            const currentLink = row.querySelector('.file-upload a, .readonly a');
-            if (currentLink && currentLink.href && /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(currentLink.href)) {
+            const currentLink = row.querySelector('.file-upload a, .readonly a, .field-image a, .field-logo a');
+            if (currentLink && currentLink.href && /\.(jpg|jpeg|png|webp|gif|svg|avif|ico)$/i.test(currentLink.href.split('?')[0])) {
                 updatePreview(currentLink.href);
             }
         } else if (input.value && /^https?:\/\//i.test(input.value.trim())) {
