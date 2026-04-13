@@ -1,131 +1,107 @@
 /**
- * Admin UX Improvements (Hardened & Optimized)
- * - Rename "Add" buttons to "➕ Add New"
- * - Rename "Change" buttons to "📋 Manage"
- * - MutationObserver for dynamic content (formsets, AJAX)
- * - Premium clearable file input previews
+ * Admin UX Improvements (Standardized & Unified)
+ * - Rename "Add" buttons for better UX
+ * - Instant image previews (File/URL)
+ * - Dynamic mutation observer for formsets
  */
 
 (function() {
     'use strict';
 
-    /**
-     * 1. Rename Buttons
-     */
+    // 1. UI Helper: Rename Buttons
     function renameButtons(container = document) {
-        // Add buttons
         const addButtons = container.querySelectorAll('.addlink, .btn-success, .add-row a');
         addButtons.forEach(btn => {
-            const text = btn.innerText.trim();
-            if ((text === 'Add' || text.startsWith('Add ')) && !btn.innerText.includes('➕')) {
+            if (!btn.dataset.renamed && (btn.innerText.trim() === 'Add' || btn.innerText.trim().startsWith('Add '))) {
                 btn.innerHTML = btn.innerHTML.replace('Add', '➕ Add New');
-            }
-        });
-
-        // Change/View buttons in list
-        const changeLinks = container.querySelectorAll('.changelink, .btn-info');
-        changeLinks.forEach(link => {
-            if (link.innerText.trim() === 'Change') {
-                link.innerHTML = '📋 Manage';
+                btn.dataset.renamed = "true";
             }
         });
     }
 
-    /**
-     * 2. Instant Image Previews (File & URL)
-     */
-    function setupInstantPreviews(container = document) {
-        // A. File Input Observer
-        const fileInputs = container.querySelectorAll('input[type="file"]');
-        fileInputs.forEach(input => {
-            if (input.dataset.previewInitialized) return;
-            input.dataset.previewInitialized = "true";
+    // 2. Core Feature: Image Preview
+    function setupImagePreview(input) {
+        if (!input || input.dataset.previewManaged) return;
+        
+        const isPotentialImage = (
+            input.type === 'file' || 
+            input.classList.contains('urlfield') || 
+            input.classList.contains('vURLField') ||
+            /image|logo|favicon|banner|icon|thumb|pic|img/i.test(input.name)
+        );
 
-            const handleFile = (file) => {
-                if (file && file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        let preview = input.closest('.form-row').querySelector('.instant-admin-preview');
-                        if (!preview) {
-                            preview = document.createElement('img');
-                            preview.className = 'instant-admin-preview';
-                            input.closest('.form-row').appendChild(preview);
-                        }
-                        preview.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
+        if (!isPotentialImage) return;
+        input.dataset.previewManaged = "true";
 
-            input.addEventListener('change', e => handleFile(e.target.files[0]));
+        // Logic to find correct container (handles both standalone fields and tabular inlines)
+        const row = input.closest('.form-row') || input.closest('tr') || input.closest('div');
+        
+        const updatePreview = (src) => {
+            if (!src) return;
+            let preview = row.querySelector('.instant-admin-preview');
+            if (!preview) {
+                preview = document.createElement('img');
+                preview.className = 'instant-admin-preview';
+                // Find a good place to insert it (at the end of the row/row-cell)
+                row.appendChild(preview);
+            }
+            preview.src = src;
+            preview.style.display = 'block';
+            preview.onerror = () => { preview.style.display = 'none'; };
+        };
 
-            // Initial preview for existing files
-            const currentLink = input.closest('.form-row').querySelector('.file-upload a, .readonly');
+        // Initial State
+        if (input.type === 'file') {
+            const currentLink = row.querySelector('.file-upload a, .readonly');
             if (currentLink && currentLink.href && /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(currentLink.href)) {
-                let preview = input.closest('.form-row').querySelector('.instant-admin-preview');
-                if (!preview) {
-                    preview = document.createElement('img');
-                    preview.className = 'instant-admin-preview';
-                    input.closest('.form-row').appendChild(preview);
-                }
-                preview.src = currentLink.href;
+                updatePreview(currentLink.href);
+            }
+        } else if (input.value && /^https?:\/\//i.test(input.value.trim())) {
+            updatePreview(input.value.trim());
+        }
+
+        // Event Listeners
+        input.addEventListener('change', function() {
+            if (this.type === 'file' && this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => updatePreview(e.target.result);
+                reader.readAsDataURL(this.files[0]);
+            } else if (this.value && /^https?:\/\//i.test(this.value.trim())) {
+                updatePreview(this.value.trim());
             }
         });
 
-        // B. URL Input Observer (Live Preview as you type)
-        const urlSelectors = [
-            '.field-image_url input', '.field-logo_url input', 
-            '.field-banner_url input', '.field-favicon_url input',
-            '.field-screenshot_url input', '.field-thumbnail_url input',
-            '.field-hero_image_url input', '.field-icon_url input',
-            '.field-bg_url input', '.field-img_url input',
-            '.field-featured_image_url input', '.field-video_url input'
-        ];
-        const urlInputs = container.querySelectorAll(urlSelectors.join(','));
-        
-        urlInputs.forEach(input => {
-            if (input.dataset.previewInitialized) return;
-            input.dataset.previewInitialized = "true";
-
-            const updatePreview = () => {
-                const val = input.value.trim();
-                if (val && (val.startsWith('http') || val.startsWith('/static'))) {
-                    let preview = input.closest('.form-row').querySelector('.instant-admin-preview');
-                    if (!preview) {
-                        preview = document.createElement('img');
-                        preview.className = 'instant-admin-preview';
-                        input.closest('.form-row').appendChild(preview);
-                    }
-                    preview.src = val;
-                    preview.onerror = () => preview.style.display = 'none';
-                    preview.onload = () => preview.style.display = 'block';
+        if (input.type !== 'file') {
+            input.addEventListener('input', function() {
+                if (this.value && /^https?:\/\//i.test(this.value.trim())) {
+                    updatePreview(this.value.trim());
                 }
-            };
-
-            input.addEventListener('input', updatePreview);
-            updatePreview();
-        });
+            });
+        }
     }
 
-    /**
-     * Init & Observation
-     */
+    // 3. Orchestration
+    function initialize(container = document) {
+        renameButtons(container);
+        container.querySelectorAll('input').forEach(setupImagePreview);
+    }
+
     function init() {
-        renameButtons();
-        setupInstantPreviews();
-        
+        initialize();
+
+        // Observe dynamic additions (e.g., adding rows to inlines)
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
                     if (node.nodeType === 1) {
-                        renameButtons(node);
-                        setupInstantPreviews(node);
+                        initialize(node);
                     }
                 });
             });
         });
 
-        observer.observe(document.body, { childList: true, subtree: true });
+        const target = document.getElementById('content') || document.body;
+        observer.observe(target, { childList: true, subtree: true });
     }
 
     if (document.readyState === 'loading') {

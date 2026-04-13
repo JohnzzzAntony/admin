@@ -44,7 +44,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ('site_name',)
     fieldsets = (
         ('Overview & Branding', {
-            'fields': (('site_name', 'company_name'), ('fav_text', 'logo', 'logo_url'), ('favicon', 'favicon_url')),
+            'fields': (('site_name', 'company_name'), 'fav_text', ('logo', 'logo_url'), ('favicon', 'favicon_url')),
             'description': 'Main site identification and logo assets.'
         }),
         ('SEO Presence', {

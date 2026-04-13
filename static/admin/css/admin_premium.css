@@ -1250,7 +1250,8 @@ input[type="file"] {
 .form-row[class*="field-img"],
 .form-row[class*="field-pic"],
 .form-row.field-profile_picture,
-.form-row[class*="field-avatar"] {
+.form-row[class*="field-avatar"],
+.inline-related .form-row[class*="field-"] {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
@@ -1259,6 +1260,15 @@ input[type="file"] {
     border-bottom: 1px solid #f1f5f9 !important;
     gap: 20px !important;
 }
+
+/* Tabular Inline Support */
+.results table tbody td[class*="field-image"],
+.results table tbody td[class*="field-logo"],
+.results table tbody td[class*="field-banner"],
+.tabular.inline-related table tbody td[class*="field-"] {
+    position: relative !important;
+}
+
 
 /* Hide Redundant Django Labels for Clean File Upload */
 .file-upload label[for*="-clear_id"],
