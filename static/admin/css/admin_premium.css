@@ -1324,6 +1324,14 @@ input[type="file"] {
 }
 
 /* High-Fidelity Instant Preview Thumbnail */
+.admin-preview-container {
+    position: relative !important;
+    display: inline-block !important;
+    margin-left: 20px !important;
+    flex-shrink: 0 !important;
+    animation: previewSlideIn 0.4s ease-out !important;
+}
+
 .instant-admin-preview {
     height: 120px !important;
     width: auto !important;
@@ -1334,10 +1342,36 @@ input[type="file"] {
     border: 2px solid #fff !important;
     background: #f8fafc !important;
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-    margin-left: 20px !important;
-    flex-shrink: 0 !important;
-    animation: previewSlideIn 0.4s ease-out !important;
+    display: block !important;
 }
+
+/* Remove button on the preview */
+.remove-preview-btn {
+    position: absolute !important;
+    top: -8px !important;
+    right: -8px !important;
+    width: 26px !important;
+    height: 26px !important;
+    background: #ef4444 !important;
+    color: white !important;
+    border: 2px solid #fff !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+    transition: all 0.2s ease !important;
+    z-index: 10 !important;
+}
+
+.remove-preview-btn:hover {
+    background: #dc2626 !important;
+    transform: scale(1.1) rotate(90deg) !important;
+}
+
 
 @keyframes previewSlideIn {
     from { opacity: 0; transform: translateX(20px) scale(0.9); }

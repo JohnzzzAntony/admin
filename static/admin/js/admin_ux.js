@@ -1,7 +1,7 @@
 /**
  * Admin UX Improvements (Standardized & Unified)
  * - Rename "Add" buttons for better UX
- * - Instant image previews (File/URL)
+ * - Instant image previews (File/URL) with removal capability
  * - Dynamic mutation observer for formsets
  */
 
@@ -19,7 +19,7 @@
         });
     }
 
-    // 2. Core Feature: Image Preview
+    // 2. Core Feature: Image Preview with Removal
     function setupImagePreview(input) {
         if (!input || input.dataset.previewManaged) return;
         
@@ -33,26 +33,63 @@
         if (!isPotentialImage) return;
         input.dataset.previewManaged = "true";
 
-        // Logic to find correct container (handles both standalone fields and tabular inlines)
-        const row = input.closest('.form-row') || input.closest('tr') || input.closest('div');
+        // Logic to find correct row container
+        const row = input.closest('.form-row') || input.closest('tr') || input.closest('fieldset > div') || input.parentElement;
         
         const updatePreview = (src) => {
             if (!src) return;
-            let preview = row.querySelector('.instant-admin-preview');
-            if (!preview) {
-                preview = document.createElement('img');
-                preview.className = 'instant-admin-preview';
-                // Find a good place to insert it (at the end of the row/row-cell)
-                row.appendChild(preview);
+            
+            let container = row.querySelector('.admin-preview-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'admin-preview-container';
+                
+                const previewImg = document.createElement('img');
+                previewImg.className = 'instant-admin-preview';
+                container.appendChild(previewImg);
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-preview-btn';
+                removeBtn.innerHTML = '×';
+                removeBtn.type = 'button';
+                removeBtn.title = 'Remove image';
+                
+                removeBtn.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (input.type === 'file') {
+                        input.value = '';
+                        // Find and check the Django 'Clear' checkbox if it exists
+                        const clearCheckbox = row.querySelector('input[type="checkbox"][name*="-clear"]');
+                        if (clearCheckbox) clearCheckbox.checked = true;
+                    } else {
+                        input.value = '';
+                    }
+                    
+                    container.style.display = 'none';
+                    // Trigger events to notify other potential listeners
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                };
+                
+                container.appendChild(removeBtn);
+                row.appendChild(container);
             }
-            preview.src = src;
-            preview.style.display = 'block';
-            preview.onerror = () => { preview.style.display = 'none'; };
+            
+            const img = container.querySelector('.instant-admin-preview');
+            img.src = src;
+            container.style.display = 'inline-block';
+            img.onerror = () => { container.style.display = 'none'; };
+
+            // If we are showing a preview, ensure the clear checkbox is UNCHECKED
+            const clearCheckbox = row.querySelector('input[type="checkbox"][name*="-clear"]');
+            if (clearCheckbox) clearCheckbox.checked = false;
         };
 
-        // Initial State
+        // Initial State (Existing images)
         if (input.type === 'file') {
-            const currentLink = row.querySelector('.file-upload a, .readonly');
+            const currentLink = row.querySelector('.file-upload a, .readonly a');
             if (currentLink && currentLink.href && /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(currentLink.href)) {
                 updatePreview(currentLink.href);
             }
@@ -60,7 +97,7 @@
             updatePreview(input.value.trim());
         }
 
-        // Event Listeners
+        // Event Listeners for changes
         input.addEventListener('change', function() {
             if (this.type === 'file' && this.files && this.files[0]) {
                 const reader = new FileReader();
@@ -75,6 +112,9 @@
             input.addEventListener('input', function() {
                 if (this.value && /^https?:\/\//i.test(this.value.trim())) {
                     updatePreview(this.value.trim());
+                } else if (!this.value) {
+                    const container = row.querySelector('.admin-preview-container');
+                    if (container) container.style.display = 'none';
                 }
             });
         }
