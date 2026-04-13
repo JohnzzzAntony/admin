@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from .models import Product, Category, ProductImage, Wishlist, Brand
+from .models import Product, Category, ProductImage, Wishlist, Brand, Collection
 
 @staff_member_required
 def delete_product_media(request, pk):
@@ -157,10 +157,14 @@ def product_detail(request, slug=None, pk=None):
 
 
 # ── REST API For Category Management ───────────────────────────────────────────
-from rest_framework import viewsets, permissions, status
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from .serializers import CategoryTreeSerializer, CategoryDetailSerializer
+try:
+    from rest_framework import viewsets, permissions, status
+    from rest_framework.response import Response
+    from rest_framework.decorators import action
+    from .serializers import CategoryTreeSerializer, CategoryDetailSerializer
+    _DRF_AVAILABLE = True
+except ImportError:
+    _DRF_AVAILABLE = False
 
 class CategoryViewSet(viewsets.ModelViewSet):
     """
@@ -192,7 +196,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
         """Handle children properly - logic is in on_delete=CASCADE in models.py"""
         return super().destroy(request, *args, **kwargs)
 
-from .models import Collection
 def collection_detail(request, slug):
     """
     Shows products belonging to a specific collection.

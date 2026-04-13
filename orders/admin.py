@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import landscape, A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from django.utils import timezone
 from datetime import timedelta
 
@@ -154,7 +154,12 @@ class CustomerOrderResource(resources.ModelResource):
             'payment_status_display', 'order_status_display', 
             'items_summary', 'total_with_currency', 'date_created'
         )
-        export_order = fields
+        export_order = (
+            'order_number', 'user_name', 'guest_flag', 'loyalty_tag', 
+            'full_name', 'email', 'phone', 'trn', 'payment_method_display', 
+            'payment_status_display', 'order_status_display', 
+            'items_summary', 'total_with_currency', 'date_created'
+        )
 
     def dehydrate_order_number(self, obj):
         return f"#Demo-{obj.pk:05d}"
@@ -326,7 +331,7 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
 
     def items_total_display(self, obj):
         from django.utils.html import format_html_join
-        items = obj.items.all()
+        items = list(obj.items.all())  # Materialize once — avoids double DB query
         rows = format_html_join(
             '',
             '<tr><td style="padding:8px 10px;">{}</td>'
@@ -336,6 +341,7 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
             '<td style="padding:8px 10px;text-align:right;font-weight:700;">{} {}</td></tr>',
             ((i.product_name, i.quantity, i.regular_price, settings.CURRENCY, i.unit_price, settings.CURRENCY, i.total_price, settings.CURRENCY) for i in items)
         )
+        items_subtotal = sum(i.total_price for i in items)
         return format_html(
             '<table style="width:100%; border-collapse:collapse; font-size:13px; border:1px solid #eee; border-radius:8px; overflow:hidden;">'
             '<thead><tr style="background:#f8fafc; border-bottom:1px solid #eee;">'
@@ -348,17 +354,18 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
             '<tfoot>'
             '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">Items Subtotal</td>'
             '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
-            '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">Shipping Details</td>'
+            '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">Shipping</td>'
             '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
             '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">VAT (Tax)</td>'
             '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
-            '<tr style="background:#f1f5f9; font-weight:700; font-size:15px;"><td colspan="4" style="padding:12px 10px; text-align:right;">Grand Total Amount</td>'
+            '<tr style="background:#f1f5f9; font-weight:700; font-size:15px;"><td colspan="4" style="padding:12px 10px; text-align:right;">Grand Total</td>'
             '<td style="padding:12px 10px; text-align:right; color:#2563eb;">{} {}</td></tr>'
             '</tfoot>'
             '</table>',
             mark_safe(rows),
-            sum(i.total_price for i in items) if items else 0, settings.CURRENCY,
+            items_subtotal, settings.CURRENCY,
             obj.shipping_amount or 0, settings.CURRENCY,
+            obj.tax_amount or 0, settings.CURRENCY,
             obj.total_amount or 0, settings.CURRENCY
         )
     items_total_display.short_description = "Detailed Summary"
@@ -385,7 +392,12 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
     def print_order(self, request, order_id):
         from django.shortcuts import get_object_or_404, render
         order = get_object_or_404(CustomerOrder, pk=order_id)
-        return render(request, 'admin/orders/print_order.html', {'order': order, 'site_name': settings.DEMO_SITE_NAME if hasattr(settings, 'DEMO_SITE_NAME') else "Demo International"})
+        site_name = settings.DEMO_SITE_NAME if hasattr(settings, 'DEMO_SITE_NAME') else "Demo International"
+        return render(request, 'admin/orders/print_order.html', {
+            'order': order,
+            'site_name': site_name,
+            'currency': getattr(settings, 'CURRENCY', 'AED'),
+        })
 
     def generate_invoice(self, request, order_id):
         from django.shortcuts import get_object_or_404
@@ -458,28 +470,43 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         styles = getSampleStyleSheet()
         elements.append(Paragraph(f"Customer Orders Export — {timezone.now().strftime('%Y-%m-%d')}", styles['Title']))
         elements.append(Paragraph("<br/>", styles['Normal']))
-        data = [['Order #', 'Loyalty', 'Customer', 'Email', 'Pay Method', 'Pay Status', 'Order Status', 'Items', 'Total', 'Date']]
+        
+        # Optimized column widths for landscape A4
+        col_widths = [0.8*inch, 0.7*inch, 1.2*inch, 1.5*inch, 0.8*inch, 0.8*inch, 0.9*inch, 0.5*inch, 1.1*inch, 0.9*inch]
+        
+        data = [['Order #', 'Loyalty', 'Customer', 'Email', 'Pay Method', 'Pay Status', 'Status', 'Qty', 'Total', 'Date']]
         resource = self.resource_class()
+        
+        inner_style = ParagraphStyle('inner', parent=styles['Normal'], fontSize=8, leading=10)
+        
+        from django.utils.html import escape
         for obj in queryset:
+            # Wrap potentially long strings in Paragraphs and escape for safety
+            customer_p = Paragraph(escape(resource.dehydrate_full_name(obj)), inner_style)
+            email_p = Paragraph(escape(obj.email), inner_style)
+            
             data.append([
                 resource.dehydrate_order_number(obj),
                 resource.dehydrate_loyalty_tag(obj),
-                resource.dehydrate_full_name(obj)[:20],
-                obj.email[:25],
-                obj.get_payment_method_display(),
+                customer_p,
+                email_p,
+                obj.get_payment_method_display()[:6],
                 obj.get_payment_status_display(),
                 obj.get_status_display(),
                 str(obj.items.count()),
                 resource.dehydrate_total_with_currency(obj),
                 obj.created_at.strftime("%y-%m-%d")
             ])
-        table = Table(data, repeatRows=1)
+            
+        table = Table(data, repeatRows=1, colWidths=col_widths)
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#114084")),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
         ]))
         elements.append(table)
         doc.build(elements)

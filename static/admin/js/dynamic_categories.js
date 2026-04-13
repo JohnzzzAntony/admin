@@ -1,5 +1,5 @@
 /**
- * Dynamic Subcategory Filtering
+ * Dynamic Subcategory Filtering (Hardened Version)
  * Handles the dependent dropdown logic for Product Category selection.
  * When a parent is chosen → API fetches only its subcategories → sub dropdown updates.
  */
@@ -9,72 +9,70 @@
         const subSelect    = $('#id_category');
 
         if (!parentSelect.length || !subSelect.length) {
-            console.warn('[DynCat] Could not find #id_parent_category or #id_category');
             return;
         }
 
-        // ── Helpers ──────────────────────────────────────────────────────────
-
-        function setSubLabel(text, isError) {
-            subSelect.empty().append(
-                $('<option>').val('').text(text)
-            );
+        /**
+         * Helpers
+         */
+        function setSubLabel(text) {
+            subSelect.empty().append($('<option>').val('').text(text));
             if (subSelect.data('select2')) subSelect.trigger('change.select2');
         }
 
-        function showLoading() {
-            setSubLabel('Loading subcategories…');
-        }
-
-        function populateSubs(data) {
+        function populateSubs(data, savedId = null) {
             subSelect.empty().append($('<option>').val('').text('---------'));
-            if (data.length === 0) {
-                subSelect.append($('<option>').val('').text('No subcategories (products assigned directly)').prop('disabled', true));
-            } else {
+            if (data && data.length > 0) {
                 $.each(data, function(_, item) {
                     subSelect.append($('<option>').val(item.id).text(item.name));
                 });
+                
+                if (savedId) {
+                    subSelect.val(savedId);
+                }
+            } else {
+                subSelect.append($('<option>').val('').text('No subcategories found').prop('disabled', true));
             }
-            if (subSelect.data('select2')) subSelect.trigger('change.select2');
+            
+            if (subSelect.data('select2')) {
+                subSelect.trigger('change.select2');
+            }
         }
 
-        function fetchSubs(parentId) {
+        function fetchSubs(parentId, savedId = null) {
             if (!parentId) {
                 setSubLabel('---------');
                 return;
             }
-            showLoading();
-            $.getJSON('/products/api/subcategories/' + parentId + '/', function(data) {
-                console.log('[DynCat] Received', data.length, 'subcategories for parent', parentId);
-                populateSubs(data);
-            }).fail(function(jqXHR) {
-                console.error('[DynCat] API Error', jqXHR.status, jqXHR.responseText);
-                setSubLabel('Error loading – try refreshing', true);
+
+            setSubLabel('Loading subcategories...');
+            
+            $.ajax({
+                url: '/products/api/subcategories/' + parentId + '/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    populateSubs(data, savedId);
+                },
+                error: function() {
+                    setSubLabel('Error loading subcategories');
+                }
             });
         }
 
-        // ── Init ─────────────────────────────────────────────────────────────
+        /**
+         * Execution Logic
+         */
+        const initialParent = parentSelect.val();
+        const initialSub    = subSelect.val();
 
-        // On page load, if a parent is already set (edit mode), fetch its subs
-        const currentParentId = parentSelect.val();
-        if (currentParentId) {
-            // Fetch subs, then re-select the previously saved category
-            const savedCategoryId = subSelect.val();
-            fetchSubs(currentParentId);
-            // After fetch completes, re-select the saved sub
-            setTimeout(function() {
-                if (savedCategoryId) {
-                    subSelect.val(savedCategoryId);
-                    if (subSelect.data('select2')) subSelect.trigger('change.select2');
-                }
-            }, 1500);
+        if (initialParent) {
+            fetchSubs(initialParent, initialSub);
         }
 
-        // ── Events ────────────────────────────────────────────────────────────
         parentSelect.on('change', function() {
-            const parentId = $(this).val();
-            console.log('[DynCat] Parent changed to:', parentId);
-            fetchSubs(parentId);
+            fetchSubs($(this).val());
         });
     });
 })(django.jQuery);
+

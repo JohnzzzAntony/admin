@@ -11,7 +11,7 @@
         .info-section { flex: 1; }
         .info-section h3 { border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 12px; font-size: 16px; text-transform: uppercase; color: #666; }
         .table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-        .table th { background: #114084; color: #white; text-align: left; padding: 12px; }
+        .table th { background: #114084; color: white; text-align: left; padding: 12px; }
         .table td { border-bottom: 1px solid #eee; padding: 12px; }
         .totals { float: right; width: 300px; }
         .totals-row { display: flex; justify-content: space-between; padding: 8px 0; }
@@ -84,8 +84,8 @@
             <tr>
                 <td>{{ item.product_name }}</td>
                 <td style="text-align: center;">{{ item.quantity }}</td>
-                <td style="text-align: right;">{{ item.unit_price }} {{ settings.CURRENCY }}</td>
-                <td style="text-align: right;">{{ item.total_price }} {{ settings.CURRENCY }}</td>
+                <td style="text-align: right;">{{ item.unit_price }} {{ currency }}</td>
+                <td style="text-align: right;">{{ item.total_price }} {{ currency }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -93,20 +93,16 @@
 
     <div class="totals">
         <div class="totals-row">
-            <span>Subtotal</span>
-            <span>{{ order.total_amount|add:"-order.shipping_amount"|add:"-order.tax_amount"|floatformat:2 }} {{ settings.CURRENCY }}</span>
+            <span>Shipping</span>
+            <span>{{ order.shipping_amount|floatformat:2 }} {{ currency }}</span>
         </div>
         <div class="totals-row">
             <span>VAT (Tax)</span>
-            <span>{{ order.tax_amount|floatformat:2 }} {{ settings.CURRENCY }}</span>
-        </div>
-        <div class="totals-row">
-            <span>Shipping</span>
-            <span>{{ order.shipping_amount|floatformat:2 }} {{ settings.CURRENCY }}</span>
+            <span>{{ order.tax_amount|floatformat:2 }} {{ currency }}</span>
         </div>
         <div class="totals-row grand">
             <span>Grand Total</span>
-            <span>{{ order.total_amount|floatformat:2 }} {{ settings.CURRENCY }}</span>
+            <span>{{ order.total_amount|floatformat:2 }} {{ currency }}</span>
         </div>
     </div>
 

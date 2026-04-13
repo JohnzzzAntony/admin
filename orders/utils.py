@@ -40,12 +40,13 @@ def create_invoice_pdf(order):
         [Paragraph("<b>SHIPPING ADDRESS</b>", header_style), Paragraph("<b>BILLING ADDRESS</b>", header_style)]
     ]
     
-    ship_to = f"{order.first_name} {order.last_name}<br/>{order.street}<br/>{order.city}, {order.country}<br/>Phone: {order.phone}"
+    from django.utils.html import escape
+    ship_to = f"{escape(order.first_name)} {escape(order.last_name)}<br/>{escape(order.street)}<br/>{escape(order.city)}, {escape(order.country)}<br/>Phone: {escape(order.phone)}"
     
     if order.billing_address_same_as_shipping:
         bill_to = ship_to
     else:
-        bill_to = f"{order.billing_first_name} {order.billing_last_name}<br/>{order.billing_street}<br/>{order.billing_city}, {order.billing_country}<br/>Phone: {order.billing_phone}"
+        bill_to = f"{escape(order.billing_first_name)} {escape(order.billing_last_name)}<br/>{escape(order.billing_street)}<br/>{escape(order.billing_city)}, {escape(order.billing_country)}<br/>Phone: {escape(order.billing_phone)}"
     
     addr_data.append([Paragraph(ship_to, header_style), Paragraph(bill_to, header_style)])
     
@@ -61,12 +62,15 @@ def create_invoice_pdf(order):
 
     # 4. Items Table
     item_data = [['Product', 'Qty', 'Unit Price', 'Total']]
+    from django.utils.html import escape
     for item in order.items.all():
+        # Escape product name for XML compatibility in Paragraphs
+        p_name = Paragraph(escape(item.product_name), header_style)
         item_data.append([
-            item.product_name,
+            p_name,
             str(item.quantity),
-            f"{item.unit_price} {settings.CURRENCY}",
-            f"{item.total_price} {settings.CURRENCY}"
+            f"{item.unit_price:.2f} {settings.CURRENCY}",
+            f"{item.total_price:.2f} {settings.CURRENCY}"
         ])
     
     items_table = Table(item_data, colWidths=[3.5*inch, 0.7*inch, 1.15*inch, 1.15*inch])
@@ -75,6 +79,7 @@ def create_invoice_pdf(order):
         ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
         ('ALIGN', (0,0), (-1,0), 'CENTER'),
         ('ALIGN', (1,1), (-1,-1), 'CENTER'),
+        ('VALIGN', (0,1), (-1,-1), 'MIDDLE'), # Vertical center for multi-line support
         ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
         ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
         ('BOTTOMPADDING', (0,0), (-1,0), 10),
@@ -85,10 +90,10 @@ def create_invoice_pdf(order):
     # 5. Totals
     subtotal = sum(i.total_price for i in order.items.all())
     totals_data = [
-        ['', 'Subtotal:', f"{subtotal} {settings.CURRENCY}"],
-        ['', 'Shipping:', f"{order.shipping_amount} {settings.CURRENCY}"],
-        ['', 'VAT (Tax):', f"{order.tax_amount} {settings.CURRENCY}"],
-        ['', 'Grand Total:', f"{order.total_amount} {settings.CURRENCY}"]
+        ['', 'Subtotal:', f"{subtotal:.2f} {settings.CURRENCY}"],
+        ['', 'Shipping:', f"{(order.shipping_amount or 0):.2f} {settings.CURRENCY}"],
+        ['', 'VAT (Tax):', f"{(order.tax_amount or 0):.2f} {settings.CURRENCY}"],
+        ['', 'Grand Total:', f"{(order.total_amount or 0):.2f} {settings.CURRENCY}"]
     ]
     totals_table = Table(totals_data, colWidths=[4*inch, 1.25*inch, 1.25*inch])
     totals_table.setStyle(TableStyle([

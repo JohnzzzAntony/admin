@@ -84,20 +84,24 @@ LOGOUT_REDIRECT_URL = 'core:home'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # For static files
+    'whitenoise.middleware.WhiteNoiseMiddleware', # For static files (must be after SecurityMiddleware)
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
 ]
 
 # ── Security Hardening ────────────────────────────────────────────────────────
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Silence known third-party library warnings that are not actionable
+SILENCED_SYSTEM_CHECKS = [
+    'ckeditor.W001',  # CKEditor 4 EOL warning — aware, will migrate to CKEditor 5 in a future sprint
+]
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 IS_PRODUCTION = env.bool('IS_PRODUCTION', default=False)

@@ -1,7 +1,10 @@
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Sum
 from .models import SiteSettings, AnnouncementBar
 from .design_models import DesignSettings
+from products.models import Product
+from orders.models import CustomerOrder
+from contact.models import ContactFormSubmission
 
 def site_settings(request):
     now = timezone.now()
@@ -39,10 +42,6 @@ def page_heroes(request):
         'page_heroes': heroes,
     }
 
-from django.db.models import Sum
-from products.models import Product
-from orders.models import CustomerOrder
-from contact.models import ContactFormSubmission
 
 def admin_dashboard(request):
     """Provides key metrics for the admin dashboard summary."""

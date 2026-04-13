@@ -225,11 +225,10 @@ def checkout_payment(request):
                     total_price=item['total_item']
                 )
 
-            # Clear cart & billing from session
+            # Clear cart & billing only for non-Stripe methods
+            # (Stripe clears on success page after confirming the session)
             request.session['enquiry_cart'] = {}
             request.session.pop('checkout_billing', None)
-
-            # Store order id for the success page
             request.session['last_order_id'] = order.id
 
             if payment_method == 'card':
@@ -276,10 +275,7 @@ def checkout_payment(request):
                 
                 return redirect(checkout_session.url, code=303)
             
-            # For COD or other methods, proceed as before
-            # Clear cart & billing only for non-stripe here (Stripe will clear on success/webhook)
-            request.session['enquiry_cart'] = {}
-            request.session.pop('checkout_billing', None)
+            # COD or other non-Stripe methods — go to success page
             return redirect('orders:checkout_success')
 
         except Exception as e:
@@ -309,11 +305,9 @@ def checkout_success(request):
         return redirect('orders:enquiry_cart')
         
     if session_id:
-        # If we have a session ID, try to find the order by it
+        # Stripe redirects here with session_id — find the order
         order = get_object_or_404(CustomerOrder, stripe_session_id=session_id)
-        # Clear cart for Stripe success (since we didn't clear it in POST)
-        request.session['enquiry_cart'] = {}
-        request.session.pop('checkout_billing', None)
+        # Cart already cleared during checkout POST — nothing to do here
     else:
         order = get_object_or_404(CustomerOrder, id=order_id)
         
@@ -364,8 +358,13 @@ def stripe_webhook(request):
             event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
         else:
             # Fallback if secret is not set (less secure, only for debugging)
-            event = stripe.Event.construct_from(request.json(), stripe.api_key)
-    except (ValueError, stripe.error.SignatureVerificationError) as e:
+            import json
+            event = stripe.Event.construct_from(json.loads(payload), stripe.api_key)
+    except ValueError:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError:
+        # Invalid signature
         return HttpResponse(status=400)
 
     # Handle the checkout.session.completed event
@@ -379,10 +378,12 @@ def stripe_webhook(request):
                 order = CustomerOrder.objects.get(id=order_id)
                 order.payment_status = 'paid'
                 order.stripe_payment_id = session.get('payment_intent')
-                order.save()
-                
-                # Note: notifications are already triggered on save() if status changes 
-                # (handled in CustomerOrder.save)
+                # Use update_fields to avoid triggering full save() side-effects
+                # (status history + notifications are for ORDER status changes, not payment status)
+                CustomerOrder.objects.filter(id=order_id).update(
+                    payment_status='paid',
+                    stripe_payment_id=session.get('payment_intent')
+                )
                 
             except CustomerOrder.DoesNotExist:
                 pass
