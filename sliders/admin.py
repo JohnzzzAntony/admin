@@ -58,7 +58,7 @@ class BannerItemInline(admin.StackedInline):
     readonly_fields = ('preview',)
     
     def preview(self, obj):
-        url = obj.get_image_url()
+        url = obj.get_image_url
         if url:
             return format_html('<img src="{}" style="width: 100px; height:60px; object-fit: cover; border-radius:4px;" />', url)
         return "-"

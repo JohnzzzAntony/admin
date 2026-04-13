@@ -234,7 +234,7 @@ class CategoryAdmin(ImportExportModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
     def category_image(self, obj):
-        url = obj.get_image_url()
+        url = obj.get_image_url
         if url:
             return mark_safe(f'<img src="{url}" class="admin-list-img" />')
         return "-"
@@ -293,7 +293,7 @@ class BrandAdmin(admin.ModelAdmin):
     radio_fields = {"is_active": admin.HORIZONTAL, "show_on_homepage": admin.HORIZONTAL}
 
     def brand_logo(self, obj):
-        url = obj.get_image_url()
+        url = obj.get_image_url
         if url:
             return mark_safe(f'<img src="{url}" class="admin-list-img" />')
         return "-"
@@ -343,7 +343,7 @@ class CollectionAdmin(admin.ModelAdmin):
     list_editable = ('display_order',)
     
     def banner_preview(self, obj):
-        url = obj.get_image_url()
+        url = obj.get_image_url
         if url:
             return mark_safe(f'<img src="{url}" class="admin-list-img" />')
         return "-"

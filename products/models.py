@@ -137,6 +137,7 @@ class Brand(models.Model):
         if not self.slug: self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+    @property
     def get_image_url(self):
         try:
             if self.logo: return self.logo.url
@@ -310,11 +311,11 @@ class ProductImage(models.Model):
     image_url = models.URLField(blank=True, null=True)
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']
+    @property
     def get_image_url(self):
         try:
             if self.image: return self.image.url
-        except Exception:
-            pass
+        except Exception: pass
         return self.image_url or "https://via.placeholder.com/300"
 
 class Offer(models.Model):
@@ -349,6 +350,15 @@ class Collection(models.Model):
         from django.urls import reverse
         return reverse('products:collection_detail', kwargs={'slug': self.slug})
     def __str__(self): return self.name
+
+    @property
+    def get_image_url(self):
+        try:
+            if self.banner: return self.banner.url
+            if self.banner_url: return self.banner_url
+        except Exception: pass
+        return "https://via.placeholder.com/1200x400?text=Collection"
+
     class Meta: ordering = ['display_order']
 
 class Wishlist(models.Model):

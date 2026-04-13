@@ -71,6 +71,7 @@ class BannerItem(models.Model):
     subtitle = models.CharField(max_length=255, blank=True)
     order = models.PositiveIntegerField(default=0)
     
+    @property
     def get_image_url(self):
         if self.image_url: return self.image_url
         return self.image.url if self.image else ""
