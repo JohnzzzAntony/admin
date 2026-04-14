@@ -131,24 +131,14 @@ class CounterAdmin(admin.ModelAdmin):
         html_parts.append('<div class="svg-grid">')
         
         for name, code in icons:
-            # Use format_html for the card to safely inject the SVG and the click handler
+            # Safely build each card
             card = format_html(
                 '<div class="svg-card" onclick="document.getElementById(\'id_icon_svg\').value = \'{}\'; return false;">'
                 '<div class="svg-card-icon">{}</div>'
                 '<span class="svg-card-name">{}</span>'
                 '</div>',
-                format_html('{}', code), # Inner SVG
-                format_html('{}', code), # Click data
-                name
-            )
-            # WAIT! The above format_html has a logic error in argument positions. Let's fix.
-            card = format_html(
-                '<div class="svg-card" onclick="document.getElementById(\'id_icon_svg\').value = \'{}\'; return false;">'
-                '<div class="svg-card-icon">{}</div>'
-                '<span class="svg-card-name">{}</span>'
-                '</div>',
-                code, # Escaped for JS string
-                format_html('{}', code), # Raw SVG for display
+                code, 
+                format_html('{}', code), 
                 name
             )
             html_parts.append(card)
@@ -162,7 +152,8 @@ class CounterAdmin(admin.ModelAdmin):
         )
         html_parts.append('</div>')
         
-        return format_html(''.join(html_parts))
+        from django.utils.safestring import mark_safe
+        return mark_safe(''.join(html_parts))
     svg_selection_helper.short_description = "Icon Selection Center"
 
 @admin.register(WhyUsCard)
