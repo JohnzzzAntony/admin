@@ -168,17 +168,20 @@ class CustomerOrder(models.Model):
     def save(self, *args, **kwargs):
         is_new = self.pk is None
         status_changed = not is_new and self.status != self.__status
-        
+
         super().save(*args, **kwargs)
-        
+
         if is_new or status_changed:
             # 1. Log history
             OrderStatusHistory.objects.create(order=self, status=self.status)
-            
+
             # 2. Trigger notifications
             from .notifications import send_customer_notification
-            send_customer_notification(self)
-            
+            if is_new:
+                send_customer_notification(self, notification_type='order_placed')
+            else:
+                send_customer_notification(self, notification_type='status_change')
+
             self.__status = self.status
 
 

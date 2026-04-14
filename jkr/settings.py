@@ -306,6 +306,18 @@ STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='sk_test_12345')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_12345')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default=None)
 
+# Tabby Payment Settings
+TABBY_API_KEY = env('TABBY_API_KEY', default='')
+TABBY_SECRET_KEY = env('TABBY_SECRET_KEY', default='')
+TABBY_MERCHANT_CODE = env('TABBY_MERCHANT_CODE', default='')
+TABBY_TEST_MODE = env.bool('TABBY_TEST_MODE', default=True)
+
+# Tamara Payment Settings
+TAMARA_API_KEY = env('TAMARA_API_KEY', default='')
+TAMARA_API_TOKEN = env('TAMARA_API_TOKEN', default='')
+TAMARA_MERCHANT_ID = env('TAMARA_MERCHANT_ID', default='')
+TAMARA_TEST_MODE = env.bool('TAMARA_TEST_MODE', default=True)
+
 # Cloudinary Storage Dictionary (Required by django-cloudinary-storage)
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME', default='dltest'),

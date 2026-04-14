@@ -8,6 +8,9 @@ from django.urls import reverse
 import stripe
 from products.models import Product
 from .models import QuoteEnquiry, QuoteItem, CustomerOrder, CustomerOrderItem
+from .notifications import send_customer_notification
+from .tabby_payment import create_tabby_session
+from .tamara_payment import create_tamara_checkout
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -275,6 +278,22 @@ def checkout_payment(request):
                 
                 return redirect(checkout_session.url, code=303)
             
+            elif payment_method == 'tabby':
+                res = create_tabby_session(order, request)
+                if res.get('success'):
+                    return redirect(res['checkout_url'])
+                else:
+                    messages.error(request, f"Tabby Error: {res.get('error')}")
+                    return redirect('orders:checkout_payment')
+
+            elif payment_method == 'tamara':
+                res = create_tamara_checkout(order, request)
+                if res.get('success'):
+                    return redirect(res['checkout_url'])
+                else:
+                    messages.error(request, f"Tamara Error: {res.get('error')}")
+                    return redirect('orders:checkout_payment')
+
             # COD or other non-Stripe methods — go to success page
             return redirect('orders:checkout_success')
 
@@ -384,11 +403,97 @@ def stripe_webhook(request):
                     payment_status='paid',
                     stripe_payment_id=session.get('payment_intent')
                 )
+                # Trigger payment confirmation email
+                send_customer_notification(order, notification_type='payment_confirmation')
                 
             except CustomerOrder.DoesNotExist:
                 pass
 
     return HttpResponse(status=200)
+
+
+# ── Tabby Webhook ──────────────────────────────────────────────────────────────
+
+@csrf_exempt
+@require_POST
+def tabby_webhook(request):
+    """Handle Tabby payment webhook notifications"""
+    try:
+        import json
+        data = json.loads(request.body)
+        event_type = data.get('event', '')
+        payload = data.get('payload', {})
+
+        logger = logging.getLogger(__name__)
+        logger.info(f"Tabby webhook received: {event_type}")
+
+        if event_type == 'payment.approved':
+            order_ref = payload.get('order_reference_id')
+            if order_ref:
+                order = CustomerOrder.objects.filter(id=order_ref).first()
+                if order:
+                    order.payment_status = 'paid'
+                    order.save(update_fields=['payment_status'])
+                    send_customer_notification(order, notification_type='payment_confirmation')
+                    logger.info(f"Tabby payment approved for order {order_ref}")
+
+        elif event_type == 'order.expired':
+            order_ref = payload.get('order_reference_id')
+            if order_ref:
+                order = CustomerOrder.objects.filter(id=order_ref).first()
+                if order:
+                    order.payment_status = 'failed'
+                    order.save(update_fields=['payment_status'])
+                    logger.info(f"Tabby order expired for order {order_ref}")
+
+        return HttpResponse(status=200)
+
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Tabby webhook error: {e}")
+        return HttpResponse(status=200)
+
+
+# ── Tamara Webhook ──────────────────────────────────────────────────────────────
+
+@csrf_exempt
+@require_POST
+def tamara_webhook(request):
+    """Handle Tamara payment webhook notifications"""
+    try:
+        import json
+        data = json.loads(request.body)
+        event_type = data.get('event', '')
+        payload = data.get('payload', {})
+
+        logger = logging.getLogger(__name__)
+        logger.info(f"Tamara webhook received: {event_type}")
+
+        if event_type == 'order.approved' or event_type == 'checkout.order.approved':
+            order_ref = payload.get('order_reference_id') or payload.get('order_id')
+            if order_ref:
+                order = CustomerOrder.objects.filter(id=order_ref).first()
+                if order:
+                    order.payment_status = 'paid'
+                    order.save(update_fields=['payment_status'])
+                    send_customer_notification(order, notification_type='payment_confirmation')
+                    logger.info(f"Tamara payment approved for order {order_ref}")
+
+        elif event_type == 'order.declined':
+            order_ref = payload.get('order_reference_id') or payload.get('order_id')
+            if order_ref:
+                order = CustomerOrder.objects.filter(id=order_ref).first()
+                if order:
+                    order.payment_status = 'failed'
+                    order.save(update_fields=['payment_status'])
+                    logger.info(f"Tamara order declined for order {order_ref}")
+
+        return HttpResponse(status=200)
+
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Tamara webhook error: {e}")
+        return HttpResponse(status=200)
 
 
 # ── Legacy enquiry submit (kept for compatibility) ───────────────────────────

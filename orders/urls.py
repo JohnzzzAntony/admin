@@ -18,8 +18,10 @@ urlpatterns = [
     path('checkout/success/', views.checkout_success, name='checkout_success'),
     path('order/<int:order_id>/invoice/download/', views.download_invoice, name='download_invoice'),
 
-    # Stripe Webhook
+    # Payment Webhooks
     path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
+    path('tabby/webhook/', views.tabby_webhook, name='tabby_webhook'),
+    path('tamara/webhook/', views.tamara_webhook, name='tamara_webhook'),
 
     # Legacy
     path('submit-enquiry/', views.submit_enquiry, name='submit_enquiry'),
