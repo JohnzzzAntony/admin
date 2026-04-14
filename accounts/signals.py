@@ -48,7 +48,7 @@ def send_login_notification(user, request, login_type='email'):
             return
 
         subject = f"Login Alert - {user.username}"
-        message = f\"\"\"
+        message = f"""
 Dear {user.get_full_name() or user.username},
 
 We noticed a new login to your account.
@@ -66,7 +66,7 @@ If you don't recognize this activity, please secure your account immediately.
 
 Best regards,
 Demo International Team
-        \"\"\"
+        """
 
         # Send email in background
         if user.email:
