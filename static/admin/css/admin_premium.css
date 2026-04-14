@@ -1139,26 +1139,14 @@ body.jazzmin-page .selector select {
 /* Precise widths for a single-frame layout */
 .inline-group .tabular th.column-image,
 .inline-group .tabular td.field-image {
-    width: 25% !important;
-    min-width: 200px !important;
-}
-
-.inline-group .tabular th.column-image_url,
-.inline-group .tabular td.field-image_url {
-    width: 45% !important;
+    width: 60% !important;
     min-width: 300px !important;
-}
-
-.inline-group .tabular th.column-order,
-.inline-group .tabular td.field-order {
-    width: 10% !important;
-    min-width: 80px !important;
 }
 
 .inline-group .tabular th.column-delete,
 .inline-group .tabular td.delete {
-    width: 10% !important;
-    min-width: 80px !important;
+    width: 40% !important;
+    min-width: 100px !important;
     text-align: left !important;
 }
 

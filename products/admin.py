@@ -19,7 +19,7 @@ class ProductResource(resources.ModelResource):
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
-    fields = ('image', 'image_url', 'order')
+    fields = ('image',)
 
 class SubCategoryInline(admin.TabularInline):
     model = Category
