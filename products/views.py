@@ -222,12 +222,12 @@ def collection_detail(request, slug):
 
 def brand_list(request):
     """Shows all active brands."""
-    brands = Brand.objects.filter(is_active=True)
+    brands = Brand.objects.all()
     return render(request, 'products/brand_list.html', {'brands': brands})
 
 def brand_detail(request, slug):
     """Shows products for a specific brand."""
-    brand = get_object_or_404(Brand, slug=slug, is_active=True)
+    brand = get_object_or_404(Brand, slug=slug)
     products = Product.objects.filter(
         brand=brand,
         is_active=True,

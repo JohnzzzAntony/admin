@@ -54,20 +54,28 @@ class Category(models.Model):
         except Exception: pass
         return "https://via.placeholder.com/512"
 
-    def get_all_children(self, include_self=True):
+    def get_all_children(self, include_self=True, visited=None):
+        """Recursively gets all children with loop detection."""
+        if visited is None: visited = set()
+        if self.id in visited: return []
+        visited.add(self.id)
+        
         children = [self] if include_self else []
         for sub in self.subcategories.all():
-            children.extend(sub.get_all_children(include_self=True))
+            children.extend(sub.get_all_children(include_self=True, visited=visited))
         return children
 
     @property
     def active_subcategories(self):
         return self.subcategories.all()
 
-    def get_ancestors(self):
+    def get_ancestors(self, visited=None):
+        """Returns ordered list of ancestors from root down to parent."""
+        if visited is None: visited = set()
         ancestors = []
         curr = self.parent
-        while curr:
+        while curr and curr.id not in visited:
+            visited.add(curr.id)
             ancestors.insert(0, curr)
             curr = curr.parent
         return ancestors
@@ -92,7 +100,9 @@ class Category(models.Model):
     def __str__(self):
         full_path = [self.name]
         k = self.parent
-        while k is not None:
+        visited = {self.id}
+        while k is not None and k.id not in visited:
+            visited.add(k.id)
             full_path.append(k.name)
             k = k.parent
         return ' > '.join(full_path[::-1])

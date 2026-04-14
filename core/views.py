@@ -84,7 +84,7 @@ def home(request):
         'products__offers'
     )
 
-    brands = Brand.objects.filter(show_on_homepage=True, is_active=True)
+    brands = Brand.objects.filter(show_on_homepage=True)
 
     context = {
         'sliders': sliders,
