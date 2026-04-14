@@ -230,6 +230,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_IMAGE_BACKEND = "pillow"
 
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Full',
+        'height': 300,
+        'width': '100%',
+        # Remove plugins that cause console errors or are unnecessary for this project
+        'removePlugins': 'exportpdf',
+    },
+}
+
 # Jazzmin Admin Theme Configuration
 JAZZMIN_SETTINGS = {
     "site_title": "Demo Administration",
