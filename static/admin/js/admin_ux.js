@@ -60,8 +60,23 @@
                     e.preventDefault();
                     if (input.type === 'file') {
                         input.value = '';
+                        // Clear text nodes and links that Django might show for currently selected files
                         const clearCheckbox = fieldContainer.querySelector('input[type="checkbox"][name*="-clear"]');
                         if (clearCheckbox) clearCheckbox.checked = true;
+                        
+                        // Hide bits of the default Django widget that show the old filename
+                        fieldContainer.querySelectorAll('a, .file-upload, span.clearable-file-input').forEach(el => {
+                            if (!el.contains(input)) el.style.display = 'none';
+                        });
+                        
+                        // If there are text nodes containing filenames (like in some custom themes), clear them
+                        const walker = document.createTreeWalker(fieldContainer, NodeFilter.SHOW_TEXT, null, false);
+                        let node;
+                        while(node = walker.nextNode()) {
+                            if (node.textContent.includes('.') && /\.(webp|jpg|png|jpeg|gif)$/i.test(node.textContent)) {
+                                node.textContent = '';
+                            }
+                        }
                     } else {
                         input.value = '';
                     }
