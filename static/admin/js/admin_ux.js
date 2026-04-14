@@ -33,23 +33,21 @@
         if (!isPotentialImage) return;
         input.dataset.previewManaged = "true";
 
-        // Logic to find correct row container
-        const row = input.closest('.form-row') || input.closest('tr') || input.closest('fieldset > div') || input.parentElement;
+        // Find the most specific container for this field
+        const fieldContainer = input.closest('.fieldBox') || input.closest('.form-group') || input.closest('.form-row > div') || input.parentElement;
         
         const updatePreview = (src) => {
             if (!src) return;
             
-            let container = row.querySelector('.admin-preview-container');
+            let container = fieldContainer.querySelector('.admin-preview-container');
             if (!container) {
                 container = document.createElement('div');
                 container.className = 'admin-preview-container';
                 
                 const previewImg = document.createElement('img');
                 previewImg.className = 'instant-admin-preview';
-                previewImg.style.height = '80px';
-                previewImg.style.width = '80px';
-                previewImg.style.borderRadius = '8px';
-                previewImg.style.objectFit = 'cover';
+                // Styles are mostly handled by admin_premium.css, but we ensure basic visibility here
+                previewImg.style.display = 'block';
                 container.appendChild(previewImg);
                 
                 const removeBtn = document.createElement('button');
@@ -60,25 +58,26 @@
                 
                 removeBtn.onclick = (e) => {
                     e.preventDefault();
-                    e.stopPropagation();
-                    
                     if (input.type === 'file') {
                         input.value = '';
-                        // Find and check the Django 'Clear' checkbox if it exists
-                        const clearCheckbox = row.querySelector('input[type="checkbox"][name*="-clear"]');
+                        const clearCheckbox = fieldContainer.querySelector('input[type="checkbox"][name*="-clear"]');
                         if (clearCheckbox) clearCheckbox.checked = true;
                     } else {
                         input.value = '';
                     }
-                    
                     container.style.display = 'none';
-                    // Trigger events to notify other potential listeners
                     input.dispatchEvent(new Event('change', { bubbles: true }));
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
                 };
                 
                 container.appendChild(removeBtn);
-                row.appendChild(container);
+                
+                // Smart Insertion: after label or at the top of the field
+                const label = fieldContainer.querySelector('label');
+                if (label) {
+                    label.after(container);
+                } else {
+                    fieldContainer.prepend(container);
+                }
             }
             
             const img = container.querySelector('.instant-admin-preview');
@@ -86,14 +85,14 @@
             container.style.display = 'inline-block';
             img.onerror = () => { container.style.display = 'none'; };
 
-            // If we are showing a preview, ensure the clear checkbox is UNCHECKED
-            const clearCheckbox = row.querySelector('input[type="checkbox"][name*="-clear"]');
+            const clearCheckbox = fieldContainer.querySelector('input[type="checkbox"][name*="-clear"]');
             if (clearCheckbox) clearCheckbox.checked = false;
         };
 
         // Initial State (Existing images)
         if (input.type === 'file') {
-            const currentLink = row.querySelector('.file-upload a, .readonly a, .field-image a, .field-logo a');
+            // Search specifically within this field's container
+            const currentLink = fieldContainer.querySelector('a[href*="/media/"], .file-upload a, .readonly a, .clearable-file-input a');
             if (currentLink && currentLink.href && /\.(jpg|jpeg|png|webp|gif|svg|avif|ico)$/i.test(currentLink.href.split('?')[0])) {
                 updatePreview(currentLink.href);
             }
@@ -101,7 +100,7 @@
             updatePreview(input.value.trim());
         }
 
-        // Event Listeners for changes
+        // Live Changes
         input.addEventListener('change', function() {
             if (this.type === 'file' && this.files && this.files[0]) {
                 const reader = new FileReader();
@@ -112,12 +111,13 @@
             }
         });
 
+        // URL fields: live preview as user types
         if (input.type !== 'file') {
             input.addEventListener('input', function() {
                 if (this.value && /^https?:\/\//i.test(this.value.trim())) {
                     updatePreview(this.value.trim());
                 } else if (!this.value) {
-                    const container = row.querySelector('.admin-preview-container');
+                    const container = fieldContainer.querySelector('.admin-preview-container');
                     if (container) container.style.display = 'none';
                 }
             });

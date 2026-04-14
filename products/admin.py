@@ -272,14 +272,14 @@ class CategoryAdmin(ImportExportModelAdmin):
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('name', 'show_on_homepage', 'is_active', 'order', 'brand_logo')
-    list_editable = ('show_on_homepage', 'is_active', 'order')
+    list_display = ('name', 'show_on_homepage', 'order', 'brand_logo')
+    list_editable = ('show_on_homepage', 'order')
     search_fields = ('name',)
     prepopulated_fields = {"slug": ("name",)}
     
     fieldsets = (
         ('Brand Identity', {
-            'fields': (('name', 'slug'), 'order', 'is_active'),
+            'fields': (('name', 'slug'), 'order'),
         }),
         ('Visuals & Branding', {
             'fields': (('logo', 'logo_url'), 'description'),
@@ -290,7 +290,7 @@ class BrandAdmin(admin.ModelAdmin):
             'description': 'Toggle visibility in the "We Deal With" section on the homepage.'
         }),
     )
-    radio_fields = {"is_active": admin.HORIZONTAL, "show_on_homepage": admin.HORIZONTAL}
+    radio_fields = {"show_on_homepage": admin.HORIZONTAL}
 
     def brand_logo(self, obj):
         url = obj.get_image_url
