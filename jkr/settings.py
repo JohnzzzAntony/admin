@@ -245,7 +245,6 @@ JAZZMIN_SETTINGS = {
     "site_title": "Demo Administration",
     "site_header": "Demo Admin",
     "site_brand": "Demo International",
-    "site_logo": "assets/logo.png",
     "welcome_sign": "Welcome to Demo Management System",
     "search_model": ["products.Product", "blog.Post"],
     "show_ui_builder": False,
