@@ -40,7 +40,7 @@ class ProductAdmin(ImportExportModelAdmin):
     list_editable = ('show_on_homepage', 'brand')
     search_fields = ('name', 'slug', 'sku_id', 'brand__name')
     list_filter = ('brand', 'category', 'show_on_homepage', 'is_active')
-    readonly_fields = ('preview', 'sku_id')
+    readonly_fields = ('sku_id', 'preview')
     inlines = [ProductImageInline]
     # change_list_template = "admin/products/product/change_list.html"
 
@@ -178,9 +178,9 @@ class ProductAdmin(ImportExportModelAdmin):
         return obj.category.name
     category_display.short_description = "Category"
 
-    def parent_category(self, obj):
+    def parent_category_display(self, obj):
         return obj.category.parent if obj.category and obj.category.parent else (obj.category if obj.category else "-")
-    parent_category.short_description = "Parent Category"
+    parent_category_display.short_description = "Parent Category"
 
     def stock_status(self, obj):
         return "✅ In Stock" if obj.is_in_stock() else "❌ Out of Stock"
@@ -191,8 +191,8 @@ class ProductAdmin(ImportExportModelAdmin):
             'fields': (
                 ('name', 'sku_id'), 
                 ('parent_category', 'category'),
-                ('slug', 'quantity'),
-                'show_on_homepage'
+                ('brand', 'quantity'),
+                ('slug', 'show_on_homepage')
             ),
             'description': 'Core identity and stock availability. Choose a parent category to see subcategories.'
         }),

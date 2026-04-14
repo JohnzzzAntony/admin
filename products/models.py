@@ -306,10 +306,14 @@ class Product(models.Model):
         if not self.sku_id:
             import random, string, time
             prefix = slugify(self.name)[:10].upper() or "PRO"
-            # Increase entropy to 8 chars and add timestamp component to ensure uniqueness
-            timestamp = str(int(time.time()))[-4:]
-            rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-            self.sku_id = f"{prefix}-{timestamp}-{rand_str}"
+            # Loop to ensure SKU uniqueness
+            while True:
+                timestamp = str(int(time.time()))[-4:]
+                rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                new_sku = f"{prefix}-{timestamp}-{rand_str}"
+                if not Product.objects.filter(sku_id=new_sku).exists():
+                    self.sku_id = new_sku
+                    break
         
         super().save(*args, **kwargs)
 
@@ -321,6 +325,8 @@ class ProductImage(models.Model):
     image_url = models.URLField(blank=True, null=True)
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']
+    def __str__(self):
+        return f"Image for {self.product.name}" if self.product else "Unassigned Product Image"
     @property
     def get_image_url(self):
         try:
