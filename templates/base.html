@@ -34,16 +34,22 @@
     <!-- Tailwind Engine (Production Robustness) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+      // Sanitize design settings for JS config
+      const primaryColor = "{{ design_settings.primary_color|default:'#114084' }}";
+      const secondaryColor = "{{ design_settings.secondary_color|default:'#005CB9' }}";
+      const mainFont = "{{ design_settings.font_main|safe|default:'sans-serif' }}";
+      const headingFont = "{{ design_settings.font_secondary|safe|default:'serif' }}";
+
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              primary: "{{ design_settings.primary_color|default:'#114084' }}",
-              secondary: "{{ design_settings.secondary_color|default:'#005CB9' }}",
+              primary: primaryColor,
+              secondary: secondaryColor,
             },
             fontFamily: {
-                sans: {{ design_settings.font_main|safe|default:"'Inter', sans-serif"|safe }},
-                heading: {{ design_settings.font_secondary|safe|default:"'Noto Serif', serif"|safe }},
+                sans: [mainFont],
+                heading: [headingFont],
             },
           }
         }
@@ -77,6 +83,7 @@
         }
         @layer components {
             .glass-morph {
+                /* Adaptive glassmorphism */
                 {% if design_settings.enable_glassmorphism %}
                 @apply backdrop-blur-md bg-white/70 border border-white/20;
                 {% else %}
