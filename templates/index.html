@@ -21,7 +21,8 @@
     .category-card:hover .cat-ring { transform: scale(1.1); opacity: 1; }
 
     /* Infinite Marquee Animation Smoothness */
-    .brands-swiper .swiper-wrapper {
+    .partners-marquee .swiper-wrapper,
+    .brands-marquee .swiper-wrapper {
         transition-timing-function: linear !important;
     }
 </style>
@@ -196,15 +197,31 @@
         <div class="mb-16 text-center">
             <p class="text-[10px] font-black uppercase tracking-[0.5em] text-slate-400">Trusted Industry Partners</p>
         </div>
-        <div class="swiper brands-swiper overflow-hidden">
+        <div class="swiper brands-marquee overflow-hidden">
             <div class="swiper-wrapper items-center">
                 {% for brand in brands %}
-                <div class="swiper-slide px-8 grayscale hover:grayscale-0 opacity-40 hover:opacity-100 transition-all">
+                <div class="swiper-slide px-6 py-4 text-center group">
                     <a href="{{ brand.get_absolute_url }}">
-                        <img src="{{ brand.get_image_url }}" alt="{{ brand.name }}" class="h-12 w-auto object-contain mx-auto">
+                        <div class="h-16 flex items-center justify-center mb-3 grayscale group-hover:grayscale-0 opacity-40 group-hover:opacity-100 transition-all">
+                            <img src="{{ brand.get_image_url }}" alt="{{ brand.name }}" class="h-full w-auto object-contain mx-auto">
+                        </div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{{ brand.name }}</p>
                     </a>
                 </div>
                 {% endfor %}
+                <!-- Seamless Loop padding -->
+                {% if brands.count < 10 %}
+                    {% for brand in brands %}
+                    <div class="swiper-slide px-6 py-4 text-center group">
+                        <a href="{{ brand.get_absolute_url }}">
+                            <div class="h-16 flex items-center justify-center mb-3 grayscale group-hover:grayscale-0 opacity-40 group-hover:opacity-100 transition-all">
+                                <img src="{{ brand.get_image_url }}" alt="{{ brand.name }}" class="h-full w-auto object-contain mx-auto">
+                            </div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{{ brand.name }}</p>
+                        </a>
+                    </div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
     </div>
@@ -266,7 +283,7 @@
         <div class="text-center mb-16 space-y-4">
             <h3 class="text-xs font-black uppercase tracking-[0.4em] text-primary">{{ design_settings.hp_clients_title|safe }}</h3>
         </div>
-        <div class="swiper brands-swiper">
+        <div class="swiper partners-marquee">
             <div class="swiper-wrapper flex items-center">
                 {% for client in public_clients %}
                 <div class="swiper-slide flex items-center justify-center p-8 bg-slate-50 rounded-3xl grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all">
@@ -343,21 +360,33 @@
         loop: false
     });
 
-    // Brands Marquee (Infinite Linear Scroll)
-    new Swiper('.brands-swiper', {
+    // Infinite Partners Marquee
+    new Swiper('.partners-marquee', {
         slidesPerView: 2,
         spaceBetween: 24,
         loop: true,
-        autoplay: {
-            delay: 0,
-            disableOnInteraction: false,
-        },
+        autoplay: { delay: 0, disableOnInteraction: false },
         speed: 4000,
         allowTouchMove: false,
         breakpoints: {
             640: { slidesPerView: 3, spaceBetween: 32 },
             1024: { slidesPerView: 5, spaceBetween: 40 },
             1440: { slidesPerView: 6, spaceBetween: 48 }
+        }
+    });
+
+    // Infinite Brands Marquee
+    new Swiper('.brands-marquee', {
+        slidesPerView: 2,
+        spaceBetween: 24,
+        loop: true,
+        autoplay: { delay: 0, disableOnInteraction: false },
+        speed: 5000,
+        allowTouchMove: false,
+        breakpoints: {
+            640: { slidesPerView: 3, spaceBetween: 32 },
+            1024: { slidesPerView: 4, spaceBetween: 40 },
+            1440: { slidesPerView: 5, spaceBetween: 48 }
         }
     });
 
