@@ -1,8 +1,10 @@
 from django.db import models
 
 class HeroSlider(models.Model):
-    title = models.CharField(max_length=255)
-    subtitle = models.CharField(max_length=255, blank=True)
+    badge_text = models.CharField(max_length=100, default="Elite Collection", blank=True)
+    title = models.CharField(max_length=255, default="Royal Quality Healthcare")
+    description = models.TextField(blank=True, default="Precision medical equipment delivered with royalty-class service.")
+    
     image = models.ImageField(
         upload_to="sliders/", 
         null=True, 

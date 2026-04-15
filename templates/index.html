@@ -46,15 +46,15 @@
                     <div class="max-w-3xl mx-auto text-center space-y-8 animate-hero flex flex-col items-center">
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full hero-glass text-white/90 text-xs font-black uppercase tracking-[0.2em]">
                             <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                            {{ slider.subtitle|default:"Elite Collection" }}
+                            {{ slider.badge_text|default:"Elite Collection"|safe }}
                         </div>
                         
                         <h1 class="text-3xl sm:text-6xl lg:text-7xl font-black text-white leading-[0.9] tracking-tighter">
-                            {{ design_settings.hp_hero_title|safe }}
+                            {{ slider.title|safe }}
                         </h1>
                         
                         <p class="text-lg text-slate-300 max-w-lg leading-relaxed font-medium">
-                            {{ design_settings.hp_hero_subtitle|default:"Experience the pinnacle of quality and craftsmanship. Our curated collection brings world-class standards directly to your doorstep." }}
+                            {{ slider.description|safe|linebreaksbr }}
                         </p>
                         
                     </div>
