@@ -2,213 +2,210 @@
 {% load static %}
 
 {% block content %}
-<section class="py-5 mt-5 bg-light">
-    <div class="container py-4">
+<section class="py-12 lg:py-24 bg-slate-50 min-h-screen">
+    <div class="container mx-auto px-6">
 
         <!-- Checkout Steps -->
-        <div class="d-flex justify-content-center mb-5">
-            <div class="d-flex align-items-center">
-                <div class="d-flex flex-column align-items-center">
-                    <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">1</div>
-                    <small class="mt-1 font-weight-bold text-primary">Billing</small>
+        <div class="max-w-3xl mx-auto mb-16 lg:mb-24">
+            <div class="relative flex items-center justify-between">
+                <div class="absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 -translate-y-1/2"></div>
+                <div class="absolute top-1/2 left-0 w-1/3 h-0.5 bg-primary -translate-y-1/2 transition-all duration-500"></div>
+                
+                <!-- Step 1 -->
+                <div class="relative z-10 flex flex-col items-center gap-3">
+                    <div class="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center font-black shadow-xl shadow-primary/20 animate__animated animate__bounceIn">1</div>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-primary">Billing</span>
                 </div>
-                <div style="width:80px;height:2px;background:#ddd;margin:0 8px;margin-bottom:18px;"></div>
-                <div class="d-flex flex-column align-items-center">
-                    <div style="width:40px;height:40px;border-radius:50%;background:#ddd;color:#999;display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
-                    <small class="mt-1 text-muted">Payment</small>
+                <!-- Step 2 -->
+                <div class="relative z-10 flex flex-col items-center gap-3">
+                    <div class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-400 rounded-2xl flex items-center justify-center font-black">2</div>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Payment</span>
                 </div>
-                <div style="width:80px;height:2px;background:#ddd;margin:0 8px;margin-bottom:18px;"></div>
-                <div class="d-flex flex-column align-items-center">
-                    <div style="width:40px;height:40px;border-radius:50%;background:#ddd;color:#999;display:flex;align-items:center;justify-content:center;font-weight:700;">3</div>
-                    <small class="mt-1 text-muted">Confirmation</small>
+                <!-- Step 3 -->
+                <div class="relative z-10 flex flex-col items-center gap-3">
+                    <div class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-400 rounded-2xl flex items-center justify-center font-black">3</div>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Complete</span>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <!-- Billing Form -->
-            <div class="col-lg-7 mb-4">
-                <div class="card border-0 shadow-sm rounded-lg">
-                    <div class="card-body p-4 p-md-5">
-                        <h4 class="font-weight-bold mb-4" style="color:var(--primary-blue);">
-                            <i class="fas fa-truck mr-2"></i>Shipping Address
-                        </h4>
-                        <form method="POST" action="{% url 'orders:checkout_billing' %}">
-                            {% csrf_token %}
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label class="font-weight-bold small">First Name *</label>
-                                    <input type="text" name="first_name" class="form-control rounded-pill px-4 py-3"
-                                           value="{% if form_data.first_name %}{{ form_data.first_name }}{% elif user.is_authenticated %}{{ user.first_name }}{% endif %}" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label class="font-weight-bold small">Last Name *</label>
-                                    <input type="text" name="last_name" class="form-control rounded-pill px-4 py-3"
-                                           value="{% if form_data.last_name %}{{ form_data.last_name }}{% elif user.is_authenticated %}{{ user.last_name }}{% endif %}" required>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label class="font-weight-bold small">Email Address *</label>
-                                    <input type="email" name="email" class="form-control rounded-pill px-4 py-3"
-                                           value="{% if form_data.email %}{{ form_data.email }}{% elif user.is_authenticated %}{{ user.email }}{% endif %}" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label class="font-weight-bold small">Phone Number *</label>
-                                    <input type="tel" name="phone" class="form-control rounded-pill px-4 py-3"
-                                           placeholder="+971..." value="{{ form_data.phone|default:'' }}" required>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label class="font-weight-bold small">Country *</label>
-                                    <input type="text" name="country" class="form-control rounded-pill px-4 py-3"
-                                           value="{{ form_data.country|default:'UAE' }}" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label class="font-weight-bold small">City *</label>
-                                    <input type="text" name="city" class="form-control rounded-pill px-4 py-3"
-                                           value="{{ form_data.city|default:'' }}" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold small">Street Address</label>
-                                <input type="text" name="street" class="form-control rounded-pill px-4 py-3"
-                                       value="{{ form_data.street|default:'' }}">
-                            </div>
-
-                            <hr class="my-4">
-
-                            <div class="form-group">
-                                <label class="font-weight-bold small">TRN (Tax Registration Number) - <span class="text-muted">Optional</span></label>
-                                <input type="text" name="trn" class="form-control rounded-pill px-4 py-3"
-                                       placeholder="Enter 15-digit TRN" value="{{ form_data.trn|default:'' }}" maxlength="15">
-                            </div>
-
-                            <div class="form-group mt-4 mb-4">
-                                <div class="custom-control custom-checkbox custom-control-primary">
-                                    <input type="checkbox" class="custom-control-input" id="billing_same" name="billing_address_same_as_shipping" 
-                                           {% if form_data.billing_same is not False %}checked{% endif %}>
-                                    <label class="custom-control-label small font-weight-bold text-dark" for="billing_same" style="cursor:pointer;">
-                                        Billing Address is same as Shipping Address
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div id="billing-section" style="display: {% if form_data.billing_same is False %}block{% else %}none{% endif %};" class="bg-white p-3 rounded-lg border">
-                                <h5 class="font-weight-bold mb-4" style="color:var(--primary-blue); font-size:1rem;">
-                                    <i class="fas fa-receipt mr-2 text-warning"></i>Separate Billing Address
-                                </h5>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="font-weight-bold small">Billing First Name *</label>
-                                        <input type="text" name="billing_first_name" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_first_name|default:'' }}">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="font-weight-bold small">Billing Last Name *</label>
-                                        <input type="text" name="billing_last_name" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_last_name|default:'' }}">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="font-weight-bold small">Billing Email *</label>
-                                        <input type="email" name="billing_email" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_email|default:'' }}">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="font-weight-bold small">Billing Phone *</label>
-                                        <input type="tel" name="billing_phone" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_phone|default:'' }}">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="font-weight-bold small">Billing Street Address</label>
-                                    <input type="text" name="billing_street" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_street|default:'' }}">
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="font-weight-bold small">Billing Country</label>
-                                        <input type="text" name="billing_country" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_country|default:'UAE' }}">
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="font-weight-bold small">Billing City</label>
-                                        <input type="text" name="billing_city" class="form-control rounded-pill px-4 py-2" value="{{ form_data.b_city|default:'' }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group mt-4">
-                                <label class="font-weight-bold small">Order Notes (Optional)</label>
-                                <textarea name="comment" class="form-control px-4 py-3" rows="3"
-                                          style="border-radius:15px;">{{ form_data.comment|default:'' }}</textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block py-3 mt-4 font-weight-bold shadow"
-                                    style="border-radius:30px;background:var(--accent-blue);font-size:1.05rem;">
-                                Continue to Payment <i class="fas fa-arrow-right ml-2"></i>
-                            </button>
-                        </form>
+            <div class="lg:col-span-7">
+                <div class="bg-white rounded-[40px] p-8 lg:p-12 shadow-2xl shadow-slate-200/50 border border-slate-100">
+                    <div class="flex items-center gap-4 mb-10">
+                        <div class="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-truck text-xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-black text-slate-900 tracking-tighter">Shipping <span class="italic text-primary">Details</span></h2>
                     </div>
+
+                    <form method="POST" action="{% url 'orders:checkout_billing' %}" class="space-y-8">
+                        {% csrf_token %}
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">First Name *</label>
+                                <input type="text" name="first_name" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{% if form_data.first_name %}{{ form_data.first_name }}{% elif user.is_authenticated %}{{ user.first_name }}{% endif %}" required>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Last Name *</label>
+                                <input type="text" name="last_name" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{% if form_data.last_name %}{{ form_data.last_name }}{% elif user.is_authenticated %}{{ user.last_name }}{% endif %}" required>
+                            </div>
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Email Address *</label>
+                                <input type="email" name="email" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{% if form_data.email %}{{ form_data.email }}{% elif user.is_authenticated %}{{ user.email }}{% endif %}" required>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Phone Number *</label>
+                                <input type="tel" name="phone" placeholder="+971..." class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{{ form_data.phone|default:'' }}" required>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">City *</label>
+                                <input type="text" name="city" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{{ form_data.city|default:'' }}" required>
+                            </div>
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Street Address</label>
+                                <input type="text" name="street" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{{ form_data.street|default:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="pt-8 border-t border-slate-100">
+                            <div class="flex items-center gap-4 mb-8">
+                                <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-receipt text-sm"></i>
+                                </div>
+                                <h3 class="text-xl font-black text-slate-900 tracking-tighter">Tax Information <span class="text-slate-400 text-xs font-medium ml-2">(Optional)</span></h3>
+                            </div>
+                            <div class="space-y-2 mb-8">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">TRN (15-digit)</label>
+                                <input type="text" name="trn" maxlength="15" placeholder="Enter Tax Registration Number" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{{ form_data.trn|default:'' }}">
+                            </div>
+
+                            <label class="flex items-center gap-4 p-6 bg-slate-50 rounded-[30px] cursor-pointer hover:bg-slate-100 transition-all border border-slate-100/50">
+                                <input type="checkbox" id="billing_same" name="billing_address_same_as_shipping" class="w-6 h-6 rounded-lg text-primary focus:ring-primary border-slate-200" {% if form_data.billing_same is not False %}checked{% endif %}>
+                                <div class="flex-1">
+                                    <h4 class="text-xs font-black uppercase tracking-widest text-slate-900">Same Billing Address</h4>
+                                    <p class="text-[10px] text-slate-400 font-medium">Use my shipping details for billing and invoices</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div id="billing-section" class="pt-8 animate__animated animate__fadeIn" style="display: {% if form_data.billing_same is False %}block{% else %}none{% endif %};">
+                            <h3 class="text-xl font-black text-slate-900 tracking-tighter mb-8"><i class="fas fa-map-pin mr-3 text-primary/40"></i>Billing Address</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Billing First Name</label>
+                                    <input type="text" name="billing_first_name" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm" value="{{ form_data.b_first_name|default:'' }}">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Billing Last Name</label>
+                                    <input type="text" name="billing_last_name" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm" value="{{ form_data.b_last_name|default:'' }}">
+                                </div>
+                                <div class="space-y-2 md:col-span-2">
+                                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Billing Street</label>
+                                    <input type="text" name="billing_street" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm" value="{{ form_data.b_street|default:'' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 pt-8">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Order Notes <span class="text-slate-300">(Optional)</span></label>
+                            <textarea name="comment" rows="3" class="w-full bg-slate-50 border border-slate-100 rounded-[30px] px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all">{{ form_data.comment|default:'' }}</textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-6 bg-primary text-white rounded-[32px] font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:-translate-y-1 hover:shadow-primary/40 transition-all flex items-center justify-center gap-4 group">
+                            Proceed to Payment <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
 
-            <!-- Order Summary Sidebar -->
-            <div class="col-lg-5">
-                <div class="card border-0 shadow-sm rounded-lg sticky-top" style="top:100px;">
-                    <div class="card-header bg-white border-0 pt-4">
-                        <h5 class="font-weight-bold">Your Order</h5>
-                    </div>
-                    <div class="card-body p-4 pt-0">
+            <!-- Summary Sidebar -->
+            <div class="lg:col-span-5 sticky top-32">
+                <div class="bg-slate-950 rounded-[40px] p-8 lg:p-12 text-white shadow-2xl shadow-slate-950/20">
+                    <h3 class="text-2xl font-black tracking-tighter mb-10">Your <span class="italic text-primary">Order</span></h3>
+                    
+                    <div class="space-y-6 mb-10 overflow-y-auto max-h-[300px] pr-4 custom-scrollbar">
                         {% for item in cart_items %}
-                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
-                            <img src="{{ item.product.get_image_url }}" style="width:55px;height:55px;object-fit:contain;border-radius:8px;border:1px solid #eee;" class="mr-3">
-                            <div class="flex-grow-1">
-                                <div class="font-weight-bold small text-dark">{{ item.product.name|truncatechars:35 }}</div>
-                                <div class="text-muted small">Qty: {{ item.quantity }}</div>
+                        <div class="flex items-center gap-6 group">
+                            <div class="w-20 h-20 bg-white/5 rounded-2xl border border-white/10 p-2 transform group-hover:scale-105 transition-transform overflow-hidden">
+                                <img src="{{ item.product.get_image_url }}" class="w-full h-full object-contain">
                             </div>
-                            <div class="font-weight-bold small">{{ item.total_item }} AED</div>
+                            <div class="flex-1 space-y-1">
+                                <h4 class="text-xs font-bold text-white group-hover:text-primary transition-colors">{{ item.product.name|truncatechars:35 }}</h4>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">Qty: {{ item.quantity }}</p>
+                            </div>
+                            <span class="text-xs font-black text-white whitespace-nowrap">{{ item.total_item }} AED</span>
                         </div>
                         {% endfor %}
-                        <div class="d-flex justify-content-between mb-2 mt-2">
-                            <span class="text-muted small">Subtotal</span>
-                            <span class="small font-weight-bold">{{ subtotal|floatformat:2 }} AED</span>
+                    </div>
+
+                    <div class="space-y-4 py-8 border-t border-white/10">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-400 font-medium">Subtotal</span>
+                            <span class="font-bold text-white">{{ subtotal|floatformat:2 }} AED</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted small">Shipping</span>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-400 font-medium">Shipping</span>
                             {% if total_shipping > 0 %}
-                            <span class="small font-weight-bold">{{ total_shipping|floatformat:2 }} AED</span>
+                            <span class="font-bold text-white">{{ total_shipping|floatformat:2 }} AED</span>
                             {% else %}
-                            <span class="small font-weight-bold text-success">FREE</span>
+                            <span class="font-black text-[9px] uppercase tracking-widest text-emerald-400 px-3 py-1 bg-emerald-400/10 rounded-lg">Free</span>
                             {% endif %}
                         </div>
-                        <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
-                            <span class="text-muted small">VAT (Approx. 5%)</span>
-                            <span class="small font-weight-bold">{{ total_tax|floatformat:2 }} AED</span>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-400 font-medium">VAT (Approx. 5%)</span>
+                            <span class="font-bold text-white">{{ total_tax|floatformat:2 }} AED</span>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <strong class="text-dark">Total</strong>
-                            <strong class="text-primary h5 mb-0" id="billing-total">{{ grand_total|floatformat:2 }} AED</strong>
+                    </div>
+
+                    <div class="pt-8 border-t border-white/20">
+                        <div class="flex flex-col gap-2">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Investment</span>
+                            <span class="text-5xl font-black text-white tracking-tighter" id="billing-total">{{ grand_total|floatformat:2 }} <span class="text-sm font-bold ml-1 text-slate-400">AED</span></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-8 border-t border-white/5 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-shield-check text-emerald-400"></i>
+                            <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">Encrypted Security</span>
+                        </div>
+                        <div class="flex gap-4 opacity-50 grayscale">
+                            <i class="fab fa-cc-visa text-xl"></i>
+                            <i class="fab fa-cc-mastercard text-xl"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </section>
 
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary-color, #114084); }
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const grandTotal = parseFloat("{{ grand_total|default:0 }}");
-    const el = document.getElementById('billing-total');
-    if(el) el.textContent = grandTotal.toFixed(2) + ' AED';
-
     const billingToggle = document.getElementById('billing_same');
     const billingSection = document.getElementById('billing-section');
 
     if (billingToggle && billingSection) {
         billingToggle.addEventListener('change', function() {
             if (this.checked) {
-                billingSection.style.display = 'none';
+                billingSection.classList.add('animate__fadeOut');
+                setTimeout(() => {
+                    billingSection.style.display = 'none';
+                    billingSection.classList.remove('animate__fadeOut');
+                }, 300);
             } else {
                 billingSection.style.display = 'block';
+                billingSection.classList.add('animate__fadeIn');
             }
         });
     }

@@ -1,1269 +1,596 @@
+{% load static %}
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-    <title>{{ site_settings.meta_title|default:site_settings.site_name|default:"Demo International" }}</title>
-    <meta name="description" content="{{ site_settings.meta_description }}"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- Production Meta Tags -->
+    <title>{{ site_settings.meta_title|default:site_settings.site_name|default:"Premium E-commerce" }}</title>
+    <meta name="description" content="{{ site_settings.meta_description|default:'Quality medical equipment and healthcare products.' }}"/>
+    <meta name="keywords" content="{{ site_settings.meta_keywords }}"/>
+    <meta name="author" content="JKR International"/>
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ site_settings.site_name }}">
+    <meta property="og:description" content="{{ site_settings.meta_description }}">
+    {% if site_settings.logo %}<meta property="og:image" content="{{ site_settings.logo.url }}">{% endif %}
+    
     {% if site_settings.favicon %}
-    <link rel="icon" href="{{ site_settings.favicon.url }}" />
+    <link rel="icon" type="image/png" href="{{ site_settings.favicon.url }}" />
     {% endif %}
 
-    <!-- Google Fonts -->
+    <!-- Fonts Cache -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&display=swap" rel="stylesheet">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Inter:wght@400;600;700;900&family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     
-    <style>
-        :root {
-            /* Dynamic admin-controlled colors */
-            --primary-blue: {{ design_settings.primary_color|default:"#114084" }};
-            --accent-blue: {{ design_settings.secondary_color|default:"#005CB9" }};
-            --accent-glow: {{ design_settings.accent_glow_color|default:"#0081ff" }};
-            --header-bg: {{ design_settings.header_bg_color|default:"#ffffff" }};
-            --footer-bg: {{ design_settings.footer_bg_color|default:"#1a1a1a" }};
-            --white: #ffffff;
-            --dark-gray: #4C4D4F;
-            
-            /* Premium Health Mart Palette */
-            --hm-red: #e40707;
-            --hm-black: #000000;
-            --hm-gray: #f8f9fa;
-            --hm-text: #333;
-            --hm-border: #eee;
-            --hm-pill-bg: #f5f5f5;
-            
-            /* Dynamic admin-controlled typography */
-            --font-body: {{ design_settings.font_body|default:"'Montserrat', sans-serif" }};
-            --font-heading: {{ design_settings.font_heading|default:"'Montserrat', sans-serif" }};
-            
-            /* Dynamic border radius */
-            --border-radius-btn: {% if design_settings.button_style == 'sharp' %}0px{% elif design_settings.button_style == 'soft' %}8px{% else %}50px{% endif %};
-            --border-radius-card: {% if design_settings.card_style == 'sharp' %}0px{% elif design_settings.card_style == 'soft' %}12px{% else %}30px{% endif %};
-            
-            /* Dark/Light mode */
-            --bg-body: {% if design_settings.dark_mode_enabled %}#121212{% else %}#ffffff{% endif %};
-            --text-main: {% if design_settings.dark_mode_enabled %}#f1f1f1{% else %}#333333{% endif %};
-            --text-muted-custom: {% if design_settings.dark_mode_enabled %}#aaaaaa{% else %}#6c757d{% endif %};
-            --bg-light-box: {% if design_settings.dark_mode_enabled %}#1e1e1e{% else %}#ffffff{% endif %};
-            --card-bg: {% if design_settings.dark_mode_enabled %}#1a1a1a{% else %}#ffffff{% endif %};
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Tailwind Engine (Production Robustness) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "{{ design_settings.primary_color|default:'#114084' }}",
+              secondary: "{{ design_settings.secondary_color|default:'#005CB9' }}",
+            },
+            fontFamily: {
+                sans: [{{ design_settings.font_main|safe|default:"'Inter', sans-serif" }}],
+                heading: [{{ design_settings.font_secondary|safe|default:"'Noto Serif', serif" }}],
+            },
+          }
+        }
+      }
+    </script>
 
-            /* Feature-specific variables to avoid inline template tags */
-            --ambient-glow-opacity-before: {% if design_settings.dark_mode_enabled %}0.12{% else %}0.04{% endif %};
-            --ambient-glow-opacity-after: {% if design_settings.dark_mode_enabled %}0.1{% else %}0.03{% endif %};
-            --neumorph-shadow-dark: {% if design_settings.dark_mode_enabled %}#0d0d0d{% else %}#d1d9e6{% endif %};
-            --neumorph-shadow-light: {% if design_settings.dark_mode_enabled %}#171717{% else %}#ffffff{% endif %};
-            --neumorph-shadow-btn-dark: {% if design_settings.dark_mode_enabled %}#0d0d0d{% else %}rgba(17, 64, 132, 0.4){% endif %};
-            --neumorph-shadow-btn-light: {% if design_settings.dark_mode_enabled %}#171717{% else %}rgba(255, 255, 255, 0.4){% endif %};
-            --glass-bg-nav: {% if design_settings.dark_mode_enabled %}rgba(18, 18, 18, 0.8){% else %}#ffffff{% endif %};
-            --glass-bg-card: {% if design_settings.dark_mode_enabled %}rgba(30, 30, 30, 0.6){% else %}rgba(255, 255, 255, 0.6){% endif %};
-            --glass-border: {% if design_settings.dark_mode_enabled %}rgba(255,255,255,0.05){% else %}rgba(255, 255, 255, 0.8){% endif %};
-            --footer-bg-final: {% if design_settings.dark_mode_enabled %}#111111{% else %}var(--footer-bg){% endif %};
-            --newsletter-bg: {% if design_settings.dark_mode_enabled %}var(--card-bg){% else %}var(--primary-blue){% endif %};
-            --newsletter-btn-bg: {% if design_settings.dark_mode_enabled %}var(--primary-blue){% else %}#0081ff{% endif %};
-            --form-border: {% if design_settings.dark_mode_enabled %}#333{% else %}#ced4da{% endif %};
-            --boxed-bg: {% if design_settings.dark_mode_enabled %}#0a0a0a{% else %}#ffffff{% endif %};
-        }
-
-        /* Centered Section Headings */
-        .section-title, 
-        .home-slider h1, 
-        .home-slider h4,
-        section h2, 
-        section h3,
-        #collections .section-title {
-            text-align: center !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-        }
-
-        section .container > .text-center {
-            width: 100% !important;
-        }
-        html, body {
-            overflow-x: hidden !important;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            position: relative;
-        }
-
-        body { 
-            font-family: var(--font-body); 
-            color: var(--text-main); 
-            background-color: var(--bg-body);
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
-
-        /* Ambient Premium Background Glow */
-        body.ambient-glow::before {
-            content: '';
-            position: fixed;
-            top: -10%;
-            right: -10%;
-            width: 50vw;
-            height: 50vw;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            opacity: var(--ambient-glow-opacity-before);
-            border-radius: 50%;
-            z-index: -1;
-            pointer-events: none;
-            filter: blur(80px);
-        }
-        body.ambient-glow::after {
-            content: '';
-            position: fixed;
-            bottom: -10%;
-            left: -10%;
-            width: 40vw;
-            height: 40vw;
-            background: radial-gradient(circle, var(--primary-blue) 0%, transparent 70%);
-            opacity: var(--ambient-glow-opacity-after);
-            border-radius: 50%;
-            z-index: -1;
-            pointer-events: none;
-            filter: blur(80px);
-        }
-
-        h1, h2, h3, h4, h5, h6, .navbar-brand {
-            font-family: var(--font-heading);
-            color: var(--text-main);
-            letter-spacing: -0.5px;
-        }
-
-        /* Global Center Alignment for Section Headings */
-        .section-title {
-            text-align: center;
-            margin-left: auto;
-            margin-right: auto;
-            width: 100%;
-            position: relative;
-            margin-bottom: 3rem;
-            font-weight: 800;
-        }
-        
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 3px;
-            background: var(--primary-blue);
-            margin: 1rem auto;
-        }
-        
-        .section-title span.text-primary {
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
-        
-        p, span, div {
-            color: inherit;
-        }
-        
-        .text-muted { color: var(--text-muted-custom) !important; }
-        .bg-white { background-color: var(--card-bg) !important; }
-        .bg-light { background-color: var(--bg-light-box) !important; color: var(--text-main) !important; }
-        .text-dark { color: var(--text-main) !important; }
-
-        /* Announcement Slider */
-        #announcement-bar-container {
-            height: 40px;
-            overflow: hidden;
-            position: relative;
-            z-index: 1060;
-        }
-        #announcement-bar-swiper {
-            height: 100%;
-        }
-        #announcement-bar-swiper .swiper-slide {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 40px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        #announcement-bar-container .close-announcement {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-            color: currentColor; /* Inherit color from the slide if possible, or use white */
-            opacity: 0.7;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: 0.3s;
-        }
-        #announcement-bar-container .close-announcement:hover { opacity: 1; }
-
-        .main-header {
-            background: var(--header-bg);
-            padding: 12px 0;
-            border-bottom: 1px solid var(--hm-border);
-            position: sticky;
-            top: 0;
-            z-index: 1050;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-            transition: background-color 0.3s ease;
-        }
-        
-        .logo-link {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-        
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .search-wrapper {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 50px;
-            overflow: hidden;
-            height: 50px;
-            padding: 4px;
-            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-        .search-wrapper:hover, .search-wrapper:focus-within {
-            border-color: var(--primary-blue);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-        
-        .search-wrapper select {
-            border: none;
-            padding: 0 20px;
-            height: 100%;
-            outline: none !important;
-            color: #444;
-            background: #f8f9fa;
-            font-weight: 600;
-            font-size: 0.82rem;
-            min-width: 140px;
-            cursor: pointer;
-            border-radius: 40px 0 0 40px;
-            margin-right: -1px;
-        }
-        
-        .search-wrapper .divider {
-            width: 1px;
-            height: 24px;
-            background: #eee;
-            margin: 0;
-        }
-        
-        .search-wrapper input {
-            border: none;
-            flex: 1;
-            padding: 0 20px;
-            outline: none !important;
-            font-size: 0.92rem;
-            background: transparent;
-            color: #333;
-            font-weight: 500;
-        }
-        
-        .search-btn {
-            background: var(--hm-black);
-            color: #fff;
-            border: none;
-            padding: 0 30px;
-            height: 100%;
-            font-weight: 700;
-            border-radius: 40px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
-            font-size: 0.75rem;
-        }
-        .search-btn:hover { background: var(--primary-blue); color: #fff; transform: translateY(-1px); }
-
-        .header-icons {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .header-icon-link {
-            color: #333;
-            font-size: 1.25rem;
-            position: relative;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-        .header-icon-link:hover { background: #f8f9fa; color: var(--hm-red); }
-        .header-icon-link .badge {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: var(--hm-red);
-            color: #fff;
-            font-size: 0.6rem;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            border: 2px solid #fff;
-        }
-        
-        .hamburger-menu {
-            font-size: 1.4rem;
-            color: #333;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: 0.3s;
-            margin-right: 10px;
-        }
-        .hamburger-menu:hover { background: #f8f9fa; color: var(--hm-red); }
-
-        /* Sub Header / Category Bar */
-        .sub-header {
-            background: #fff;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 0;
-            position: relative;
-            z-index: 1040;
-        }
-        
-        .category-nav {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0;
-        }
-        
-        .category-nav > li {
-            position: relative;
-        }
-        
-        .category-nav > li > a {
-            color: #333;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-decoration: none;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 15px 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        
-        .category-nav > li > a:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: var(--hm-red);
-            transition: 0.3s;
-            transform: translateX(-50%);
-        }
-        
-        .category-nav > li:hover > a { color: var(--hm-red); }
-        .category-nav > li:hover > a:after { width: 100%; }
-
-        /* Dropdown Styles */
-        .dropdown-menu-custom {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: #fff;
-            min-width: 250px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            border-radius: 0 0 12px 12px;
-            padding: 10px 0;
-            list-style: none;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            border: 1px solid #f0f0f0;
-            border-top: none;
-            z-index: 1000;
-        }
-        
-        .category-nav li:hover .dropdown-menu-custom {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .dropdown-menu-custom li {
-            border-bottom: 1px solid #f8f9fa;
-        }
-        .dropdown-menu-custom li:last-child { border-bottom: none; }
-        
-        .dropdown-menu-custom li a {
-            padding: 12px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: #444;
-            font-size: 0.88rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .dropdown-menu-custom li a:hover {
-            color: var(--hm-red);
-            background: #fff5f5;
-            padding-left: 30px;
-        }
-        .dropdown-menu-custom li a i {
-            font-size: 0.7rem;
-            opacity: 0;
-            transition: 0.3s;
-            transform: translateX(-10px);
-        }
-        .dropdown-menu-custom li a:hover i {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .header-phone {
-            color: #333;
-            font-weight: 700;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            padding: 5px 0;
-            transition: 0.3s;
-        }
-        .header-phone i { color: var(--hm-red); }
-        .header-phone:hover { color: var(--hm-red); text-decoration: none; }
-
-        /* Promo Banner Styles */
-        .promo-banner-item {
-            display: block;
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-            background: #f8f9fa;
-        }
-        .promo-banner-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.8s ease;
-        }
-        .promo-banner-item:hover img {
-            transform: scale(1.05);
-        }
-        .promo-banner-item.shape-rounded { border-radius: 20px; }
-        .promo-banner-item.shape-pill { border-radius: 50px; }
-        .promo-banner-item.shape-square { border-radius: 0; }
-        
-        .banner-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 30px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.6));
-            color: #fff;
-            transition: 0.3s;
-        }
-        .promo-banner-item:hover .banner-overlay {
-            padding-bottom: 40px;
-        }
-
-        /* Side Menu (Hamburger Sidebar) */
-        .side-menu {
-            position: fixed;
-            top: 0;
-            left: -320px;
-            width: 320px;
-            height: 100vh;
-            background: #fff;
-            z-index: 2100;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.05);
-            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .side-menu.active { left: 0; }
-        .side-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.4);
-            z-index: 2050;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s;
-            backdrop-filter: blur(2px);
-        }
-        .side-menu-overlay.active { 
-            opacity: 1; 
-            visibility: visible; 
-        }
-        
-        .side-menu-header {
-            padding: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .close-side-menu {
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: #f8f9fa;
-            color: #333;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .close-side-menu:hover { background: #fee2e2; color: var(--hm-red); }
-        
-        .side-menu-body {
-            padding: 20px 0;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .side-menu-body ul { list-style: none; padding: 0; margin: 0; }
-        .side-menu-body ul li a {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 14px 25px;
-            color: #333;
-            font-weight: 600;
-            font-size: 0.92rem;
-            transition: 0.3s;
-            text-decoration: none;
-            border-left: 3px solid transparent;
-        }
-        .side-menu-body ul li a:hover {
-            background: #fff5f5;
-            color: var(--hm-red);
-            padding-left: 30px;
-            border-left-color: var(--hm-red);
-        }
-        .side-menu-body ul li a i {
-            width: 20px;
-            text-align: center;
-            font-size: 1.1rem;
-            color: #888;
-            transition: 0.3s;
-        }
-        .side-menu-body ul li a:hover i {
-            color: var(--hm-red);
-        }
-        .side-menu-body .menu-title {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: 800;
-            color: #999;
-            letter-spacing: 1.5px;
-            padding: 20px 25px 10px;
-        }
-
-        @media (max-width: 991px) {
-            .search-container { margin-top: 15px; margin-bottom: 5px; }
-            .sub-header { display: none; }
-            .header-icons { gap: 10px; }
-            .hamburger-menu { margin-right: 5px; }
-        }
-
-        /* ── Footer Styles ───────────────────────────────────────────────── */
-        .site-footer {
-            background-color: var(--footer-bg);
-            color: #ccc;
-            padding: 60px 0 0;
-            position: relative;
-        }
-        .site-footer::before {
-            content: '';
-            display: block;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue), var(--accent-glow));
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-        }
-        .footer-heading {
-            color: #fff;
-            font-weight: 700;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            position: relative;
-        }
-        .footer-heading::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 30px;
-            height: 2px;
-            background: var(--primary-blue);
-        }
-        .footer-link {
-            display: block;
-            color: #aaa;
-            font-size: 0.88rem;
-            font-weight: 500;
-            text-decoration: none;
-            margin-bottom: 10px;
-            transition: all 0.25s ease;
-            padding-left: 0;
-        }
-        .footer-link:hover {
-            color: #fff;
-            padding-left: 6px;
-            text-decoration: none;
-        }
-        .newsletter-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px;
-            padding: 24px;
-        }
-        .newsletter-input {
-            background: rgba(255,255,255,0.08) !important;
-            border: 1px solid rgba(255,255,255,0.15) !important;
-            color: #fff !important;
-            border-radius: 8px !important;
-        }
-        .newsletter-input::placeholder { color: rgba(255,255,255,0.45); }
-        .newsletter-input:focus {
-            background: rgba(255,255,255,0.12) !important;
-            border-color: var(--primary-blue) !important;
-            box-shadow: 0 0 0 3px rgba(17,64,132,0.3) !important;
-            outline: none;
-        }
-        .btn-newsletter {
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
-            color: #fff;
-            font-weight: 700;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-size: 0.88rem;
-            letter-spacing: 0.5px;
-            transition: 0.3s;
-            margin-top: 8px;
-        }
-        .btn-newsletter:hover {
-            opacity: 0.88;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-        .footer-social a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.08);
-            color: #ccc;
-            font-size: 0.88rem;
-            transition: 0.3s;
-            margin: 0 4px;
-            text-decoration: none;
-        }
-        .footer-social a:hover {
-            background: var(--primary-blue);
-            color: #fff;
-            transform: translateY(-2px);
-        }
-        .footer-bottom {
-            background: rgba(0,0,0,0.25);
-            padding: 18px 0;
-            margin-top: 40px;
-        }
-        .footer-bottom p { margin: 0; font-size: 0.82rem; color: rgba(255,255,255,0.4); }
-        /* Mobile-Specific Premium Optimization */
-        @media (max-width: 768px) {
-            /* Compact Layout */
-            .container { padding-left: 15px; padding-right: 15px; }
-            section { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
-            .py-5 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
-
-            /* Very Small Product Tiles */
-            .card { border-radius: 18px !important; margin-bottom: 12px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important; }
-            .card-img-top { height: 140px !important; padding: 12px !important; }
-            .card-body { padding: 12px !important; }
-            .card-body h5, .card-body h6 { 
-                font-size: 0.85rem !important; 
-                line-height: 1.3 !important;
-                height: auto !important; 
-                min-height: 0 !important; 
-                margin-bottom: 6px !important;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
+    <style type="text/tailwindcss">
+        @layer base {
+            html { scroll-behavior: smooth; overflow-x: hidden; }
+            body { 
+                font-family: {{ design_settings.font_main|safe|default:"'Noto Serif', serif" }}; 
+                background-color: {{ design_settings.surface_bg_color|default:"#f8fafc" }};
+                color: {{ design_settings.text_primary_color|default:"#1e293b" }};
+                @apply antialiased; 
+                overflow-x: hidden; 
             }
-            .price .h5, .price .h6 { font-size: 0.9rem !important; }
-            .wishlist-btn { width: 30px !important; height: 30px !important; top: 10px !important; right: 10px !important; font-size: 0.75rem !important; }
-            .badge { font-size: 0.65rem !important; padding: 4px 8px !important; top: 10px !important; left: 10px !important; }
-            
-            /* Compact Category Slider */
-            .category-circle { width: 100px !important; height: 100px !important; margin-bottom: 10px !important; border-width: 4px !important; }
-            .category-slider h6 { font-size: 0.8rem !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
-            .category-slider span.small { font-size: 0.7rem !important; opacity: 0.8; }
-
-            /* Milestone Counter Boxes */
-            .counter-box { padding: 20px 10px !important; border-radius: 20px !important; }
-            .display-3.counter-value { font-size: 2rem !important; }
-            .counter-value + p { font-size: 0.85rem !important; }
-            .counter-icon { font-size: 1.8rem !important; margin-bottom: 10px !important; }
-
-            /* Banners Optimization */
-            .collection-banner { height: 180px !important; border-radius: 20px !important; }
-            .banner-mosaic-large, .banner-mosaic-small { height: 200px !important; border-radius: 20px !important; }
-            .banner-overlay { padding: 20px !important; }
-            .banner-overlay h2 { font-size: 1.3rem !important; }
-            .banner-overlay p { font-size: 0.85rem !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-            /* Typography & Section Titles */
-            .section-title { font-size: 1.6rem !important; margin-bottom: 2rem !important; }
-            .section-title::after { width: 40px !important; height: 3px !important; margin: 0.8rem auto !important; }
-            p.lead { font-size: 0.95rem !important; line-height: 1.5 !important; margin-bottom: 1.5rem !important; }
-            
-            /* Brands */
-            .brand-item-box { height: 90px !important; padding: 15px !important; border-radius: 18px !important; }
-            .brand-slider p { font-size: 0.75rem !important; }
-            
-            /* Search Bar Optimization */
-            .search-container { margin-top: 5px !important; }
-            .search-wrapper { height: 44px !important; border-radius: 12px !important; }
-            .search-wrapper input { font-size: 0.85rem !important; padding: 0 15px !important; }
-            .search-btn { padding: 0 15px !important; font-size: 0.7rem !important; border-radius: 0 10px 10px 0 !important; }
-            
-            /* Sidebar Menu Small Icons */
-            .side-menu-body ul li a { padding: 12px 20px !important; font-size: 0.85rem !important; }
-            .side-menu-body .menu-title { padding: 15px 20px 8px !important; font-size: 0.65rem !important; }
-            
-            /* General Helpers */
-            .hover-lift:hover { transform: none !important; }
+            h1, h2, h3, h4, h5, h6 { 
+                font-family: {{ design_settings.font_secondary|safe|default:"'Noto Serif', serif" }}; 
+                @apply font-bold tracking-tight; 
+            }
+            :root {
+                --primary: {{ design_settings.primary_color|default:"#114084" }};
+                --secondary: {{ design_settings.secondary_color|default:"#1E293B" }};
+                --accent: {{ design_settings.accent_glow_color|default:"#0081ff" }};
+                
+                --radius-container: {{ design_settings.container_radius|default:"40px" }};
+                --radius-card: {{ design_settings.card_radius|default:"24px" }};
+                --radius-btn: {{ design_settings.button_radius|default:"9999px" }};
+                --radius-img: {{ design_settings.image_radius|default:"20px" }};
+            }
+        }
+        @layer components {
+            .glass-morph {
+                {% if design_settings.enable_glassmorphism %}
+                @apply backdrop-blur-md bg-white/70 border border-white/20;
+                {% else %}
+                @apply bg-white border border-slate-100;
+                {% endif %}
+            }
+            .premium-card {
+                background-color: {{ design_settings.card_bg_color|default:"#ffffff" }};
+                border-radius: var(--radius-card);
+                border: 1px solid {{ design_settings.border_color|default:"#e2e8f0" }};
+                @apply shadow-sm transition-all duration-300;
+            }
+            .premium-btn {
+                border-radius: var(--radius-btn);
+                @apply px-8 py-4 font-bold transition-all duration-300 flex items-center justify-center gap-2;
+            }
+            .premium-toast {
+                @apply fixed bottom-10 right-10 z-[3000] px-8 py-4 bg-slate-900/95 backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/10 translate-y-20 opacity-0 transition-all duration-500;
+            }
+            .premium-toast.show {
+                @apply translate-y-0 opacity-100;
+            }
+            .glass-header { @apply bg-white border-b border-gray-200 shadow-sm; }
+            .premium-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+            .dropdown-menu { @apply absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-100 opacity-0 invisible translate-y-1 transition-all duration-200 z-50; }
+            .group:hover .dropdown-menu { @apply opacity-100 visible translate-y-0; }
         }
     </style>
+
+    <!-- Essential Vendor -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Global Premium Styles -->
+    <link rel="stylesheet" href="{% static 'css/header_hero.css' %}?v=1.5">
+
     {% block split_css %}{% endblock %}
 </head>
-<body class="{% if design_settings.dark_mode_enabled %}dark-mode{% endif %} {% if design_settings.enable_ambient_glow %}ambient-glow{% endif %} {% if design_settings.enable_neumorphism and not design_settings.enable_glassmorphism %}neumorphism{% endif %} {% if design_settings.enable_glassmorphism %}glassmorphism{% endif %} {% if design_settings.layout_style == 'boxed' %}layout-boxed{% endif %}"
-      data-enable-animations="{{ design_settings.enable_animations|yesno:'true,false' }}">
-<div class="main-wrapper">
 
-
-    <!-- Dynamic Announcement Bar Swiper -->
-    {% if announcement_bar_list %}
-    <div id="announcement-bar-container" class="position-relative">
-        <div id="announcement-bar-swiper" class="swiper" style="overflow: hidden;">
-            <div class="swiper-wrapper">
-                {% for bar in announcement_bar_list %}
-                <div class="swiper-slide d-flex align-items-center justify-content-center" 
-                     style="background-color: {{ bar.background_color|default:design_settings.primary_color }}; color: {{ bar.text_color|default:'#ffffff' }}; height: 35px; min-height: 35px; font-size: 0.85rem;">
-                    <span class="mr-2"><i class="fas fa-bullhorn"></i></span>
-                    <span class="announcement-text">{{ bar.text }}</span>
-                </div>
-                {% endfor %}
-            </div>
+<body class="{% if request.path == '/' %}is-home{% endif %} antialiased">
+    <!-- Premium Toast Notification -->
+    <div id="premium-toast" class="premium-toast flex items-center gap-4">
+        <div id="toast-icon" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+            <i class="fas fa-check text-xs"></i>
         </div>
-        <div class="close-announcement" onclick="document.getElementById('announcement-bar-container').style.display='none';" 
-             style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: white; opacity: 0.8; z-index: 100;">
-            <i class="fas fa-times"></i>
+        <div>
+            <p id="toast-title" class="text-[10px] font-black uppercase tracking-widest text-white/50 leading-none mb-1">Success</p>
+            <p id="toast-message" class="text-sm font-bold text-white"></p>
         </div>
     </div>
-    {% endif %}
+    <!-- CSRF Helper -->
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <!-- Main Header -->
-    <header class="main-header">
-        <div class="container">
-            <div class="row align-items-center">
-                <!-- Hamburger & Logo -->
-                <div class="col-6 col-lg-3 d-flex align-items-center">
-                    <div class="hamburger-menu" id="side-menu-trigger">
-                        <i class="fas fa-bars"></i>
+    <!-- ===== TRANSLUCENT PREMIUM HEADER ===== -->
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-[2000] glass-header-container transition-all duration-500">
+        <!-- Premium Announcement Bar (Now integrated into header for seamless scroll) -->
+        {% if announcement_bar_list %}
+        <div id="announcement-bar" class="w-full bg-primary/95 backdrop-blur-md text-white overflow-hidden relative group">
+            <div class="swiper announcement-swiper h-9">
+                <div class="swiper-wrapper">
+                    {% for bar in announcement_bar_list %}
+                    <div class="swiper-slide flex items-center justify-center text-[10px] font-black uppercase tracking-[0.2em]">
+                        {{ bar.text }}
                     </div>
-                    <a href="{% url 'core:home' %}" class="logo-link">
-                        {% if site_settings.logo %}
-                        <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 55px; width: auto;">
-                        {% elif site_settings.logo_url %}
-                         <img src="{{ site_settings.logo_url }}" alt="{{ site_settings.site_name }}" style="max-height: 55px; width: auto;">
-                        {% else %}
-                        <img src="https://healthmart.ae/wp-content/uploads/2021/04/healthmart-logo-1.png" alt="Health Mart" style="max-height: 50px; width: auto;">
-                        {% endif %}
-                    </a>
+                    {% endfor %}
                 </div>
+            </div>
+            <!-- Close Button -->
+            <button onclick="dismissAnnouncement()" class="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-all z-10 opacity-0 group-hover:opacity-100">
+                <i class="fas fa-times text-[10px]"></i>
+            </button>
+        </div>
+        {% endif %}
 
-                <!-- Search Container -->
-                <div class="col-12 col-lg-6 order-3 order-lg-2">
-                    <div class="search-container">
-                        <form action="{% url 'products:product_list' %}" method="GET">
-                            <div class="search-wrapper">
-                                <div class="category-dropdown d-none d-md-block">
-                                    <select name="category">
-                                        <option value="">All Categories</option>
-                                        {% for cat in categories %}
-                                        <option value="{{ cat.slug }}">{{ cat.name }}</option>
-                                        {% endfor %}
-                                    </select>
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 grid grid-cols-[auto_1fr_auto] items-center gap-6 sm:gap-10">
+            
+            <!-- 1. LEFT: AUTHENTIC BRANDING -->
+            <div class="flex-shrink-0">
+                <a href="{% url 'core:home' %}" class="block group">
+                    {% if site_settings.logo %}
+                        <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" class="h-8 sm:h-10 w-auto group-hover:scale-105 transition-transform header-logo">
+                    {% else %}
+                        <span class="text-2xl font-black tracking-tighter group-hover:text-primary transition-colors logo-text-main">{{ site_settings.site_name|default:"JKR" }}</span>
+                    {% endif %}
+                </a>
+            </div>
+
+            <!-- 2. CENTER: AMAZON-STYLE CATEGORY + SEARCH (DESKTOP) -->
+            {% if design_settings.show_header_search %}
+                <div class="flex-1 max-w-4xl flex flex-col gap-2 items-center">
+                    <div class="category-search-bar group relative w-full h-12 flex items-center">
+                        
+                        <!-- Categories Dropdown Trigger -->
+                        <div class="categories-trigger group/label h-full">
+                            <span class="font-black text-[11px] tracking-widest uppercase">Categories</span>
+                            <i class="fas fa-chevron-down text-[9px] opacity-40 group-hover/label:rotate-180 transition-transform"></i>
+
+                            <!-- MEGA MENU (The Powerhouse) -->
+                            <div class="mega-menu">
+                                <!-- Category Sidebar -->
+                                <div class="category-list py-2 h-full overflow-y-auto">
+                                    {% for cat in categories %}
+                                    <div class="category-item group/item" data-category-id="{{ cat.id }}">
+                                        <span>{{ cat.name }}</span>
+                                        <i class="fas fa-chevron-right text-[10px] opacity-20"></i>
+                                        
+                                        <!-- Dynamic Panel (Hover sensitive) -->
+                                        <div class="subcategory-panel absolute left-[240px] top-0 bottom-0 w-[560px] bg-white rounded-r-2xl p-8 overflow-y-auto pointer-events-none group-hover/item:pointer-events-auto">
+                                            <div class="space-y-6">
+                                                <h4 class="text-xl font-black text-slate-900 border-b pb-4">{{ cat.name }}</h4>
+                                                
+                                                {% if cat.active_subcategories %}
+                                                    <div class="grid grid-cols-2 gap-x-12 gap-y-6">
+                                                        {% for sub in cat.active_subcategories %}
+                                                        <div class="space-y-3">
+                                                            <a href="{{ sub.get_absolute_url }}" class="text-sm font-black text-primary uppercase tracking-widest hover:translate-x-1 transition-transform block">{{ sub.name }}</a>
+                                                            <div class="flex flex-col gap-2">
+                                                                {% for prod in sub.products.all|slice:":3" %}
+                                                                <a href="{{ prod.get_absolute_url }}" class="text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">{{ prod.name }}</a>
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="grid grid-cols-2 gap-4">
+                                                        {% for prod in cat.products.all|slice:":6" %}
+                                                        <a href="{{ prod.get_absolute_url }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100">
+                                                            <img src="{{ prod.get_image_url }}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
+                                                            <span class="text-xs font-bold text-slate-700">{{ prod.name }}</span>
+                                                        </a>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
                                 </div>
-                                <div class="divider d-none d-md-block"></div>
-                                <input type="text" name="q" placeholder="Search for products" value="{{ request.GET.q }}">
-                                <button type="submit" class="search-btn">search</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Icons -->
-                <div class="col-6 col-lg-3 order-2 order-lg-3">
-                    <div class="header-icons justify-content-end">
-                        <div class="dropdown d-inline-block">
-                            <a href="#" class="header-icon-link" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="far fa-user"></i>
-                                {% if user.is_authenticated %}
-                                <span class="d-none d-lg-inline ml-2 small font-weight-bold" style="font-size: 0.75rem;">{{ user.username|truncatechars:10 }}</span>
-                                {% endif %}
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow border-0 mt-2" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 200px;">
-                                {% if user.is_authenticated %}
-                                    <div class="dropdown-header font-weight-bold text-dark mb-1">Hi, {{ user.username }}!</div>
-                                    <a class="dropdown-item py-2" href="#"><i class="fas fa-user-circle mr-2 text-muted"></i> My Profile</a>
-                                    <a class="dropdown-item py-2" href="{% url 'orders:enquiry_cart' %}"><i class="fas fa-history mr-2 text-muted"></i> My Orders</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item py-2 text-danger" href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
-                                {% else %}
-                                    <a class="dropdown-item py-2 font-weight-bold" href="{% url 'accounts:login' %}"><i class="fas fa-sign-in-alt mr-2 text-muted"></i> Login</a>
-                                    <a class="dropdown-item py-2" href="{% url 'accounts:register' %}"><i class="fas fa-user-plus mr-2 text-muted"></i> Create Account</a>
-                                {% endif %}
                             </div>
                         </div>
-                        <a href="{% url 'products:wishlist' %}" class="header-icon-link mr-2">
-                            <i class="far fa-heart"></i>
-                            <span class="badge" id="wishlist-badge" style="{% if not wishlist_count %}display:none;{% endif %} background: var(--primary-blue);">{{ wishlist_count }}</span>
-                        </a>
-                        <a href="{% url 'orders:enquiry_cart' %}" class="header-icon-link">
-                            <i class="fas fa-shopping-bag"></i>
-                            {% if cart_count %}<span class="badge">{{ cart_count }}</span>{% endif %}
-                        </a>
+
+                        <!-- Search Input Wrapper -->
+                        <form action="{% url 'products:product_list' %}" method="GET" class="flex-1 h-full flex items-center">
+                            <input type="text" 
+                                   name="q" 
+                                   placeholder="What are you looking for today?" 
+                                   class="search-input h-full w-full bg-transparent focus:outline-none focus:ring-0">
+                            <button type="submit" class="h-full px-6 hover:text-primary transition-all flex items-center justify-center premium-icon">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
                     </div>
+
+                    <div class="flex items-center justify-center gap-6 px-4">
+                        <a href="{% url 'core:home' %}" class="quick-nav-link text-[10px] font-black uppercase tracking-[0.2em]">Home</a>
+                        <a href="{% url 'products:product_list' %}" class="quick-nav-link text-[10px] font-black uppercase tracking-[0.2em]">Collections</a>
+                        <a href="{% url 'products:brand_list' %}" class="quick-nav-link text-[10px] font-black uppercase tracking-[0.2em]">Shop by Brands</a>
+                        <a href="{% url 'core:about_us' %}" class="quick-nav-link text-[10px] font-black uppercase tracking-[0.2em]">About Us</a>
+                        <a href="{% url 'contact:contact' %}" class="quick-nav-link text-[10px] font-black uppercase tracking-[0.2em]">Contact</a>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="flex items-center gap-3 sm:gap-6">
+                <!-- User Account -->
+                {% if design_settings.show_header_account %}
+                <div class="group relative hidden sm:block">
+                    <button class="flex items-center gap-3 p-2 group" aria-label="Account">
+                        <div class="premium-icon-box w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/10 group-hover:bg-primary group-hover:border-primary transition-all">
+                            <i class="fas fa-user-circle text-sm sm:text-lg group-hover:scale-110 transition-transform premium-icon"></i>
+                        </div>
+                        <div class="hidden xl:block text-left">
+                            <p class="premium-icon-text-small text-[9px] font-black uppercase tracking-widest opacity-50">My Account</p>
+                            <p class="premium-icon-text text-xs font-bold font-sans">{% if user.is_authenticated %}{{ user.username|truncatechars:10 }}{% else %}Login / Join{% endif %}</p>
+                        </div>
+                    </button>
+                    <!-- Account Dropdown -->
+                    <div class="dropdown-menu right-0 left-auto origin-top-right mt-4 p-2 w-56 !rounded-2xl bg-white shadow-2xl overflow-hidden border-none pointer-events-none group-hover:pointer-events-auto">
+                        {% if user.is_authenticated %}
+                        <div class="p-4 bg-slate-50/50 rounded-xl mb-1">
+                             <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Signed in as</p>
+                             <p class="text-xs font-black text-slate-900 truncate">{{ user.username }}</p>
+                        </div>
+                        <a href="{% url 'accounts:profile' %}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/5 text-xs font-black text-slate-600 hover:text-primary transition-all"><i class="fas fa-id-card opacity-30 text-base"></i> Profile</a>
+                        <a href="{% url 'accounts:order_history' %}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/5 text-xs font-black text-slate-600 hover:text-primary transition-all"><i class="fas fa-history opacity-30 text-base"></i> Orders</a>
+                        <div class="h-px bg-slate-100 my-1"></div>
+                        <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 p-3 rounded-xl bg-red-50 text-red-600 text-xs font-black hover:bg-red-100 transition-all"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        {% else %}
+                        <div class="p-4 space-y-3">
+                            <a href="{% url 'accounts:login' %}" class="block w-full py-4 bg-primary text-white text-center rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20">Sign In</a>
+                            <a href="{% url 'accounts:register' %}" class="block w-full py-4 border-2 border-slate-100 text-slate-950 text-center rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-primary transition-all">Create Account</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Wishlist -->
+                {% if design_settings.show_header_wishlist %}
+                <a href="{% url 'products:wishlist' %}" class="premium-icon-box relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/10 hover:bg-red-500 hover:border-red-500 transition-all group" aria-label="Wishlist">
+                    <i class="fas fa-heart text-sm group-hover:scale-110 transition-transform premium-icon"></i>
+                    <span class="wishlist-count-badge absolute -top-1 -right-1 w-5 h-5 bg-red-600 rounded-full border-2 border-slate-950 text-[9px] font-black text-white flex items-center justify-center animate-bounce {% if not wishlist_count %}hidden{% endif %}">
+                        {{ wishlist_count|default:"0" }}
+                    </span>
+                </a>
+                {% endif %}
+
+                <!-- Cart -->
+                {% if design_settings.show_header_cart %}
+                <a href="{% url 'orders:enquiry_cart' %}" class="w-10 h-10 sm:w-auto sm:px-5 sm:h-12 rounded-full bg-primary flex items-center justify-center gap-3 border border-primary hover:bg-secondary hover:border-secondary transition-all shadow-lg shadow-primary/20 group" aria-label="Cart">
+                    <i class="fas fa-shopping-basket text-sm sm:text-lg text-white group-hover:rotate-12 transition-transform"></i>
+                    <div class="hidden sm:block text-left border-l border-white/20 pl-3">
+                         <p class="text-[9px] font-black text-white/50 uppercase tracking-widest leading-none mb-1">Cart</p>
+                         <p class="text-xs font-black text-white"><span class="cart-count-val">{{ cart_count|default:"0" }}</span> items</p>
+                    </div>
+                </a>
+                {% endif %}
+
+                <!-- Mobile Hamburger -->
+                <button onclick="toggleMobileMenu()" class="premium-icon-box lg:hidden w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/10 text-white" aria-label="Menu">
+                    <i class="fas fa-bars text-lg" id="hamburger-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MOBILE SEARCH & NAV (Slide Down) -->
+        <div id="mobile-menu" class="hidden lg:hidden border-t border-white/10 bg-slate-950 max-h-[85vh] overflow-y-auto">
+            <div class="p-6 space-y-8">
+                <!-- Mobile Search -->
+                <form action="{% url 'products:product_list' %}" method="GET" class="relative group">
+                    <input type="text" name="q" placeholder="Explore our store..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-5 px-6 text-sm text-white focus:outline-none focus:border-primary transition-all">
+                    <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 group-hover:text-primary transition-colors">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                </form>
+
+                <!-- Navigation Accordion -->
+                <nav class="space-y-2">
+                    <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] ml-2 mb-4">Shop Categories</p>
+                    {% for cat in categories %}
+                    <div class="rounded-2xl border border-white/5 bg-white/[0.02]">
+                        <button onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('rotate-180')" 
+                                class="w-full flex items-center justify-between p-5 text-sm font-black text-white hover:text-primary transition-all">
+                            {{ cat.name }}
+                            <i class="fas fa-chevron-down text-[10px] opacity-40 chevron transition-transform"></i>
+                        </button>
+                        <div class="hidden px-5 pb-5 space-y-3 border-t border-white/5 pt-4">
+                            {% for sub in cat.active_subcategories %}
+                            <a href="{{ sub.get_absolute_url }}" class="block text-xs font-bold text-slate-400 hover:text-white transition-all pl-2 border-l-2 border-primary/20 hover:border-primary">{{ sub.name }}</a>
+                            {% endfor %}
+                            <a href="{{ cat.get_absolute_url }}" class="block text-[10px] font-black text-primary uppercase tracking-widest pt-2">View All {{ cat.name }}</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </nav>
+
+                <!-- Mobile Auth -->
+                <div class="pt-6 border-t border-white/10 flex flex-col gap-4">
+                    {% if user.is_authenticated %}
+                    <div class="flex items-center gap-4 bg-white/5 p-4 rounded-2xl">
+                        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white"><i class="fas fa-user text-sm"></i></div>
+                        <div>
+                            <p class="text-[10px] font-black text-white/30 uppercase tracking-widest">Logged in</p>
+                            <p class="text-sm font-black text-white">{{ user.username }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}" class="block w-full py-5 bg-primary text-white text-center rounded-2xl text-[10px] font-black uppercase tracking-widest">Sign In</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Sub Header / Navigation -->
-    <nav class="sub-header">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <ul class="category-nav">
-                    {% for cat in categories|slice:":8" %}
-                    <li class="{% if cat.active_subcategories or cat.products.all %}has-dropdown{% endif %}">
-                        <a href="{% url 'products:category_detail' slug=cat.slug %}">
-                            {{ cat.name }} 
-                            {% if cat.active_subcategories or cat.products.all %}<i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>{% endif %}
-                        </a>
-                        
-                        <!-- Dynamic Dropdown Content -->
-                        {% if cat.active_subcategories or cat.products.all %}
-                        <ul class="dropdown-menu-custom">
-                            {% if cat.active_subcategories %}
-                                <!-- Subcategories Dropdown -->
-                                {% for sub in cat.active_subcategories %}
-                                <li>
-                                    <a href="{% url 'products:category_detail' slug=sub.slug %}">
-                                        {{ sub.name }}
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                                {% endfor %}
-                            {% elif cat.products.all %}
-                                <!-- Products Mini-List for Categories without Sub-categories -->
-                                <li class="dropdown-header px-3 py-2 text-muted font-weight-bold" style="font-size: 0.7rem; text-transform: uppercase; background: #f8f9fa;">Products</li>
-                                {% for prod in cat.products.all|slice:":6" %}
-                                <li>
-                                    <a href="{% url 'products:product_detail' slug=prod.slug %}" class="py-2">
-                                        {{ prod.name }}
-                                    </a>
-                                </li>
-                                {% endfor %}
-                                {% if cat.products.all|length > 6 %}
-                                <li class="border-top mt-1">
-                                    <a href="{% url 'products:category_detail' slug=cat.slug %}" class="text-primary font-weight-bold py-2 text-center" style="font-size: 0.8rem;">View More</a>
-                                </li>
-                                {% endif %}
-                            {% endif %}
-                        </ul>
-                        {% endif %}
-                    </li>
-                    {% endfor %}
+    <!-- Main Content (Added pt-20 to compensate fixed header for subpages) -->
+    <main class="min-h-[70vh] {% if request.path != '/' %}pt-32{% endif %}">
+        {% block content %}{% endblock %}
+    </main>
 
-                    {% if categories|length > 8 %}
-                    <li>
-                        <a href="{% url 'products:category_index' %}">Others <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i></a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <div class="contact-number">
-                    <a href="tel:{{ site_settings.phone|default:'+971 55 6635772' }}" class="header-phone">
-                        <i class="fas fa-phone-alt"></i> {{ site_settings.phone|default:'+971 55 6635772' }}
+    <!-- Premium Footer (Condensed for better flow) -->
+    <footer class="bg-slate-950 pt-24 pb-12 text-white">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+                <div class="space-y-8">
+                    <a href="/" class="text-3xl font-black tracking-tighter text-white">
+                        {{ site_settings.site_name|default:"JKR" }}<span class="text-primary">.</span>
                     </a>
+                    <p class="text-slate-400 text-sm font-medium leading-relaxed">
+                        Setting new benchmarks in medical device logistics and high-end healthcare solutions. Your trust, our excellence.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="space-y-8">
+                    <h4 class="text-[11px] font-black uppercase tracking-[0.3em] text-primary">Quick Navigation</h4>
+                    <nav class="flex flex-col gap-4">
+                        <a href="{% url 'core:home' %}" class="text-slate-400 hover:text-white transition-colors text-sm font-bold">Home</a>
+                        <a href="{% url 'products:product_list' %}" class="text-slate-400 hover:text-white transition-colors text-sm font-bold">Collections</a>
+                        <a href="{% url 'core:about_us' %}" class="text-slate-400 hover:text-white transition-colors text-sm font-bold">About Us</a>
+                        <a href="{% url 'contact:contact' %}" class="text-slate-400 hover:text-white transition-colors text-sm font-bold">Contact</a>
+                    </nav>
+                </div>
+
+                <div class="space-y-8">
+                    <h4 class="text-[11px] font-black uppercase tracking-[0.3em] text-primary">Our Expertise</h4>
+                    <nav class="flex flex-col gap-4">
+                        {% for cat in categories|slice:":4" %}
+                        <a href="{{ cat.get_absolute_url }}" class="text-slate-400 hover:text-white transition-colors text-sm font-bold">{{ cat.name }}</a>
+                        {% endfor %}
+                    </nav>
+                </div>
+
+                <div class="space-y-8">
+                    <h4 class="text-[11px] font-black uppercase tracking-[0.3em] text-primary">Newsletter</h4>
+                    <p class="text-slate-400 text-sm font-medium">Subscribe to receive the latest industry updates and curated offers.</p>
+                    <form class="relative">
+                        <input type="email" placeholder="email@example.com" class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm focus:outline-none focus:border-primary transition-all">
+                        <button class="absolute right-2 top-2 bottom-2 px-4 bg-primary text-white rounded-xl text-[10px] font-black uppercase">Join</button>
+                    </form>
                 </div>
             </div>
-        </div>
-    </nav>
 
-    {% block content %}{% endblock %}
-
-    <!-- Site Footer -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="row">
-
-                <!-- Brand & Contact Col -->
-                <div class="col-12 col-lg-4 mb-5">
-                    {% if site_settings.logo %}
-                    <img src="{{ site_settings.logo.url }}" class="mb-4 d-block" height="55" style="filter: brightness(0) invert(1);">
-                    {% else %}
-                    <h4 class="text-white font-weight-bold mb-4">{{ site_settings.site_name }}</h4>
-                    {% endif %}
-                    <p class="small" style="color:#aaa; line-height:1.8;">{{ site_settings.meta_description|default:"Your trusted medical equipment partner." }}</p>
-
-                    {% if site_settings.dubai_address or site_settings.abudhabi_address %}
-                    <div class="mt-3">
-                        {% if site_settings.dubai_address %}
-                        <div class="mb-3">
-                            <p class="mb-1" style="color:#fff; font-weight:600; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.8px;">{{ site_settings.branch1_name|default:"Dubai" }}</p>
-                            <p class="mb-0" style="color:#aaa; font-size:0.85rem; line-height:1.7;">{{ site_settings.dubai_address|linebreaksbr }}</p>
-                        </div>
-                        {% endif %}
-                        {% if site_settings.abudhabi_address %}
-                        <div>
-                            <p class="mb-1" style="color:#fff; font-weight:600; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.8px;">{{ site_settings.branch2_name|default:"Abu Dhabi" }}</p>
-                            <p class="mb-0" style="color:#aaa; font-size:0.85rem; line-height:1.7;">{{ site_settings.abudhabi_address|linebreaksbr }}</p>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
+            <div class="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between gap-6">
+                <p class="text-slate-500 text-[10px] uppercase font-black tracking-widest">© 2024 {{ site_settings.site_name|default:"JKR International" }} LLC. All Rights Reserved.</p>
+                <div class="flex gap-8">
+                    <a href="#" class="text-slate-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-slate-500 hover:text-white text-[10px] uppercase font-black tracking-widest transition-colors">Terms of Service</a>
                 </div>
-
-                <!-- Quick Links -->
-                <div class="col-6 col-lg-2 mb-5">
-                    <h5 class="footer-heading">{{ site_settings.footer_quick_links_title|default:"Quick Links" }}</h5>
-                    <a href="{% url 'core:home' %}" class="footer-link">Home</a>
-                    <a href="{% url 'products:category_index' %}" class="footer-link">Products</a>
-                    <a href="{% url 'core:services' %}" class="footer-link">Services</a>
-                    <a href="{% url 'blog:post_list' %}" class="footer-link">Blog</a>
-                </div>
-
-                <!-- Support -->
-                <div class="col-6 col-lg-2 mb-5">
-                    <h5 class="footer-heading">{{ site_settings.footer_support_title|default:"Support" }}</h5>
-                    <a href="{% url 'core:about_us' %}" class="footer-link">About Us</a>
-                    <a href="{% url 'contact:contact' %}" class="footer-link">Contact</a>
-                    <h5 class="footer-heading mt-4">{{ site_settings.footer_legal_title|default:"Legal" }}</h5>
-                    <a href="{% url 'core:home' %}" class="footer-link">Privacy Policy</a>
-                    <a href="{% url 'core:home' %}" class="footer-link">Terms of Use</a>
-                </div>
-
-                <!-- Newsletter & Socials -->
-                <div class="col-12 col-lg-4 mb-5">
-                    <div class="newsletter-card">
-                        <h5 class="footer-heading" style="margin-bottom:6px;">{{ site_settings.footer_newsletter_title|default:"Stay in the loop" }}</h5>
-                        <p class="small mb-3" style="color:#aaa;">Get the latest products and updates direct to your inbox.</p>
-                        <form action="{% url 'contact:subscribe' %}" method="POST">
-                            {% csrf_token %}
-                            <input type="email" name="email" class="form-control newsletter-input mb-2" placeholder="Enter your email address" required>
-                            <button type="submit" class="btn btn-newsletter w-100">Subscribe &rarr;</button>
-                        </form>
-                    </div>
-
-                    {% if site_settings.facebook or site_settings.instagram or site_settings.linkedin or site_settings.twitter %}
-                    <div class="footer-social mt-4">
-                        {% if site_settings.facebook %}<a href="{{ site_settings.facebook }}" title="Facebook"><i class="fab fa-facebook-f"></i></a>{% endif %}
-                        {% if site_settings.instagram %}<a href="{{ site_settings.instagram }}" title="Instagram"><i class="fab fa-instagram"></i></a>{% endif %}
-                        {% if site_settings.linkedin %}<a href="{{ site_settings.linkedin }}" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>{% endif %}
-                        {% if site_settings.twitter %}<a href="{{ site_settings.twitter }}" title="Twitter"><i class="fab fa-twitter"></i></a>{% endif %}
-                    </div>
-                    {% endif %}
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Footer Bottom Bar -->
-        <div class="footer-bottom">
-            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <p>© {% now "Y" %} {{ site_settings.site_name|default:"Demo International" }}. {{ site_settings.footer_copyright_text|default:"All rights reserved." }}</p>
-                <p class="mt-2 mt-md-0">Powered by <span style="color:var(--primary-blue); font-weight:600;">Demo Platform</span></p>
             </div>
         </div>
     </footer>
+
+    <!-- Vendor Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     
-    <!-- Side Menu Overlay -->
-    <div class="side-menu-overlay" id="side-menu-overlay"></div>
-    
-    <!-- Side Menu -->
-    <div class="side-menu" id="side-menu">
-        <div class="side-menu-header">
-            <h5 class="mb-0 font-weight-bold">Menu</h5>
-            <div class="close-side-menu" id="side-menu-close">
-                <i class="fas fa-times"></i>
-            </div>
-        </div>
-        <div class="side-menu-body">
-            <div class="menu-title">Main Navigation</div>
-            <ul>
-                <li><a href="{% url 'products:product_list' %}"><i class="fas fa-home"></i> Shop All Product</a></li>
-                {% if all_brands_count > 0 %}
-                <li><a href="{% url 'products:brand_list' %}"><i class="fas fa-tags"></i> Shop by Brands</a></li>
-                {% endif %}
-                
-                {% if collections %}
-                <li class="has-submenu">
-                    <a href="javascript:void(0)" class="submenu-toggle d-flex align-items-center justify-content-between">
-                        <span><i class="fas fa-info-circle mr-2"></i> Collections</span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
-                    </a>
-                    <ul class="submenu pl-4" style="display: none; list-style: none;">
-                        {% for col in collections %}
-                        <li><a href="{% url 'products:collection_detail' slug=col.slug %}" class="py-2 d-block small">{{ col.name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </li>
-                {% endif %}
-            </ul>
-            
-            <div class="menu-title">Product Categories Catalog</div>
-            <ul>
-                {% for cat in categories|slice:":12" %}
-                <li><a href="{% url 'products:category_detail' slug=cat.slug %}"><i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i> {{ cat.name }}</a></li>
-                {% endfor %}
-            </ul>
-
-            <div class="menu-title">Account & Support</div>
-            <ul>
-                {% if user.is_authenticated %}
-                <li><a href="#"><i class="fas fa-user-circle"></i> My Profile</a></li>
-                <li><a href="{% url 'orders:enquiry_cart' %}"><i class="fas fa-history"></i> My Orders</a></li>
-                <li><a href="{% url 'accounts:logout' %}" class="text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                {% else %}
-                <li><a href="{% url 'accounts:login' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                {% endif %}
-                <li><a href="{% url 'contact:contact' %}"><i class="fas fa-envelope"></i> Contact Us</a></li>
-            </ul>
-        </div>
-    </div>
-
-    </div> <!-- /main-wrapper -->
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const enableAnimations = document.body.dataset.enableAnimations === 'true';
-            if (enableAnimations) {
-                AOS.init({
-                    duration: 1000,
-                    easing: 'ease-out-quint',
-                    once: true,
-                    offset: 50,
-                    anchorPlacement: 'top-bottom'
-                });
-            }
-
-            // Smooth Counter Initialization
-            const counters = document.querySelectorAll('.counter-value');
-            if (counters.length > 0) {
-                const observerOptions = {
-                    threshold: 0.5
-                };
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const obj = entry.target;
-                            const text = obj.innerText;
-                            const countTo = parseInt(text.replace(/[^0-9]/g, '')) || 0;
-                            const format = text.replace(/[0-9]/g, '');
-                            
-                            // Prevent re-animating
-                            if (obj.dataset.animated) return;
-                            obj.dataset.animated = 'true';
-                            
-                            let start = 0;
-                            const duration = 2000;
-                            let startTimestamp = null;
-                            
-                            const step = (timestamp) => {
-                                if (!startTimestamp) startTimestamp = timestamp;
-                                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                                // easeOutExpo
-                                const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-                                
-                                obj.innerText = Math.floor(easeProgress * countTo) + format;
-                                
-                                if (progress < 1) {
-                                    window.requestAnimationFrame(step);
-                                } else {
-                                    obj.innerText = countTo + format;
-                                }
-                            };
-                            window.requestAnimationFrame(step);
-                            observer.unobserve(obj);
-                        }
-                    });
-                }, observerOptions);
-                
-                counters.forEach(counter => {
-                    // pre-fill with zero before animation
-                    const val = counter.innerText;
-                    counter.innerText = '0' + val.replace(/[0-9]/g, '');
-                    observer.observe(counter);
-                });
-            }
-            
-            // Side Menu Toggle
-            const sideTrigger = document.getElementById('side-menu-trigger');
-            const sideMenu = document.getElementById('side-menu');
-            const sideOverlay = document.getElementById('side-menu-overlay');
-            const sideClose = document.getElementById('side-menu-close');
-            
-            if (sideTrigger && sideMenu) {
-                sideTrigger.addEventListener('click', () => {
-                    sideMenu.classList.add('active');
-                    sideOverlay.classList.add('active');
-                    document.body.style.overflowY = 'hidden';
-                });
-                
-                const closeMenu = () => {
-                    sideMenu.classList.remove('active');
-                    sideOverlay.classList.remove('active');
-                    document.body.style.overflowY = 'auto';
-                };
-                
-                sideClose.addEventListener('click', closeMenu);
-                sideOverlay.addEventListener('click', closeMenu);
-            }
-
-            // Submenu Toggle Logic
-            const submenuToggles = document.querySelectorAll('.submenu-toggle');
-            submenuToggles.forEach(toggle => {
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const submenu = this.nextElementSibling;
-                    const icon = this.querySelector('.fa-chevron-down');
-                    
-                    if (submenu.style.display === 'block') {
-                        submenu.style.display = 'none';
-                        if (icon) icon.style.transform = 'rotate(0deg)';
-                    } else {
-                        submenu.style.display = 'block';
-                        if (icon) icon.style.transform = 'rotate(180deg)';
-                    }
-                });
+        // Premium Core Interface Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Unified Scroll Handler
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 40) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
             });
+
+            // 2. Announcement Swiper (Premium Transitions)
+            const announcementSwiper = document.querySelector('.announcement-swiper');
+            if (announcementSwiper) {
+                new Swiper(announcementSwiper, {
+                    autoplay: { delay: 4000, disableOnInteraction: false },
+                    loop: true,
+                    effect: 'fade',
+                    fadeEffect: { crossFade: true },
+                    speed: 800
+                });
+            }
+        });
+
+        // Mobile Navigation Interaction
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('hamburger-icon');
+            const isHidden = menu.classList.contains('hidden');
             
-            // Announcement Swiper
-            const announcementSwiper = new Swiper('#announcement-bar-swiper', {
-                direction: 'horizontal',
-                loop: true,
-                autoplay: {
-                    delay: 4000,
-                    disableOnInteraction: false,
-                },
-                speed: 800,
-                effect: 'slide'
+            menu.classList.toggle('hidden', !isHidden);
+            if (isHidden) {
+                icon.classList.replace('fa-bars', 'fa-times');
+                menu.style.animation = 'slideDownFade 0.4s ease forwards';
+            } else {
+                icon.classList.replace('fa-times', 'fa-bars');
+            }
+        }
+
+        // Dismiss Announcement Bar
+        function dismissAnnouncement() {
+            const bar = document.getElementById('announcement-bar');
+            if (bar) {
+                bar.remove();
+                // Adjust main content padding if on subpages
+                if (document.body.classList.contains('pt-32')) {
+                    // Logic to shrink padding if necessary
+                }
+            }
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', (e) => {
+            const header = document.getElementById('main-header');
+            const menu  = document.getElementById('mobile-menu');
+            if (header && !header.contains(e.target) && !menu.classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+        });
+
+        // Smart Category Selection
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
             });
         });
-        // Wishlist Toggle Logic
-        window.toggleWishlist = function(productId, btnElement) {
-            if (!{{ user.is_authenticated|yesno:"true,false" }}) {
-                window.location.href = "{% url 'accounts:login' %}?next=" + window.location.pathname;
-                return;
+
+        // Global Toast Helper
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('premium-toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastTitle = document.getElementById('toast-title');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = message;
+            toastTitle.innerText = type === 'success' ? 'Success' : 'Attention';
+            
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // Global Commerce AJAX Handlers
+        document.addEventListener('click', async (e) => {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // 1. Add to Cart Logic
+            if (e.target.closest('.cart-action-btn')) {
+                e.preventDefault();
+                const btn = e.target.closest('.cart-action-btn');
+                const url = btn.getAttribute('data-url');
+                
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrfToken
+                        }
+                    });
+                    if (response.ok) {
+                        showToast('Item added to your cart!');
+                        const cartCounters = document.querySelectorAll('.cart-count-val');
+                        cartCounters.forEach(cartCounter => {
+                            let curr = parseInt(cartCounter.innerText) || 0;
+                            cartCounter.innerText = curr + 1;
+                        });
+                    }
+                } catch (err) {
+                    // Failover if view doesn't handle AJAX Redirects well
+                    const btn = e.target.closest('.cart-action-btn');
+                    window.location.href = btn.getAttribute('data-url');
+                }
             }
 
-            const url = `/products/wishlist/toggle/${productId}/`;
-            const icon = btnElement.querySelector('i');
-            
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'added') {
-                    icon.classList.remove('far');
-                    icon.classList.add('fas');
-                    icon.classList.add('animate__animated', 'animate__heartBeat');
-                    icon.style.color = 'var(--hm-red)';
-                } else if (data.status === 'removed') {
-                    icon.classList.remove('fas');
-                    icon.classList.add('far');
-                    icon.classList.remove('animate__animated', 'animate__heartBeat');
-                    icon.style.color = '';
-                }
-
-                // Update Badge
-                const badge = document.getElementById('wishlist-badge');
-                if (badge) {
-                    badge.innerText = data.count;
-                    badge.style.display = data.count > 0 ? 'flex' : 'none';
-                }
+            // 2. Wishlist Toggle Logic
+            if (e.target.closest('.wishlist-btn')) {
+                e.preventDefault();
+                const btn = e.target.closest('.wishlist-btn');
+                const productId = btn.getAttribute('data-product-id');
+                const url = `/products/wishlist/toggle/${productId}/`;
                 
-                // Optional: Show Toast if you have one
-            })
-            .catch(error => console.error('Error toggling wishlist:', error));
-        };
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrfToken
+                        }
+                    });
+                    
+                    if (response.status === 401 || response.url.includes('/login')) {
+                        window.location.href = `/accounts/login/?next=${window.location.pathname}`;
+                        return;
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.status === 'added' || data.status === 'removed') {
+                        const icon = btn.querySelector('i');
+                        const wishCountBadge = document.querySelector('.wishlist-count-badge');
+                        
+                        // Update UI State
+                        if (data.status === 'added') {
+                            icon.classList.replace('far', 'fas');
+                            btn.classList.add('bg-red-500', 'text-white', 'border-red-500');
+                            btn.classList.remove('bg-slate-900/40');
+                            showToast('Added to wishlist');
+                        } else {
+                            icon.classList.replace('fas', 'far');
+                            btn.classList.remove('bg-red-500', 'text-white', 'border-red-500');
+                            btn.classList.add('bg-slate-900/40');
+                            showToast('Removed from wishlist');
+                        }
+
+                        // Update Badge
+                        if (wishCountBadge) {
+                            if (data.count > 0) {
+                                wishCountBadge.classList.remove('hidden');
+                                wishCountBadge.innerText = data.count;
+                            } else {
+                                wishCountBadge.classList.add('hidden');
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error('Wishlist failed:', err);
+                }
+            }
+        });
     </script>
+
     {% block scripts %}{% endblock %}
 </body>
 </html>

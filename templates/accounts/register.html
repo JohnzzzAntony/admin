@@ -2,193 +2,85 @@
 {% load static %}
 
 {% block content %}
-<style>
-    :root {
-        --auth-dark: #2d333b;
-        --auth-gray: #f6f8fa;
-        --auth-border: #d0d7de;
-        --auth-orange: #ff6b00;
-        --auth-text-muted: #57606a;
-    }
-
-    .auth-page {
-        min-height: 90vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f0f2f5;
-        padding: 40px 20px;
-    }
-
-    .auth-card {
-        width: 100%;
-        max-width: 520px;
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    }
-
-    .auth-header {
-        background: var(--auth-dark);
-        color: white;
-        padding: 35px 30px;
-        text-align: center;
-    }
-
-    .auth-header h2 {
-        font-weight: 800;
-        font-size: 1.8rem;
-        margin-bottom: 8px;
-        color: #fff;
-    }
-
-    .auth-header p {
-        color: rgba(255,255,255,0.7);
-        font-size: 0.95rem;
-        margin: 0;
-    }
-
-    .auth-body {
-        padding: 40px;
-    }
-
-    .form-group label {
-        display: block;
-        font-size: 0.75rem;
-        font-weight: 800;
-        color: var(--auth-text-muted);
-        margin-bottom: 8px;
-        letter-spacing: 0.5px;
-    }
-
-    .form-control-custom {
-        width: 100%;
-        background: var(--auth-gray);
-        border: 1px solid transparent;
-        border-radius: 10px;
-        padding: 12px 18px;
-        font-size: 1rem;
-        color: var(--auth-dark);
-        transition: all 0.2s;
-    }
-
-    .form-control-custom:focus {
-        background: white;
-        border-color: var(--auth-dark);
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(45, 51, 59, 0.1);
-    }
-
-    .btn-register {
-        background: var(--auth-dark);
-        color: white;
-        font-weight: 700;
-        border-radius: 10px;
-        padding: 15px;
-        width: 100%;
-        border: none;
-        margin-top: 25px;
-        transition: all 0.2s;
-        font-size: 1.1rem;
-    }
-
-    .btn-register:hover {
-        background: #1a1e22;
-        transform: translateY(-1px);
-    }
-
-    .auth-footer-text {
-        text-align: center;
-        color: var(--auth-text-muted);
-        font-size: 0.9rem;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-    }
-    
-    .btn-outline-login {
-        background: transparent;
-        border: 1px solid var(--auth-dark);
-        color: var(--auth-dark);
-        font-weight: 700;
-        border-radius: 10px;
-        padding: 12px;
-        width: 100%;
-        text-align: center;
-        display: block;
-        text-decoration: none;
-        transition: all 0.2s;
-        margin-top: 10px;
-    }
-    
-    .btn-outline-login:hover {
-        background: var(--auth-dark);
-        color: white;
-        text-decoration: none;
-    }
-    
-    .form-text-help {
-        font-size: 0.7rem;
-        color: #888;
-        margin-top: 5px;
-        line-height: 1.3;
-    }
-    
-    .errorlist {
-        list-style: none;
-        padding: 0;
-        margin: 5px 0 0;
-        color: #dc3545;
-        font-size: 0.75rem;
-    }
-    
-    /* Django form styling hacks */
-    input[type="text"], input[type="email"], input[type="password"] {
-        display: block;
-        width: 100%;
-        background: var(--auth-gray);
-        border: 1px solid transparent;
-        border-radius: 10px;
-        padding: 12px 18px;
-        font-size: 1rem;
-        color: var(--auth-dark);
-        transition: all 0.2s;
-    }
-</style>
-
-<div class="auth-page">
-    <div class="auth-card">
-        <div class="auth-header">
-            <h2>Create Your Account</h2>
-            <p>Join the Demo International family</p>
-        </div>
-
-        <div class="auth-body">
-            <form method="POST">
-                {% csrf_token %}
-                
-                {% for field in form %}
-                <div class="form-group mb-3">
-                    <label>{{ field.label|upper }}</label>
-                    {{ field }}
-                    {% if field.help_text %}
-                        <div class="form-text-help">{{ field.help_text }}</div>
-                    {% endif %}
-                    {% if field.errors %}
-                        {{ field.errors }}
-                    {% endif %}
+<section class="min-h-[90vh] flex items-center justify-center py-16 lg:py-24 px-6 bg-slate-50">
+    <div class="w-full max-w-xl bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-primary p-12 text-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+            <div class="relative z-10">
+                <div class="w-20 h-20 bg-white/20 text-white rounded-[30px] mx-auto flex items-center justify-center mb-8 backdrop-blur-md">
+                    <i class="fas fa-user-plus text-3xl"></i>
                 </div>
-                {% endfor %}
-
-                <button type="submit" class="btn-register">Create New Account</button>
-            </form>
-
-            <div class="auth-footer-text">
-                <p class="mb-2">Already have an account?</p>
-                <a href="{% url 'accounts:login' %}" class="btn-outline-login">Login to Your Account</a>
+                <h2 class="text-4xl font-black text-white tracking-tighter mb-2">Create <span class="italic text-slate-100">Account</span></h2>
+                <p class="text-white/70 text-sm font-medium">Join our community for a premium experience</p>
             </div>
         </div>
+
+        <!-- Body -->
+        <div class="p-12">
+            <form method="POST" class="space-y-8">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for field in form %}
+                    <div class="space-y-2 {% if field.name == 'email' or field.name == 'username' %}md:col-span-2{% endif %}">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">
+                            {{ field.label }}
+                        </label>
+                        <div class="relative group">
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="mt-2 text-[10px] font-bold text-red-500 flex items-center gap-1">
+                                <i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if field.help_text and not field.errors %}
+                        <p class="text-[10px] text-slate-400 leading-tight ml-2">{{ field.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full py-5 bg-primary text-white rounded-3xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/30 transition-all flex items-center justify-center gap-3 active:scale-95">
+                        Initialize Membership <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <p class="text-center mt-6 text-[10px] text-slate-400 font-medium">
+                        By signing up, you agree to our <a href="#" class="text-primary font-bold">Terms of Service</a> & <a href="#" class="text-primary font-bold">Privacy Policy</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-8 bg-slate-50 border-t border-slate-100 text-center">
+            <p class="text-xs font-medium text-slate-500">
+                Already part of the family? 
+                <a href="{% url 'accounts:login' %}" class="font-black text-primary hover:text-primary/80 uppercase tracking-widest text-[10px] ml-2">Login Now</a>
+            </p>
+        </div>
     </div>
-</div>
+</section>
+
+<style>
+    /* Styling Django Form Widgets */
+    input[type="text"], input[type="email"], input[type="password"], select, textarea {
+        width: 100% !important;
+        background-color: #f8fafc !important; /* bg-slate-50 */
+        border: 1px solid #f1f5f9 !important; /* border-slate-100 */
+        border-radius: 1.25rem !important; /* rounded-2xl */
+        padding: 1rem 1.5rem !important; /* px-6 py-4 */
+        font-size: 0.875rem !important; /* text-sm */
+        font-weight: 500 !important; /* font-medium */
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    input:focus {
+        background-color: white !important;
+        border-color: var(--primary-color, #114084) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px var(--primary-color, #114084) !important;
+    }
+</style>
 {% endblock %}

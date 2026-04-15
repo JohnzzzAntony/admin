@@ -140,6 +140,7 @@ class Brand(models.Model):
     logo_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted logo.")
     description = models.TextField(blank=True)
     show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
     order = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
@@ -199,8 +200,23 @@ class Product(models.Model):
 
     # Simplified Content
     features = models.TextField(help_text="Key features (one per line)", blank=True)
+    avg_rating = models.DecimalField(max_digits=3, decimal_places=1, default=4.5, verbose_name="Average Rating")
+    review_count = models.PositiveIntegerField(default=0, verbose_name="Review Count")
+    
+    # UI Enhancements
+    badge = models.CharField(max_length=20, blank=True, help_text="Small badge text (e.g. NEW, TRENDING)")
+    badge_color = models.CharField(max_length=20, default="blue", choices=[
+        ("blue", "Blue"), ("red", "Red"), ("green", "Green"), ("dark", "Dark"), ("gold", "Gold")
+    ])
+    is_featured = models.BooleanField(default=False, verbose_name="Featured Product")
+    
     overview = RichTextField(blank=True, null=True)
     technical_info = RichTextField(blank=True, null=True, verbose_name="Product Characteristics & Specifications")
+    
+    @property
+    def features_list(self):
+        if not self.features: return []
+        return [f.strip() for f in self.features.split('\n') if f.strip()]
     
     created_at = models.DateTimeField(auto_now_add=True)
     show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
@@ -323,6 +339,7 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='products/gallery/', null=True, blank=True)
     image_url = models.URLField(blank=True, null=True)
+    image_alt = models.CharField(max_length=255, blank=True, null=True, verbose_name="Alternative Text")
     order = models.PositiveIntegerField(default=0)
     class Meta: ordering = ['order']
     def __str__(self):

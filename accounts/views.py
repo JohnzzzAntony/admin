@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
-
 from .forms import CustomUserCreationForm
 
 def register_view(request):
@@ -133,3 +133,25 @@ def social_callback(request):
     except Exception as e:
         messages.error(request, "Authentication failed. Please use email & password login.")
         return redirect('accounts:login')
+
+@login_required
+def profile_view(request):
+    """Premium User Profile Dashboard."""
+    from orders.models import CustomerOrder
+    from products.models import Wishlist
+    
+    orders = CustomerOrder.objects.filter(user=request.user).order_by('-created_at')[:5]
+    wishlist_count = Wishlist.objects.filter(user=request.user).count()
+    
+    return render(request, 'accounts/profile.html', {
+        'orders': orders,
+        'wishlist_count': wishlist_count,
+        'total_orders': CustomerOrder.objects.filter(user=request.user).count()
+    })
+
+@login_required
+def order_history_view(request):
+    """List of all orders placed by the user."""
+    from orders.models import CustomerOrder
+    orders = CustomerOrder.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'accounts/order_history.html', {'orders': orders})

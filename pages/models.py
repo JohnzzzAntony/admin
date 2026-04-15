@@ -21,6 +21,7 @@ class PageHero(models.Model):
     hero_image_url = models.URLField(blank=True, null=True, help_text="Alternative external link for hero image.")
     title = models.CharField(max_length=255, blank=True, help_text="Main title on the hero section.")
     subtitle = models.TextField(blank=True, help_text="Subtitle or description below the title.")
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Hidden')))
     
     @property
     def get_image_url(self):
@@ -77,6 +78,7 @@ class MissionVision(models.Model):
     image_url = models.URLField(blank=True, null=True)
     icon_svg = models.TextField(blank=True, help_text="Paste SVG code here.")
     section_type = models.CharField(max_length=20, choices=SECTION_TYPES, unique=True)
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Hidden')))
     def __str__(self): return self.get_section_type_display()
     @property
     def get_image_url(self):

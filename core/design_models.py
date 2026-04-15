@@ -1,82 +1,46 @@
 from django.db import models
 
 class DesignSettings(models.Model):
-    # Colors
-    primary_color = models.CharField(max_length=20, default="#114084", help_text="Hex code, e.g. #114084")
-    secondary_color = models.CharField(max_length=20, default="#005CB9", help_text="Hex code, e.g. #005CB9")
-    accent_glow_color = models.CharField(max_length=20, default="#0081ff", help_text="Color for ambient glow effects.")
-    header_bg_color = models.CharField(max_length=20, default="#ffffff", help_text="Background color for the main header bar. e.g. #ffffff")
-    footer_bg_color = models.CharField(max_length=20, default="#1a1a1a", help_text="Background color for the site footer. e.g. #1a1a1a")
+    # ── Colors & Branding ───────────────────────────────────────────
+    primary_color = models.CharField(max_length=50, default="#114084", help_text="Primary Brand Color (Buttons, Links, Accents).")
+    secondary_color = models.CharField(max_length=50, default="#005CB9", help_text="Secondary/Hover states.")
+    accent_glow_color = models.CharField(max_length=50, default="#0081ff", help_text="Ambient glow effects.")
     
-    # Typography
-    font_body = models.CharField(max_length=100, default="'Montserrat', sans-serif", help_text="CSS font-family value")
-    font_heading = models.CharField(max_length=100, default="'Montserrat', sans-serif", help_text="CSS font-family value")
+    text_primary_color = models.CharField(max_length=50, default="#1e293b", help_text="Main text color.")
+    text_secondary_color = models.CharField(max_length=50, default="#64748b", help_text="Muted text/labels.")
+    text_white_color = models.CharField(max_length=50, default="#ffffff", help_text="Text on dark backgrounds.")
     
-    # Visual Effects
-    enable_glassmorphism = models.BooleanField(default=False, verbose_name="Glassmorphism", choices=((True, 'Enabled'), (False, 'Disabled')))
+    surface_bg_color = models.CharField(max_length=50, default="#f8fafc", help_text="Main site background.")
+    card_bg_color = models.CharField(max_length=50, default="#ffffff", help_text="Card/Container background.")
+    border_color = models.CharField(max_length=50, default="#e2e8f0", help_text="Default border color.")
+    
+    header_bg_color = models.CharField(max_length=50, default="#ffffff")
+    header_text_color = models.CharField(max_length=50, default="#1e293b")
+    footer_bg_color = models.CharField(max_length=50, default="#1a1a1a")
+    footer_text_color = models.CharField(max_length=50, default="#94a3b8")
+    
+    # ── Typography ───────────────────────────────────────────
+    FONT_CHOICES = (
+        ("'Noto Serif', serif", "Noto Serif (Classic/Premium)"),
+        ("'Inter', sans-serif", "Inter (Modern/Clean)"),
+        ("'Plus Jakarta Sans', sans-serif", "Jakarta (High-tech)"),
+        ("'Montserrat', sans-serif", "Montserrat (Bold/Social)"),
+    )
+    font_main = models.CharField(max_length=100, choices=FONT_CHOICES, default="'Noto Serif', serif")
+    font_secondary = models.CharField(max_length=100, choices=FONT_CHOICES, default="'Noto Serif', serif")
+    
+    # ── Shapes & Radius ───────────────────────────────────────────
+    container_radius = models.CharField(max_length=50, default="40px", help_text="e.g. 40px, 2rem")
+    card_radius = models.CharField(max_length=50, default="24px", help_text="e.g. 24px, 1.5rem")
+    button_radius = models.CharField(max_length=50, default="9999px", help_text="e.g. 9999px (Pill), 12px (Soft)")
+    image_radius = models.CharField(max_length=50, default="20px")
+
+    # ── Visual Effects ────────────────────────────────────────────
+    enable_glassmorphism = models.BooleanField(default=True, verbose_name="Glassmorphism", choices=((True, 'Enabled'), (False, 'Disabled')))
     enable_neumorphism = models.BooleanField(default=False, verbose_name="Neumorphism", choices=((True, 'Enabled'), (False, 'Disabled')))
     enable_ambient_glow = models.BooleanField(default=True, verbose_name="Ambient Glow", choices=((True, 'Enabled'), (False, 'Disabled')))
     enable_animations = models.BooleanField(default=True, verbose_name="Scroll Animations", choices=((True, 'Enabled'), (False, 'Disabled')))
     
-    # UI Components
-    BUTTON_CHOICES = (
-        ('pill', 'Pill (Fully Rounded)'),
-        ('soft', 'Soft (8px Radius)'),
-        ('sharp', 'Sharp (Square)'),
-    )
-    button_style = models.CharField(max_length=20, choices=BUTTON_CHOICES, default='pill')
-    
-    CARD_CHOICES = (
-        ('standard', 'Standard Rounded'),
-        ('glass', 'Glass Edge'),
-        ('minimal', 'Minimalist (No Border)'),
-    )
-    card_style = models.CharField(max_length=20, choices=CARD_CHOICES, default='standard')
-    
-    LAYOUT_CHOICES = (
-        ('boxed', 'Boxed Layout'),
-        ('full', 'Full Width Layout'),
-    )
-    layout_style = models.CharField(max_length=20, choices=LAYOUT_CHOICES, default='full')
-    dark_mode_enabled = models.BooleanField(default=False, verbose_name="Dark Mode", choices=((True, 'Enabled'), (False, 'Disabled')))
-
-    # ── Header & Global Settings ──────────────────────────────────────────────
-    header_title = models.CharField(max_length=255, default="Demo International")
-    header_subtitle = models.CharField(max_length=255, default="Empowering Your Vision")
-    
-    # ── Homepage Section Titles ─────────────────────────────────────────────
-    hp_collections_title = models.CharField(max_length=255, default='Exclusive <span class="text-primary">Collections</span>')
-    hp_collections_subtitle = models.TextField(default='Handpicked selection of premium medical equipment and essential supplies.', blank=True)
-    
-    hp_categories_title = models.CharField(max_length=255, default='Product <span class="text-primary">Categories</span>')
-    
-    hp_latest_products_title = models.CharField(max_length=255, default='Explore <span class="text-primary">Latest Products</span>')
-    hp_latest_products_subtitle = models.TextField(default='Discover our newest medical innovations and technology.', blank=True)
-    hp_latest_products_empty = models.CharField(max_length=255, default='Stay tuned for our latest medical products.', blank=True)
-    
-    hp_partners_title = models.CharField(max_length=255, default="We Deal with,")
-    hp_partners_subtitle = models.TextField(default="100+ partnerships we've made ensure the quality of products we distribute", blank=True)
-    
-    hp_services_overtitle = models.CharField(max_length=255, default="OUR SERVICES")
-    hp_services_title = models.CharField(max_length=255, default="Specialized Maintenance Services")
-    hp_services_subtitle = models.TextField(default="We are dedicated to maintaining the health and effectiveness of your essential diagnostic equipment.", blank=True)
-    
-    hp_gallery_title = models.CharField(max_length=255, default='Latest <span class="text-primary">Gallery & Updates</span>')
-    
-    hp_testimonials_overtitle = models.CharField(max_length=255, default="TESTIMONIALS")
-    hp_testimonials_title = models.CharField(max_length=255, default="Read what our clients have to share!")
-    
-    hp_clients_title = models.CharField(max_length=255, default="Our Clients")
-    
-    hp_social_overtitle = models.CharField(max_length=255, default="GO SOCIAL WITH US")
-    hp_social_subtitle = models.CharField(max_length=255, default="Follow our Instagram @demo_intl")
-    
-    # ── Product Detail Settings ─────────────────────────────────────────────
-    pd_related_title = models.CharField(max_length=255, default="Related Products")
-    pd_show_related = models.BooleanField(default=True, verbose_name="Related Products", choices=((True, 'Show'), (False, 'Hide')))
-    pd_related_count = models.PositiveIntegerField(default=4, verbose_name="Number of Related Products")
-
-    # Advanced Animation Controls
     ANIMATION_EFFECTS = (
         ('fade-up', 'Fade Up'),
         ('fade-down', 'Fade Down'),
@@ -85,22 +49,57 @@ class DesignSettings(models.Model):
         ('none', 'No Animation'),
     )
     global_animation_type = models.CharField(max_length=20, choices=ANIMATION_EFFECTS, default='fade-up')
-
-    # Counter Specific Animations
-    COUNTER_ANIMATION_CHOICES = (
-        ('runner', 'Progressive Runner (Count-up)'),
-        ('fade', 'Simple Fade-in (No Counting)'),
-        ('zoom', 'Zoom-in Count (Speedy)'),
-    )
-    counter_animation_style = models.CharField(max_length=20, choices=COUNTER_ANIMATION_CHOICES, default='runner', verbose_name="Counter Animation Style")
     
-    COUNTER_SPEED_CHOICES = (
-        (3000, 'Conservative (3s)'),
-        (2000, 'Standard (2s)'),
-        (1000, 'Fast (1s)'),
-        (500, 'Instant (0.5s)'),
-    )
-    counter_animation_speed = models.PositiveIntegerField(choices=COUNTER_SPEED_CHOICES, default=2000, verbose_name="Counter Animation Duration (ms)")
+    # ── Homepage Section Titles ─────────────────────────────────────────────
+    hp_hero_title = models.CharField(max_length=255, default='Royal Quality <span class="italic">Healthcare</span>')
+    hp_hero_subtitle = models.TextField(default='Precision medical equipment delivered with royalty-class service.', blank=True)
+    
+    hp_collections_title = models.CharField(max_length=255, default='Exclusive <span class="text-primary">Collections</span>')
+    hp_collections_subtitle = models.TextField(default='Handpicked selection of premium medical equipment.', blank=True)
+    
+    hp_categories_title = models.CharField(max_length=255, default='Product <span class="text-primary">Categories</span>')
+    
+    hp_latest_products_title = models.CharField(max_length=255, default='Explore <span class="text-primary">Latest Products</span>')
+    hp_latest_products_subtitle = models.TextField(default='Discover our newest medical innovations.', blank=True)
+    
+    hp_partners_title = models.CharField(max_length=255, default="Our Global Partners")
+    hp_services_title = models.CharField(max_length=255, default="Maintenance Support")
+    hp_gallery_title = models.CharField(max_length=255, default='Visual <span class="text-primary">Updates</span>')
+    hp_testimonials_title = models.CharField(max_length=255, default="Client Testimonials")
+    hp_clients_title = models.CharField(max_length=255, default="Trusted By")
+    hp_social_title = models.CharField(max_length=255, default="Join Our Network")
+
+    # ── App-Wide Section Titles ─────────────────────────────────────────────
+    cart_page_title = models.CharField(max_length=255, default='Your <span class="italic text-primary">Cart</span>')
+    wishlist_page_title = models.CharField(max_length=255, default='My <span class="italic text-primary">Wishlist</span>')
+    search_page_title = models.CharField(max_length=255, default='Search <span class="text-primary">Results</span>')
+    checkout_page_title = models.CharField(max_length=255, default='Secure <span class="text-primary">Checkout</span>')
+    profile_page_title = models.CharField(max_length=255, default='My <span class="text-primary">Account</span>')
+    orders_page_title = models.CharField(max_length=255, default='Order <span class="text-primary">History</span>')
+    contact_page_title = models.CharField(max_length=255, default='Contact <span class="text-primary">Us</span>')
+
+    # ── Component Visibility (Header) ─────────────────────────────
+    show_header_search = models.BooleanField(default=True, verbose_name="Header Search", choices=((True, 'Show'), (False, 'Hide')))
+    show_header_wishlist = models.BooleanField(default=True, verbose_name="Header Wishlist", choices=((True, 'Show'), (False, 'Hide')))
+    show_header_account = models.BooleanField(default=True, verbose_name="Header Account", choices=((True, 'Show'), (False, 'Hide')))
+    show_header_cart = models.BooleanField(default=True, verbose_name="Header Cart", choices=((True, 'Show'), (False, 'Hide')))
+
+    # ── Homepage Section Visibility ──────────────────────────────
+    show_hp_categories = models.BooleanField(default=True, verbose_name="Home Categories", choices=((True, 'Show'), (False, 'Hide')))
+    show_hp_latest_products = models.BooleanField(default=True, verbose_name="Home Latest Products", choices=((True, 'Show'), (False, 'Hide')))
+    show_hp_brands = models.BooleanField(default=True, verbose_name="Home Brands", choices=((True, 'Show'), (False, 'Hide')))
+    show_hp_testimonials = models.BooleanField(default=True, verbose_name="Home Testimonials", choices=((True, 'Show'), (False, 'Hide')))
+    show_hp_clients = models.BooleanField(default=True, verbose_name="Home Clients", choices=((True, 'Show'), (False, 'Hide')))
+    show_hp_social = models.BooleanField(default=True, verbose_name="Home Social", choices=((True, 'Show'), (False, 'Hide')))
+
+    # ── Product Display Settings ────────────────────────────────────────────
+    pd_related_title = models.CharField(max_length=255, default="You May Also Like")
+    pd_show_related = models.BooleanField(default=True, verbose_name="Related Products", choices=((True, 'Show'), (False, 'Hide')))
+    pd_related_count = models.PositiveIntegerField(default=4)
+
+    # ── Counter Animations ──────────────────────────────────────────────────
+    counter_animation_style = models.CharField(max_length=50, default='runner')
+    counter_animation_speed = models.PositiveIntegerField(default=2000)
 
     class Meta:
         verbose_name = "Theme Settings"

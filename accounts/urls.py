@@ -10,4 +10,6 @@ urlpatterns = [
     path('guest-checkout/', views.guest_checkout_view, name='guest_checkout'),
     path('social/<str:provider>/', views.social_login, name='social_login'),
     path('callback/', views.social_callback, name='social_callback'),
+    path('profile/', views.profile_view, name='profile'),
+    path('orders/', views.order_history_view, name='order_history'),
 ]

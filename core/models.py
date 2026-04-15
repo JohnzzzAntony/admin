@@ -1,4 +1,5 @@
 from django.db import models
+from .design_models import DesignSettings
 
 class SiteSettings(models.Model):
     site_name = models.CharField(max_length=255, default="Demo International")

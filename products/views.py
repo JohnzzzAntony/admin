@@ -76,15 +76,15 @@ def get_subcategories(request, parent_id):
 
 def category_index(request):
     """Shows top-level categories in a professional grid."""
-    categories = Category.objects.filter(parent__isnull=True)
+    categories = Category.objects.filter(parent__isnull=True, is_active=True)
     if not categories.exists():
-        categories = Category.objects.all()
+        categories = Category.objects.filter(is_active=True)
     return render(request, 'products/category_index.html', {'categories': categories})
 
 def product_list(request):
     """Shows all products with stock, and categories in sidebar."""
-    parents = Category.objects.filter(parent__isnull=True)
-    categories = parents if parents.count() > 1 else Category.objects.all()
+    parents = Category.objects.filter(parent__isnull=True, is_active=True)
+    categories = parents if parents.count() > 1 else Category.objects.filter(is_active=True)
 
     # Only show active, in-stock products
     products = Product.objects.filter(
@@ -114,7 +114,7 @@ def category_detail(request, slug=None, hierarchy_path=None):
     if hierarchy_path:
         slug = hierarchy_path.strip('/').split('/')[-1]
     
-    category = get_object_or_404(Category, slug=slug)
+    category = get_object_or_404(Category, slug=slug, is_active=True)
     
     all_categories_in_branch = category.get_all_children(include_self=True)
     cat_ids = [c.id for c in all_categories_in_branch]
@@ -130,7 +130,7 @@ def category_detail(request, slug=None, hierarchy_path=None):
     ).distinct().order_by('-id')
     
     # Root categories for sidebar
-    roots = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+    roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
 
     return render(request, 'products/product_list.html', {
         'current_category': category, 
@@ -141,19 +141,35 @@ def category_detail(request, slug=None, hierarchy_path=None):
 
 
 
+from core.design_models import DesignSettings
+
 def product_detail(request, slug=None, pk=None):
     """SEO-friendly product detail page. Supports both slug and PK for administrative legacy tools."""
     if pk:
         product = get_object_or_404(
             Product.objects.select_related('category').prefetch_related('offers', 'images'), 
-            pk=pk
+            pk=pk, is_active=True
         )
     else:
         product = get_object_or_404(
             Product.objects.select_related('category').prefetch_related('offers', 'images'), 
-            slug=slug
+            slug=slug, is_active=True
         )
-    return render(request, 'products/product_detail.html', {'product': product})
+
+    # Fetch related products from the same category
+    design = DesignSettings.objects.first()
+    related_count = design.pd_related_count if design else 4
+    
+    related_products = Product.objects.filter(
+        category=product.category,
+        is_active=True,
+        quantity__gt=0
+    ).exclude(id=product.id).select_related('category').prefetch_related('offers', 'images')[:related_count]
+
+    return render(request, 'products/product_detail.html', {
+        'product': product,
+        'related_products': related_products
+    })
 
 
 # ── REST API For Category Management ───────────────────────────────────────────
@@ -211,7 +227,7 @@ def collection_detail(request, slug):
     ).distinct().order_by('-id')
     
     # Root categories for sidebar
-    roots = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+    roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
 
     return render(request, 'products/product_list.html', {
         'collection': collection, 
@@ -222,12 +238,12 @@ def collection_detail(request, slug):
 
 def brand_list(request):
     """Shows all active brands."""
-    brands = Brand.objects.all()
+    brands = Brand.objects.filter(is_active=True)
     return render(request, 'products/brand_list.html', {'brands': brands})
 
 def brand_detail(request, slug):
     """Shows products for a specific brand."""
-    brand = get_object_or_404(Brand, slug=slug)
+    brand = get_object_or_404(Brand, slug=slug, is_active=True)
     products = Product.objects.filter(
         brand=brand,
         is_active=True,
@@ -238,7 +254,7 @@ def brand_detail(request, slug):
         'images'
     ).distinct().order_by('-id')
     
-    roots = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+    roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
     
     return render(request, 'products/product_list.html', {
         'current_brand': brand,

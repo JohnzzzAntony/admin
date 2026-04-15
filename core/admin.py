@@ -78,48 +78,67 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 
 @admin.register(DesignSettings)
 class DesignSettingsAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'dark_mode_enabled', 'enable_glassmorphism', 'enable_ambient_glow')
+    list_display = ('__str__', 'enable_glassmorphism', 'enable_ambient_glow', 'enable_animations')
     fieldsets = (
-        ('Color Palette', {
+        ('Branding & Color Theme', {
             'fields': (
                 ('primary_color', 'secondary_color', 'accent_glow_color'),
-                ('header_bg_color', 'footer_bg_color'),
+                ('text_primary_color', 'text_secondary_color', 'text_white_color'),
+                ('surface_bg_color', 'card_bg_color', 'border_color'),
+                ('header_bg_color', 'header_text_color'),
+                ('footer_bg_color', 'footer_text_color'),
             ),
-            'description': 'Define the visual tone of your store. Use hex codes (e.g. #1a1a1a). Header and footer colors are applied site-wide.'
+            'description': 'Master color palette for the entire storefront. Supports Hex codes (e.g., #114084).'
         }),
-        ('Typography', {
-            'fields': (('font_body', 'font_heading'),),
+        ('Typography & Shapes', {
+            'fields': (
+                ('font_main', 'font_secondary'),
+                ('container_radius', 'card_radius'),
+                ('button_radius', 'image_radius'),
+            ),
+            'description': 'Select site-wide fonts and control the "softness" of the UI shapes.'
         }),
-        ('UI Strategy', {
-            'fields': (('button_style', 'card_style', 'layout_style'),),
-        }),
-        ('Special Visuals', {
+        ('Premium Effects', {
             'fields': (
                 ('enable_glassmorphism', 'enable_neumorphism', 'enable_ambient_glow'), 
-                ('enable_animations', 'global_animation_type', 'dark_mode_enabled'),
+                ('enable_animations', 'global_animation_type'),
                 ('counter_animation_style', 'counter_animation_speed'),
             ),
-            'description': 'Premium effects, dark mode, and counter animation controls.'
         }),
-        ('Homepage Content Blocks', {
+        ('Homepage Titles & Content', {
             'fields': (
-                ('header_title', 'header_subtitle'),
+                ('hp_hero_title', 'hp_hero_subtitle'),
                 ('hp_collections_title', 'hp_collections_subtitle'),
                 'hp_categories_title',
                 ('hp_latest_products_title', 'hp_latest_products_subtitle'),
-                'hp_latest_products_empty',
-                ('hp_partners_title', 'hp_partners_subtitle'),
-                ('hp_services_overtitle', 'hp_services_title'),
-                'hp_services_subtitle',
+                'hp_partners_title', 
+                'hp_services_title',
                 'hp_gallery_title',
-                ('hp_testimonials_overtitle', 'hp_testimonials_title'),
+                'hp_testimonials_title',
                 'hp_clients_title',
-                ('hp_social_overtitle', 'hp_social_subtitle'),
+                'hp_social_title',
             ),
             'classes': ('collapse',),
+            'description': 'Edit section headings and subheadings for the landing page.'
         }),
-        ('Product Display', {
-            'fields': (('pd_related_title', 'pd_show_related', 'pd_related_count'),),
+        ('App-Wide Page Titles', {
+            'fields': (
+                ('cart_page_title', 'wishlist_page_title'),
+                ('search_page_title', 'checkout_page_title'),
+                ('profile_page_title', 'orders_page_title'),
+                'contact_page_title',
+            ),
+            'classes': ('collapse',),
+            'description': 'Global control for all internal page headings.'
+        }),
+        ('Visibility & Display Controls', {
+            'fields': (
+                ('show_header_search', 'show_header_wishlist', 'show_header_account', 'show_header_cart'),
+                ('show_hp_categories', 'show_hp_latest_products', 'show_hp_brands'),
+                ('show_hp_testimonials', 'show_hp_clients', 'show_hp_social'),
+                ('pd_show_related', 'pd_related_title', 'pd_related_count'),
+            ),
+            'description': 'Enable or disable major features and sections site-wide.'
         }),
     )
     radio_fields = {
@@ -127,9 +146,20 @@ class DesignSettingsAdmin(admin.ModelAdmin):
         "enable_neumorphism": admin.HORIZONTAL,
         "enable_ambient_glow": admin.HORIZONTAL,
         "enable_animations": admin.HORIZONTAL,
-        "dark_mode_enabled": admin.HORIZONTAL,
         "pd_show_related": admin.HORIZONTAL,
-        "counter_animation_style": admin.HORIZONTAL,
+        "font_main": admin.HORIZONTAL,
+        "font_secondary": admin.HORIZONTAL,
+        # Visibility toggles
+        "show_header_search": admin.HORIZONTAL,
+        "show_header_wishlist": admin.HORIZONTAL,
+        "show_header_account": admin.HORIZONTAL,
+        "show_header_cart": admin.HORIZONTAL,
+        "show_hp_categories": admin.HORIZONTAL,
+        "show_hp_latest_products": admin.HORIZONTAL,
+        "show_hp_brands": admin.HORIZONTAL,
+        "show_hp_testimonials": admin.HORIZONTAL,
+        "show_hp_clients": admin.HORIZONTAL,
+        "show_hp_social": admin.HORIZONTAL,
     }
 
     def save_model(self, request, obj, form, change):

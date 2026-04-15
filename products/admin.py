@@ -19,7 +19,11 @@ class ProductResource(resources.ModelResource):
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
-    fields = ('image',)
+    fields = ('image', 'image_alt', 'order')
+    show_change_link = False   # removes the "Original" pk column entirely
+    verbose_name = "Product Image"
+    verbose_name_plural = "Product Images"
+
 
 class SubCategoryInline(admin.TabularInline):
     model = Category
@@ -36,10 +40,10 @@ class SubCategoryInline(admin.TabularInline):
 class ProductAdmin(ImportExportModelAdmin):
     form = ProductAdminForm
     resource_class = ProductResource
-    list_display = ('name', 'category_display', 'brand', 'regular_price', 'sale_price', 'quantity', 'show_on_homepage', 'stock_status', 'preview')
-    list_editable = ('show_on_homepage', 'brand')
+    list_display = ('name', 'category_display', 'brand', 'regular_price', 'sale_price', 'quantity', 'is_featured', 'show_on_homepage', 'stock_status', 'preview')
+    list_editable = ('show_on_homepage', 'brand', 'is_featured')
     search_fields = ('name', 'slug', 'sku_id', 'brand__name')
-    list_filter = ('brand', 'category', 'show_on_homepage', 'is_active')
+    list_filter = ('brand', 'category', 'is_featured', 'show_on_homepage', 'is_active')
     readonly_fields = ('sku_id', 'preview')
     inlines = [ProductImageInline]
     # change_list_template = "admin/products/product/change_list.html"
@@ -192,7 +196,9 @@ class ProductAdmin(ImportExportModelAdmin):
                 ('name', 'sku_id'), 
                 ('parent_category', 'category'),
                 ('brand', 'quantity'),
-                ('slug', 'show_on_homepage')
+                ('avg_rating', 'review_count'),
+                ('badge', 'badge_color'),
+                ('slug', 'show_on_homepage', 'is_featured')
             ),
             'description': 'Core identity and stock availability. Choose a parent category to see subcategories.'
         }),

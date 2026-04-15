@@ -2,117 +2,112 @@
 {% load static %}
 
 {% block content %}
-    <!-- Hero Header -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white hero-section">
-        <div class="container py-5">
-            <h1 class="display-3 font-weight-bold hero-title">{{ page_heroes.contact.title|default:"Contact Us" }}</h1>
-            {% if page_heroes.contact.subtitle %}<p class="lead" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ page_heroes.contact.subtitle }}</p>{% endif %}
-        </div>
-    </section>
+<!-- Hero Section -->
+<section class="relative min-h-[50vh] flex items-center justify-center overflow-hidden bg-slate-900">
+    <div class="absolute inset-0 opacity-40">
+        <img src="{{ page_heroes.contact.get_hero_url|default:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070' }}" class="w-full h-full object-cover">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+    
+    <div class="container mx-auto px-6 relative z-10 text-center animate__animated animate__fadeInUp">
+        <span class="inline-block py-2 px-4 bg-primary text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-6">Get in Touch</span>
+        <h1 class="text-5xl lg:text-8xl font-black text-white tracking-tighter mb-4 leading-none">
+            Let's Start a <span class="italic text-primary">Conversation</span>
+        </h1>
+        <p class="text-slate-300 text-lg lg:text-xl font-medium max-w-2xl mx-auto italic">{{ page_heroes.contact.subtitle|default:"We are here to provide excellence and support for your every inquiry." }}</p>
+    </div>
+</section>
 
-    <!-- Quick Contact Boxes (Image 2 Section 1) -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <h2 class="text-center font-weight-bold mb-5 pb-3">Quick Contact</h2>
-            <div class="row text-center">
-                <!-- Call Us box -->
-                <div class="col-md-4 mb-4">
-                    <div class="p-4 border-0 shadow-sm h-100 transition-all d-flex align-items-center justify-content-center flex-column" style="border-radius: 20px; background-color: #f1f7ff;">
-                        <div class="mb-3 text-primary" style="font-size: 2rem;"><i class="fas fa-phone-alt"></i></div>
-                        <h5 class="font-weight-bold mb-2">Call us</h5>
-                        <p class="text-primary font-weight-bold mb-0">{{ site_settings.phone|default:"+971 4 251 5383" }}</p>
-                    </div>
+<!-- Contact Info Grid -->
+<section class="py-24 bg-white relative z-20 -mt-20">
+    <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Box 1 -->
+            <div class="group bg-white p-10 rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100 flex flex-col items-center text-center transition-all hover:-translate-y-2">
+                <div class="w-20 h-20 bg-primary/10 text-primary rounded-3xl flex items-center justify-center mb-8 text-2xl group-hover:bg-primary group-hover:text-white transition-all">
+                    <i class="fas fa-phone-alt"></i>
                 </div>
-                <!-- Mail Us box -->
-                <div class="col-md-4 mb-4">
-                    <div class="p-4 border-0 shadow-sm h-100 transition-all d-flex align-items-center justify-content-center flex-column" style="border-radius: 20px; background-color: #f1f7ff;">
-                        <div class="mb-3 text-primary" style="font-size: 2rem;"><i class="far fa-envelope"></i></div>
-                        <h5 class="font-weight-bold mb-2">Mail us</h5>
-                        <p class="text-primary font-weight-bold mb-0">{{ site_settings.email|default:"info@jkrintl.com" }}</p>
-                    </div>
+                <h3 class="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Call Excellence</h3>
+                <p class="text-slate-500 font-medium mb-4">Direct line to our support team</p>
+                <a href="tel:{{ site_settings.phone }}" class="text-lg font-black text-primary">{{ site_settings.phone|default:"+971 4 251 5383" }}</a>
+            </div>
+
+            <!-- Box 2 -->
+            <div class="group bg-white p-10 rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100 flex flex-col items-center text-center transition-all hover:-translate-y-2">
+                <div class="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-3xl flex items-center justify-center mb-8 text-2xl group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                    <i class="far fa-envelope"></i>
                 </div>
-                <!-- Working Hours box -->
-                <div class="col-md-4 mb-4">
-                    <div class="p-4 border-0 shadow-sm h-100 transition-all d-flex align-items-center justify-content-center flex-column" style="border-radius: 20px; background-color: #f1f7ff;">
-                        <div class="mb-3 text-primary" style="font-size: 2rem;"><i class="far fa-clock"></i></div>
-                        <h5 class="font-weight-bold mb-2">Working Hours</h5>
-                        <p class="text-primary font-weight-bold mb-0">08:30 AM to 05:00 PM</p>
-                    </div>
+                <h3 class="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Email Inquiries</h3>
+                <p class="text-slate-500 font-medium mb-4">Fast response for all requests</p>
+                <a href="mailto:{{ site_settings.email }}" class="text-lg font-black text-emerald-500">{{ site_settings.email|default:"info@jkrintl.com" }}</a>
+            </div>
+
+            <!-- Box 3 -->
+            <div class="group bg-white p-10 rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100 flex flex-col items-center text-center transition-all hover:-translate-y-2">
+                <div class="w-20 h-20 bg-amber-50 text-amber-500 rounded-3xl flex items-center justify-center mb-8 text-2xl group-hover:bg-amber-500 group-hover:text-white transition-all">
+                    <i class="far fa-clock"></i>
                 </div>
+                <h3 class="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Operation Hours</h3>
+                <p class="text-slate-500 font-medium mb-4">Monday - Friday</p>
+                <span class="text-lg font-black text-amber-600">08:30 AM — 05:00 PM</span>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Contact Form with Image Side-by-side (Image 2 Section 2) -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <div class="row align-items-center">
-                <!-- Left Side Form -->
-                <div class="col-lg-6 pr-lg-5 mb-5 mb-lg-0">
-                    <h2 class="display-5 font-weight-bold mb-5" style="color: var(--primary-blue)">Hi! Have Any Questions?</h2>
-                    
-                    <form action="{% url 'contact:contact_submit' %}" method="POST" id="contactForm">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label class="font-weight-bold text-dark mb-2">Name</label>
-                                <input type="text" name="name" class="form-control border-top-0 border-left-0 border-right-0 border-bottom rounded-0 bg-transparent px-0 pb-3 h-auto" placeholder="Your Name" required>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <label class="font-weight-bold text-dark mb-2">Mobile</label>
-                                <input type="text" name="phone" class="form-control border-top-0 border-left-0 border-right-0 border-bottom rounded-0 bg-transparent px-0 pb-3 h-auto" placeholder="+971 xxxxxxxxx" required>
-                            </div>
-                            <div class="col-12 mb-4 mt-3">
-                                <label class="font-weight-bold text-dark mb-2">Email</label>
-                                <input type="email" name="email" class="form-control border-top-0 border-left-0 border-right-0 border-bottom rounded-0 bg-transparent px-0 pb-3 h-auto" placeholder="Your Email" required>
-                            </div>
-                            <div class="col-12 mb-5 mt-3">
-                                <label class="font-weight-bold text-dark mb-2">Message</label>
-                                <textarea name="message" class="form-control border-top-0 border-left-0 border-right-0 border-bottom rounded-0 bg-transparent px-0 pb-3 h-auto" rows="4" placeholder="What We Need To Know..." required></textarea>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-lg px-5 py-3 shadow-lg" style="border-radius: 50px; background-color: var(--primary-blue); min-width: 180px;">Submit</button>
-                            </div>
+<!-- Contact Form Section -->
+<section class="py-24 bg-slate-50">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-col lg:flex-row gap-20 items-center">
+            <!-- Form Area -->
+            <div class="lg:w-1/2 w-full">
+                <div class="space-y-4 mb-12">
+                    <h2 class="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter">Have a <span class="italic text-primary">Question?</span></h2>
+                    <p class="text-slate-500 font-medium text-lg">Send us a message and our specialists will reach out to you within 24 business hours.</p>
+                </div>
+
+                <form action="{% url 'contact:contact_submit' %}" method="POST" class="space-y-8">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Full Identity</label>
+                            <input type="text" name="name" placeholder="John Doe" class="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all shadow-sm" required>
                         </div>
-                    </form>
-                </div>
-                
-                <!-- Right Side Image (matching Image 2) -->
-                <div class="col-lg-6">
-                    <div class="position-relative p-2" style="border-radius: 40px; overflow: hidden;">
-                        <img src="https://jkrintl.com/wp-content/uploads/2022/12/Contact-Us-Image.jpg" alt="Contact JKR" class="img-fluid w-100 shadow-lg" style="border-radius: 30px; object-fit: cover;">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Digital Mail</label>
+                            <input type="email" name="email" placeholder="john@example.com" class="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all shadow-sm" required>
+                        </div>
+                        <div class="space-y-2 md:col-span-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Direct Contact (Optional)</label>
+                            <input type="text" name="phone" placeholder="+971..." class="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all shadow-sm">
+                        </div>
+                        <div class="space-y-2 md:col-span-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Inquiry Detail</label>
+                            <textarea name="message" rows="5" placeholder="Tell us about your requirements..." class="w-full bg-white border border-slate-200 rounded-[30px] px-6 py-5 text-sm font-medium focus:outline-none focus:border-primary transition-all shadow-sm" required></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-slate-950 text-white py-6 rounded-[32px] font-black text-[11px] uppercase tracking-[0.3em] flex items-center justify-center gap-4 group hover:bg-slate-900 transition-all shadow-2xl shadow-slate-950/20 active:scale-95">
+                        Transmit Message <i class="fas fa-paper-plane text-xs transition-transform group-hover:translate-x-2 group-hover:-translate-y-1"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Image Area -->
+            <div class="lg:w-1/2 w-full">
+                <div class="relative group">
+                    <div class="absolute -inset-4 bg-primary/5 rounded-[60px] blur-2xl transform rotate-3 group-hover:rotate-0 transition-transform duration-700"></div>
+                    <div class="relative rounded-[50px] overflow-hidden shadow-2xl border-8 border-white">
+                        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=2070" alt="Excellence Support" class="w-full aspect-[4/5] object-cover transform scale-105 group-hover:scale-100 transition-transform duration-1000">
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Map Section (Optional but good) -->
-    <section class="py-0">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.123456789!2d55.35!3d25.23!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDEzJzQ4LjAiTiA1NcKwMjEnMDQuOCJF!5e0!3m2!1sen!2sae!4v123456789" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-    </section>
-
-    <style>
-        .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url("{{ page_heroes.contact.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}");
-            background-size: cover;
-            background-position: center;
-            min-height: 40vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .hero-title {
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-        }
-        .form-control:focus {
-            box-shadow: none;
-            border-bottom-color: var(--primary-blue) !important;
-        }
-        .transition-all:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
-        }
-    </style>
+<!-- Location Section -->
+<section class="h-[500px] w-full relative grayscale hover:grayscale-0 transition-all duration-1000">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3608.12!2d55.38!3d25.27!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDE2JzA0LjgiTiA1NcKwMjInNDguMCJF!5e0!3m2!1sen!2sae!4v123456789" class="w-full h-full border-0 absolute inset-0" allowfullscreen="" loading="lazy"></iframe>
+</section>
 {% endblock %}

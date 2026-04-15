@@ -2,8 +2,13 @@ from .models import Category, Wishlist, Brand
 
 def categories(request):
     try:
+        # Optimizing fetch for the mega-menu to prevent N+1 queries
+        cats = Category.objects.filter(parent__isnull=True, is_active=True)\
+            .prefetch_related('subcategories__products')\
+            .order_by('homepage_order', 'name')
+        
         return {
-            'categories': Category.objects.filter(parent__isnull=True, is_active=True).order_by('homepage_order', 'name'),
+            'categories': cats,
             'all_brands_count': Brand.objects.all().count()
         }
     except Exception:

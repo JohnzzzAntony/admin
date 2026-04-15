@@ -2,240 +2,83 @@
 {% load static %}
 
 {% block content %}
-<style>
-    :root {
-        --auth-dark: #2d333b;
-        --auth-gray: #f6f8fa;
-        --auth-border: #d0d7de;
-        --auth-orange: #ff6b00;
-        --auth-text-muted: #57606a;
-    }
-
-    .auth-page {
-        min-height: 90vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f0f2f5;
-        padding: 40px 20px;
-    }
-
-    .auth-card {
-        width: 100%;
-        max-width: 480px;
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    }
-
-    .auth-header {
-        background: var(--auth-dark);
-        color: white;
-        padding: 35px 30px;
-        text-align: center;
-    }
-
-    .auth-header h2 {
-        font-weight: 800;
-        font-size: 1.8rem;
-        margin-bottom: 8px;
-        color: #fff;
-    }
-
-    .auth-header p {
-        color: rgba(255,255,255,0.7);
-        font-size: 0.95rem;
-        margin: 0;
-    }
-
-    .auth-body {
-        padding: 40px;
-    }
-
-    .btn-guest {
-        background: white;
-        border: 2px solid var(--auth-orange);
-        color: var(--auth-orange);
-        font-weight: 700;
-        border-radius: 10px;
-        padding: 12px;
-        margin-bottom: 15px;
-        transition: all 0.2s;
-        text-align: center;
-        display: block;
-        width: 100%;
-        text-decoration: none;
-    }
-    
-    .btn-guest:hover {
-        background: var(--auth-orange);
-        color: white;
-        text-decoration: none;
-    }
-
-    .btn-google {
-        background: white;
-        border: 1px solid var(--auth-border);
-        color: var(--auth-dark);
-        font-weight: 700;
-        border-radius: 10px;
-        padding: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 25px;
-        transition: all 0.2s;
-        width: 100%;
-        text-decoration: none;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    .btn-google:hover {
-        background: #fcfcfc;
-        border-color: #888;
-        color: var(--auth-dark);
-        text-decoration: none;
-    }
-
-    .divider {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        margin: 25px 0;
-        color: var(--auth-text-muted);
-        font-size: 0.8rem;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-    }
-
-    .divider::before, .divider::after {
-        content: '';
-        flex: 1;
-        border-bottom: 1px solid var(--auth-border);
-    }
-
-    .divider:not(:empty)::before { margin-right: 15px; }
-    .divider:not(:empty)::after { margin-left: 15px; }
-
-    .form-group label {
-        display: block;
-        font-size: 0.75rem;
-        font-weight: 800;
-        color: var(--auth-text-muted);
-        margin-bottom: 8px;
-        letter-spacing: 0.5px;
-    }
-
-    .form-control-custom {
-        width: 100%;
-        background: var(--auth-gray);
-        border: 1px solid transparent;
-        border-radius: 10px;
-        padding: 14px 18px;
-        font-size: 1rem;
-        color: var(--auth-dark);
-        transition: all 0.2s;
-    }
-
-    .form-control-custom:focus {
-        background: white;
-        border-color: var(--auth-dark);
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(45, 51, 59, 0.1);
-    }
-
-    .btn-login {
-        background: var(--auth-dark);
-        color: white;
-        font-weight: 700;
-        border-radius: 10px;
-        padding: 15px;
-        width: 100%;
-        border: none;
-        margin-top: 15px;
-        transition: all 0.2s;
-        font-size: 1.1rem;
-    }
-
-    .btn-login:hover {
-        background: #1a1e22;
-        transform: translateY(-1px);
-    }
-
-    .btn-create {
-        background: transparent;
-        border: 1px solid var(--auth-dark);
-        color: var(--auth-dark);
-        font-weight: 700;
-        border-radius: 10px;
-        padding: 12px;
-        width: 100%;
-        text-align: center;
-        display: block;
-        text-decoration: none;
-        transition: all 0.2s;
-        margin-top: 10px;
-    }
-    
-    .btn-create:hover {
-        background: var(--auth-dark);
-        color: white;
-        text-decoration: none;
-    }
-
-    .auth-footer-text {
-        text-align: center;
-        color: var(--auth-text-muted);
-        font-size: 0.9rem;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-    }
-</style>
-
-<div class="auth-page">
-    <div class="auth-card">
-        <div class="auth-header">
-            <h2>Login to Your Account</h2>
-            <p>Welcome back to Demo International</p>
-        </div>
-
-        <div class="auth-body">
-            <!-- Guest Login Button -->
-            <a href="{% url 'accounts:guest_checkout' %}?next={% if next %}{{ next }}{% else %}core:home{% endif %}" class="btn-guest">
-                Guest Login
-            </a>
-
-            <!-- Social Login -->
-            <a href="{% url 'accounts:social_login' provider='google' %}" class="btn-google">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" alt="Google">
-                Continue with Google
-            </a>
-
-            <div class="divider">OR LOGIN WITH EMAIL</div>
-
-            <form method="POST">
-                {% csrf_token %}
-                <div class="form-group mb-4">
-                    <label>USERNAME</label>
-                    <input type="text" name="username" class="form-control-custom" placeholder="Enter username" required>
+<section class="min-h-[85vh] flex items-center justify-center py-12 px-6 bg-slate-50">
+    <div class="w-full max-w-md bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden transform transition-all hover:shadow-primary/5">
+        
+        <!-- Header -->
+        <div class="bg-slate-950 p-10 text-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+            <div class="relative z-10">
+                <div class="w-16 h-16 bg-primary/20 text-primary rounded-3xl mx-auto flex items-center justify-center mb-6">
+                    <i class="fas fa-lock text-2xl"></i>
                 </div>
-                
-                <div class="form-group mb-4">
-                    <label>PASSWORD</label>
-                    <input type="password" name="password" class="form-control-custom" placeholder="Enter password" required>
-                </div>
-
-                <button type="submit" class="btn-login">Login</button>
-            </form>
-
-            <div class="auth-footer-text">
-                <p class="mb-2">Don't have an account?</p>
-                <a href="{% url 'accounts:register' %}" class="btn-create">Create New Account</a>
+                <h2 class="text-3xl font-black text-white tracking-tighter mb-2">Welcome <span class="italic text-primary">Back</span></h2>
+                <p class="text-slate-400 text-sm font-medium">Sign in to access your premium account</p>
             </div>
         </div>
+
+        <!-- Body -->
+        <div class="p-10">
+            <!-- Guest Link -->
+            <a href="{% url 'accounts:guest_checkout' %}?next={% if next %}{{ next }}{% else %}core:home{% endif %}" class="block w-full py-4 text-center rounded-2xl bg-amber-50 text-amber-600 font-black text-[11px] uppercase tracking-[0.2em] mb-6 hover:bg-amber-100 transition-colors">
+                Continue as Guest
+            </a>
+
+            <!-- Social Auth -->
+            <a href="{% url 'accounts:social_login' provider='google' %}" class="flex items-center justify-center gap-3 w-full py-4 border-2 border-slate-100 text-slate-700 rounded-2xl font-black text-xs hover:border-slate-300 transition-all mb-8 shadow-sm">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="18" alt="Google">
+                Sign in with Google
+            </a>
+
+            <div class="flex items-center gap-4 mb-8">
+                <div class="h-px bg-slate-100 flex-1"></div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">or sign in with email</span>
+                <div class="h-px bg-slate-100 flex-1"></div>
+            </div>
+
+            <!-- Form -->
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                
+                {% if messages %}
+                <div class="p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold text-center">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Username</label>
+                    <input type="text" name="username" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Enter your username" required>
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Password</label>
+                    <input type="password" name="password" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="••••••••" required>
+                </div>
+
+                <div class="flex justify-between items-center px-2">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary">
+                        <span class="text-xs font-bold text-slate-600">Remember me</span>
+                    </label>
+                    <a href="#" class="text-xs font-bold text-primary hover:text-primary/80">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="w-full py-5 bg-primary text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-lg shadow-primary/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/30 transition-all flex items-center justify-center gap-3">
+                    Submit Securely <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-6 bg-slate-50 border-t border-slate-100 text-center">
+            <p class="text-xs font-medium text-slate-500">
+                New to our platform? 
+                <a href="{% url 'accounts:register' %}" class="font-black text-primary hover:text-primary/80 uppercase tracking-widest text-[10px] ml-2">Create Account</a>
+            </p>
+        </div>
     </div>
-</div>
+</section>
 {% endblock %}

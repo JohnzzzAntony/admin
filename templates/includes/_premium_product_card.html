@@ -1,0 +1,110 @@
+{% load static %}
+
+{% with price_info=product.get_best_price_info %}
+<!-- Product Reveal Card (Shadcn-style) -->
+<div class="group relative w-full h-[450px] rounded-2xl border border-border/50 bg-card text-card-foreground overflow-hidden shadow-lg shadow-black/5 cursor-pointer bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-xl">
+    
+    <!-- Image Container -->
+    <div class="relative h-64 overflow-hidden bg-slate-100 group">
+        <img src="{{ product.get_image_url }}"
+             alt="{{ product.name }}"
+             class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+             loading="lazy">
+        
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/10 to-transparent"></div>
+        
+        <!-- Wishlist Button -->
+        <button class="wishlist-btn absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20 transition-all duration-300 z-30 shadow-xl {% if product.id in wishlist_ids %}bg-red-500 text-white border-red-500{% else %}bg-slate-900/40 text-white hover:bg-slate-900/60{% endif %}"
+                data-product-id="{{ product.id }}">
+            <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart text-sm"></i>
+        </button>
+
+        <!-- Discount Badge -->
+        {% if price_info.has_offer %}
+        <div class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase shadow-lg shadow-red-600/20">
+            {{ price_info.discount_percentage }}% OFF
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Content Area -->
+    <div class="p-5 space-y-3">
+        <!-- Rating -->
+        <div class="flex items-center gap-2">
+            <div class="flex text-yellow-400 text-xs">
+                {% with ""|center:5 as range %}
+                {% for _ in range %}
+                    <i class="{% if forloop.counter <= product.avg_rating %}fas{% else %}far{% endif %} fa-star"></i>
+                {% endfor %}
+                {% endwith %}
+            </div>
+            <span class="text-xs text-muted-foreground font-medium">
+                {{ product.avg_rating }} ({{ product.review_count }} reviews)
+            </span>
+        </div>
+
+        <!-- Product Info -->
+        <div class="space-y-1">
+            {% if product.category %}
+            <div class="text-[10px] font-bold uppercase tracking-widest text-primary/70 mb-1">
+                {{ product.category.name }}
+            </div>
+            {% endif %}
+            
+            <a href="{% url 'products:product_detail' slug=product.slug %}" class="block">
+                <h3 class="text-lg font-bold leading-tight tracking-tight text-slate-800 line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
+                    {{ product.name }}
+                </h3>
+            </a>
+            
+            <div class="flex items-center gap-3 mt-2">
+                <span class="text-xl font-black text-primary">{{ price_info.final_price }} <span class="text-xs uppercase">AED</span></span>
+                {% if price_info.has_offer %}
+                <span class="text-sm text-muted-foreground line-through opacity-60">
+                    {{ price_info.regular_price }} AED
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Reveal Overlay (Slide Up) -->
+    <div class="absolute inset-0 bg-white/95 backdrop-blur-xl translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col justify-between p-6 z-20">
+        
+        <div class="space-y-4">
+            <div>
+                <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Product Details</h4>
+                <p class="text-sm text-slate-600 leading-relaxed line-clamp-4">
+                    {{ product.overview|striptags|truncatewords:40|default:"No description available for this premium product." }}
+                </p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-2 gap-2 text-[10px]">
+                <div class="bg-slate-100/50 rounded-xl p-3 text-center border border-slate-100">
+                    <div class="font-bold text-slate-800">Quality</div>
+                    <div class="text-slate-500">Certified</div>
+                </div>
+                <div class="bg-slate-100/50 rounded-xl p-3 text-center border border-slate-100">
+                    <div class="font-bold text-slate-800">Delivery</div>
+                    <div class="text-slate-500">{{ product.delivery_time|default:"Fast Shipping" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-3">
+            <button data-url="{% url 'orders:add_to_cart' product_id=product.pk %}"
+                    class="cart-action-btn w-full py-4 bg-primary text-white rounded-xl font-bold text-sm shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <i class="fas fa-shopping-bag"></i>
+                Add to Cart
+            </button>
+            
+            <a href="{% url 'products:product_detail' slug=product.slug %}" 
+               class="block w-full py-3 border-2 border-slate-200 text-slate-700 rounded-xl font-bold text-sm text-center hover:bg-slate-50 transition-colors">
+                View Details
+            </a>
+        </div>
+    </div>
+</div>
+{% endwith %}

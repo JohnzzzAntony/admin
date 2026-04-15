@@ -66,10 +66,14 @@ def _get_cart_items(request):
 def enquiry_cart(request):
     cart_items, total_shipping = _get_cart_items(request)
     subtotal = sum(item['total_item'] for item in cart_items)
-    grand_total = subtotal + total_shipping
+    # Calculate tax based on item subtotal & product tax percentage
+    total_tax = sum((item['total_item'] * item['product'].tax_percentage / 100) for item in cart_items)
+    grand_total = subtotal + total_shipping + total_tax
+    
     return render(request, 'orders/enquiry_cart.html', {
         'cart_items': cart_items,
         'subtotal': subtotal,
+        'total_tax': total_tax,
         'total_shipping': total_shipping,
         'grand_total': grand_total
     })

@@ -12,7 +12,7 @@ def site_settings(request):
     try:
         settings = SiteSettings.objects.first()
         now = timezone.now()
-        announcements = AnnouncementBar.objects.filter(
+        announcements = AnnouncementBar.objects.filter(is_active=True).filter(
             Q(start_date__isnull=True) | Q(start_date__lte=now)
         ).filter(
             Q(end_date__isnull=True) | Q(end_date__gte=now)
@@ -35,7 +35,7 @@ def site_settings(request):
 def page_heroes(request):
     from pages.models import PageHero
     try:
-        heroes = {hero.page: hero for hero in PageHero.objects.all()}
+        heroes = {hero.page: hero for hero in PageHero.objects.filter(is_active=True)}
     except:
         heroes = {}
     return {

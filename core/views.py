@@ -9,16 +9,16 @@ from .models import Testimonial, Client, SocialPost, StoreLocation
 
 def home(request):
     """Homepage aggregation view."""
-    sliders = HeroSlider.objects.all().order_by('order')
+    sliders = HeroSlider.objects.filter(is_active=True).order_by('order')
     
     # Homepage Interleaving Logic
     # Homepage sections logic
-    homepage_sections_raw = Category.objects.filter(show_on_homepage=True)
+    homepage_sections_raw = Category.objects.filter(show_on_homepage=True, is_active=True)
     
     # Categories for the circular slider (Top)
     categories_circles = homepage_sections_raw
     if not categories_circles.exists():
-        categories_circles = Category.objects.filter(parent__isnull=True)[:10]
+        categories_circles = Category.objects.filter(parent__isnull=True, is_active=True)[:10]
     
     # Merge and Sort
     homepage_sections = []
@@ -44,28 +44,29 @@ def home(request):
     # Sort everything by the order value
     homepage_sections.sort(key=lambda x: x['order'])
 
-    about_us = AboutUs.objects.first()
+    about_us = AboutUs.objects.filter(is_active=True).first()
     
     # Batch Mission/Vision queries to reduce one round-trip
-    mv_sections = MissionVision.objects.filter(section_type__in=['mission', 'vision'])
+    mv_sections = MissionVision.objects.filter(section_type__in=['mission', 'vision'], is_active=True)
     mission = next((mv for mv in mv_sections if mv.section_type == 'mission'), None)
     vision = next((mv for mv in mv_sections if mv.section_type == 'vision'), None)
     
-    services = Service.objects.all()
-    counters = Counter.objects.all()
-    why_us = WhyUsCard.objects.all()
-    partners = Partner.objects.all().order_by('order')
-    gallery = GalleryItem.objects.all().order_by('order')[:8]
+    services = Service.objects.filter(is_active=True).order_by('order')
+    counters = Counter.objects.filter(is_active=True).order_by('order')
+    why_us = WhyUsCard.objects.filter(is_active=True).order_by('order')
+    partners = Partner.objects.filter(is_active=True).order_by('order')
+    gallery = GalleryItem.objects.filter(is_active=True).order_by('order')[:8]
     
-    testimonials = Testimonial.objects.all().order_by('order')
-    public_clients = Client.objects.filter(category='Public').order_by('order')
-    private_clients = Client.objects.filter(category='Private').order_by('order')
+    testimonials = Testimonial.objects.filter(is_active=True).order_by('order')
+    public_clients = Client.objects.filter(category='Public', is_active=True).order_by('order')
+    private_clients = Client.objects.filter(category='Private', is_active=True).order_by('order')
     social_posts = SocialPost.objects.all().order_by('order')[:6]
     
     # Optimized latest_products
     latest_products = Product.objects.filter(
-        quantity__gt=0
-    ).select_related('category').prefetch_related('offers').order_by('-id')[:4]
+        quantity__gt=0,
+        is_active=True
+    ).select_related('category').prefetch_related('offers', 'images').order_by('-id')[:8]
 
     # Fetch Products with active offers (either via Offer model or manual sale_price)
     now = timezone.now()
@@ -77,14 +78,25 @@ def home(request):
         models.Q(sale_price__isnull=False, sale_price__lt=models.F('regular_price'))
     ).distinct().select_related('category').prefetch_related('offers', 'images')
 
+    # Premium Featured Products
+    featured_products = Product.objects.filter(
+        is_featured=True,
+        is_active=True,
+        quantity__gt=0
+    ).select_related('category').prefetch_related('offers', 'images').order_by('-id')[:8]
+    
+    # Fallback to latest if none featured
+    if not featured_products.exists():
+        featured_products = latest_products
+
     # Homepage Collections: Filter active ones and prefetch related Products.
-    collections = Collection.objects.all().prefetch_related(
+    collections = Collection.objects.filter(is_active=True).prefetch_related(
         'products', 
         'products__category',
         'products__offers'
     )
 
-    brands = Brand.objects.filter(show_on_homepage=True)
+    brands = Brand.objects.filter(show_on_homepage=True, is_active=True).order_by('order')
 
     context = {
         'sliders': sliders,
@@ -103,6 +115,8 @@ def home(request):
         'private_clients': private_clients,
         'social_posts': social_posts,
         'latest_products': latest_products,
+        'featured_products': featured_products,
+        'promo_banners': banners,
         'homepage_sections': homepage_sections,
         'brands': brands,
     }

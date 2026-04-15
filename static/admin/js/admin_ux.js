@@ -86,12 +86,19 @@
                 
                 container.appendChild(removeBtn);
                 
-                // Smart Insertion: after label or at the top of the field
-                const label = fieldContainer.querySelector('label');
-                if (label) {
-                    label.after(container);
+                // Smart Insertion:
+                // In a tabular inline, insert right after the file input itself.
+                // Otherwise, insert after the label for a normal change-form field.
+                const isTabularInline = !!input.closest('.tabular.inline-related, .inline-group .tabular');
+                if (isTabularInline) {
+                    input.after(container);
                 } else {
-                    fieldContainer.prepend(container);
+                    const label = fieldContainer.querySelector('label');
+                    if (label) {
+                        label.after(container);
+                    } else {
+                        fieldContainer.prepend(container);
+                    }
                 }
             }
             

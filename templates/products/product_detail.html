@@ -1,191 +1,251 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-    <!-- Main Content Section -->
-    <section class="py-5 bg-white" style="margin-top: 80px;">
-        <div class="container py-4">
-            <div class="row">
-                <!-- Product Gallery - Dynamic Swiper -->
-                <div class="col-lg-6 mb-5 pr-lg-5">
-                    <div class="product-gallery">
-                        <!-- Main Image Display -->
-                        <div class="swiper product-main-slider mb-3 shadow-sm rounded-lg overflow-hidden border">
-                            <div class="swiper-wrapper">
-                                <!-- Main Primary Image -->
-                                <div class="swiper-slide text-center bg-white d-flex align-items-center justify-content-center" style="height: 350px;">
-                                    <a href="{{ product.get_image_url }}" data-fancybox="gallery">
-                                        <img src="{{ product.get_image_url }}" alt="{{ product.name }}" class="img-fluid" style="max-height: 100%; object-fit: contain;">
-                                    </a>
-                                </div>
-                                <!-- Additional Gallery Images -->
-                                {% for pimg in product.images.all %}
-                                <div class="swiper-slide text-center bg-white d-flex align-items-center justify-content-center" style="height: 350px;">
-                                    <a href="{{ pimg.get_image_url }}" data-fancybox="gallery">
-                                        <img src="{{ pimg.get_image_url }}" alt="{{ product.name }}-{{ forloop.counter }}" class="img-fluid" style="max-height: 100%; object-fit: contain;">
-                                    </a>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <div class="swiper-button-next"></div>
-                            <div class="swiper-button-prev"></div>
-                        </div>
+{% block split_css %}
+<style>
+    .product-gallery-thumb.active { @apply border-primary; }
+    .tab-btn.active { @apply bg-primary text-white shadow-xl shadow-primary/20; }
+    .tab-content-panel { display: none; }
+    .tab-content-panel.active { display: block; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+{% endblock %}
 
-                        <!-- Thumbnails Slider -->
-                        <div class="swiper product-thumbs-slider">
-                            <div class="swiper-wrapper">
-                                <div class="swiper-slide border rounded p-1 cursor-pointer" style="height: 80px; width: 80px;">
-                                    <img src="{{ product.get_image_url }}" class="img-fluid w-100 h-100" style="object-fit: contain;">
-                                </div>
-                                {% for pimg in product.images.all %}
-                                <div class="swiper-slide border rounded p-1 cursor-pointer" style="height: 80px; width: 80px;">
-                                    <img src="{{ pimg.get_image_url }}" class="img-fluid w-100 h-100" style="object-fit: contain;">
-                                </div>
-                                {% endfor %}
-                            </div>
+{% block content %}
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-6">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-10 text-[11px] font-black uppercase tracking-widest text-slate-400">
+            <a href="{% url 'core:home' %}" class="hover:text-primary transition-colors">Home</a>
+            <span class="mx-3 opacity-30">/</span>
+            {% if product.category %}
+            <a href="{{ product.category.get_absolute_url }}" class="hover:text-primary transition-colors">{{ product.category.name }}</a>
+            <span class="mx-3 opacity-30">/</span>
+            {% endif %}
+            <span class="text-slate-900 truncate max-w-[200px]">{{ product.name }}</span>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+            <!-- Left: Gallery -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="sticky top-32">
+                    <div class="aspect-square bg-slate-50 rounded-[40px] overflow-hidden border border-slate-100 relative group">
+                        <img id="main-product-image" src="{{ product.get_image_url }}" alt="{{ product.name }}" class="w-full h-full object-contain p-12 transition-transform duration-700 group-hover:scale-110">
+                        
+                        {% if product.badge %}
+                        <div class="absolute top-8 left-8 bg-{{ product.badge_color|default:'primary' }} text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
+                            {{ product.badge }}
                         </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Thumbnails -->
+                    {% if product.images.all %}
+                    <div class="flex gap-4 mt-6 overflow-x-auto pb-4 px-2">
+                        <button onclick="updateMainImage('{{ product.get_image_url }}', this)" class="product-gallery-thumb active flex-shrink-0 w-24 h-24 rounded-2xl border-2 bg-slate-50 p-2 transition-all">
+                            <img src="{{ product.get_image_url }}" class="w-full h-full object-contain">
+                        </button>
+                        {% for pimg in product.images.all %}
+                        <button onclick="updateMainImage('{{ pimg.image.url }}', this)" class="product-gallery-thumb flex-shrink-0 w-24 h-24 rounded-2xl border-2 border-transparent bg-slate-50 p-2 hover:border-slate-200 transition-all">
+                            <img src="{{ pimg.image.url }}" class="w-full h-full object-contain">
+                        </button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right: Details -->
+            <div class="lg:col-span-5 space-y-8">
+                <div class="space-y-4">
+                    {% if product.brand %}
+                    <a href="{{ product.brand.get_absolute_url }}" class="inline-block text-[10px] font-black uppercase tracking-[0.3em] text-primary hover:text-slate-900 transition-colors">
+                        {{ product.brand.name }}
+                    </a>
+                    {% endif %}
+                    
+                    <h1 class="text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tighter">
+                        {{ product.name }}
+                    </h1>
+
+                    <div class="flex items-center gap-4">
+                        <div class="flex text-yellow-400 text-sm">
+                            {% with ""|center:5 as range %}
+                            {% for _ in range %}
+                                <i class="{% if forloop.counter <= product.avg_rating %}fas{% else %}far{% endif %} fa-star"></i>
+                            {% endfor %}
+                            {% endwith %}
+                        </div>
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-widest">
+                            {{ product.avg_rating }} / {{ product.review_count }} Reviews
+                        </span>
                     </div>
                 </div>
 
-                <!-- Product Content -->
-                <div class="col-lg-6">
-                    <h2 class="font-weight-bold h1 mb-2" style="color:var(--primary-blue)">{{ product.name }}</h2>
-                    {% if product.brand %}
-                    <div class="mb-3">
-                        <span class="text-muted">Brand:</span> 
-                        <a href="{{ product.brand.get_absolute_url }}" class="text-primary font-weight-bold ml-1">{{ product.brand.name }}</a>
+                <!-- Price -->
+                {% with price_info=product.get_best_price_info %}
+                <div class="space-y-2">
+                    <div class="flex items-baseline gap-4">
+                        <span class="text-5xl font-black text-primary tracking-tighter">{{ price_info.final_price }} <span class="text-xs uppercase ml-1">AED</span></span>
+                        {% if price_info.has_offer %}
+                        <span class="text-xl text-slate-300 line-through font-bold">{{ price_info.regular_price }}</span>
+                        {% endif %}
+                    </div>
+                    {% if price_info.has_offer %}
+                    <div class="inline-block px-4 py-1.5 bg-red-50 text-red-600 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                        Save {{ price_info.discount_percentage }}% ({{ price_info.discount_amount }} AED)
                     </div>
                     {% endif %}
-                    
-                    <div class="mb-4">
-                        {% with price_info=product.get_best_price_info %}
-                        {% if price_info.has_offer %}
-                            <div class="d-flex align-items-baseline mb-1">
-                                <h1 class="font-weight-bold text-dark mb-0 mr-3">{{ price_info.final_price }} <small class="text-muted" style="font-size: 1rem;">AED</small></h1>
-                                <h4 class="text-muted mb-0"><del>{{ price_info.regular_price }} AED</del></h4>
-                            </div>
-                            <div class="d-flex align-items-center mb-4">
-                                <span class="badge badge-success px-3 py-2 mr-3" style="border-radius: 8px; font-size: 1rem; background-color: #28a745;">
-                                    <i class="fas fa-tag mr-1"></i> SAVE {{ price_info.discount_percentage }}%
-                                </span>
-                                <span class="text-success font-weight-bold" style="font-size: 1.1rem;">
-                                    (Save {{ price_info.discount_amount }} AED)
-                                </span>
-                            </div>
-                        {% else %}
-                            <h1 class="font-weight-bold text-dark">{{ price_info.final_price }} <small class="text-muted" style="font-size: 1rem;">AED</small></h1>
-                        {% endif %}
-                        {% endwith %}
-                    </div>
+                </div>
+                {% endwith %}
 
-                    <div class="mb-4">
-                        <h4 class="font-weight-bold text-dark border-bottom pb-2 mb-3">Features</h4>
-                        <div class="text-muted product-features" style="line-height: 1.8;">
-                            {{ product.features|safe }}
+                <p class="text-slate-500 font-medium leading-relaxed">
+                    {{ product.overview|striptags|truncatewords:50 }}
+                </p>
+
+                <!-- Features Preview -->
+                {% if product.features %}
+                <div class="grid grid-cols-1 gap-3">
+                    {% for feature in product.features_list|slice:":3" %}
+                    <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                            <i class="fas fa-check text-[10px]"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-700">{{ feature }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Selection & Cart -->
+                <div class="space-y-6 pt-6 border-t border-slate-100">
+                    <div class="flex items-center gap-8">
+                        <div class="space-y-2">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Select Quantity</p>
+                            <div class="flex items-center bg-slate-100 rounded-2xl p-1 w-fit">
+                                <button onclick="changeQty(-1)" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"><i class="fas fa-minus text-xs"></i></button>
+                                <input id="final-qty" type="number" value="1" min="1" max="{{ product.quantity }}" class="w-12 bg-transparent text-center border-none focus:ring-0 font-black text-slate-900">
+                                <button onclick="changeQty(1)" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"><i class="fas fa-plus text-xs"></i></button>
+                            </div>
+                        </div>
+                        <div class="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                            {% if product.quantity > 0 %}In Stock: {{ product.quantity }}{% else %}Out of Stock{% endif %}
                         </div>
                     </div>
 
-                    <div class="d-flex flex-column flex-sm-row my-5 align-items-center">
-                        <a href="{% url 'orders:add_to_cart' product_id=product.id %}" class="btn btn-primary px-5 py-3 shadow-lg font-weight-bold mb-3 mb-sm-0" style="border-radius: 8px; background-color: var(--primary-blue); min-width: 250px;"><i class="fas fa-cart-plus mr-2"></i>Add to Cart</a>
-                        
-                        <!-- Wishlist Button -->
-                        <button onclick="toggleWishlist({{ product.id }}, this)" 
-                                class="ml-sm-3 btn btn-outline-secondary px-4 py-3 d-flex align-items-center justify-content-center wishlist-detail-btn" 
-                                style="border-radius: 8px; min-width: 65px; height: 56px; border: 2px solid #f0f0f0; background: #fff; transition: 0.3s; outline:none; cursor:pointer;">
-                            <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart" 
-                               style="font-size: 1.4rem; {% if product.id in wishlist_ids %}color: var(--hm-red);{% endif %}"></i>
+                    <div class="flex gap-4">
+                        {% if product.quantity > 0 %}
+                        <button onclick="addToCartRequest()" class="flex-1 py-5 bg-primary text-white rounded-3xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3">
+                            <i class="fas fa-shopping-bag"></i> Add to Cart
+                        </button>
+                        {% else %}
+                        <button disabled class="flex-1 py-5 bg-slate-200 text-slate-400 rounded-3xl font-black text-xs uppercase tracking-widest cursor-not-allowed">
+                            Product Unavailable
+                        </button>
+                        {% endif %}
+                        <button data-product-id="{{ product.id }}" class="wishlist-btn w-16 h-16 rounded-3xl border-2 border-slate-100 flex items-center justify-center transition-all hover:bg-slate-50 hover:border-slate-200 group">
+                            <i class="{% if product.id in wishlist_ids %}fas text-red-500{% else %}far text-slate-400{% endif %} fa-heart text-xl transition-transform group-hover:scale-110"></i>
                         </button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Product Accordions -->
-            <div class="row mt-5 pt-4">
-                <div class="col-12">
-                    <div class="accordion" id="productSpecs">
-                        <!-- Technical Information -->
-                        <div class="card border-0 mb-3 shadow-sm" style="border-radius: 10px; overflow: hidden;">
-                            <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" data-toggle="collapse" data-target="#collapseTechnical">
-                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-tools mr-3 text-primary"></i> Technical Specifications</h5>
-                                <i class="fas fa-chevron-down text-muted"></i>
-                            </div>
-                            <div id="collapseTechnical" class="collapse show" data-parent="#productSpecs">
-                                <div class="card-body bg-white py-4 border-top">
-                                    {{ product.technical_info|safe|default:"<p class='text-muted'>Standard technical specifications apply. Customized according to the patient's needs, sizes and particular requirements.</p>" }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Overview -->
-                        <div class="card border-0 mb-3 shadow-sm" style="border-radius: 10px; overflow: hidden;">
-                            <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" data-toggle="collapse" data-target="#collapseOverview">
-                                <h5 class="mb-0 font-weight-bold text-dark"><i class="fas fa-info-circle mr-3 text-primary"></i> Description</h5>
-                                <i class="fas fa-chevron-down text-muted"></i>
-                            </div>
-                            <div id="collapseOverview" class="collapse" data-parent="#productSpecs">
-                                <div class="card-body bg-white py-4 border-top">
-                                    {{ product.overview|safe }}
-                                </div>
-                            </div>
-                        </div>
+                <!-- Trust Badges -->
+                <div class="grid grid-cols-2 gap-4 py-6 border-t border-slate-100">
+                    <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                        <i class="fas fa-shield-check text-emerald-600"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-emerald-900">Genuine Product</span>
+                    </div>
+                    <div class="flex items-center gap-3 px-4 py-3 bg-blue-50/50 rounded-2xl border border-blue-100">
+                        <i class="fas fa-truck-fast text-blue-600"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-blue-900">Fast Delivery</span>
                     </div>
                 </div>
             </div>
-
-            <!-- Related Products Section -->
-            {% if design_settings.pd_show_related|default:True %}
-            <div class="mt-5 pt-5 text-center">
-                <div class="mb-5">
-                    <h2 class="section-title mb-2">{{ design_settings.pd_related_title|default:"Related Products" }}</h2>
-                    <a href="{% url 'products:category_detail' slug=product.category.slug %}" class="text-secondary font-weight-bold text-decoration-none">View All <i class="fa fa-arrow-right ml-1 small"></i></a>
-                </div>
-                <div class="row">
-                    {% for rp in product.category.products.all %}
-                    {% if rp.id != product.id %}
-                    {% if forloop.counter <= design_settings.pd_related_count|default:4 %}
-                    <div class="col-lg-3 col-md-6 col-6 mb-4">
-                        <div class="card border-0 text-center h-100 shadow-sm category-card transition-all p-3 position-relative" style="border-radius: 15px;">
-                            <!-- Wishlist Heart -->
-                            <button onclick="toggleWishlist({{ rp.id }}, this)" 
-                                    class="wishlist-btn position-absolute" 
-                                    style="top: 10px; right: 10px; z-index: 10; background: white; border: none; width: 30px; height: 30px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: #888; transition: 0.3s; display: flex; align-items: center; justify-content: center; outline: none; cursor: pointer;">
-                                <i class="{% if rp.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart" 
-                                   style="font-size: 0.9rem; {% if rp.id in wishlist_ids %}color: var(--hm-red);{% endif %}"></i>
-                            </button>
-                            <a href="{% url 'products:product_detail' slug=rp.slug %}" class="text-decoration-none">
-                                <img src="{{ rp.get_image_url }}" class="img-fluid mb-3" style="height: 180px; object-fit: contain;">
-                                <h6 class="text-dark font-weight-bold mb-3" style="min-height: 3rem;">{{ rp.name }}</h6>
-                                <span class="btn btn-outline-primary btn-sm btn-block py-2 mb-2" style="border-radius: 10px;"><i class="fas fa-cart-plus mr-1"></i> Add to Cart</span>
-                            </a>
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
         </div>
-    </section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var thumbsSlider = new Swiper(".product-thumbs-slider", {
-                spaceBetween: 10,
-                slidesPerView: 4,
-                freeMode: true,
-                watchSlidesProgress: true,
-            });
-            var mainSlider = new Swiper(".product-main-slider", {
-                spaceBetween: 10,
-                navigation: {
-                    nextEl: ".swiper-button-next",
-                    prevEl: ".swiper-button-prev",
-                },
-                thumbs: {
-                    swiper: thumbsSlider,
-                },
-            });
-        });
-    </script>
+        <!-- Information Tabs -->
+        <div class="mt-32 max-w-5xl mx-auto">
+            <div class="flex items-center justify-center gap-4 mb-12">
+                <button onclick="switchTab('overview', this)" class="tab-btn active px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Overview</button>
+                {% if product.technical_info %}<button onclick="switchTab('specs', this)" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Specifications</button>{% endif %}
+                <button onclick="switchTab('shipping', this)" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Shipping & Returns</button>
+            </div>
+
+            <div class="bg-slate-50/50 rounded-[40px] p-8 lg:p-16 border border-slate-100 min-h-[300px]">
+                <div id="overview-tab" class="tab-content-panel active">
+                    <div class="prose prose-slate max-w-none prose-headings:font-black prose-headings:tracking-tighter prose-p:font-medium prose-p:leading-relaxed text-slate-600">
+                        {{ product.overview|safe }}
+                    </div>
+                </div>
+                <div id="specs-tab" class="tab-content-panel">
+                    <div class="prose prose-slate max-w-none text-slate-600">
+                        {{ product.technical_info|safe }}
+                    </div>
+                </div>
+                <div id="shipping-tab" class="tab-content-panel">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div class="space-y-6">
+                            <h4 class="text-xl font-black text-slate-900">Dispatch & Delivery</h4>
+                            <p class="text-sm font-medium text-slate-500 leading-relaxed">
+                                All orders are processed within 24 hours. We offer express shipping across all UAE Emirates with a standard delivery time of 2-3 business days.
+                            </p>
+                        </div>
+                        <div class="space-y-6">
+                            <h4 class="text-xl font-black text-slate-900">Secure Packaging</h4>
+                            <p class="text-sm font-medium text-slate-500 leading-relaxed">
+                                Our products are professionally packaged in temperature-controlled environments to ensure they reach you in perfect condition.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Masterpieces -->
+        {% if design_settings.pd_show_related and related_products %}
+        <div class="mt-32">
+            <div class="flex flex-col items-center justify-center text-center mb-16 space-y-4">
+                <h3 class="text-xs font-black uppercase tracking-[0.3em] text-primary">Discover More</h3>
+                <h4 class="text-4xl font-black text-slate-900 tracking-tighter">{{ design_settings.pd_related_title|safe }}</h4>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% for rp in related_products %}
+                    {% include 'includes/_premium_product_card.html' with product=rp %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function updateMainImage(src, thumb) {
+        document.getElementById('main-product-image').src = src;
+        document.querySelectorAll('.product-gallery-thumb').forEach(t => t.classList.remove('active', 'border-primary'));
+        thumb.classList.add('active', 'border-primary');
+    }
+
+    function changeQty(delta) {
+        const input = document.getElementById('final-qty');
+        let val = parseInt(input.value) + delta;
+        if (val < 1) val = 1;
+        if (val > {{ product.quantity }}) val = {{ product.quantity }};
+        input.value = val;
+    }
+
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(tabId + '-tab').classList.add('active');
+    }
+
+    function addToCartRequest() {
+        const qty = document.getElementById('final-qty').value;
+        const baseUrl = "{% url 'orders:add_to_cart' product_id=product.id %}";
+        window.location.href = `${baseUrl}?qty=${qty}`;
+    }
+</script>
 {% endblock %}
