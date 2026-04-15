@@ -341,3 +341,19 @@ body:not(.is-home) #hamburger-icon {
     color: #0f172a !important;
 }
 
+/* High-Stability Button Overrides */
+.primary-accent-btn {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.primary-accent-btn i, 
+.primary-accent-btn span, 
+.primary-accent-btn p {
+    color: white !important;
+}
+
+.primary-accent-btn:hover {
+    background-color: var(--secondary) !important;
+}
