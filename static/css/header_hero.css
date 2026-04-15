@@ -17,6 +17,10 @@ body:not(.is-home) .glass-header-container {
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
+.shadow-header {
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
 .scrolled .glass-header-container .premium-icon,
 .scrolled .glass-header-container .nav-link,
 body:not(.is-home) .glass-header-container .premium-icon,
@@ -179,7 +183,7 @@ body:not(.is-home) .categories-trigger {
     flex-grow: 1;
     padding-left: 30px;
     display: none;
-    grid-template-cols: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 15px;
 }
 
@@ -278,6 +282,7 @@ body:not(.is-home) .quick-nav-link:hover {
 .categories-trigger,
 .premium-icon-text-small {
     color: white !important;
+    text-shadow: 0 1px 15px rgba(0,0,0,0.3);
 }
 
 /* Scrolled/Non-home explicit overrides - HIGHER SPECIFICITY */
@@ -312,6 +317,7 @@ body:not(.is-home) .bg-primary .premium-icon,
 body:not(.is-home) .bg-primary span,
 body:not(.is-home) .bg-primary p {
     color: white !important;
+    text-shadow: none !important; /* No shadow needed inside dark buttons */
 }
 
 /* Search Input Placeholder */
@@ -327,6 +333,7 @@ body:not(.is-home) .search-input::placeholder {
 /* Mobile Hamburger Color */
 #hamburger-icon {
     color: white !important;
+    text-shadow: 0 1px 15px rgba(0,0,0,0.3);
 }
 
 .scrolled #hamburger-icon,
