@@ -19,6 +19,11 @@
     /* Category Circle Effects */
     .category-card:hover .cat-img { transform: scale(1.1); }
     .category-card:hover .cat-ring { transform: scale(1.1); opacity: 1; }
+
+    /* Infinite Marquee Animation Smoothness */
+    .brands-swiper .swiper-wrapper {
+        transition-timing-function: linear !important;
+    }
 </style>
 {% endblock %}
 
@@ -261,12 +266,22 @@
         <div class="text-center mb-16 space-y-4">
             <h3 class="text-xs font-black uppercase tracking-[0.4em] text-primary">{{ design_settings.hp_clients_title|safe }}</h3>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
-            {% for client in public_clients %}
-            <div class="flex items-center justify-center p-8 bg-slate-50 rounded-3xl grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all">
-                <img src="{{ client.get_image_url }}" alt="{{ client.name }}" class="max-h-12 w-auto object-contain">
+        <div class="swiper brands-swiper">
+            <div class="swiper-wrapper flex items-center">
+                {% for client in public_clients %}
+                <div class="swiper-slide flex items-center justify-center p-8 bg-slate-50 rounded-3xl grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all">
+                    <img src="{{ client.get_image_url }}" alt="{{ client.name }}" class="max-h-8 sm:max-h-12 w-auto object-contain">
+                </div>
+                {% endfor %}
+                <!-- Double the logos if few for seamless loop -->
+                {% if public_clients.count < 10 %}
+                    {% for client in public_clients %}
+                    <div class="swiper-slide flex items-center justify-center p-8 bg-slate-50 rounded-3xl grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all">
+                        <img src="{{ client.get_image_url }}" alt="{{ client.name }}" class="max-h-8 sm:max-h-12 w-auto object-contain">
+                    </div>
+                    {% endfor %}
+                {% endif %}
             </div>
-            {% endfor %}
         </div>
     </div>
 </section>
@@ -328,17 +343,21 @@
         loop: false
     });
 
-    // Brands Marquee
+    // Brands Marquee (Infinite Linear Scroll)
     new Swiper('.brands-swiper', {
         slidesPerView: 2,
-        spaceBetween: 40,
+        spaceBetween: 24,
         loop: true,
-        autoplay: { delay: 1, disableOnInteraction: false },
-        speed: 5000,
+        autoplay: {
+            delay: 0,
+            disableOnInteraction: false,
+        },
+        speed: 4000,
+        allowTouchMove: false,
         breakpoints: {
-            640: { slidesPerView: 3 },
-            1024: { slidesPerView: 5 },
-            1440: { slidesPerView: 6 }
+            640: { slidesPerView: 3, spaceBetween: 32 },
+            1024: { slidesPerView: 5, spaceBetween: 40 },
+            1440: { slidesPerView: 6, spaceBetween: 48 }
         }
     });
 
