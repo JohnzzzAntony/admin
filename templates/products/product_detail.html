@@ -64,7 +64,7 @@
                     </a>
                     {% endif %}
                     
-                    <h1 class="text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tighter">
+                    <h1 class="text-3xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tighter">
                         {{ product.name }}
                     </h1>
 
@@ -86,7 +86,7 @@
                 {% with price_info=product.get_best_price_info %}
                 <div class="space-y-2">
                     <div class="flex items-baseline gap-4">
-                        <span class="text-5xl font-black text-primary tracking-tighter">{{ price_info.final_price }} <span class="text-xs uppercase ml-1">AED</span></span>
+                        <span class="text-4xl lg:text-5xl font-black text-primary tracking-tighter">{{ price_info.final_price }} <span class="text-xs uppercase ml-1">AED</span></span>
                         {% if price_info.has_offer %}
                         <span class="text-xl text-slate-300 line-through font-bold">{{ price_info.regular_price }}</span>
                         {% endif %}
