@@ -20,7 +20,15 @@ class PageHero(models.Model):
     )
     hero_image_url = models.URLField(blank=True, null=True, help_text="Alternative external link for hero image.")
     title = models.CharField(max_length=255, blank=True, help_text="Main title on the hero section.")
+    title_html = models.CharField(max_length=512, blank=True, help_text="HTML Title (e.g. Our <span class='italic text-primary'>Legacy</span>). If provided, overrides Title.")
     subtitle = models.TextField(blank=True, help_text="Subtitle or description below the title.")
+    
+    button_text = models.CharField(max_length=100, blank=True, help_text="Primary button text.")
+    button_link = models.CharField(max_length=255, blank=True, help_text="Link for primary button.")
+    button_2_text = models.CharField(max_length=100, blank=True, help_text="Secondary button text.")
+    button_2_link = models.CharField(max_length=255, blank=True, help_text="Link for secondary button.")
+    
+    alignment = models.CharField(max_length=20, choices=(('center', 'Center'), ('left', 'Left'), ('right', 'Right')), default='center')
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Hidden')))
     
     @property
@@ -40,8 +48,24 @@ class AboutUs(models.Model):
     title = models.CharField(max_length=255, default="About Us")
     heading = models.CharField(max_length=255, default="We craft solutions that enhance and Simplify Lives.")
     content = RichTextField()
+    
+    image = models.ImageField(upload_to="about/", null=True, blank=True, help_text="Primary image for the story section.")
+    image_url = models.URLField(blank=True, null=True, help_text="External URL for primary image.")
+    image_alt = models.CharField(max_length=255, blank=True, default="JKR Story Image")
+    
+    experience_value = models.CharField(max_length=20, default="12+", help_text="e.g. 12+, 500+")
+    experience_label = models.CharField(max_length=100, default="Years of Trust")
+    
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     def __str__(self): return f"{self.title} Settings"
+    
+    @property
+    def get_image_url(self):
+        try:
+            if self.image: return self.image.url
+            if self.image_url: return self.image_url
+        except Exception: pass
+        return "https://via.placeholder.com/800x1000"
     class Meta: verbose_name_plural = "About Us Settings"
 
 class VideoCard(models.Model):
@@ -76,6 +100,7 @@ class MissionVision(models.Model):
         help_text="Recommended: 1200x800px. JPG, WEBP. Max 2MB."
     )
     image_url = models.URLField(blank=True, null=True)
+    image_alt = models.CharField(max_length=255, blank=True, null=True)
     icon_svg = models.TextField(blank=True, help_text="Paste SVG code here.")
     section_type = models.CharField(max_length=20, choices=SECTION_TYPES, unique=True)
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Hidden')))
@@ -138,6 +163,7 @@ class GalleryItem(models.Model):
         help_text="Recommended: 1000x1000px or 1200x800px. JPG, WEBP. Max 2MB."
     )
     image_url = models.URLField(blank=True, null=True)
+    image_alt = models.CharField(max_length=255, blank=True, null=True, help_text="SEO Alt Text")
     category = models.CharField(max_length=100, blank=True)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
@@ -160,6 +186,7 @@ class Partner(models.Model):
         help_text="Brand Logo. Recommended: 400x400px (Transparent PNG). Max 500KB."
     )
     logo_url = models.URLField(blank=True, null=True)
+    logo_alt = models.CharField(max_length=255, blank=True, null=True)
     icon_svg = models.TextField(blank=True, help_text="Paste SVG logo code here. Used if provided.")
     website_url = models.URLField(blank=True, help_text="Optional link to partner website")
     order = models.PositiveIntegerField(default=0)

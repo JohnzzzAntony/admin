@@ -70,6 +70,7 @@ class BannerItem(models.Model):
     banner_section = models.ForeignKey(PromoBanner, related_name='items', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='banners/', null=True, blank=True)
     image_url = models.URLField(blank=True, null=True, help_text="Direct link if image is externally hosted.")
+    image_alt = models.CharField(max_length=255, blank=True, null=True)
     link = models.CharField(max_length=255, blank=True, help_text="Link path (e.g., /shop/ or full URL).")
     title = models.CharField(max_length=255, blank=True, help_text="Optional overlay text.")
     subtitle = models.CharField(max_length=255, blank=True)

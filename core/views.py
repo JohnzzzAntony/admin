@@ -127,10 +127,12 @@ def about_us_view(request):
     about_us = AboutUs.objects.first()
     mission = MissionVision.objects.filter(section_type='mission').first()
     vision = MissionVision.objects.filter(section_type='vision').first()
+    counters = Counter.objects.filter(is_active=True).order_by('order')
     return render(request, 'pages/about.html', {
         'about_us': about_us,
         'mission': mission,
-        'vision': vision
+        'vision': vision,
+        'counters': counters
     })
 
 def services_view(request):

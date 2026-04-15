@@ -32,6 +32,7 @@ class Category(models.Model):
         help_text="Recommended: 512x512px. JPG, PNG, WEBP. Max 1MB."
     )
     image_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted image.")
+    image_alt = models.CharField(max_length=255, blank=True, null=True, help_text="Descriptive text for the category image.")
     icon_svg = models.TextField(blank=True, help_text="Paste SVG icon code here. Used if provided.")
     
     # Meta / Controls
@@ -373,6 +374,7 @@ class Collection(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     banner = models.ImageField(upload_to='collections/', null=True, blank=True)
     banner_url = models.URLField(blank=True, null=True)
+    banner_alt = models.CharField(max_length=255, blank=True, null=True)
     products = models.ManyToManyField(Product, related_name='collections', blank=True)
     display_order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
