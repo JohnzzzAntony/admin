@@ -184,7 +184,7 @@
                                         <i class="fas fa-chevron-right text-[10px] opacity-20"></i>
                                         
                                         <!-- Dynamic Panel (Hover sensitive) -->
-                                        <div class="subcategory-panel absolute left-[240px] top-0 bottom-0 w-[560px] bg-white rounded-r-2xl p-8 overflow-y-auto pointer-events-none group-hover/item:pointer-events-auto">
+                                        <div class="subcategory-panel absolute left-[240px] top-0 bottom-0 w-[560px] bg-white rounded-r-2xl p-8 overflow-y-auto transition-all">
                                             <div class="space-y-6">
                                                 <h4 class="text-xl font-black text-slate-900 border-b pb-4">{{ cat.name }}</h4>
                                                 
@@ -255,7 +255,7 @@
                         </div>
                     </button>
                     <!-- Account Dropdown -->
-                    <div class="dropdown-menu right-0 left-auto origin-top-right mt-4 p-2 w-56 !rounded-2xl bg-white shadow-2xl overflow-hidden border-none pointer-events-none group-hover:pointer-events-auto">
+                    <div class="dropdown-menu right-0 left-auto origin-top-right p-2 w-56 !rounded-2xl bg-white shadow-2xl overflow-hidden border-none transition-all duration-300">
                         {% if user.is_authenticated %}
                         <div class="p-4 bg-slate-50/50 rounded-xl mb-1">
                              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Signed in as</p>

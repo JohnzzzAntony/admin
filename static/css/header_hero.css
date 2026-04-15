@@ -124,10 +124,31 @@ body:not(.is-home) .categories-trigger {
 }
 
 /* Trigger for other dropdowns (like Account) */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    margin-top: 15px; /* Visual gap */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    z-index: 1000;
+}
+
 .group:hover .dropdown-menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+}
+
+/* Hover Bridge for standard dropdowns */
+.dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 25px;
+    background: transparent;
 }
 
 .category-list {
