@@ -24,9 +24,26 @@ def create_invoice_pdf(order):
     table_header_style = ParagraphStyle('TableHeader', parent=styles['Normal'], fontSize=10, textColor=colors.whitesmoke, fontName='Helvetica-Bold')
 
     # 1. Header (Brand & Invoice Info)
+    from core.models import SiteSettings
+    site_settings = SiteSettings.objects.first()
+    
+    brand_name = site_settings.company_name if site_settings and site_settings.company_name else "Demo International"
+    
+    # Company Contact Info for Header
+    company_addr = ""
+    if site_settings:
+        addr_parts = []
+        if site_settings.dubai_address:
+            addr_parts.append(site_settings.dubai_address.replace('\n', '<br/>'))
+        if site_settings.phone:
+            addr_parts.append(f"Phone: {site_settings.phone}")
+        if site_settings.email:
+            addr_parts.append(f"Email: {site_settings.email}")
+        company_addr = "<br/>".join(addr_parts)
+
     header_data = [
         [
-            Paragraph("Demo International", brand_style),
+            Paragraph(f"{brand_name}<br/><font size='8' color='#666666'>{company_addr}</font>", brand_style),
             Paragraph(f"<b>INVOICE</b><br/>Order #Demo-{order.pk:05d}<br/>Date: {order.created_at.strftime('%Y-%m-%d')}", header_style)
         ]
     ]
@@ -41,12 +58,29 @@ def create_invoice_pdf(order):
     ]
     
     from django.utils.html import escape
-    ship_to = f"{escape(order.first_name)} {escape(order.last_name)}<br/>{escape(order.street)}<br/>{escape(order.city)}, {escape(order.country)}<br/>Phone: {escape(order.phone)}"
+    
+    def format_address(obj, prefix=""):
+        fname = getattr(obj, f"{prefix}first_name")
+        lname = getattr(obj, f"{prefix}last_name")
+        street = getattr(obj, f"{prefix}street")
+        street2 = getattr(obj, f"{prefix}street2")
+        emirates = getattr(obj, f"{prefix}emirates")
+        city = getattr(obj, f"{prefix}city")
+        country = getattr(obj, f"{prefix}country")
+        phone = getattr(obj, f"{prefix}phone")
+        
+        lines = [f"<b>{escape(fname)} {escape(lname)}</b>", escape(street)]
+        if street2: lines.append(escape(street2))
+        lines.append(f"{escape(emirates or city)}, {escape(country)}")
+        lines.append(f"Phone: {escape(phone)}")
+        return "<br/>".join(lines)
+
+    ship_to = format_address(order)
     
     if order.billing_address_same_as_shipping:
         bill_to = ship_to
     else:
-        bill_to = f"{escape(order.billing_first_name)} {escape(order.billing_last_name)}<br/>{escape(order.billing_street)}<br/>{escape(order.billing_city)}, {escape(order.billing_country)}<br/>Phone: {escape(order.billing_phone)}"
+        bill_to = format_address(order, prefix="billing_")
     
     addr_data.append([Paragraph(ship_to, header_style), Paragraph(bill_to, header_style)])
     

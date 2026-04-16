@@ -22,7 +22,7 @@ class HeroSliderAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Header Information', {
-            'fields': (('title', 'subtitle'), 'order'),
+            'fields': (('title', 'badge_text'), 'order'),
         }),
         ('Background Media', {
             'fields': (('image', 'image_url'), ('video', 'video_url')),

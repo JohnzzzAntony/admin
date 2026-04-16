@@ -61,13 +61,27 @@
                                 <input type="tel" name="phone" placeholder="+971..." class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{{ form_data.phone|default:'' }}" required>
                             </div>
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">City *</label>
-                                <input type="text" name="city" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{{ form_data.city|default:'' }}" required>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Emirates *</label>
+                                <select name="emirates" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all appearance-none cursor-pointer" required>
+                                    <option value="" disabled selected>Select Emirate</option>
+                                    <option value="Abu Dhabi" {% if form_data.emirates == 'Abu Dhabi' %}selected{% endif %}>Abu Dhabi</option>
+                                    <option value="Dubai" {% if form_data.emirates == 'Dubai' or not form_data.emirates %}selected{% endif %}>Dubai</option>
+                                    <option value="Sharjah" {% if form_data.emirates == 'Sharjah' %}selected{% endif %}>Sharjah</option>
+                                    <option value="Ajman" {% if form_data.emirates == 'Ajman' %}selected{% endif %}>Ajman</option>
+                                    <option value="Umm Al Quwain" {% if form_data.emirates == 'Umm Al Quwain' %}selected{% endif %}>Umm Al Quwain</option>
+                                    <option value="Ras Al Khaimah" {% if form_data.emirates == 'Ras Al Khaimah' %}selected{% endif %}>Ras Al Khaimah</option>
+                                    <option value="Fujairah" {% if form_data.emirates == 'Fujairah' %}selected{% endif %}>Fujairah</option>
+                                </select>
                             </div>
                             <div class="space-y-2 md:col-span-2">
-                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Street Address</label>
-                                <input type="text" name="street" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{{ form_data.street|default:'' }}">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Address (Street & Building) *</label>
+                                <input type="text" name="street" placeholder="e.g. Al Sufouh St, Tower A, Apt 101" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{{ form_data.street|default:'' }}" required>
                             </div>
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Address 2 (Area, Landmark)</label>
+                                <input type="text" name="street2" placeholder="e.g. Near Mall of the Emirates" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all" value="{{ form_data.street2|default:'' }}">
+                            </div>
+                            <input type="hidden" name="city" value="Multiple">
                         </div>
 
                         <div class="pt-8 border-t border-slate-100">
@@ -103,8 +117,25 @@
                                     <input type="text" name="billing_last_name" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm" value="{{ form_data.b_last_name|default:'' }}">
                                 </div>
                                 <div class="space-y-2 md:col-span-2">
+                                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Billing Emirates</label>
+                                    <select name="billing_emirates" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+                                        <option value="" disabled {% if not form_data.b_emirates %}selected{% endif %}>Select Emirate</option>
+                                        <option value="Abu Dhabi" {% if form_data.b_emirates == 'Abu Dhabi' %}selected{% endif %}>Abu Dhabi</option>
+                                        <option value="Dubai" {% if form_data.b_emirates == 'Dubai' %}selected{% endif %}>Dubai</option>
+                                        <option value="Sharjah" {% if form_data.b_emirates == 'Sharjah' %}selected{% endif %}>Sharjah</option>
+                                        <option value="Ajman" {% if form_data.b_emirates == 'Ajman' %}selected{% endif %}>Ajman</option>
+                                        <option value="Umm Al Quwain" {% if form_data.b_emirates == 'Umm Al Quwain' %}selected{% endif %}>Umm Al Quwain</option>
+                                        <option value="Ras Al Khaimah" {% if form_data.b_emirates == 'Ras Al Khaimah' %}selected{% endif %}>Ras Al Khaimah</option>
+                                        <option value="Fujairah" {% if form_data.b_emirates == 'Fujairah' %}selected{% endif %}>Fujairah</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2 md:col-span-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Billing Street</label>
                                     <input type="text" name="billing_street" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm" value="{{ form_data.b_street|default:'' }}">
+                                </div>
+                                <div class="space-y-2 md:col-span-2">
+                                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Billing Street 2</label>
+                                    <input type="text" name="billing_street2" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm" value="{{ form_data.b_street2|default:'' }}">
                                 </div>
                             </div>
                         </div>

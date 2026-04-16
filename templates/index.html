@@ -20,9 +20,11 @@
     .category-card:hover .cat-img { transform: scale(1.1); }
     .category-card:hover .cat-ring { transform: scale(1.1); opacity: 1; }
 
-    /* Infinite Marquee Animation Smoothness */
+    /* Continuous Infinite Marquee Effects */
+    .category-swiper .swiper-wrapper,
     .partners-marquee .swiper-wrapper,
-    .brands-marquee .swiper-wrapper {
+    .brands-marquee .swiper-wrapper,
+    .testimonial-swiper .swiper-wrapper {
         transition-timing-function: linear !important;
     }
 </style>
@@ -57,6 +59,14 @@
                             {{ slider.description|safe|linebreaksbr }}
                         </p>
                         
+                        {% if slider.button_text %}
+                        <div class="pt-4">
+                            <a href="{% if slider.button_link %}{{ slider.button_link }}{% else %}{% url 'products:product_list' %}{% endif %}" class="inline-flex items-center gap-4 px-10 py-5 bg-primary text-white rounded-full font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 transition-all active:scale-95 group">
+                                {{ slider.button_text }}
+                                <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -170,19 +180,19 @@
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-1 {% if section.data.layout == '2_col' %}lg:grid-cols-2{% elif section.data.layout == '3_col' %}lg:grid-cols-3{% else %}grid-cols-1{% endif %} gap-10">
                 {% for item in section.data.items.all %}
-                <div class="relative group overflow-hidden h-[550px] {% if section.data.shape == 'rounded' %}rounded-[48px]{% elif section.data.shape == 'pill' %}rounded-full{% endif %} shadow-2xl">
+                <a href="{% if item.link %}{{ item.link }}{% else %}{% url 'products:product_list' %}{% endif %}" class="group relative block overflow-hidden h-[550px] {% if section.data.shape == 'rounded' %}rounded-[48px]{% elif section.data.shape == 'pill' %}rounded-full{% endif %} shadow-2xl">
                     <img src="{{ item.get_image_url }}" alt="{{ item.title }}" class="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
                     <div class="absolute inset-0 p-12 flex flex-col justify-end gap-4 transform transition-all duration-700 group-hover:translate-y-[-10px]">
                         {% if item.subtitle %}<span class="text-[10px] font-black text-white/50 uppercase tracking-[0.4em]">{{ item.subtitle }}</span>{% endif %}
                         <h3 class="text-4xl lg:text-5xl font-black text-white leading-tight tracking-tighter">{{ item.title }}</h3>
                         <div class="pt-6">
-                            <a href="{{ item.link }}" class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white text-slate-950 hover:bg-primary hover:text-white transition-all transform hover:rotate-[-45deg] scale-100 ring-4 ring-white/10">
+                            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white text-slate-950 group-hover:bg-primary group-hover:text-white transition-all transform group-hover:rotate-[-45deg] scale-100 ring-4 ring-white/10">
                                 <i class="fas fa-arrow-right"></i>
-                            </a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
         </div>
@@ -348,13 +358,15 @@
         pagination: { el: '.swiper-pagination', clickable: true }
     });
 
-    // Luxury Category Swiper
+    // Luxury Category Swiper (Continuous)
     new Swiper('.category-swiper', {
         slidesPerView: 2,
         spaceBetween: 24,
         loop: true,
-        autoplay: { delay: 4000, disableOnInteraction: false },
-        speed: 1000,
+        autoplay: { delay: 0, disableOnInteraction: false },
+        speed: 5000,
+        grabCursor: true,
+        allowTouchMove: true,
         breakpoints: {
             640: { slidesPerView: 3, spaceBetween: 32 },
             1024: { slidesPerView: 5, spaceBetween: 40 },
@@ -362,14 +374,15 @@
         }
     });
 
-    // Infinite Partners Marquee
+    // Clients Marquee (Continuous)
     new Swiper('.partners-marquee', {
         slidesPerView: 2,
         spaceBetween: 24,
         loop: true,
         autoplay: { delay: 0, disableOnInteraction: false },
-        speed: 4000,
-        allowTouchMove: false,
+        speed: 6000,
+        grabCursor: true,
+        allowTouchMove: true,
         breakpoints: {
             640: { slidesPerView: 3, spaceBetween: 32 },
             1024: { slidesPerView: 5, spaceBetween: 40 },
@@ -377,14 +390,15 @@
         }
     });
 
-    // Infinite Brands Marquee
+    // Brands Marquee (Continuous)
     new Swiper('.brands-marquee', {
         slidesPerView: 2,
         spaceBetween: 24,
         loop: true,
         autoplay: { delay: 0, disableOnInteraction: false },
-        speed: 5000,
-        allowTouchMove: false,
+        speed: 7000,
+        grabCursor: true,
+        allowTouchMove: true,
         breakpoints: {
             640: { slidesPerView: 3, spaceBetween: 32 },
             1024: { slidesPerView: 4, spaceBetween: 40 },
@@ -392,13 +406,15 @@
         }
     });
 
-    // Testimonial Swiper
+    // Testimonial Swiper (Continuous)
     new Swiper('.testimonial-swiper', {
         slidesPerView: 1.2,
         spaceBetween: 24,
         loop: true,
-        autoplay: { delay: 6000, disableOnInteraction: false },
-        speed: 1000,
+        autoplay: { delay: 0, disableOnInteraction: false },
+        speed: 8000,
+        grabCursor: true,
+        allowTouchMove: true,
         navigation: { nextEl: '.test-next', prevEl: '.test-prev' },
         breakpoints: {
             768: { slidesPerView: 1.5, spaceBetween: 32 },

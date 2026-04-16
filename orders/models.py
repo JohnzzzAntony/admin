@@ -38,6 +38,8 @@ class QuoteEnquiry(models.Model):
     country = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     street = models.CharField(max_length=255, blank=True)
+    street2 = models.CharField(max_length=255, blank=True, verbose_name="Street Address 2")
+    emirates = models.CharField(max_length=100, blank=True, verbose_name="Emirate/State")
     phone = models.CharField(max_length=50)
     comment = models.TextField(blank=True)
     status = models.CharField(max_length=20, default='New', choices=(
@@ -93,6 +95,16 @@ class CustomerOrder(models.Model):
         ('refund',            'Refund'),
     )
 
+    EMIRATES_CHOICES = (
+        ('Abu Dhabi', 'Abu Dhabi'),
+        ('Dubai', 'Dubai'),
+        ('Sharjah', 'Sharjah'),
+        ('Ajman', 'Ajman'),
+        ('Umm Al Quwain', 'Umm Al Quwain'),
+        ('Ras Al Khaimah', 'Ras Al Khaimah'),
+        ('Fujairah', 'Fujairah'),
+    )
+
     # ── Billing / Customer ──────────────────────────────────────────────────
     user        = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     is_guest    = models.BooleanField(default=False)
@@ -106,6 +118,8 @@ class CustomerOrder(models.Model):
     country     = models.CharField(max_length=100)
     city        = models.CharField(max_length=100)
     street      = models.CharField(max_length=255, blank=True)
+    street2     = models.CharField(max_length=255, blank=True, verbose_name="Street Address 2")
+    emirates    = models.CharField(max_length=50, choices=EMIRATES_CHOICES, default='Dubai')
     comment     = models.TextField(blank=True, verbose_name="Customer Notes")
 
     # TRN (Tax Registration Number)
@@ -126,6 +140,8 @@ class CustomerOrder(models.Model):
     billing_country = models.CharField(max_length=100, blank=True)
     billing_city = models.CharField(max_length=100, blank=True)
     billing_street = models.CharField(max_length=255, blank=True)
+    billing_street2 = models.CharField(max_length=255, blank=True, verbose_name="Billing Street Address 2")
+    billing_emirates = models.CharField(max_length=50, choices=EMIRATES_CHOICES, blank=True)
 
     # ── Payment ─────────────────────────────────────────────────────────────
     payment_method  = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default='cod')

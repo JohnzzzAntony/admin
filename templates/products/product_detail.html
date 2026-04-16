@@ -3,8 +3,8 @@
 
 {% block split_css %}
 <style>
-    .product-gallery-thumb.active { @apply border-primary; }
-    .tab-btn.active { @apply bg-primary text-white shadow-xl shadow-primary/20; }
+    .product-gallery-thumb.active { border-color: var(--primary); }
+    .tab-btn.active { background-color: var(--primary); color: white; box-shadow: 0 20px 25px -5px rgba(var(--primary-rgb), 0.2), 0 10px 10px -5px rgba(var(--primary-rgb), 0.1); }
     .tab-content-panel { display: none; }
     .tab-content-panel.active { display: block; animation: fadeIn 0.5s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

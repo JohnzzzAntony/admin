@@ -162,20 +162,19 @@ body:not(.is-home) .categories-trigger {
 }
 
 .category-item {
-    padding: 12px 20px;
     font-size: 13px;
     font-weight: 700;
     color: #475569;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .category-item:hover, .category-item.active {
     background: #f8fafc;
+}
+
+.category-item:hover a, .category-item.active a {
     color: var(--primary);
 }
 

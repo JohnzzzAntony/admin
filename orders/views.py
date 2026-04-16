@@ -134,6 +134,8 @@ def checkout_billing(request):
             'country':    request.POST.get('country', ''),
             'city':       request.POST.get('city', ''),
             'street':     request.POST.get('street', ''),
+            'street2':    request.POST.get('street2', ''),
+            'emirates':   request.POST.get('emirates', ''),
             'comment':    request.POST.get('comment', ''),
             'trn':        request.POST.get('trn', ''),
             'billing_same': request.POST.get('billing_address_same_as_shipping') == 'on',
@@ -144,6 +146,8 @@ def checkout_billing(request):
             'b_country':    request.POST.get('billing_country', ''),
             'b_city':       request.POST.get('billing_city', ''),
             'b_street':     request.POST.get('billing_street', ''),
+            'b_street2':    request.POST.get('billing_street2', ''),
+            'b_emirates':   request.POST.get('billing_emirates', ''),
         }
         request.session['checkout_billing'] = billing
         return redirect('orders:checkout_payment')
@@ -196,6 +200,8 @@ def checkout_payment(request):
                 country=billing.get('country', ''),
                 city=billing.get('city', ''),
                 street=billing.get('street', ''),
+                street2=billing.get('street2', ''),
+                emirates=billing.get('emirates', 'Dubai'),
                 comment=billing.get('comment', ''),
                 
                 # TRN & Billing
@@ -208,6 +214,8 @@ def checkout_payment(request):
                 billing_country=billing.get('b_country', ''),
                 billing_city=billing.get('b_city', ''),
                 billing_street=billing.get('b_street', ''),
+                billing_street2=billing.get('b_street2', ''),
+                billing_emirates=billing.get('b_emirates', ''),
 
                 payment_method=payment_method,
                 status='pending',
@@ -509,7 +517,7 @@ def submit_enquiry(request):
             messages.warning(request, "Your cart is empty.")
             return redirect('orders:enquiry_cart')
         billing = {k: request.POST.get(k, '') for k in
-                   ['first_name','last_name','email','department','country','city','street','phone','comment']}
+                   ['first_name','last_name','email','department','country','city','street', 'street2', 'emirates', 'phone','comment']}
         enquiry = QuoteEnquiry.objects.create(**billing)
         for product_id, item_data in cart.items():
             product = get_object_or_404(Product, id=int(product_id))
