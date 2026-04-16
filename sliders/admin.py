@@ -6,7 +6,7 @@ from django.contrib import messages
 
 @admin.register(HeroSlider)
 class HeroSliderAdmin(admin.ModelAdmin):
-    list_display = ('title', 'preview', 'order', 'is_active', 'button_text')
+    list_display = ('title', 'preview', 'order', 'is_active')
     list_editable = ('order', 'is_active')
     list_filter = ()
     radio_fields = {"is_active": admin.HORIZONTAL}
@@ -27,9 +27,6 @@ class HeroSliderAdmin(admin.ModelAdmin):
         ('Background Media', {
             'fields': (('image', 'image_url'), ('video', 'video_url')),
             'description': 'Upload a file or provide an external URL. Images are prioritized.'
-        }),
-        ('Action Layer', {
-            'fields': (('button_text', 'button_link'),),
         }),
     )
 
