@@ -37,6 +37,12 @@
       // Sanitize design settings for JS config
       const primaryColor = "{{ design_settings.primary_color|default:'#114084' }}";
       const secondaryColor = "{{ design_settings.secondary_color|default:'#005CB9' }}";
+      const accentGlow = "{{ design_settings.accent_glow_color|default:'#0081ff' }}";
+      const surfaceBg = "{{ design_settings.surface_bg_color|default:'#f8fafc' }}";
+      const cardBg = "{{ design_settings.card_bg_color|default:'#ffffff' }}";
+      const borderCol = "{{ design_settings.border_color|default:'#e2e8f0' }}";
+      const textPrimary = "{{ design_settings.text_primary_color|default:'#1e293b' }}";
+      
       const mainFont = "{{ design_settings.font_main|safe|default:'sans-serif' }}";
       const headingFont = "{{ design_settings.font_secondary|safe|default:'serif' }}";
 
@@ -46,69 +52,120 @@
             colors: {
               primary: primaryColor,
               secondary: secondaryColor,
+              accent: accentGlow,
+              surface: surfaceBg,
+              card: cardBg,
+              'border-custom': borderCol,
+              'txt-main': textPrimary,
             },
             fontFamily: {
                 sans: [mainFont],
                 heading: [headingFont],
             },
+            borderRadius: {
+                'container': "{{ design_settings.container_radius|default:'40px' }}",
+                'card-custom': "{{ design_settings.card_radius|default:'24px' }}",
+                'btn-custom': "{{ design_settings.button_radius|default:'9999px' }}",
+                'img-custom': "{{ design_settings.image_radius|default:'20px' }}",
+            }
           }
         }
       }
     </script>
 
-    <style type="text/tailwindcss">
-        @layer base {
-            html { scroll-behavior: smooth; overflow-x: hidden; }
-            body { 
-                font-family: {{ design_settings.font_main|safe|default:"'Noto Serif', serif" }}; 
-                background-color: {{ design_settings.surface_bg_color|default:"#f8fafc" }};
-                color: {{ design_settings.text_primary_color|default:"#1e293b" }};
-                @apply antialiased; 
-                overflow-x: hidden; 
-            }
-            h1, h2, h3, h4, h5, h6 { 
-                font-family: {{ design_settings.font_secondary|safe|default:"'Noto Serif', serif" }}; 
-                @apply font-bold tracking-tight; 
-            }
-            :root {
-                --primary: {{ design_settings.primary_color|default:"#114084" }};
-                --secondary: {{ design_settings.secondary_color|default:"#1E293B" }};
-                --accent: {{ design_settings.accent_glow_color|default:"#0081ff" }};
-                
-                --radius-container: {{ design_settings.container_radius|default:"40px" }};
-                --radius-card: {{ design_settings.card_radius|default:"24px" }};
-                --radius-btn: {{ design_settings.button_radius|default:"9999px" }};
-                --radius-img: {{ design_settings.image_radius|default:"20px" }};
-            }
+    <style type="text/css">
+        :root {
+            --primary: {{ design_settings.primary_color|default:"#114084" }};
+            --secondary: {{ design_settings.secondary_color|default:"#1E293B" }};
+            --accent: {{ design_settings.accent_glow_color|default:"#0081ff" }};
+            
+            --surface: {{ design_settings.surface_bg_color|default:"#f8fafc" }};
+            --card: {{ design_settings.card_bg_color|default:"#ffffff" }};
+            --border-custom: {{ design_settings.border_color|default:"#e2e8f0" }};
+            --txt-main: {{ design_settings.text_primary_color|default:"#1e293b" }};
+
+            --font-sans: {{ design_settings.font_main|safe|default:"'Noto Serif', serif" }};
+            --font-heading: {{ design_settings.font_secondary|safe|default:"'Noto Serif', serif" }};
+
+            --radius-container: {{ design_settings.container_radius|default:"40px" }};
+            --radius-card: {{ design_settings.card_radius|default:"24px" }};
+            --radius-btn: {{ design_settings.button_radius|default:"9999px" }};
+            --radius-img: {{ design_settings.image_radius|default:"20px" }};
         }
-        @layer components {
-            .glass-morph {
-                /* Adaptive glassmorphism */
-                {% if design_settings.enable_glassmorphism %}
-                @apply backdrop-blur-md bg-white/70 border border-white/20;
-                {% else %}
-                @apply bg-white border border-slate-100;
-                {% endif %}
-            }
-            .premium-card {
-                background-color: {{ design_settings.card_bg_color|default:"#ffffff" }};
-                border-radius: var(--radius-card);
-                border: 1px solid {{ design_settings.border_color|default:"#e2e8f0" }};
-                @apply shadow-sm transition-all duration-300;
-            }
-            .premium-btn {
-                border-radius: var(--radius-btn);
-                @apply px-8 py-4 font-bold transition-all duration-300 flex items-center justify-center gap-2;
-            }
-            .premium-toast {
-                @apply fixed bottom-10 right-10 z-[3000] px-8 py-4 bg-slate-900/95 backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/10 translate-y-20 opacity-0 transition-all duration-500;
-            }
-            .premium-toast.show {
-                @apply translate-y-0 opacity-100;
-            }
-            .glass-header { @apply bg-white border-b border-gray-200 shadow-sm; }
-            .premium-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+        body { 
+            font-family: var(--font-sans);
+            background-color: var(--surface);
+            color: var(--txt-main);
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden; 
         }
+        h1, h2, h3, h4, h5, h6 { 
+            font-family: var(--font-heading);
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .glass-morph {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        /* Silencing glass if disabled via body class */
+        body.no-glass .glass-morph {
+            background-color: white;
+            border: 1px solid #f1f5f9;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        .premium-card {
+            background-color: var(--card);
+            border: 1px solid var(--border-custom);
+            border-radius: var(--radius-card);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .premium-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: var(--radius-btn);
+        }
+        .premium-toast {
+            position: fixed;
+            bottom: 2.5rem;
+            right: 2.5rem;
+            z-index: 3000;
+            padding: 1rem 2rem;
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: white;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(5rem);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .premium-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .glass-header { 
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .premium-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
     </style>
 
     <!-- Essential Vendor -->
@@ -121,7 +178,7 @@
     {% block split_css %}{% endblock %}
 </head>
 
-<body class="{% if request.path == '/' %}is-home{% endif %} antialiased">
+<body class="{% if request.path == '/' %}is-home{% endif %} {% if not design_settings.enable_glassmorphism %}no-glass{% endif %} antialiased">
     <!-- Premium Toast Notification -->
     <div id="premium-toast" class="premium-toast flex items-center gap-4">
         <div id="toast-icon" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
@@ -389,7 +446,36 @@
                     <a href="/" class="text-3xl font-black tracking-tighter text-white">
                         {{ site_settings.site_name|default:"JKR" }}<span class="text-primary">.</span>
                     </a>
-                    <p class="text-slate-400 text-sm font-medium leading-relaxed">
+                    
+                    {% if site_settings.dubai_address or site_settings.abudhabi_address %}
+                    <div class="mt-6 space-y-4">
+                        {% if site_settings.dubai_address %}
+                        <div class="flex items-start gap-3 group">
+                            <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                                <i class="fas fa-map-marker-alt text-primary text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">{{ site_settings.branch1_name|default:"Head Office" }}</p>
+                                <p class="text-slate-400 text-xs font-medium leading-relaxed">{{ site_settings.dubai_address|linebreaksbr }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if site_settings.abudhabi_address %}
+                        <div class="flex items-start gap-3 group">
+                            <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                                <i class="fas fa-map-marker-alt text-primary text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">{{ site_settings.branch2_name|default:"Branch Office" }}</p>
+                                <p class="text-slate-400 text-xs font-medium leading-relaxed">{{ site_settings.abudhabi_address|linebreaksbr }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <p class="text-slate-400 text-xs font-medium leading-relaxed mt-6">
                         Setting new benchmarks in medical device logistics and high-end healthcare solutions. Your trust, our excellence.
                     </p>
                     <div class="flex gap-4">
