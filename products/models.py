@@ -378,6 +378,11 @@ class Collection(models.Model):
     products = models.ManyToManyField(Product, related_name='collections', blank=True)
     display_order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
+    layout = models.CharField(max_length=20, default='3_col', choices=[
+        ('1_col', '1-Image (Full Width)'),
+        ('2_col', '2-Images (50% Width)'),
+        ('3_col', '3-Images (33% Width)'),
+    ], help_text="Determine the visual size of this collection on the homepage grid.")
     
     def save(self, *args, **kwargs):
         if not self.slug: self.slug = slugify(self.name)
