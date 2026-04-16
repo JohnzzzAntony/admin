@@ -173,7 +173,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
     <!-- Global Premium Styles -->
-    <link rel="stylesheet" href="{% static 'css/header_hero.css' %}?v=1.5">
+    <link rel="stylesheet" href="{% static 'css/header_hero.css' %}?v=1.6">
 
     {% block split_css %}{% endblock %}
 </head>
@@ -239,16 +239,16 @@
                             <!-- MEGA MENU (The Powerhouse) -->
                             <div class="mega-menu">
                                 <!-- Category Sidebar -->
-                                <div class="category-list py-2 h-full overflow-y-auto">
+                                <div class="category-list h-full overflow-y-auto">
                                     {% for cat in categories %}
                                     <div class="category-item group/item transition-colors" data-category-id="{{ cat.id }}">
                                         <a href="{{ cat.get_absolute_url }}" class="flex items-center justify-between w-full h-full px-6 py-4 text-slate-600 hover:text-primary no-underline">
-                                            <span class="font-bold uppercase tracking-wider">{{ cat.name }}</span>
+                                            <span class="font-bold uppercase tracking-wider text-xs">{{ cat.name }}</span>
                                             <i class="fas fa-chevron-right text-[10px] opacity-20 transition-transform group-hover/item:translate-x-1"></i>
                                         </a>
                                         
-                                        <!-- Dynamic Panel (Hover sensitive) -->
-                                        <div class="subcategory-panel absolute left-[240px] top-0 bottom-0 w-[560px] bg-white rounded-r-2xl p-8 overflow-y-auto transition-all">
+                                        <!-- Dynamic Panel (Flyout to the right) -->
+                                        <div class="subcategory-panel absolute left-[100%] ml-2 top-0 min-h-full w-[560px] bg-white rounded-2xl p-8 overflow-y-auto transition-all shadow-2xl border border-slate-100 z-10 invisible opacity-0 translate-x-[-10px] group-hover/item:visible group-hover/item:opacity-100 group-hover/item:translate-x-0">
                                             <div class="space-y-6">
                                                 <h4 class="text-xl font-black text-slate-900 border-b pb-4">{{ cat.name }}</h4>
                                                 

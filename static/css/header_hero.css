@@ -87,18 +87,17 @@ body:not(.is-home) .categories-trigger {
     border-color: #cbd5e1;
 }
 
-/* Mega Menu Dropdown */
 .mega-menu {
     position: absolute;
     top: 100%;
     left: 0;
-    width: 860px;
+    min-width: 250px;
     background: rgba(255, 255, 255, 1);
     backdrop-filter: blur(20px);
     border-radius: 24px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     border: 1px solid #f1f5f9;
-    padding: 30px;
+    padding: 20px;
     display: none !important;
     opacity: 0;
     visibility: hidden;
@@ -156,9 +155,8 @@ body:not(.is-home) .categories-trigger {
 }
 
 .category-list {
-    width: 240px;
+    width: 250px;
     flex-shrink: 0;
-    border-right: 1px solid #f1f5f9;
 }
 
 .category-item {
@@ -179,15 +177,7 @@ body:not(.is-home) .categories-trigger {
 }
 
 .subcategory-panel {
-    flex-grow: 1;
-    padding-left: 30px;
-    display: none;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-}
-
-.category-item:hover .subcategory-panel {
-    display: grid;
+    /* Tailwind classes handle visibility and transitions now */
 }
 
 /* Animations */
