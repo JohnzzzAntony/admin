@@ -457,31 +457,39 @@
                 </a>
 
                 <div class="space-y-8">
-                    <div class="space-y-4 text-xs text-slate-500 font-bold uppercase tracking-widest">
+                    <div class="space-y-6 text-xs text-slate-500 font-bold uppercase tracking-widest">
                         {% if site_settings.dubai_address %}
-                        <div class="flex items-start gap-4">
-                            <i class="fas fa-map-marker-alt text-primary/60 mt-0.5"></i>
-                            <span class="leading-relaxed opacity-80">{{ site_settings.dubai_address }}</span>
+                        <div class="space-y-2">
+                            <h5 class="text-primary text-[10px] font-black tracking-[0.2em]">{{ site_settings.branch1_name|default:"Dubai" }}</h5>
+                            <div class="flex items-start gap-4">
+                                <i class="fas fa-map-marker-alt text-primary/60 mt-0.5"></i>
+                                <span class="leading-relaxed opacity-80">{{ site_settings.dubai_address }}</span>
+                            </div>
                         </div>
                         {% endif %}
                         {% if site_settings.abudhabi_address %}
-                        <div class="flex items-start gap-4">
-                            <i class="fas fa-map-marker-alt text-primary/60 mt-0.5"></i>
-                            <span class="leading-relaxed opacity-80">{{ site_settings.abudhabi_address }}</span>
+                        <div class="space-y-2">
+                            <h5 class="text-primary text-[10px] font-black tracking-[0.2em]">{{ site_settings.branch2_name|default:"Abu Dhabi" }}</h5>
+                            <div class="flex items-start gap-4">
+                                <i class="fas fa-map-marker-alt text-primary/60 mt-0.5"></i>
+                                <span class="leading-relaxed opacity-80">{{ site_settings.abudhabi_address }}</span>
+                            </div>
                         </div>
                         {% endif %}
-                        {% if site_settings.phone %}
-                        <div class="flex items-center gap-4">
-                            <i class="fas fa-phone-alt text-primary/60"></i>
-                            <span class="opacity-80">{{ site_settings.phone }}</span>
+                        <div class="pt-2 space-y-4">
+                            {% if site_settings.phone %}
+                            <div class="flex items-center gap-4">
+                                <i class="fas fa-phone-alt text-primary/60"></i>
+                                <span class="opacity-80">{{ site_settings.phone }}</span>
+                            </div>
+                            {% endif %}
+                            {% if site_settings.email %}
+                            <div class="flex items-center gap-4">
+                                <i class="fas fa-envelope text-primary/60"></i>
+                                <span class="lowercase tracking-normal opacity-80">{{ site_settings.email }}</span>
+                            </div>
+                            {% endif %}
                         </div>
-                        {% endif %}
-                        {% if site_settings.email %}
-                        <div class="flex items-center gap-4">
-                            <i class="fas fa-envelope text-primary/60"></i>
-                            <span class="lowercase tracking-normal opacity-80">{{ site_settings.email }}</span>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
 
