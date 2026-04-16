@@ -95,35 +95,12 @@
                             </label>
                         </div>
 
-                        <!-- Card Fields Detail -->
-                        <div id="card-fields" class="space-y-6 animate__animated animate__fadeIn">
-                            <div class="p-8 lg:p-10 bg-slate-900 rounded-[40px] text-white shadow-2xl space-y-8 relative overflow-hidden">
-                                <div class="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px] pointer-events-none"></div>
-                                <div class="flex justify-between items-center mb-4">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-4 filter brightness-0 invert opacity-50">
-                                    <i class="fas fa-microchip text-3xl text-amber-400/50"></i>
-                                </div>
-
-                                <div class="space-y-2">
-                                    <label class="text-[9px] font-black uppercase tracking-widest text-slate-400 opacity-50">Card Number</label>
-                                    <input type="text" id="cardNum" name="card_number" placeholder="0000 0000 0000 0000" maxlength="19" class="w-full bg-transparent border-none p-0 text-xl lg:text-2xl font-black tracking-[0.2em] placeholder:text-white/10 focus:ring-0">
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-12">
-                                    <div class="space-y-2">
-                                        <label class="text-[9px] font-black uppercase tracking-widest text-slate-400 opacity-50">Expires</label>
-                                        <input type="text" name="card_expiry" placeholder="MM / YY" maxlength="7" class="w-full bg-transparent border-none p-0 text-sm font-black tracking-widest placeholder:text-white/10 focus:ring-0">
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-[9px] font-black uppercase tracking-widest text-slate-400 opacity-50">CVC</label>
-                                        <input type="password" name="card_cvv" placeholder="•••" maxlength="4" class="w-full bg-transparent border-none p-0 text-sm font-black tracking-widest placeholder:text-white/10 focus:ring-0">
-                                    </div>
-                                </div>
-
-                                <div class="pt-4 border-t border-white/10 flex justify-between items-center">
-                                    <input type="text" name="card_name" placeholder="CARDHOLDER NAME" class="bg-transparent border-none p-0 text-[10px] font-black uppercase tracking-[0.3em] placeholder:text-white/10 focus:ring-0 w-full">
-                                    <i class="fas fa-wifi-slash text-xs text-white/20"></i>
-                                </div>
+                        <!-- Card Payment Notice -->
+                        <div id="stripe-notice" class="p-6 bg-slate-900 border-2 border-primary/20 rounded-[30px] flex items-center gap-6 animate__animated animate__fadeIn">
+                            <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-primary shadow-sm"><i class="fas fa-shield-alt text-xl"></i></div>
+                            <div class="flex-1">
+                                <h4 class="text-xs font-black uppercase tracking-widest text-white">Secure Card Payment</h4>
+                                <p class="text-[10px] text-slate-400 font-medium tracking-wide">You will be redirected to our PCI-compliant secure gateway to complete your card transaction via Stripe.</p>
                             </div>
                         </div>
 
@@ -217,13 +194,13 @@
 
 <script>
 function selectPayment(method) {
-    const cardFields = document.getElementById('card-fields');
+    const stripeNotice = document.getElementById('stripe-notice');
     const bnplNotice = document.getElementById('bnpl-notice');
     const codNotice = document.getElementById('cod-notice');
     const bnplText = document.getElementById('bnpl-text');
 
     // Reset visibility
-    cardFields.style.display = (method === 'card') ? 'block' : 'none';
+    stripeNotice.style.display = (method === 'card') ? 'flex' : 'none';
     bnplNotice.classList.add('hidden');
     codNotice.classList.add('hidden');
 
@@ -235,21 +212,6 @@ function selectPayment(method) {
     } else if (method === 'cod') {
         codNotice.classList.remove('hidden');
     }
-}
-
-// Format card number while typing
-const cardInput = document.getElementById('cardNum');
-if (cardInput) {
-    cardInput.addEventListener('input', function(e) {
-        let v = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-        let matches = v.match(/\d{4,16}/g);
-        let match = matches && matches[0] || '';
-        let parts = [];
-        for (let i = 0, len = match.length; i < len; i += 4) {
-            parts.push(match.substring(i, i + 4));
-        }
-        e.target.value = parts.length ? parts.join(' ') : v;
-    });
 }
 </script>
 
