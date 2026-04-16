@@ -70,7 +70,7 @@ PAYMENT_METHOD_ICONS = {
 class CustomerOrderItemInline(admin.TabularInline):
     model = CustomerOrderItem
     extra = 0
-    fields = ('product', 'product_name', 'quantity', 'regular_price', 'unit_price', 'shipping_charge', 'total_price')
+    fields = ('product', 'product_name', 'quantity', 'regular_price', 'offer_price', 'unit_price', 'shipping_charge', 'total_price')
     readonly_fields = ('total_price',)
 
     def has_add_permission(self, request, obj=None):
@@ -338,8 +338,9 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
             '<td style="padding:8px 10px;text-align:center;">{}</td>'
             '<td style="padding:8px 10px;text-align:right;">{} {}</td>'
             '<td style="padding:8px 10px;text-align:right;">{} {}</td>'
+            '<td style="padding:8px 10px;text-align:right;">{} {}</td>'
             '<td style="padding:8px 10px;text-align:right;font-weight:700;">{} {}</td></tr>',
-            ((i.product_name, i.quantity, i.regular_price, settings.CURRENCY, i.unit_price, settings.CURRENCY, i.total_price, settings.CURRENCY) for i in items)
+            ((i.product_name, i.quantity, i.regular_price, settings.CURRENCY, i.offer_price, settings.CURRENCY, i.unit_price, settings.CURRENCY, i.total_price, settings.CURRENCY) for i in items)
         )
         items_subtotal = sum(i.total_price for i in items)
         return format_html(
@@ -348,22 +349,26 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
             '<th style="padding:10px; text-align:left;">Product</th>'
             '<th style="padding:10px; text-align:center;">Qty</th>'
             '<th style="padding:10px; text-align:right;">Regular</th>'
-            '<th style="padding:10px; text-align:right;">Sale</th>'
+            '<th style="padding:10px; text-align:right;">Offer</th>'
+            '<th style="padding:10px; text-align:right;">Final</th>'
             '<th style="padding:10px; text-align:right;">Subtotal</th></tr></thead>'
             '<tbody>{}</tbody>'
             '<tfoot>'
-            '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">Items Subtotal</td>'
+            '<tr style="background:#fafafa;"><td colspan="5" style="padding:10px; text-align:right; color:#64748b;">Items Subtotal</td>'
             '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
-            '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">Shipping</td>'
+            '<tr style="background:#fafafa;"><td colspan="5" style="padding:10px; text-align:right; color:#f43f5e;">Coupon Discount ({})</td>'
+            '<td style="padding:10px; text-align:right; color:#f43f5e;">- {} {}</td></tr>'
+            '<tr style="background:#fafafa;"><td colspan="5" style="padding:10px; text-align:right; color:#64748b;">Shipping</td>'
             '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
-            '<tr style="background:#fafafa;"><td colspan="4" style="padding:10px; text-align:right; color:#64748b;">VAT (Tax)</td>'
+            '<tr style="background:#fafafa;"><td colspan="5" style="padding:10px; text-align:right; color:#64748b;">VAT (Tax)</td>'
             '<td style="padding:10px; text-align:right; color:#64748b;">{} {}</td></tr>'
-            '<tr style="background:#f1f5f9; font-weight:700; font-size:15px;"><td colspan="4" style="padding:12px 10px; text-align:right;">Grand Total</td>'
+            '<tr style="background:#f1f5f9; font-weight:700; font-size:15px;"><td colspan="5" style="padding:12px 10px; text-align:right;">Grand Total</td>'
             '<td style="padding:12px 10px; text-align:right; color:#2563eb;">{} {}</td></tr>'
             '</tfoot>'
             '</table>',
             mark_safe(rows),
             items_subtotal, settings.CURRENCY,
+            obj.coupon_code or "None", obj.discount_amount or 0, settings.CURRENCY,
             obj.shipping_amount or 0, settings.CURRENCY,
             obj.tax_amount or 0, settings.CURRENCY,
             obj.total_amount or 0, settings.CURRENCY
@@ -441,6 +446,7 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
         ('Payment & Financials', {
             'fields': (
                 ('payment_method', 'payment_status'),
+                ('coupon_code', 'discount_amount'),
                 ('shipping_amount', 'tax_amount', 'total_amount'),
             ),
         }),

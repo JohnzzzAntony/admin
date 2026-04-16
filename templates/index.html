@@ -132,6 +132,45 @@
 </section>
 {% endif %}
 
+<!-- Premium Collections Grid -->
+{% if design_settings.show_hp_collections and collections %}
+<section class="py-24 bg-white">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+            <div class="space-y-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Handpicked Selections</p>
+                <h3 class="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter">{{ design_settings.hp_collections_title|safe }}</h3>
+            </div>
+            <p class="text-slate-500 max-w-sm font-medium leading-relaxed">
+                {{ design_settings.hp_collections_subtitle }}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for collection in collections %}
+            <div class="relative group h-[450px] overflow-hidden rounded-[40px] shadow-2xl">
+                <img src="{{ collection.get_image_url }}" alt="{{ collection.name }}" class="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                <div class="absolute inset-0 p-12 flex flex-col justify-end gap-4 transform transition-all duration-700 group-hover:translate-y-[-10px]">
+                    <span class="text-[10px] font-black text-white/50 uppercase tracking-[0.4em]">Curated Theme</span>
+                    <h4 class="text-3xl font-black text-white tracking-tighter">{{ collection.name }}</h4>
+                    <p class="text-sm text-white/70 font-medium line-clamp-2">{{ collection.products.count }} Premium Items</p>
+                    <div class="pt-6">
+                        <a href="{{ collection.get_absolute_url }}" class="inline-flex items-center gap-4 text-white text-[10px] font-black uppercase tracking-widest group">
+                            Explore Now
+                            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center transform transition-transform group-hover:translate-x-2">
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <!-- Refined Featured Section -->
 {% if design_settings.show_hp_latest_products %}
 <section class="py-24 bg-slate-50">

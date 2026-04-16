@@ -151,9 +151,14 @@ class CustomerOrder(models.Model):
 
     # ── Order Management ─────────────────────────────────────────────────────
     status          = models.CharField(max_length=30, choices=ORDER_STATUS_CHOICES, default='pending', verbose_name="Order Status")
+    
+    # Financial Breakdown
+    coupon_code     = models.CharField(max_length=50, blank=True, null=True)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Total promotional discount")
     shipping_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Total shipping cost for this order")
     tax_amount      = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Total tax amount for this order")
-    total_amount    = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Grand Total (Items + Shipping + Tax)")
+    total_amount    = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Grand Total (Items - Discount + Shipping + Tax)")
+    
     admin_notes     = models.TextField(blank=True, verbose_name="Internal Admin Notes")
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
@@ -176,8 +181,10 @@ class CustomerOrder(models.Model):
 
     def compute_total(self):
         items_total = sum(item.total_price for item in self.items.all())
-        self.tax_amount = sum(item.tax_amount for item in self.items.all())
-        self.total_amount = items_total + self.shipping_amount + self.tax_amount
+        # Tax is typically calculated on the discounted subtotal + shipping
+        taxable_amount = items_total - self.discount_amount + self.shipping_amount
+        self.tax_amount = (taxable_amount * 5 / 100) # Default 5% VAT if not specified otherwise
+        self.total_amount = taxable_amount + self.tax_amount
         self.save(update_fields=['total_amount', 'tax_amount'])
         return self.total_amount
 
@@ -221,7 +228,8 @@ class CustomerOrderItem(models.Model):
     product_name = models.CharField(max_length=255, help_text="Snapshot of name at time of order")
     quantity     = models.PositiveIntegerField(default=1)
     regular_price   = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Regular price before offer")
-    unit_price      = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    offer_price     = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Site price at time of order")
+    unit_price      = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Final price after item discounts")
     tax_percentage  = models.DecimalField(max_digits=5, decimal_places=2, default=0, help_text="VAT percentage at time of order")
     tax_amount      = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Tax amount for this item")
     shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Shipping cost for this specific item")

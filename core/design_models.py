@@ -86,6 +86,7 @@ class DesignSettings(models.Model):
 
     # ── Homepage Section Visibility ──────────────────────────────
     show_hp_categories = models.BooleanField(default=True, verbose_name="Home Categories", choices=((True, 'Show'), (False, 'Hide')))
+    show_hp_collections = models.BooleanField(default=True, verbose_name="Home Collections", choices=((True, 'Show'), (False, 'Hide')))
     show_hp_latest_products = models.BooleanField(default=True, verbose_name="Home Latest Products", choices=((True, 'Show'), (False, 'Hide')))
     show_hp_brands = models.BooleanField(default=True, verbose_name="Home Brands", choices=((True, 'Show'), (False, 'Hide')))
     show_hp_testimonials = models.BooleanField(default=True, verbose_name="Home Testimonials", choices=((True, 'Show'), (False, 'Hide')))
