@@ -457,14 +457,17 @@
                 </a>
 
                 <div class="space-y-8">
-                    <p class="text-slate-400 text-sm leading-relaxed font-medium">
-                        {{ site_settings.meta_description|truncatewords:25|default:"Leading international provider of premium healthcare and surgical solutions. Excellence in medical logistics since 2012." }}
-                    </p>
                     <div class="space-y-4 text-xs text-slate-500 font-bold uppercase tracking-widest">
                         {% if site_settings.dubai_address %}
                         <div class="flex items-start gap-4">
                             <i class="fas fa-map-marker-alt text-primary/60 mt-0.5"></i>
                             <span class="leading-relaxed opacity-80">{{ site_settings.dubai_address }}</span>
+                        </div>
+                        {% endif %}
+                        {% if site_settings.abudhabi_address %}
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-map-marker-alt text-primary/60 mt-0.5"></i>
+                            <span class="leading-relaxed opacity-80">{{ site_settings.abudhabi_address }}</span>
                         </div>
                         {% endif %}
                         {% if site_settings.phone %}
