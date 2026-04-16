@@ -399,6 +399,27 @@
         pagination: { el: '.swiper-pagination', clickable: true }
     });
 
+    // Ensure enough slides for infinite looping (Swiper requires >= slidesPerView for loops)
+    function ensureSlidesForLoop(selector, minSlides) {
+        const swiperEl = document.querySelector(selector);
+        if (!swiperEl) return;
+        const wrapper = swiperEl.querySelector('.swiper-wrapper');
+        const slides = Array.from(wrapper.children);
+        if (slides.length > 0 && slides.length < minSlides) {
+            const clonesNeeded = Math.ceil(minSlides / slides.length) - 1;
+            for (let i = 0; i < clonesNeeded; i++) {
+                slides.forEach(slide => wrapper.appendChild(slide.cloneNode(true)));
+            }
+        }
+    }
+    
+    ['.category-swiper', '.partners-marquee', '.brands-marquee', '.testimonial-swiper'].forEach(sel => ensureSlidesForLoop(sel, 12));
+
+    // Force linear timing for smooth continuous swipers
+    document.querySelectorAll('.category-swiper .swiper-wrapper, .partners-marquee .swiper-wrapper, .brands-marquee .swiper-wrapper, .testimonial-swiper .swiper-wrapper').forEach(wrapper => {
+        wrapper.style.transitionTimingFunction = 'linear';
+    });
+
     // Luxury Category Swiper (Continuous)
     new Swiper('.category-swiper', {
         slidesPerView: 2,
