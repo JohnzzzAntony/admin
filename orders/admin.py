@@ -414,21 +414,26 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
 
     fieldsets = (
         ('Order Identification', {
-            'fields': (('order_number', 'customer_order_tag', 'trn'),),
+            'fields': ('order_number', 'customer_order_tag', 'trn'),
         }),
         ('Documents', {
             'fields': ('print_invoice_buttons',),
         }),
         ('Customer Details', {
             'fields': (
-                ('first_name', 'last_name'),
-                ('email', 'phone'),
-                ('department', 'user', 'is_guest'),
+                'first_name', 
+                'last_name',
+                'email', 
+                'phone',
+                'department', 
+                'user', 
+                'is_guest',
             ),
         }),
         ('Shipping Address', {
             'fields': (
-                ('country', 'city'),
+                'country', 
+                'city',
                 'street',
                 'comment',
             ),
@@ -437,17 +442,24 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
             'classes': ('collapse',),
             'fields': (
                 'billing_address_same_as_shipping',
-                ('billing_first_name', 'billing_last_name'),
-                ('billing_email', 'billing_phone'),
-                ('billing_country', 'billing_city'),
+                'billing_first_name', 
+                'billing_last_name',
+                'billing_email', 
+                'billing_phone',
+                'billing_country', 
+                'billing_city',
                 'billing_street',
             ),
         }),
         ('Payment & Financials', {
             'fields': (
-                ('payment_method', 'payment_status'),
-                ('coupon_code', 'discount_amount'),
-                ('shipping_amount', 'tax_amount', 'total_amount'),
+                'payment_method', 
+                'payment_status',
+                'coupon_code', 
+                'discount_amount',
+                'shipping_amount', 
+                'tax_amount', 
+                'total_amount',
             ),
         }),
         ('Order Processing', {
@@ -455,7 +467,8 @@ class CustomerOrderAdmin(ImportExportModelAdmin):
                 'status',
                 'resend_notification_button',
                 'admin_notes',
-                ('created_at', 'updated_at'),
+                'created_at', 
+                'updated_at',
             ),
         }),
         ('Items Summary Board', {

@@ -193,28 +193,35 @@ class ProductAdmin(ImportExportModelAdmin):
     fieldsets = (
         ('Overview', {
             'fields': (
-                ('name', 'sku_id'), 
-                ('parent_category', 'category'),
-                ('brand', 'quantity'),
-                ('avg_rating', 'review_count'),
-                ('badge', 'badge_color'),
-                ('slug', 'show_on_homepage', 'is_featured')
+                'name', 
+                'sku_id', 
+                'parent_category', 
+                'category',
+                'brand', 
+                'quantity',
+                'avg_rating', 
+                'review_count',
+                'badge', 
+                'badge_color',
+                'slug', 
+                'show_on_homepage', 
+                'is_featured'
             ),
             'description': 'Core identity and stock availability. Choose a parent category to see subcategories.'
         }),
         ('Pricing & Shipping', {
-            'fields': (('regular_price', 'sale_price'), ('shipping_status', 'delivery_time'), ('tax_percentage', 'free_shipping', 'additional_shipping_charge')),
+            'fields': ('regular_price', 'sale_price', 'shipping_status', 'delivery_time', 'tax_percentage', 'free_shipping', 'additional_shipping_charge'),
             'classes': ('collapse',),
         }),
         ('Dimensions & Weight', {
-            'fields': (('weight', 'unit'), ('length', 'width', 'height')),
+            'fields': ('weight', 'unit', 'length', 'width', 'height'),
             'classes': ('collapse',),
         }),
         ('Detailed Content', {
             'fields': ('overview', 'features', 'technical_info'),
         }),
         ('Media Assets', {
-            'fields': (('image', 'image_url'),),
+            'fields': ('image', 'image_url'),
         }),
         ('Search Optimization', {
             'fields': ('meta_title', 'meta_description', 'meta_keywords'),
@@ -254,9 +261,12 @@ class CategoryAdmin(ImportExportModelAdmin):
     fieldsets = (
         ('Hierarchy & Branding', {
             'fields': (
-                ('name', 'parent'), 
-                ('slug', 'homepage_order'), 
-                ('image', 'image_url'),
+                'name', 
+                'parent', 
+                'slug', 
+                'homepage_order', 
+                'image', 
+                'image_url',
                 'icon_svg',
                 'show_on_homepage',
                 'description'
@@ -285,10 +295,10 @@ class BrandAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Brand Identity', {
-            'fields': (('name', 'slug'), 'order'),
+            'fields': ('name', 'slug', 'order'),
         }),
         ('Visuals & Branding', {
-            'fields': (('logo', 'logo_url'), 'description'),
+            'fields': ('logo', 'logo_url', 'description'),
             'description': 'Upload a brand logo or provide an external URL.'
         }),
         ('Homepage Appearance', {

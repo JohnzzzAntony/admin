@@ -19,13 +19,13 @@ class StoreLocationAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Location Info', {
-            'fields': (('name', 'city'), 'address', 'order'),
+            'fields': ('name', 'city', 'address', 'order'),
         }),
         ('Communication & Map', {
-            'fields': (('phone', 'map_url'),),
+            'fields': ('phone', 'map_url'),
         }),
         ('Branding Image', {
-            'fields': (('image', 'image_url'),),
+            'fields': ('image', 'image_url'),
         }),
     )
     radio_fields = {"is_active": admin.HORIZONTAL}
@@ -44,7 +44,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ('site_name',)
     fieldsets = (
         ('Overview & Branding', {
-            'fields': (('site_name', 'company_name'), 'fav_text', ('logo', 'logo_url'), ('favicon', 'favicon_url')),
+            'fields': ('site_name', 'company_name', 'fav_text', 'logo', 'logo_url', 'favicon', 'favicon_url'),
             'description': 'Main site identification and logo assets.'
         }),
         ('SEO Presence', {
@@ -52,17 +52,17 @@ class SiteSettingsAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
         }),
         ('Communication Channels', {
-            'fields': (('email', 'phone', 'whatsapp'),),
+            'fields': ('email', 'phone', 'whatsapp'),
         }),
         ('Physical Presence', {
-            'fields': (('branch1_name', 'dubai_address'), ('branch2_name', 'abudhabi_address')),
+            'fields': ('branch1_name', 'dubai_address', 'branch2_name', 'abudhabi_address'),
         }),
         ('Footer & Notifications', {
-            'fields': (('footer_quick_links_title', 'footer_support_title', 'footer_legal_title'), ('footer_newsletter_title', 'footer_copyright_text'), ('enable_email_notifications', 'enable_sms_notifications', 'enable_whatsapp_notifications')),
+            'fields': ('footer_quick_links_title', 'footer_support_title', 'footer_legal_title', 'footer_newsletter_title', 'footer_copyright_text', 'enable_email_notifications', 'enable_sms_notifications', 'enable_whatsapp_notifications'),
             'classes': ('collapse',),
         }),
         ('Social Links', {
-            'fields': (('facebook', 'instagram', 'linkedin', 'twitter'), 'instagram_handle'),
+            'fields': ('facebook', 'instagram', 'linkedin', 'twitter', 'instagram_handle'),
             'classes': ('collapse',),
         }),
     )
@@ -82,35 +82,53 @@ class DesignSettingsAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Branding & Color Theme', {
             'fields': (
-                ('primary_color', 'secondary_color', 'accent_glow_color'),
-                ('text_primary_color', 'text_secondary_color', 'text_white_color'),
-                ('surface_bg_color', 'card_bg_color', 'border_color'),
-                ('header_bg_color', 'header_text_color'),
-                ('footer_bg_color', 'footer_text_color'),
+                'primary_color', 
+                'secondary_color', 
+                'accent_glow_color',
+                'text_primary_color', 
+                'text_secondary_color', 
+                'text_white_color',
+                'surface_bg_color', 
+                'card_bg_color', 
+                'border_color',
+                'header_bg_color', 
+                'header_text_color',
+                'footer_bg_color', 
+                'footer_text_color',
             ),
             'description': 'Master color palette for the entire storefront. Supports Hex codes (e.g., #114084).'
         }),
         ('Typography & Shapes', {
             'fields': (
-                ('font_main', 'font_secondary'),
-                ('container_radius', 'card_radius'),
-                ('button_radius', 'image_radius'),
+                'font_main', 
+                'font_secondary',
+                'container_radius', 
+                'card_radius',
+                'button_radius', 
+                'image_radius',
             ),
             'description': 'Select site-wide fonts and control the "softness" of the UI shapes.'
         }),
         ('Premium Effects', {
             'fields': (
-                ('enable_glassmorphism', 'enable_neumorphism', 'enable_ambient_glow'), 
-                ('enable_animations', 'global_animation_type'),
-                ('counter_animation_style', 'counter_animation_speed'),
+                'enable_glassmorphism', 
+                'enable_neumorphism', 
+                'enable_ambient_glow', 
+                'enable_animations', 
+                'global_animation_type',
+                'counter_animation_style', 
+                'counter_animation_speed',
             ),
         }),
         ('Homepage Titles & Content', {
             'fields': (
-                ('hp_hero_title', 'hp_hero_subtitle'),
-                ('hp_collections_title', 'hp_collections_subtitle'),
+                'hp_hero_title', 
+                'hp_hero_subtitle',
+                'hp_collections_title', 
+                'hp_collections_subtitle',
                 'hp_categories_title',
-                ('hp_latest_products_title', 'hp_latest_products_subtitle'),
+                'hp_latest_products_title', 
+                'hp_latest_products_subtitle',
                 'hp_partners_title', 
                 'hp_services_title',
                 'hp_gallery_title',
@@ -123,9 +141,12 @@ class DesignSettingsAdmin(admin.ModelAdmin):
         }),
         ('App-Wide Page Titles', {
             'fields': (
-                ('cart_page_title', 'wishlist_page_title'),
-                ('search_page_title', 'checkout_page_title'),
-                ('profile_page_title', 'orders_page_title'),
+                'cart_page_title', 
+                'wishlist_page_title',
+                'search_page_title', 
+                'checkout_page_title',
+                'profile_page_title', 
+                'orders_page_title',
                 'contact_page_title',
             ),
             'classes': ('collapse',),
@@ -133,10 +154,19 @@ class DesignSettingsAdmin(admin.ModelAdmin):
         }),
         ('Visibility & Display Controls', {
             'fields': (
-                ('show_header_search', 'show_header_wishlist', 'show_header_account', 'show_header_cart'),
-                ('show_hp_categories', 'show_hp_latest_products', 'show_hp_brands'),
-                ('show_hp_testimonials', 'show_hp_clients', 'show_hp_social'),
-                ('pd_show_related', 'pd_related_title', 'pd_related_count'),
+                'show_header_search', 
+                'show_header_wishlist', 
+                'show_header_account', 
+                'show_header_cart',
+                'show_hp_categories', 
+                'show_hp_latest_products', 
+                'show_hp_brands',
+                'show_hp_testimonials', 
+                'show_hp_clients', 
+                'show_hp_social',
+                'pd_show_related', 
+                'pd_related_title', 
+                'pd_related_count',
             ),
             'description': 'Enable or disable major features and sections site-wide.'
         }),
@@ -181,13 +211,13 @@ class TestimonialAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Client Profile', {
-            'fields': (('client_name', 'position'), ('rating', 'order')),
+            'fields': ('client_name', 'position', 'rating', 'order'),
         }),
         ('Content', {
             'fields': ('content',),
         }),
         ('Media', {
-            'fields': (('image', 'image_url'),),
+            'fields': ('image', 'image_url'),
         }),
     )
 
@@ -215,10 +245,10 @@ class ClientAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Client Info', {
-            'fields': (('name', 'category'), 'order'),
+            'fields': ('name', 'category', 'order'),
         }),
         ('Assets (Logo/Icon)', {
-            'fields': (('logo', 'logo_url'), 'icon_svg'),
+            'fields': ('logo', 'logo_url', 'icon_svg'),
             'description': 'Provide either a traditional logo or a custom SVG path.'
         }),
     )
@@ -245,10 +275,10 @@ class SocialPostAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Post Configuration', {
-            'fields': (('link', 'order'),),
+            'fields': ('link', 'order'),
         }),
         ('Media Assets', {
-            'fields': (('image', 'image_url'), 'icon_svg'),
+            'fields': ('image', 'image_url', 'icon_svg'),
         }),
     )
 
@@ -269,13 +299,13 @@ class AnnouncementBarAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Banner Message', {
-            'fields': (('text', 'closable', 'is_active'),),
+            'fields': ('text', 'closable', 'is_active'),
         }),
         ('Appearance', {
-            'fields': (('background_color', 'text_color'),),
+            'fields': ('background_color', 'text_color'),
         }),
         ('Schedule', {
-            'fields': (('start_date', 'end_date'),),
+            'fields': ('start_date', 'end_date'),
         }),
     )
 

@@ -22,10 +22,10 @@ class HeroSliderAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Header Information', {
-            'fields': (('title', 'badge_text'), 'order'),
+            'fields': ('title', 'badge_text', 'order'),
         }),
         ('Background Media', {
-            'fields': (('image', 'image_url'), ('video', 'video_url')),
+            'fields': ('image', 'image_url', 'video', 'video_url'),
             'description': 'Upload a file or provide an external URL. Images are prioritized.'
         }),
     )
@@ -45,9 +45,12 @@ class BannerItemInline(admin.StackedInline):
     fieldsets = (
         (None, {
             'fields': (
-                ('image', 'image_url'),
-                ('title', 'subtitle'),
-                ('link', 'order'),
+                'image', 
+                'image_url',
+                'title', 
+                'subtitle',
+                'link', 
+                'order',
                 'preview',
             )
         }),
@@ -69,10 +72,10 @@ class PromoBannerAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Section Overview', {
-            'fields': (('name', 'homepage_order'), 'is_active'),
+            'fields': ('name', 'homepage_order', 'is_active'),
         }),
         ('Design & Layout', {
-            'fields': (('layout', 'shape'),),
+            'fields': ('layout', 'shape'),
             'description': 'Select how the banners are arranged and their visual shape.'
         }),
     )

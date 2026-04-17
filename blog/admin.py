@@ -12,7 +12,7 @@ class PostAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Article Details', {
-            'fields': (('title', 'slug'), ('featured_image', 'featured_image_url'))
+            'fields': ('title', 'slug', 'featured_image', 'featured_image_url')
         }),
         ('Content', {
             'fields': ('excerpt', 'content')

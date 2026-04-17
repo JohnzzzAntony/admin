@@ -1,180 +1,21 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
-{% block title %}{{ title }} | Demo Administration{% endblock %}
+{% block title %}{{ title }} | {{ site_header|default:"JKR Admin" }}{% endblock %}
 
 {% block extrahead %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'admin/css/admin_premium.css' %}">
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-
-            // ── 1. Changelist: Hide .actions bar, inject count pill + Delete button ─
-            // Jazzmin structure: .change-list-actions > .col-12 > .actions > [select + button]
-            const actionsDiv    = document.querySelector('.actions');
-            const clActionsWrap = document.querySelector('.change-list-actions');
-            const changlistForm = document.querySelector('#changelist-form');
-            const resultTable   = document.querySelector('#result_list');
-            const actionSelect  = document.querySelector('.actions select[name="action"]');
-
-            if (clActionsWrap) {
-                // ── Build the meta row ──────────────────────────────────────────
-                const metaRow = document.createElement('div');
-                metaRow.className = 'cl-meta-row';
-
-                const metaRight = document.createElement('div');
-                metaRight.className = 'cl-meta-right';
-
-                // Count pill — always visible
-                const countPill = document.createElement('span');
-                countPill.className = 'cl-count-pill';
-                countPill.textContent = '0 selected';
-                metaRight.appendChild(countPill);
-
-                // Delete button — hidden until items are selected
-                const deleteBtn = document.createElement('button');
-                deleteBtn.type = 'button';
-                deleteBtn.className = 'cl-delete-btn';
-                deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete Selected';
-                deleteBtn.style.display = 'none';
-                metaRight.appendChild(deleteBtn);
-
-                metaRow.appendChild(metaRight);
-
-                // Insert the meta row BEFORE the result table (or after actions wrap)
-                if (resultTable && resultTable.parentNode) {
-                    resultTable.parentNode.insertBefore(metaRow, resultTable);
-                } else if (clActionsWrap.parentNode) {
-                    clActionsWrap.parentNode.insertBefore(metaRow, clActionsWrap.nextSibling);
-                }
-
-                // ── Update count when checkboxes change (event delegation) ───
-                function syncCount() {
-                    const n = document.querySelectorAll('.action-select:checked').length;
-                    countPill.textContent = n + ' selected';
-                    deleteBtn.style.display = n > 0 ? 'inline-flex' : 'none';
-                }
-                document.addEventListener('change', function(e) {
-                    if (e.target.matches('.action-select, #action-toggle')) {
-                        setTimeout(syncCount, 30);
-                    }
-                });
-
-                // ── Delete click: submit the form for Django's delete confirmation ──
-                deleteBtn.addEventListener('click', function() {
-                    const checked = document.querySelectorAll('.action-select:checked').length;
-                    if (checked === 0) return;
-                    if (!confirm('Are you sure you want to delete ' + checked + ' selected item(s)? This action cannot be undone.')) return;
-
-                    // Ensure the form exists
-                    if (!changlistForm) return;
-
-                    // Find or create the action select and set it to delete_selected
-                    let sel = changlistForm.querySelector('select[name="action"]');
-                    if (!sel) {
-                        // If original select was destroyed, create a hidden one
-                        sel = document.createElement('select');
-                        sel.name = 'action';
-                        sel.style.display = 'none';
-                        const opt = document.createElement('option');
-                        opt.value = 'delete_selected';
-                        opt.selected = true;
-                        sel.appendChild(opt);
-                        changlistForm.appendChild(sel);
-                    } else {
-                        sel.value = 'delete_selected';
-                    }
-
-                    // Django requires a button with name="index" to be submitted.
-                    // Create a hidden submit button and programmatically click it.
-                    const submitBtn = document.createElement('button');
-                    submitBtn.type = 'submit';
-                    submitBtn.name = 'index';
-                    submitBtn.value = '0';
-                    submitBtn.style.cssText = 'position:absolute;left:-9999px;opacity:0;';
-                    changlistForm.appendChild(submitBtn);
-                    submitBtn.click();
-                });
-
-                // ── Hide original .actions bar and its wrapper ─────────────
-                if (actionsDiv) actionsDiv.style.cssText = 'display:none !important';
-                clActionsWrap.style.cssText = 'display:none !important';
-            }
-
-            // ── 2. Changelist: Unified Search & Filter Row ───────────────────────
-            const searchForm = document.querySelector('#changelist-search');
-            if (searchForm) {
-                // a. Create the Search Row
-                const searchRow = document.createElement('div');
-                searchRow.className = 'cl-search-row';
-
-                // b. Style and Enhance the Search Form
-                searchForm.style.maxWidth = '460px';
-                searchForm.style.flex = '1';
-                
-                // Add "Clear" button inside the search row if a query exists
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('q') && urlParams.get('q')) {
-                    const clearBtn = document.createElement('a');
-                    clearBtn.href = window.location.pathname; // Base URL
-                    clearBtn.className = 'cl-search-clear';
-                    clearBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear';
-                    clearBtn.title = 'Clear Search';
-                    searchRow.appendChild(clearBtn);
-                }
-
-                // c. Move all filter selects into the search row
-                const filterContainer = document.querySelector('.changelist-filter');
-                if (filterContainer) {
-                    const filterSelects = filterContainer.querySelectorAll('select');
-                    filterSelects.forEach(sel => {
-                        sel.className = 'cl-filter-select';
-                        searchRow.appendChild(sel);
-                    });
-                    // Hide original filter side-bar
-                    filterContainer.style.display = 'none';
-                }
-
-                // d. Assemble and Insert
-                const contentMain = document.querySelector('#content-main');
-                if (contentMain) {
-                    // Title row transformation (Title + Object Tools)
-                    const titleH1 = document.querySelector('#content > h1');
-                    const objTools = document.querySelector('.object-tools');
-                    if (titleH1 && objTools) {
-                        const titleRow = document.createElement('div');
-                        titleRow.className = 'cl-title-row';
-                        titleH1.parentNode.insertBefore(titleRow, titleH1);
-                        titleRow.appendChild(titleH1);
-                        titleRow.appendChild(objTools);
-                    }
-
-                    // Insert search row after title row
-                    const titleRow = document.querySelector('.cl-title-row');
-                    if (titleRow) {
-                        titleRow.parentNode.insertBefore(searchRow, titleRow.nextSibling);
-                        searchRow.appendChild(searchForm);
-                    }
-                }
-            }
-
-            // Instant removal logic is now handled globally by admin_ux.js to avoid conflicts.
-        });
-    </script>
+    <script src="{% static 'admin/js/admin_ux.js' %}"></script>
     <style>
+        /* Minimal site-wide tweaks */
         #branding h1 { display: flex; align-items: center; }
         #branding h1::before { content: '🏬'; margin-right: 15px; font-size: 1.8rem; }
-        #site-name a { font-family: 'Outfit', sans-serif; font-weight: 700; letter-spacing: -0.5px; }
-        #content-related { display: none !important; }
-        .colMS { margin-right: 0 !important; }
-        #content { width: 100% !important; background: transparent !important; }
-        .dashboard .module { border: none !important; box-shadow: var(--neu-shadow) !important; border-radius: var(--radius) !important; background: var(--card-bg) !important; }
     </style>
 {% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">Demo Administration</a></h1>
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:"JKR International" }}</a></h1>
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -183,5 +24,3 @@
 {% if title %} &rsaquo; {{ title }}{% endif %}
 </div>
 {% endblock %}
-
-{% block nav-global %}{% endblock %}

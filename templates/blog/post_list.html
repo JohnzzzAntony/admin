@@ -2,100 +2,103 @@
 {% load static %}
 
 {% block content %}
-    <!-- Hero Header -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white hero-section">
-        <div class="container py-5">
-            <h1 class="display-3 font-weight-bold hero-title">{{ page_heroes.blog.title|default:"Blogs" }}</h1>
-            {% if page_heroes.blog.subtitle %}<p class="lead hero-subtitle">{{ page_heroes.blog.subtitle }}</p>{% endif %}
+<section class="py-12 bg-surface min-h-screen">
+    <div class="max-w-screen-xl mx-auto px-6">
+        
+        <!-- Premium Header / Hero Area -->
+        <div class="mb-16">
+            <nav class="flex mb-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+                <a href="{% url 'core:home' %}" class="hover:text-primary transition-colors">Home</a>
+                <span class="mx-3 opacity-30">/</span>
+                <span class="text-slate-900">Latest Insights</span>
+            </nav>
+
+            <div class="relative h-64 lg:h-96 rounded-[40px] overflow-hidden bg-slate-900 group shadow-2xl">
+                {% if page_heroes.blog.image %}
+                    <img src="{{ page_heroes.blog.get_hero_url }}" class="w-full h-full object-cover opacity-40 transition-transform duration-1000 group-hover:scale-105">
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-slate-950 to-primary/30"></div>
+                {% endif %}
+                
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
+                    <span class="px-5 py-2 bg-primary/20 backdrop-blur-md rounded-full text-white text-[10px] font-black uppercase tracking-[0.4em] mb-6 animate__animated animate__fadeInDown">Journal</span>
+                    <h1 class="text-5xl lg:text-7xl font-black text-white tracking-tighter mb-4 animate__animated animate__fadeInUp">
+                        {{ page_heroes.blog.title|default:"Blogs & Insights" }}
+                    </h1>
+                    <p class="text-slate-300 max-w-2xl font-medium leading-relaxed animate__animated animate__fadeInUp animate__delay-1s">
+                        {{ page_heroes.blog.subtitle|default:"Exploring the latest innovations and updates in the medical equipment industry." }}
+                    </p>
+                </div>
+            </div>
         </div>
-    </section>
 
-    <!-- Blogs List Section -->
-    <section class="py-5 bg-white">
-        <div class="container py-5">
-            <div class="row">
-                {% for post in posts %}
-                <div class="col-lg-4 mb-5">
-                    <div class="card border-0 shadow-sm overflow-hidden h-100 p-0" style="border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important; border: 1px solid #eee !important;">
-                        <a href="{% url 'blog:post_detail' slug=post.slug %}" class="text-decoration-none">
-                            <!-- Image with "BLOG" Badge -->
-                            <div class="position-relative overflow-hidden">
-                                <img src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}https://via.placeholder.com/600x400{% endif %}" alt="{{ post.title }}" class="img-fluid w-100" style="height: 250px; object-fit: cover; transition: transform 0.3s ease;">
-                                
-                                <span class="position-absolute px-3 py-1 font-weight-bold text-white small" style="top: 20px; right: 20px; background-color: #6cce95; border-radius: 4px; font-size: 0.75rem; letter-spacing: 1px;">BLOG</span>
-                            </div>
+        <!-- Blog Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {% for post in posts %}
+            <article class="group h-full bg-white rounded-[40px] overflow-hidden border border-slate-100 hover:border-primary/20 hover:shadow-2xl transition-all duration-500 flex flex-col">
+                <a href="{% url 'blog:post_detail' slug=post.slug %}" class="block relative aspect-[16/10] overflow-hidden">
+                    <img src="{{ post.get_image_url }}" alt="{{ post.title }}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <span class="absolute top-6 right-6 px-4 py-2 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl text-white text-[9px] font-black uppercase tracking-widest">Medical</span>
+                </a>
 
-                            <!-- Post Content/Excerpt -->
-                            <div class="card-body p-4 text-left">
-                                <h4 class="font-weight-bold text-dark mb-4 h4" style="line-height: 1.4; color: #333 !important; min-height: 4.5rem; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                                    {{ post.title }}
-                                </h4>
-                                <div class="text-muted mb-4 small" style="line-height: 1.6; min-height: 3.5rem; display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
-                                    {{ post.excerpt|default:"Sharing our latest updates and industry insights for the healthcare sector in the Middle East." }}
-                                </div>
-                                <span class="font-weight-bold text-uppercase" style="color: #6cce95; font-size: 0.8rem; letter-spacing: 0.5px;">READ MORE »</span>
-                            </div>
+                <div class="p-10 flex flex-col flex-1">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{{ post.created_at|date:"M d, Y" }}</span>
+                        <span class="w-1 h-1 rounded-full bg-slate-200"></span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">5 min read</span>
+                    </div>
+
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight leading-snug mb-6 group-hover:text-primary transition-colors">
+                        <a href="{% url 'blog:post_detail' slug=post.slug %}">{{ post.title }}</a>
+                    </h2>
+
+                    <p class="text-slate-500 text-sm font-medium leading-relaxed mb-8 line-clamp-3">
+                        {{ post.excerpt|default:"Stay updated with our latest industry insights and medical breakthroughs." }}
+                    </p>
+
+                    <div class="mt-auto pt-8 border-t border-slate-50">
+                        <a href="{% url 'blog:post_detail' slug=post.slug %}" class="inline-flex items-center gap-3 text-[10px] font-black text-slate-900 uppercase tracking-widest hover:text-primary transition-all">
+                            Read Masterpiece <i class="fas fa-arrow-right text-[8px] group-hover:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
-                {% empty %}
-                <div class="col-12 text-center py-5">
-                    <h5 class="text-muted">Stay tuned! Our latest medical insights and news are coming soon.</h5>
+            </article>
+            {% empty %}
+            <div class="col-span-full py-32 text-center bg-white rounded-[40px] border border-dashed border-slate-200">
+                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                    <i class="fas fa-feather-pointed text-3xl"></i>
                 </div>
-                {% endfor %}
+                <h3 class="text-xl font-black text-slate-900 mb-2">Penning the next chapter...</h3>
+                <p class="text-slate-400 font-medium">Our latest medical insights are coming soon to this space.</p>
             </div>
+            {% endfor %}
+        </div>
 
-            <!-- Image: Pagination matching 1 | 2 | 3 layout -->
-            {% if posts.has_other_pages %}
-            <div class="row mt-4 pt-5">
-                <div class="col-12">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center border-0">
-                            {% if posts.has_previous %}
-                                <li class="page-item mx-1"><a class="page-link shadow-sm border px-3 py-2 text-dark font-weight-bold" href="?page={{ posts.previous_page_number }}" style="border-radius: 4px;">«</a></li>
-                            {% endif %}
+        <!-- Pagination -->
+        {% if posts.has_other_pages %}
+        <div class="mt-20 flex justify-center items-center gap-3">
+            {% if posts.has_previous %}
+                <a href="?page={{ posts.previous_page_number }}" class="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all shadow-sm">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </a>
+            {% endif %}
 
-                            {% for i in posts.paginator.page_range %}
-                                {% if posts.number == i %}
-                                    <li class="page-item active mx-1"><span class="page-link shadow-sm border px-3 py-2 font-weight-bold" style="background-color: #114084; border-color:#114084; border-radius: 4px;">{{ i }}</span></li>
-                                {% else %}
-                                    <li class="page-item mx-1"><a class="page-link shadow-sm border px-3 py-2 text-dark font-weight-bold" href="?page={{ i }}" style="border-radius: 4px;">{{ i }}</a></li>
-                                {% endif %}
-                            {% endfor %}
+            {% for i in posts.paginator.page_range %}
+                {% if posts.number == i %}
+                    <span class="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center text-sm font-black shadow-xl shadow-primary/20">{{ i }}</span>
+                {% else %}
+                    <a href="?page={{ i }}" class="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all text-sm font-bold shadow-sm">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
 
-                            {% if posts.has_next %}
-                                <li class="page-item mx-1"><a class="page-link shadow-sm border px-3 py-2 text-dark font-weight-bold" href="?page={{ posts.next_page_number }}" style="border-radius: 4px;">»</a></li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                </div>
-            </div>
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}" class="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all shadow-sm">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </a>
             {% endif %}
         </div>
-    </section>
-
-    <style>
-        .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url("{{ page_heroes.blog.get_hero_url|default:'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg' }}");
-            background-size: cover;
-            background-position: center;
-            min-height: 40vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .hero-title, .hero-subtitle {
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-        }
-        .card:hover img {
-            transform: scale(1.1);
-        }
-        .pagination .page-link {
-            transition: all 0.2s;
-        }
-        .pagination .page-link:hover {
-            background-color: #f8f9fa;
-        }
-    </style>
+        {% endif %}
+    </div>
+</section>
 {% endblock %}

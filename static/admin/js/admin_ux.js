@@ -1,167 +1,177 @@
 /**
- * Admin UX Improvements (Standardized & Unified)
- * - Rename "Add" buttons for better UX
- * - Instant image previews (File/URL) with removal capability
- * - Dynamic mutation observer for formsets
+ * Admin UX — Clean & Simple
+ * - Live image preview thumbnails on file inputs
+ * - REMOVE button replacing delete checkbox in tabular inlines
+ * - Rename add-row link to "+ Add New Image"
+ * - MutationObserver for dynamically added rows
  */
 
-(function() {
+(function () {
     'use strict';
 
-    // 1. UI Helper: Rename Buttons
-    function renameButtons(container = document) {
-        const addButtons = container.querySelectorAll('.addlink, .btn-success, .add-row a');
-        addButtons.forEach(btn => {
-            if (!btn.dataset.renamed && (btn.innerText.trim() === 'Add' || btn.innerText.trim().startsWith('Add '))) {
-                btn.innerHTML = btn.innerHTML.replace('Add', '➕ Add New');
-                btn.dataset.renamed = "true";
+    /* ─────────────────────────────────────────────
+       1. LIVE IMAGE PREVIEW  (only on change-form fields, NOT inside tabular inline)
+       ───────────────────────────────────────────── */
+    function setupChangeFormPreview(input) {
+        if (!input || input.dataset.previewManaged) return;
+
+        // Previews enabled for all image fields including tabular
+
+        const isImageField = (
+            input.type === 'file' ||
+            /image|logo|favicon|banner|icon|thumb|pic|img/i.test(input.name)
+        );
+        if (!isImageField) return;
+
+        input.dataset.previewManaged = 'true';
+
+        const fieldBox = input.closest('.fieldBox') || input.closest('.form-group') || input.parentElement;
+
+        const showPreview = (src) => {
+            if (!src) return;
+            let wrap = fieldBox.querySelector('.admin-preview-container');
+            if (!wrap) {
+                wrap = document.createElement('div');
+                wrap.className = 'admin-preview-container';
+
+                const img = document.createElement('img');
+                img.className = 'instant-admin-preview';
+                wrap.appendChild(img);
+
+                const btn = document.createElement('button');
+                btn.className = 'remove-preview-btn';
+                btn.innerHTML = '&times;';
+                btn.type = 'button';
+                btn.title = 'Remove image';
+                btn.onclick = () => {
+                    input.value = '';
+                    const cb = fieldBox.querySelector('input[type="checkbox"][name*="-clear"]');
+                    if (cb) {
+                        cb.checked = true;
+                        // Trigger change event to fire setupInstantClear's update logic
+                        cb.dispatchEvent(new Event('change'));
+                    }
+                };
+                wrap.appendChild(btn);
+
+                const label = fieldBox.querySelector('label');
+                if (label) label.after(wrap);
+                else fieldBox.prepend(wrap);
+            }
+            const imgEl = wrap.querySelector('.instant-admin-preview');
+            imgEl.src = src;
+            wrap.style.display = 'inline-block';
+            imgEl.onerror = () => { wrap.style.display = 'none'; };
+
+            const cb = fieldBox.querySelector('input[type="checkbox"][name*="-clear"]');
+            if (cb) cb.checked = false;
+        };
+
+        // Show existing image on load
+        if (input.type === 'file') {
+            const link = fieldBox.querySelector('a[href*="/media/"]');
+            if (link && /\.(jpg|jpeg|png|webp|gif|svg|avif|ico)$/i.test(link.href.split('?')[0])) {
+                showPreview(link.href);
+            }
+        }
+
+        // Show on file selection
+        input.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => showPreview(e.target.result);
+                reader.readAsDataURL(this.files[0]);
             }
         });
     }
 
-    // 2. Core Feature: Image Preview with Removal
-    function setupImagePreview(input) {
-        if (!input || input.dataset.previewManaged) return;
+    /* ─────────────────────────────────────────────
+       INSTANT CLEAR FUNCTIONALITY
+       ───────────────────────────────────────────── */
+    function setupInstantClear(checkbox) {
+        if (!checkbox || checkbox.dataset.clearManaged) return;
         
-        const isPotentialImage = (
-            input.type === 'file' || 
-            input.classList.contains('urlfield') || 
-            input.classList.contains('vURLField') ||
-            /image|logo|favicon|banner|icon|thumb|pic|img/i.test(input.name)
-        );
-
-        if (!isPotentialImage) return;
-        input.dataset.previewManaged = "true";
-
-        // Find the most specific container for this field
-        const fieldContainer = input.closest('.fieldBox') || input.closest('.form-group') || input.closest('.form-row > div') || input.parentElement;
+        // Target both field-clearing and inline-row deletion
+        const isClear = checkbox.name && checkbox.name.includes('-clear');
+        const isDelete = checkbox.name && checkbox.name.endsWith('-DELETE');
         
-        const updatePreview = (src) => {
-            if (!src) return;
+        if (!isClear && !isDelete) return;
+
+        checkbox.dataset.clearManaged = 'true';
+        
+        // Find the most appropriate container to strike
+        // (td for tabular rows, form-row for standard fields)
+        const container = checkbox.closest('tr') || checkbox.closest('.form-row') || checkbox.closest('p') || checkbox.parentElement;
+        
+        const updateVisibility = () => {
+            const isChecked = checkbox.checked;
             
-            let container = fieldContainer.querySelector('.admin-preview-container');
-            if (!container) {
-                container = document.createElement('div');
-                container.className = 'admin-preview-container';
-                
-                const previewImg = document.createElement('img');
-                previewImg.className = 'instant-admin-preview';
-                // Styles are mostly handled by admin_premium.css, but we ensure basic visibility here
-                previewImg.style.display = 'block';
-                container.appendChild(previewImg);
-                
-                const removeBtn = document.createElement('button');
-                removeBtn.className = 'remove-preview-btn';
-                removeBtn.innerHTML = '×';
-                removeBtn.type = 'button';
-                removeBtn.title = 'Remove image';
-                
-                removeBtn.onclick = (e) => {
-                    e.preventDefault();
-                    if (input.type === 'file') {
-                        input.value = '';
-                        // Clear text nodes and links that Django might show for currently selected files
-                        const clearCheckbox = fieldContainer.querySelector('input[type="checkbox"][name*="-clear"]');
-                        if (clearCheckbox) clearCheckbox.checked = true;
-                        
-                        // Hide bits of the default Django widget that show the old filename
-                        fieldContainer.querySelectorAll('a, .file-upload, span.clearable-file-input').forEach(el => {
-                            if (!el.contains(input)) el.style.display = 'none';
-                        });
-                        
-                        // If there are text nodes containing filenames (like in some custom themes), clear them
-                        const walker = document.createTreeWalker(fieldContainer, NodeFilter.SHOW_TEXT, null, false);
-                        let node;
-                        while(node = walker.nextNode()) {
-                            if (node.textContent.includes('.') && /\.(webp|jpg|png|jpeg|gif)$/i.test(node.textContent)) {
-                                node.textContent = '';
-                            }
-                        }
-                    } else {
-                        input.value = '';
-                    }
-                    container.style.display = 'none';
-                    input.dispatchEvent(new Event('change', { bubbles: true }));
-                };
-                
-                container.appendChild(removeBtn);
-                
-                // Smart Insertion:
-                // In a tabular inline, insert right after the file input itself.
-                // Otherwise, insert after the label for a normal change-form field.
-                const isTabularInline = !!input.closest('.tabular.inline-related, .inline-group .tabular');
-                if (isTabularInline) {
-                    input.after(container);
-                } else {
-                    const label = fieldContainer.querySelector('label');
-                    if (label) {
-                        label.after(container);
-                    } else {
-                        fieldContainer.prepend(container);
-                    }
-                }
+            // 1. Strike the immediate container/row
+            if (isChecked) {
+                container.classList.add('clearing-active');
+            } else {
+                container.classList.remove('clearing-active');
             }
-            
-            const img = container.querySelector('.instant-admin-preview');
-            img.src = src;
-            container.style.display = 'inline-block';
-            img.onerror = () => { container.style.display = 'none'; };
 
-            const clearCheckbox = fieldContainer.querySelector('input[type="checkbox"][name*="-clear"]');
-            if (clearCheckbox) clearCheckbox.checked = false;
+            // 2. Strike related previews elsewhere on the page
+            // (e.g., if we clear 'image', also strike the 'preview' readonly field)
+            if (isClear) {
+                const fieldName = checkbox.name.replace('-clear', '');
+                // Standard naming patterns for previews in this project
+                const selectors = [
+                    `.field-preview`, 
+                    `.field-thumbnail`, 
+                    `.field-${fieldName}_preview`,
+                    `.field-brand_logo`
+                ];
+                selectors.forEach(sel => {
+                    const related = document.querySelectorAll(sel);
+                    related.forEach(el => {
+                        isChecked ? el.classList.add('clearing-active') : el.classList.remove('clearing-active');
+                    });
+                });
+            }
         };
 
-        // Initial State (Existing images)
-        if (input.type === 'file') {
-            // Search specifically within this field's container
-            const currentLink = fieldContainer.querySelector('a[href*="/media/"], .file-upload a, .readonly a, .clearable-file-input a');
-            if (currentLink && currentLink.href && /\.(jpg|jpeg|png|webp|gif|svg|avif|ico)$/i.test(currentLink.href.split('?')[0])) {
-                updatePreview(currentLink.href);
-            }
-        } else if (input.value && /^https?:\/\//i.test(input.value.trim())) {
-            updatePreview(input.value.trim());
-        }
+        checkbox.addEventListener('change', updateVisibility);
+        
+        // Initial state (useful if page reloads with errors)
+        updateVisibility();
 
-        // Live Changes
-        input.addEventListener('change', function() {
-            if (this.type === 'file' && this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => updatePreview(e.target.result);
-                reader.readAsDataURL(this.files[0]);
-            } else if (this.value && /^https?:\/\//i.test(this.value.trim())) {
-                updatePreview(this.value.trim());
-            }
-        });
-
-        // URL fields: live preview as user types
-        if (input.type !== 'file') {
-            input.addEventListener('input', function() {
-                if (this.value && /^https?:\/\//i.test(this.value.trim())) {
-                    updatePreview(this.value.trim());
-                } else if (!this.value) {
-                    const container = fieldContainer.querySelector('.admin-preview-container');
-                    if (container) container.style.display = 'none';
+        // If a new file is selected, automatically uncheck the "Clear" box
+        const fileInput = container.querySelector('input[type="file"]');
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    checkbox.checked = false;
+                    updateVisibility();
                 }
             });
         }
     }
 
-    // 3. Orchestration
-    function initialize(container = document) {
-        renameButtons(container);
-        container.querySelectorAll('input').forEach(setupImagePreview);
+    /* ─────────────────────────────────────────────
+       4. ORCHESTRATE
+       ───────────────────────────────────────────── */
+    function initialize(root = document) {
+        // Change-form previews (non-tabular)
+        root.querySelectorAll('input').forEach(input => {
+            setupChangeFormPreview(input);
+            if (input.type === 'checkbox') setupInstantClear(input);
+        });
     }
 
     function init() {
         initialize();
 
-        // Observe dynamic additions (e.g., adding rows to inlines)
         const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                mutation.addedNodes.forEach((node) => {
-                    if (node.nodeType === 1) {
-                        initialize(node);
-                    }
+            mutations.forEach((mut) => {
+                mut.addedNodes.forEach((node) => {
+                    if (node.nodeType !== 1) return;
+                    node.querySelectorAll && node.querySelectorAll('input').forEach(input => {
+                        setupChangeFormPreview(input);
+                        if (input.type === 'checkbox') setupInstantClear(input);
+                    });
                 });
             });
         });
@@ -175,4 +185,5 @@
     } else {
         init();
     }
+
 })();

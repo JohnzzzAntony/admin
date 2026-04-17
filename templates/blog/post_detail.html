@@ -2,76 +2,101 @@
 {% load static %}
 
 {% block content %}
-    <!-- Hero / Header Section -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-white" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{% if post.featured_image %}{{ post.featured_image.url }}{% else %}https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg{% endif %}'); background-size: cover; background-position: center; min-height: 40vh; display: flex; align-items: center; justify-content: center;">
-        <div class="container py-5 text-center px-4">
-            <h1 class="display-3 font-weight-bold" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">{{ post.title }}</h1>
-        </div>
-    </section>
+<section class="py-12 bg-surface min-h-screen">
+    <div class="max-w-screen-xl mx-auto px-6">
+        
+        <!-- Premium Navigation -->
+        <nav class="flex mb-12 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+            <a href="{% url 'core:home' %}" class="hover:text-primary transition-colors">Home</a>
+            <span class="mx-3 opacity-30">/</span>
+            <a href="{% url 'blog:post_list' %}" class="hover:text-primary transition-colors">Journal</a>
+            <span class="mx-3 opacity-30">/</span>
+            <span class="text-slate-900 truncate max-w-[200px]">{{ post.title }}</span>
+        </nav>
 
-    <!-- Breadcrumbs Section -->
-    <nav aria-label="breadcrumb" class="bg-light py-3 border-bottom shadow-sm">
-        <div class="container">
-            <ol class="breadcrumb bg-transparent p-0 mb-0 px-4" style="font-size: 0.9rem;">
-                <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-secondary text-decoration-none">Home</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'blog:post_list' %}" class="text-secondary text-decoration-none">Blogs</a></li>
-                <li class="breadcrumb-item active text-dark font-weight-bold" aria-current="page">{{ post.title }}</li>
-            </ol>
-        </div>
-    </nav>
+        <article class="max-w-4xl mx-auto">
+            <!-- Header section -->
+            <header class="text-center mb-16">
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <span class="px-5 py-2 bg-primary/5 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.3em]">Medical Innovation</span>
+                </div>
+                
+                <h1 class="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter leading-tight mb-8">
+                    {{ post.title }}
+                </h1>
 
-    <!-- Blog Content Section -->
-    <article class="py-5 bg-white">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-10 shadow-sm border p-4 p-md-5 bg-white" style="border-radius: 20px;">
-                    <div class="d-flex align-items-center mb-5 text-muted small border-bottom pb-4">
-                        <span class="mr-4"><i class="far fa-calendar-alt mr-2 text-primary"></i> {{ post.created_at|date:"F j, Y" }}</span>
-                        <span class="badge badge-success px-3 py-1 text-white"># Medical Insights</span>
+                <div class="flex items-center justify-center gap-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <div class="flex items-center gap-2">
+                        <i class="far fa-calendar-alt text-primary/50 text-xs text-secondary "></i>
+                        <span>{{ post.created_at|date:"F d, Y" }}</span>
                     </div>
-
-                    {% if post.excerpt %}
-                    <div class="lead font-italic mb-5 border-left pl-4 py-2" style="border-width: 4px !important; border-color: #6cce95 !important;">
-                        {{ post.excerpt }}
-                    </div>
-                    {% endif %}
-
-                    <div class="blog-content text-dark" style="line-height: 1.8; font-size: 1.1rem;">
-                        {{ post.content|safe }}
-                    </div>
-                    
-                    <hr class="my-5 bg-light">
-                    
-                    <div class="mt-5 d-flex justify-content-between align-items-center">
-                        <a href="{% url 'blog:post_list' %}" class="btn btn-outline-primary px-4 py-2" style="border-radius: 30px;"><i class="fa fa-arrow-left mr-2"></i> All Blogs</a>
-                        
-                        <div class="share-icons">
-                            <span class="text-muted small font-weight-bold mr-3">SHARE:</span>
-                            <a href="#" class="text-primary mr-3"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="text-info mr-3"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="text-success mr-3"><i class="fab fa-whatsapp"></i></a>
-                        </div>
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
+                    <div class="flex items-center gap-2">
+                        <i class="far fa-clock text-primary/50 text-xs text-secondary "></i>
+                        <span>8 Min Read</span>
                     </div>
                 </div>
-            </div>
-        </div>
-    </article>
+            </header>
 
-    <style>
-        .blog-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            margin: 2rem 0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .blog-content h2, .blog-content h3 {
-            color: var(--primary-blue);
-            margin-top: 2.5rem;
-            font-weight: 700;
-        }
-        .blog-content p {
-            margin-bottom: 1.5rem;
-        }
-    </style>
+            <!-- Featured Image -->
+            <div class="relative aspect-[21/9] rounded-[40px] overflow-hidden mb-20 shadow-2xl">
+                <img src="{{ post.get_image_url }}" alt="{{ post.title }}" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Content Area -->
+            <div class="bg-white rounded-[40px] border border-slate-100 p-8 md:p-20 shadow-sm relative">
+                
+                {% if post.excerpt %}
+                <div class="mb-16 p-8 bg-slate-50 border-l-4 border-primary rounded-2xl">
+                    <p class="text-lg font-bold italic text-slate-700 leading-relaxed">
+                        "{{ post.excerpt }}"
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- The Rich Text Content -->
+                <div class="prose prose-slate prose-lg max-w-none 
+                            prose-headings:text-slate-900 prose-headings:font-black prose-headings:tracking-tighter
+                            prose-p:text-slate-600 prose-p:leading-relaxed prose-p:mb-8
+                            prose-img:rounded-[32px] prose-img:shadow-2xl prose-img:my-16
+                            prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-slate-50 prose-blockquote:p-8 prose-blockquote:rounded-r-2xl prose-blockquote:italic
+                            premium-blog-body">
+                    {{ post.content|safe }}
+                </div>
+
+                <!-- Footer / Share Area -->
+                <footer class="mt-20 pt-12 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <a href="{% url 'blog:post_list' %}" class="flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-primary transition-all shadow-lg shadow-slate-950/20">
+                        <i class="fas fa-arrow-left text-[8px]"></i> Back to Journal
+                    </a>
+
+                    <div class="flex items-center gap-4">
+                        <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mr-2">Share Engagement</span>
+                        <a href="#" class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#1877F2] hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-slate-100"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#1DA1F2] hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-slate-100"><i class="fab fa-twitter"></i></a>
+                        <a href="javascript:void(0)" onclick="copyPageUrl()" class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-slate-100"><i class="fas fa-link"></i></a>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </div>
+</section>
+
+<script>
+    function copyPageUrl() {
+        navigator.clipboard.writeText(window.location.href);
+        showToast('Link copied to clipboard!');
+    }
+</script>
+
+<style>
+    /* Premium Prose Overrides for Rich Text Content */
+    .premium-blog-body h2 { font-size: 2.25rem; margin-top: 3rem; margin-bottom: 1.5rem; }
+    .premium-blog-body h3 { font-size: 1.5rem; margin-top: 2.5rem; margin-bottom: 1.25rem; }
+    .premium-blog-body p { line-height: 1.85; font-size: 1.125rem; color: #475569; }
+    .premium-blog-body ul, .premium-blog-body ol { margin-bottom: 2rem; padding-left: 1.5rem; }
+    .premium-blog-body li { margin-bottom: 0.75rem; color: #475569; font-weight: 500; }
+    .premium-blog-body a { color: #114084; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+    .premium-blog-body a:hover { color: #1d4ed8; }
+</style>
 {% endblock %}

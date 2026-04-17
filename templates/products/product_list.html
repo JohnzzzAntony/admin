@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block content %}
-<section class="py-12 bg-white min-h-screen">
-    <div class="container mx-auto px-6">
+<section class="py-12 bg-surface min-h-screen">
+    <div class="max-w-screen-xl mx-auto px-6">
         
         <!-- Header Section -->
         <div class="mb-12">
@@ -103,7 +103,7 @@
                 </div>
 
                 <!-- Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-8">
                     {% for product in products %}
                         {% include 'includes/_premium_product_card.html' with product=product %}
                     {% empty %}

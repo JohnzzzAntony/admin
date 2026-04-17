@@ -84,7 +84,7 @@
 
 <!-- Luxury Category Quick Access -->
 {% if design_settings.show_hp_categories %}
-<section class="py-24 bg-white relative z-20 -mt-12 rounded-t-[60px] shadow-[0_-40px_80px_rgba(0,0,0,0.05)]">
+<section class="py-12 md:py-24 bg-white relative z-20 -mt-12 rounded-t-[60px] shadow-[0_-40px_80px_rgba(0,0,0,0.05)]">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6">
         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
             <div class="space-y-4">
@@ -102,7 +102,7 @@
                 {% if not cat.parent %}
                 <div class="swiper-slide group category-card">
                     <a href="{{ cat.get_absolute_url }}" class="flex flex-col items-center gap-6">
-                        <div class="relative w-40 h-40">
+                        <div class="relative w-28 h-28 sm:w-40 sm:h-40">
                             <div class="cat-ring absolute inset-[-10px] border-2 border-primary/20 rounded-full scale-90 opacity-0 transition-all duration-500"></div>
                             <div class="w-full h-full rounded-full overflow-hidden border-4 border-white shadow-xl bg-slate-50 relative z-10 transition-transform duration-500 group-hover:scale-105">
                                 <img src="{{ cat.get_image_url }}" alt="{{ cat.name }}" class="cat-img w-full h-full object-cover transition-transform duration-700">
@@ -139,7 +139,7 @@
         <div class="flex flex-wrap -mx-4 gap-y-8">
             {% for collection in collections %}
             <div class="px-4 {% if collection.layout == '1_col' %}w-full{% elif collection.layout == '2_col' %}w-full md:w-1/2{% else %}w-full md:w-1/2 lg:w-1/3{% endif %}">
-                <div class="relative group {% if collection.layout == '1_col' %}h-[350px] sm:h-[550px]{% else %}h-[450px]{% endif %} overflow-hidden rounded-[40px] shadow-2xl">
+                <div class="relative group {% if collection.layout == '1_col' %}h-[300px] sm:h-[550px]{% else %}h-[250px] sm:h-[450px]{% endif %} overflow-hidden rounded-[40px] shadow-2xl">
                     <img src="{{ collection.get_image_url }}" alt="{{ collection.name }}" class="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
                     <div class="absolute inset-0 p-8 sm:p-12 flex flex-col justify-end gap-4 transform transition-all duration-700 group-hover:translate-y-[-10px]">
@@ -173,7 +173,7 @@
             <p class="text-slate-500 font-medium">{{ design_settings.hp_latest_products_subtitle }}</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {% for product in featured_products|slice:":8" %}
                 {% include 'includes/_premium_product_card.html' with product=product %}
             {% endfor %}
@@ -198,7 +198,7 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                 {% for product in section.data.aggregated_products %}
                     {% include 'includes/_premium_product_card.html' with product=product %}
                 {% endfor %}
@@ -233,7 +233,7 @@
 
 <!-- Brands Marquee -->
 {% if design_settings.show_hp_brands %}
-<section class="py-24 bg-white border-t border-slate-50">
+<section class="py-12 md:py-24 bg-white border-t border-slate-50">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6">
         <div class="mb-16 text-center">
             <p class="text-[10px] font-black uppercase tracking-[0.5em] text-slate-400">Trusted Industry Partners</p>
@@ -271,7 +271,7 @@
 
 <!-- Premium Testimonials Section -->
 {% if design_settings.show_hp_testimonials and testimonials %}
-<section class="py-24 bg-slate-50 overflow-hidden">
+<section class="py-12 md:py-24 bg-slate-50 overflow-hidden">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6">
         <div class="flex flex-col lg:flex-row gap-16 items-center">
             <div class="lg:w-1/3 space-y-6">

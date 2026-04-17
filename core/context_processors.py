@@ -5,6 +5,7 @@ from .design_models import DesignSettings
 from products.models import Product
 from orders.models import CustomerOrder
 from contact.models import ContactFormSubmission
+from blog.models import Post
 
 def site_settings(request):
     now = timezone.now()
@@ -26,10 +27,16 @@ def site_settings(request):
     except:
         design = None
         
+    try:
+        latest_posts = Post.objects.filter(is_published=True).order_by('-created_at')[:3]
+    except Exception:
+        latest_posts = []
+        
     return {
         'site_settings': settings,
         'design_settings': design,
         'announcement_bar_list': announcements,
+        'latest_blog_posts': latest_posts,
     }
 
 def page_heroes(request):

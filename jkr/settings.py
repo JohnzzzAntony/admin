@@ -139,6 +139,7 @@ if IS_PRODUCTION:
         SECURE_HSTS_SECONDS = 31536000
         SECURE_HSTS_INCLUDE_SUBDOMAINS = True
         SECURE_HSTS_PRELOAD = True
+        X_FRAME_OPTIONS = "DENY"
 
 # =============================================================================
 # URL & WSGI CONFIGURATION
@@ -287,18 +288,19 @@ JAZZMIN_SETTINGS = {
     "site_header": "JKR Admin",
     "site_brand": "JKR International",
     "welcome_sign": "Welcome to JKR International Management System",
-    "search_model": ["products.Product", "blog.Post"],
+    "search_model": ["products.Product"],
     "show_ui_builder": False,
     "show_recent_actions": False,
+    "actions_sticky": True,
+    "edit_id_fields": True,
+    "related_modal_active": True,
     "changeform_format": "horizontal_tabs",
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Brands", "model": "products.Brand"},
-        {"name": "Promo Sections", "model": "sliders.PromoBanner"},
         {"name": "View Site", "url": "/", "new_window": True},
     ],
     "order_with_respect_to": [
-        "products", "sliders", "orders", "accounts", "blog", "pages", "contact", "core", "auth",
+        "products", "sliders", "orders", "core", "accounts", "blog", "pages", "contact", "auth",
     ],
     "icons": {
         # Auth & Users
