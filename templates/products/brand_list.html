@@ -2,44 +2,61 @@
 {% load static %}
 
 {% block content %}
-<section class="py-5 bg-light mt-5">
-    <div class="container-fluid mb-4">
-        <div class="row px-xl-5">
-            <div class="col-12">
-                <nav aria-label="breadcrumb" class="mb-3">
-                    <ol class="breadcrumb bg-transparent p-0 mb-0">
-                        <li class="breadcrumb-item"><a href="/" class="text-primary">Home</a></li>
-                        <li class="breadcrumb-item active text-dark" aria-current="page">Shop by Brands</li>
-                    </ol>
-                </nav>
-                <div class="text-center mb-5">
-                    <h1 class="display-4 font-weight-bold text-dark mb-3">Shop by Brands</h1>
-                    <p class="lead text-muted mx-auto" style="max-width: 700px;">
-                        Explore our wide range of products from the industry's most trusted and prestigious brands.
-                    </p>
-                </div>
-            </div>
+<section class="bg-surface min-h-screen">
+    <!-- Cinematic Hero Section -->
+    <div class="relative h-[40vh] min-h-[300px] overflow-hidden bg-slate-950">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-slate-900/60 z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-transparent to-surface z-20"></div>
+            {% if page_heroes.brands.image %}
+                <img src="{{ page_heroes.brands.image.url }}" class="w-full h-full object-cover">
+            {% else %}
+                <div class="w-full h-full bg-slate-900"></div>
+            {% endif %}
         </div>
 
-        <div class="row px-xl-5">
+        <div class="relative z-30 h-full flex flex-col items-center justify-center text-center p-6">
+            <span class="px-5 py-2 bg-secondary/20 backdrop-blur-md rounded-full text-white text-[10px] font-black uppercase tracking-[0.4em] mb-6 animate__animated animate__fadeInDown">Partnerships</span>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter mb-4 animate__animated animate__fadeInUp">
+                Trusted Brands
+            </h1>
+            <nav class="flex items-center gap-3 text-white/50 text-[10px] font-black uppercase tracking-widest animate__animated animate__fadeInUp animate__delay-1s">
+                <a href="/" class="hover:text-white transition-colors">Home</a>
+                <span class="w-1 h-1 rounded-full bg-white/20"></span>
+                <span class="text-white">Our Network</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Brands Grid -->
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 py-12 md:py-24">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
             {% for brand in brands %}
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                <a href="{{ brand.get_absolute_url }}" class="text-decoration-none">
-                    <div class="card brand-card h-100 border-0 shadow-sm rounded-4 overflow-hidden text-center p-4 transition-all">
-                        <div class="brand-logo-container mb-3 d-flex align-items-center justify-content-center" style="height: 120px;">
-                            <img src="{{ brand.get_image_url }}" alt="{{ brand.name }}" class="img-fluid brand-logo">
-                        </div>
-                        <h5 class="brand-name text-dark font-weight-bold mb-1">{{ brand.name }}</h5>
-                        <p class="text-muted small mb-0">{{ brand.products.count }} Products</p>
+            <a href="{{ brand.get_absolute_url }}" class="group block h-full">
+                <div class="relative h-full bg-white rounded-[32px] md:rounded-[40px] border border-slate-100 p-8 flex flex-col items-center justify-center text-center transition-all duration-500 hover:shadow-2xl hover:shadow-black/5 hover:-translate-y-2">
+                    <div class="h-20 md:h-24 w-full flex items-center justify-center mb-6 grayscale group-hover:grayscale-0 opacity-40 group-hover:opacity-100 transition-all duration-500">
+                        <img src="{{ brand.get_image_url }}" alt="{{ brand.name }}" class="max-h-full max-w-full object-contain transform transition-transform duration-700 group-hover:scale-110">
                     </div>
-                </a>
-            </div>
+                    
+                    <div class="space-y-1">
+                        <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest group-hover:text-primary transition-colors">{{ brand.name }}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ brand.products.count }} Masterpieces</p>
+                    </div>
+
+                    <!-- Subtle Indicator -->
+                    <div class="absolute bottom-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
+                        <i class="fas fa-arrow-right text-[10px] text-primary"></i>
+                    </div>
+                </div>
+            </a>
             {% empty %}
-            <div class="col-12 text-center py-5">
-                <i class="fas fa-tags fa-3x text-muted mb-3"></i>
-                <h4>No brands available yet</h4>
-                <p class="text-muted">Check back soon for new brand additions.</p>
-                <a href="{% url 'products:product_list' %}" class="btn btn-primary rounded-pill px-4">Browse All Products</a>
+            <div class="col-span-full py-24 text-center">
+                <div class="inline-flex w-20 h-20 items-center justify-center rounded-full bg-slate-50 text-slate-300 mb-6">
+                    <i class="fas fa-tags text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 tracking-tight mb-2">Expanding Our Network</h3>
+                <p class="text-slate-500 max-w-md mx-auto mb-8 font-medium">We are currently curating more world-class brands for our collection. Check back soon for new additions.</p>
+                <a href="{% url 'products:product_list' %}" class="inline-flex h-14 items-center px-10 bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-primary transition-all">Browse Collection</a>
             </div>
             {% endfor %}
         </div>
@@ -47,36 +64,6 @@
 </section>
 
 <style>
-    .brand-card {
-        background: #fff;
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-    .brand-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
-        border-color: var(--primary-color);
-    }
-    .brand-logo {
-        max-height: 100%;
-        max-width: 100%;
-        object-fit: contain;
-        filter: grayscale(100%);
-        opacity: 0.7;
-        transition: 0.3s ease;
-    }
-    .brand-card:hover .brand-logo {
-        filter: grayscale(0%);
-        opacity: 1;
-        transform: scale(1.05);
-    }
-    .brand-name {
-        transition: 0.3s;
-    }
-    .brand-card:hover .brand-name {
-        color: var(--primary-color) !important;
-    }
-    .transition-all {
-        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
+    .bg-surface { background-color: #f8fafc; }
 </style>
 {% endblock %}

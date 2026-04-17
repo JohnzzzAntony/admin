@@ -285,7 +285,13 @@
                 </div>
             </div>
 
-            <div class="lg:w-2/3">
+            <div class="lg:w-2/3 relative">
+                <!-- Fade Mask Effect (Left Side) -->
+                <div class="absolute inset-y-0 -left-1 w-24 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent z-20 pointer-events-none hidden lg:block"></div>
+                
+                <!-- Fade Mask Effect (Right Side) -->
+                <div class="absolute inset-y-0 -right-1 w-24 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent z-20 pointer-events-none hidden lg:block"></div>
+
                 <div class="swiper testimonial-swiper overflow-visible">
                     <div class="swiper-wrapper">
                         {% for test in testimonials %}
