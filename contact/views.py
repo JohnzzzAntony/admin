@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import ContactFormSubmission, NewsletterSubscriber
+from pages.models import ContactPage
 
 def contact(request):
     """Image 2 redesign: Handles contact form submission from the new layout."""
@@ -16,7 +17,8 @@ def contact(request):
         messages.success(request, "Hi! Thanks for reaching out. We will get back to you soon.")
         return redirect('contact:contact')
 
-    return render(request, 'contact/contact.html')
+    contact_settings = ContactPage.objects.first()
+    return render(request, 'contact/contact.html', {'contact_settings': contact_settings})
 
 def subscribe(request):
     """Handles newsletter subscription from Image 1/2 footer."""

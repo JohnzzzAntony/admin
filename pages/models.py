@@ -56,6 +56,9 @@ class AboutUs(models.Model):
     experience_value = models.CharField(max_length=20, default="12+", help_text="e.g. 12+, 500+")
     experience_label = models.CharField(max_length=100, default="Years of Trust")
     
+    legacy_title = models.CharField(max_length=255, default="Our Legacy", help_text="Title for the About page hero section.")
+    legacy_subtitle = models.TextField(default="Defining excellence in the international trade landscape for over a decade.", help_text="Subtitle for the About page hero section.")
+    
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
     def __str__(self): return f"{self.title} Settings"
     
@@ -200,3 +203,27 @@ class Partner(models.Model):
             if self.logo_url: return self.logo_url
         except Exception: pass
         return "https://via.placeholder.com/200x80"
+
+class ContactPage(models.Model):
+    badge = models.CharField(max_length=100, default="Get in Touch")
+    heading_html = models.CharField(max_length=512, default="Let's Start a <span class='italic text-primary'>Conversation</span>")
+    subtitle = models.TextField(default="We are here to provide excellence and support for your every inquiry.")
+    
+    hours_label = models.CharField(max_length=100, default="Monday - Friday")
+    hours_value = models.CharField(max_length=100, default="08:30 AM — 05:00 PM")
+    
+    form_title_html = models.CharField(max_length=512, default="Have a <span class='italic text-primary'>Question?</span>")
+    form_subtitle = models.TextField(default="Send us a message and our specialists will reach out to you within 24 business hours.")
+    
+    support_image = models.ImageField(upload_to="contact/", null=True, blank=True)
+    support_image_url = models.URLField(blank=True, null=True)
+    
+    def __str__(self): return "Contact Page Settings"
+    @property
+    def get_support_image(self):
+        try:
+            if self.support_image: return self.support_image.url
+            if self.support_image_url: return self.support_image_url
+        except Exception: pass
+        return "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=2070"
+    class Meta: verbose_name_plural = "Contact Page Settings"

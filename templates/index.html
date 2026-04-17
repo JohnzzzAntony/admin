@@ -240,26 +240,26 @@
         </div>
         <div class="swiper brands-marquee overflow-hidden">
             <div class="swiper-wrapper items-center">
-                {% for brand in brands %}
+                {% for partner in partners %}
                 <div class="swiper-slide px-6 py-4 text-center group">
-                    <a href="{{ brand.get_absolute_url }}">
+                    {% if partner.website_url %}<a href="{{ partner.website_url }}" target="_blank">{% endif %}
                         <div class="h-16 flex items-center justify-center mb-3 grayscale group-hover:grayscale-0 opacity-40 group-hover:opacity-100 transition-all">
-                            <img src="{{ brand.get_image_url }}" alt="{{ brand.name }}" class="h-full w-auto object-contain mx-auto">
+                            <img src="{{ partner.get_image_url }}" alt="{{ partner.name }}" class="h-full w-auto object-contain mx-auto">
                         </div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{{ brand.name }}</p>
-                    </a>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{{ partner.name }}</p>
+                    {% if partner.website_url %}</a>{% endif %}
                 </div>
                 {% endfor %}
                 <!-- Seamless Loop padding -->
-                {% if brands.count < 10 %}
-                    {% for brand in brands %}
+                {% if partners.count < 10 %}
+                    {% for partner in partners %}
                     <div class="swiper-slide px-6 py-4 text-center group">
-                        <a href="{{ brand.get_absolute_url }}">
+                        {% if partner.website_url %}<a href="{{ partner.website_url }}" target="_blank">{% endif %}
                             <div class="h-16 flex items-center justify-center mb-3 grayscale group-hover:grayscale-0 opacity-40 group-hover:opacity-100 transition-all">
-                                <img src="{{ brand.get_image_url }}" alt="{{ brand.name }}" class="h-full w-auto object-contain mx-auto">
+                                <img src="{{ partner.get_image_url }}" alt="{{ partner.name }}" class="h-full w-auto object-contain mx-auto">
                             </div>
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{{ brand.name }}</p>
-                        </a>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{{ partner.name }}</p>
+                        {% if partner.website_url %}</a>{% endif %}
                     </div>
                     {% endfor %}
                 {% endif %}

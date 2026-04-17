@@ -10,11 +10,11 @@
     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
     
     <div class="container mx-auto px-6 relative z-10 text-center animate__animated animate__fadeInUp">
-        <span class="inline-block py-2 px-4 bg-primary text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-6">Get in Touch</span>
+        <span class="inline-block py-2 px-4 bg-primary text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-6">{{ contact_settings.badge|default:"Get in Touch" }}</span>
         <h1 class="text-5xl lg:text-8xl font-black text-white tracking-tighter mb-4 leading-none">
-            Let's Start a <span class="italic text-primary">Conversation</span>
+            {{ contact_settings.heading_html|safe|default:"Let's Start a <span class='italic text-primary'>Conversation</span>" }}
         </h1>
-        <p class="text-slate-300 text-lg lg:text-xl font-medium max-w-2xl mx-auto italic">{{ page_heroes.contact.subtitle|default:"We are here to provide excellence and support for your every inquiry." }}</p>
+        <p class="text-slate-300 text-lg lg:text-xl font-medium max-w-2xl mx-auto italic">{{ contact_settings.subtitle|default:"We are here to provide excellence and support for your every inquiry." }}</p>
     </div>
 </section>
 
@@ -48,8 +48,8 @@
                     <i class="far fa-clock"></i>
                 </div>
                 <h3 class="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Operation Hours</h3>
-                <p class="text-slate-500 font-medium mb-4">Monday - Friday</p>
-                <span class="text-lg font-black text-amber-600">08:30 AM — 05:00 PM</span>
+                <p class="text-slate-500 font-medium mb-4">{{ contact_settings.hours_label|default:"Monday - Friday" }}</p>
+                <span class="text-lg font-black text-amber-600">{{ contact_settings.hours_value|default:"08:30 AM — 05:00 PM" }}</span>
             </div>
         </div>
     </div>
@@ -62,8 +62,8 @@
             <!-- Form Area -->
             <div class="lg:w-1/2 w-full">
                 <div class="space-y-4 mb-12">
-                    <h2 class="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter">Have a <span class="italic text-primary">Question?</span></h2>
-                    <p class="text-slate-500 font-medium text-lg">Send us a message and our specialists will reach out to you within 24 business hours.</p>
+                    <h2 class="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter">{{ contact_settings.form_title_html|safe|default:"Have a <span class='italic text-primary'>Question?</span>" }}</h2>
+                    <p class="text-slate-500 font-medium text-lg">{{ contact_settings.form_subtitle|default:"Send us a message and our specialists will reach out to you within 24 business hours." }}</p>
                 </div>
 
                 <form action="{% url 'contact:contact_submit' %}" method="POST" class="space-y-8">
@@ -98,7 +98,7 @@
                 <div class="relative group">
                     <div class="absolute -inset-4 bg-primary/5 rounded-[60px] blur-2xl transform rotate-3 group-hover:rotate-0 transition-transform duration-700"></div>
                     <div class="relative rounded-[50px] overflow-hidden shadow-2xl border-8 border-white">
-                        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=2070" alt="Excellence Support" class="w-full aspect-[4/5] object-cover transform scale-105 group-hover:scale-100 transition-transform duration-1000">
+                        <img src="{{ contact_settings.get_support_image }}" alt="Excellence Support" class="w-full aspect-[4/5] object-cover transform scale-105 group-hover:scale-100 transition-transform duration-1000">
                     </div>
                 </div>
             </div>

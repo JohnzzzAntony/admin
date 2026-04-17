@@ -12,10 +12,10 @@
     
     <div class="container mx-auto px-6 relative z-10 text-center animate__animated animate__fadeIn">
         <h1 class="text-6xl lg:text-9xl font-black text-white tracking-tighter leading-none mb-6">
-            {% if page_heroes.about.title_html %}{{ page_heroes.about.title_html|safe }}{% else %}{{ page_heroes.about.title|default:"Our Legacy" }}{% endif %}
+            {{ about_us.legacy_title|default:"Our Legacy" }}
         </h1>
         <p class="text-xl lg:text-2xl text-slate-200 font-medium max-w-3xl mx-auto italic opacity-80 leading-relaxed">
-            {{ page_heroes.about.subtitle|default:"Defining excellence in the international trade landscape for over a decade." }}
+            {{ about_us.legacy_subtitle|default:"Defining excellence in the international trade landscape for over a decade." }}
         </p>
     </div>
 </section>

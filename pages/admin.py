@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PageHero, AboutUs, VideoCard, MissionVision, Service, Counter, WhyUsCard, GalleryItem, Partner
+from .models import PageHero, AboutUs, VideoCard, MissionVision, Service, Counter, WhyUsCard, GalleryItem, Partner, ContactPage
 from django.utils.html import format_html
 
 @admin.register(PageHero)
@@ -38,6 +38,12 @@ class AboutUsAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Brand Story', {
             'fields': (('title', 'heading'), 'is_active', 'content'),
+        }),
+        ('Cinematic Branding', {
+            'fields': ('legacy_title', 'legacy_subtitle'),
+        }),
+        ('Experience Stats', {
+            'fields': (('experience_value', 'experience_label'),),
         }),
     )
 
@@ -207,3 +213,21 @@ class PartnerAdmin(admin.ModelAdmin):
         url = obj.get_image_url
         return format_html('<img src="{}" style="height:45px; object-fit:contain; max-width: 120px;" />', url) if url else "-"
     image_tag.short_description = 'Logo'
+
+@admin.register(ContactPage)
+class ContactPageAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'badge')
+    fieldsets = (
+        ('Hero Section', {
+            'fields': ('badge', 'heading_html', 'subtitle'),
+        }),
+        ('Business Hours', {
+            'fields': (('hours_label', 'hours_value'),),
+        }),
+        ('Inquiry Section', {
+            'fields': ('form_title_html', 'form_subtitle', ('support_image', 'support_image_url')),
+        }),
+    )
+
+    def has_add_permission(self, request):
+        return False if self.model.objects.count() > 0 else super().has_add_permission(request)
