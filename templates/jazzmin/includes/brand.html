@@ -1,9 +1,10 @@
 {% load static custom_filters %}
 {% get_site_settings as site_settings_obj %}
+<!-- JKR CUSTOM BRAND LOADED -->
 
 <a href="{% url 'admin:index' %}" class="brand-link {{ jazzmin_ui.brand_color }}">
     {% if site_settings_obj and site_settings_obj.get_image_url %}
-        <img src="{{ site_settings_obj.get_image_url }}" alt="Logo" class="brand-image" style="opacity: .8; max-height: 33px;">
+        <img src="{{ site_settings_obj.get_image_url }}" alt="Logo" class="brand-image" style="opacity: 1; max-height: 45px; width: auto; margin-top: -5px;">
     {% else %}
         <img src="{% static 'admin/img/logo.png' %}" alt="Logo" class="brand-image" style="opacity: .8; max-height: 33px;">
     {% endif %}
