@@ -285,14 +285,14 @@
                 </div>
             </div>
 
-            <div class="lg:w-2/3 relative z-10">
-                <!-- Fade Mask Effect (Left Side) -->
-                <div class="absolute inset-y-0 -left-1 w-32 bg-gradient-to-r from-slate-50 via-slate-50 to-transparent z-50 pointer-events-none hidden lg:block"></div>
+            <div class="lg:w-2/3 relative">
+                <!-- Fade Mask Effect (Left Side) - Increased width and opacity for better disappearance before title -->
+                <div class="absolute inset-y-0 -left-2 w-48 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent z-50 pointer-events-none hidden lg:block"></div>
                 
                 <!-- Fade Mask Effect (Right Side) -->
-                <div class="absolute inset-y-0 -right-1 w-32 bg-gradient-to-l from-slate-50 via-slate-50 to-transparent z-50 pointer-events-none hidden lg:block"></div>
+                <div class="absolute inset-y-0 -right-2 w-48 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent z-50 pointer-events-none hidden lg:block"></div>
 
-                <div class="swiper testimonial-swiper overflow-visible">
+                <div class="swiper testimonial-swiper overflow-hidden py-8">
                     <div class="swiper-wrapper">
                         {% for test in testimonials %}
                         <div class="swiper-slide h-auto">
