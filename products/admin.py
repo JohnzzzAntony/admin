@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
+from django.urls import reverse
 from .models import Category, Product, ProductImage, Offer, Collection, Wishlist, Brand, TrustBadge
 from .forms import ProductAdminForm
 from import_export.admin import ImportExportModelAdmin
