@@ -1,0 +1,10 @@
+{% load static %}
+
+<a href="{% url 'admin:index' %}" class="brand-link {{ jazzmin_ui.brand_color }}">
+    {% if site_settings and site_settings.get_image_url %}
+        <img src="{{ site_settings.get_image_url }}" alt="Logo" class="brand-image" style="opacity: .8; max-height: 33px;">
+    {% else %}
+        <img src="{% static 'admin/img/logo.png' %}" alt="Logo" class="brand-image" style="opacity: .8; max-height: 33px;">
+    {% endif %}
+    <span class="brand-text font-weight-light">{{ site_brand }}</span>
+</a>
