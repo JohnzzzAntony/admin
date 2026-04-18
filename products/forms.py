@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Category
+from .models import Product, Category, TrustBadge
 
 class ProductAdminForm(forms.ModelForm):
     parent_category = forms.ModelChoiceField(
@@ -13,6 +13,14 @@ class ProductAdminForm(forms.ModelForm):
         queryset=Category.objects.all(),
         required=False,
         label="Sub Category"
+    )
+
+    trust_badges = forms.ModelMultipleChoiceField(
+        queryset=TrustBadge.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Trust Badges",
+        help_text="Select badges to display on this product."
     )
     
     class Meta:

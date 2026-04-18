@@ -313,6 +313,7 @@ JAZZMIN_SETTINGS = {
         "products.Collection": "fas fa-layer-group",
         "products.Offer": "fas fa-percent",
         "products.Brand": "fas fa-copyright",
+        "products.TrustBadge": "fas fa-shield-alt",
         # Orders & Customers
         "orders.CustomerOrder": "fas fa-shopping-cart",
         "core.Client": "fas fa-users",
