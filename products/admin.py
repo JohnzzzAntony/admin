@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
-from .models import Category, Product, ProductImage, Offer, Collection, Wishlist, Brand
+from .models import Category, Product, ProductImage, Offer, Collection, Wishlist, Brand, TrustBadge
 from .forms import ProductAdminForm
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
@@ -221,8 +221,8 @@ class ProductAdmin(ImportExportModelAdmin):
             'fields': ('overview', 'features', 'technical_info', 'shipping_returns'),
         }),
         ('Trust Signals & Badges', {
-            'fields': ('include_genuine_badge', 'include_fast_delivery_badge'),
-            'description': 'Toggle visual badges for product authenticity and shipping speed.'
+            'fields': ('trust_badges',),
+            'description': 'Select visual badges for product authenticity and shipping speed.'
         }),
         ('Media Assets', {
             'fields': ('image', 'image_url'),
@@ -237,6 +237,7 @@ class ProductAdmin(ImportExportModelAdmin):
         "free_shipping": admin.HORIZONTAL,
         "show_on_homepage": admin.HORIZONTAL,
     }
+    filter_horizontal = ('trust_badges',)
     autocomplete_fields = ('brand',)
 
 @admin.register(Category)
@@ -403,3 +404,12 @@ class WishlistAdmin(admin.ModelAdmin):
     list_display = ('user', 'product', 'added_at')
     list_filter = ('user', 'added_at')
     search_fields = ('user__username', 'product__name')
+
+@admin.register(TrustBadge)
+class TrustBadgeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'is_active', 'color_preview')
+    search_fields = ('name',)
+    
+    def color_preview(self, obj):
+        return mark_safe(f'<div style="width:20px; height:20px; background:{obj.background_color}; border:1px solid {obj.border_color}; border-radius:4px;"></div>')
+    color_preview.short_description = "Color"

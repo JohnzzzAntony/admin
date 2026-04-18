@@ -162,6 +162,22 @@ class Brand(models.Model):
         from django.urls import reverse
         return reverse('products:brand_detail', kwargs={'slug': self.slug})
 
+# ─── Trust Badge ─────────────────────────────────────────────────────────────
+
+class TrustBadge(models.Model):
+    name = models.CharField(max_length=100)
+    icon_svg = models.TextField(help_text="Paste SVG icon code here (e.g., from Lucide or Heroicons).", blank=True)
+    background_color = models.CharField(max_length=50, default="#ecfdf5", help_text="e.g., #ecfdf5 (Light green)")
+    text_color = models.CharField(max_length=50, default="#065f46", help_text="e.g., #065f46 (Dark green)")
+    border_color = models.CharField(max_length=50, default="#d1fae5", help_text="e.g., #d1fae5")
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self): return self.name
+
+    class Meta:
+        verbose_name = "Trust Badge"
+        verbose_name_plural = "Trust Badges"
+
 # ─── Product ─────────────────────────────────────────────────────────────────
 
 class Product(models.Model):
@@ -215,9 +231,8 @@ class Product(models.Model):
     technical_info = RichTextField(blank=True, null=True, verbose_name="Product Characteristics & Specifications")
     shipping_returns = RichTextField(blank=True, null=True, verbose_name="Shipping & Returns Policy")
 
-    # Trust Badges (Matching User's Request Image 2)
-    include_genuine_badge = models.BooleanField(default=True, verbose_name="Show 'Genuine Product' Badge")
-    include_fast_delivery_badge = models.BooleanField(default=True, verbose_name="Show 'Fast Delivery' Badge")
+    # Trust Badges (Dynamic System)
+    trust_badges = models.ManyToManyField(TrustBadge, blank=True, related_name="products")
     
     @property
     def features_list(self):
