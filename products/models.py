@@ -166,7 +166,7 @@ class Brand(models.Model):
 
 class TrustBadge(models.Model):
     name = models.CharField(max_length=100)
-    icon_svg = models.TextField(help_text="Paste SVG icon code here (e.g., from Lucide or Heroicons).", blank=True)
+    icon_svg = models.TextField(help_text="Paste SVG icon code here. You can use <a href='https://lucide.dev/icons' target='_blank' style='color:#007bff; font-weight:bold;'>Lucide Icons</a> to find and copy icons.", blank=True)
     background_color = models.CharField(max_length=50, default="#ecfdf5", help_text="e.g., #ecfdf5 (Light green)")
     text_color = models.CharField(max_length=50, default="#065f46", help_text="e.g., #065f46 (Dark green)")
     border_color = models.CharField(max_length=50, default="#d1fae5", help_text="e.g., #d1fae5")

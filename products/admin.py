@@ -410,6 +410,10 @@ class TrustBadgeAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_active', 'color_preview')
     search_fields = ('name',)
     
+    def has_module_permission(self, request):
+        """Hides this model from the admin dashboard sidebar while keeping it operational."""
+        return False
+
     def color_preview(self, obj):
         return mark_safe(f'<div style="width:20px; height:20px; background:{obj.background_color}; border:1px solid {obj.border_color}; border-radius:4px;"></div>')
     color_preview.short_description = "Color"
