@@ -218,7 +218,11 @@ class ProductAdmin(ImportExportModelAdmin):
             'classes': ('collapse',),
         }),
         ('Detailed Content', {
-            'fields': ('overview', 'features', 'technical_info'),
+            'fields': ('overview', 'features', 'technical_info', 'shipping_returns'),
+        }),
+        ('Trust Signals & Badges', {
+            'fields': ('include_genuine_badge', 'include_fast_delivery_badge'),
+            'description': 'Toggle visual badges for product authenticity and shipping speed.'
         }),
         ('Media Assets', {
             'fields': ('image', 'image_url'),

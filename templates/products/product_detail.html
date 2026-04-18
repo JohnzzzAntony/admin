@@ -151,14 +151,19 @@
 
                 <!-- Trust Badges -->
                 <div class="grid grid-cols-2 gap-4 py-6 border-t border-slate-100">
+                    {% if product.include_genuine_badge %}
                     <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50/50 rounded-2xl border border-emerald-100">
                         <i class="fas fa-shield-check text-emerald-600"></i>
                         <span class="text-[10px] font-black uppercase tracking-widest text-emerald-900">Genuine Product</span>
                     </div>
+                    {% endif %}
+                    
+                    {% if product.include_fast_delivery_badge %}
                     <div class="flex items-center gap-3 px-4 py-3 bg-blue-50/50 rounded-2xl border border-blue-100">
                         <i class="fas fa-truck-fast text-blue-600"></i>
                         <span class="text-[10px] font-black uppercase tracking-widest text-blue-900">Fast Delivery</span>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -183,19 +188,25 @@
                     </div>
                 </div>
                 <div id="shipping-tab" class="tab-content-panel">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div class="space-y-6">
-                            <h4 class="text-xl font-black text-slate-900">Dispatch & Delivery</h4>
-                            <p class="text-sm font-medium text-slate-500 leading-relaxed">
-                                All orders are processed within 24 hours. We offer express shipping across all UAE Emirates with a standard delivery time of 2-3 business days.
-                            </p>
-                        </div>
-                        <div class="space-y-6">
-                            <h4 class="text-xl font-black text-slate-900">Secure Packaging</h4>
-                            <p class="text-sm font-medium text-slate-500 leading-relaxed">
-                                Our products are professionally packaged in temperature-controlled environments to ensure they reach you in perfect condition.
-                            </p>
-                        </div>
+                    <div class="prose prose-slate max-w-none text-slate-600">
+                        {% if product.shipping_returns %}
+                            {{ product.shipping_returns|safe }}
+                        {% else %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                <div class="space-y-6">
+                                    <h4 class="text-xl font-black text-slate-900">Dispatch & Delivery</h4>
+                                    <p class="text-sm font-medium text-slate-500 leading-relaxed">
+                                        All orders are processed within 24 hours. We offer express shipping across all UAE Emirates with a standard delivery time of 2-3 business days.
+                                    </p>
+                                </div>
+                                <div class="space-y-6">
+                                    <h4 class="text-xl font-black text-slate-900">Secure Packaging</h4>
+                                    <p class="text-sm font-medium text-slate-500 leading-relaxed">
+                                        Our products are professionally packaged in temperature-controlled environments to ensure they reach you in perfect condition.
+                                    </p>
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

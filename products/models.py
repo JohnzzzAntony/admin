@@ -213,6 +213,11 @@ class Product(models.Model):
     
     overview = RichTextField(blank=True, null=True)
     technical_info = RichTextField(blank=True, null=True, verbose_name="Product Characteristics & Specifications")
+    shipping_returns = RichTextField(blank=True, null=True, verbose_name="Shipping & Returns Policy")
+
+    # Trust Badges (Matching User's Request Image 2)
+    include_genuine_badge = models.BooleanField(default=True, verbose_name="Show 'Genuine Product' Badge")
+    include_fast_delivery_badge = models.BooleanField(default=True, verbose_name="Show 'Fast Delivery' Badge")
     
     @property
     def features_list(self):
