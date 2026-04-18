@@ -1,8 +1,9 @@
-{% load static %}
+{% load static custom_filters %}
+{% get_site_settings as site_settings_obj %}
 
 <a href="{% url 'admin:index' %}" class="brand-link {{ jazzmin_ui.brand_color }}">
-    {% if site_settings and site_settings.get_image_url %}
-        <img src="{{ site_settings.get_image_url }}" alt="Logo" class="brand-image" style="opacity: .8; max-height: 33px;">
+    {% if site_settings_obj and site_settings_obj.get_image_url %}
+        <img src="{{ site_settings_obj.get_image_url }}" alt="Logo" class="brand-image" style="opacity: .8; max-height: 33px;">
     {% else %}
         <img src="{% static 'admin/img/logo.png' %}" alt="Logo" class="brand-image" style="opacity: .8; max-height: 33px;">
     {% endif %}

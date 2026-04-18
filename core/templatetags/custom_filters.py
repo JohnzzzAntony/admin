@@ -1,6 +1,11 @@
 from django import template
+from core.models import SiteSettings
 
 register = template.Library()
+
+@register.simple_tag
+def get_site_settings():
+    return SiteSettings.objects.first()
 
 @register.filter(name='multiply')
 def multiply(value, arg):
