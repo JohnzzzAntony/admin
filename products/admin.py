@@ -44,7 +44,7 @@ class ProductAdmin(ImportExportModelAdmin):
     list_editable = ('show_on_homepage', 'brand', 'is_featured')
     search_fields = ('name', 'slug', 'sku_id', 'brand__name')
     list_filter = ('brand', 'category', 'is_featured', 'show_on_homepage', 'is_active')
-    readonly_fields = ('sku_id', 'preview')
+    readonly_fields = ('sku_id', 'preview', 'badge_management')
     inlines = [ProductImageInline]
     # change_list_template = "admin/products/product/change_list.html"
 
@@ -186,6 +186,30 @@ class ProductAdmin(ImportExportModelAdmin):
         return obj.category.parent if obj.category and obj.category.parent else (obj.category if obj.category else "-")
     parent_category_display.short_description = "Parent Category"
 
+    def badge_management(self, obj):
+        if not obj.pk: return "Save product first to manage badges."
+        badges = obj.trust_badges.all()
+        if not badges: return "No badges assigned. Use checkboxes below to add."
+        
+        html = '<div style="display:flex; flex-wrap:wrap; gap:10px;">'
+        for b in badges:
+            edit_url = reverse('admin:products_trustbadge_change', args=[b.id])
+            html += f'''
+                <div style="background:{b.background_color}; color:{b.text_color}; border:1px solid {b.border_color}; 
+                            padding:8px 12px; border-radius:12px; display:flex; align-items:center; gap:8px;">
+                    <a href="{edit_url}" class="related-widget-wrapper-link change-related" style="color:inherit; text-decoration:none; font-size:10px; font-weight:900; text-transform:uppercase;">{b.name}</a>
+                    <a href="{edit_url}" class="related-widget-wrapper-link change-related" title="Edit Badge">
+                        <img src="/static/admin/img/icon-changelink.svg" alt="Edit" style="width:14px; height:14px; opacity:0.6 hover:opacity:1;">
+                    </a>
+                </div>
+            '''
+        html += '</div>'
+        # Add a link to create new
+        add_url = reverse('admin:products_trustbadge_add')
+        html += f'<div style="margin-top:15px;"><a href="{add_url}" class="add-related" style="color:var(--primary); font-weight:bold; font-size:11px;">+ Add New Global Trust Badge</a></div>'
+        return mark_safe(html)
+    badge_management.short_description = "Manage Selected Badges"
+
     def stock_status(self, obj):
         return "✅ In Stock" if obj.is_in_stock() else "❌ Out of Stock"
     stock_status.short_description = "Stock"
@@ -221,8 +245,8 @@ class ProductAdmin(ImportExportModelAdmin):
             'fields': ('overview', 'features', 'technical_info', 'shipping_returns'),
         }),
         ('Trust Signals & Badges', {
-            'fields': ('trust_badges',),
-            'description': 'Select visual badges for product authenticity and shipping speed.'
+            'fields': ('badge_management', 'trust_badges'),
+            'description': 'View/Edit assigned badges above or select new ones below.'
         }),
         ('Media Assets', {
             'fields': ('image', 'image_url'),
