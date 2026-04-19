@@ -1,24 +1,50 @@
+"""
+core/supabase_client.py  ← REPLACE your existing file
+=======================================================
+Robust Supabase client singleton.
+Reads SUPABASE_URL and SUPABASE_KEY from environment / .env.
+Returns None gracefully if credentials are missing so the rest of the
+app can still function without crashing.
+"""
+
 import os
-from supabase import create_client, Client
-import environ
+import logging
 
-# Re-init Env in case it's needed outside Django's context
-env = environ.Env()
-environ.Env.read_env(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
+logger = logging.getLogger(__name__)
 
-def get_supabase() -> Client:
+_supabase_client = None   # module-level singleton
+
+
+def get_supabase():
     """
-    Get a configured Supabase client.
-    Requires SUPABASE_URL and SUPABASE_KEY in your .env
+    Return a configured Supabase client, or None if credentials are absent.
+    Uses a module-level singleton so the client is only created once.
     """
-    url: str = os.environ.get("SUPABASE_URL", "")
-    key: str = os.environ.get("SUPABASE_KEY", "")
-    
+    global _supabase_client
+
+    if _supabase_client is not None:
+        return _supabase_client
+
+    url = os.environ.get("SUPABASE_URL", "").strip()
+    key = os.environ.get("SUPABASE_KEY", "").strip()
+
     if not url or not key:
-        print("Warning: Supabase credentials not found in env.")
+        logger.warning(
+            "Supabase credentials missing (SUPABASE_URL / SUPABASE_KEY). "
+            "Social auth will be unavailable."
+        )
         return None
-        
-    return create_client(url, key)
 
-# Create a singleton instance for convenience
+    try:
+        from supabase import create_client
+        _supabase_client = create_client(url, key)
+        logger.info("Supabase client initialised successfully.")
+        return _supabase_client
+    except Exception as exc:
+        logger.error("Failed to initialise Supabase client: %s", exc)
+        return None
+
+
+# Convenience singleton — import this anywhere with:
+#   from core.supabase_client import supabase
 supabase = get_supabase()

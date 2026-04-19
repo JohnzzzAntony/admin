@@ -1,149 +1,57 @@
+"""
+orders/notifications.py  ← REPLACE your existing file
+=======================================================
+Delegates all e-mail sending to accounts.email_notifications.
+SMS and WhatsApp stubs preserved for future integration.
+"""
+
 import logging
-from django.core.mail import send_mail
-from django.conf import settings
-from django.utils import timezone
-from core.models import SiteSettings
 
 logger = logging.getLogger(__name__)
 
-def send_customer_notification(order, is_automated=True, notification_type='status_change'):
-    """Main logic for multi-channel notifications.
 
-    Args:
-        order: CustomerOrder instance
-        is_automated: Whether this is an automated notification
-        notification_type: 'status_change', 'payment_confirmation', 'order_placed'
+def send_customer_notification(order, is_automated=True, notification_type="status_change"):
+    """
+    Main notification dispatcher for order events.
+
+    Parameters
+    ----------
+    order             : orders.models.CustomerOrder
+    is_automated      : bool  (backward-compat, unused internally)
+    notification_type : 'order_placed' | 'payment_confirmation' | 'status_change'
+
+    Called automatically from CustomerOrder.save() in orders/models.py.
+    Can also be called manually — e.g. from a Stripe webhook view:
+
+        from orders.notifications import send_customer_notification
+        send_customer_notification(order, notification_type='payment_confirmation')
     """
     try:
+        from core.models import SiteSettings
         site_config = SiteSettings.objects.first()
         if not site_config:
-            logger.warning("No SiteSettings found for notifications")
+            logger.warning("No SiteSettings found — skipping notification for order %s", order.pk)
             return
 
-        order_id = f"Demo-{order.pk:05d}"
-        customer_name = f"{order.first_name} {order.last_name}"
-        status_label = order.get_status_display()
-        tracking_link = f"{settings.SITE_URL}/orders/track/{order.pk}/"
-
-        # Customize message based on notification type
-        if notification_type == 'payment_confirmation':
-            subject_prefix = "Payment Confirmed"
-            message_body = f"""
-Dear {customer_name},
-
-Great news! Your payment has been successfully processed.
-
-Order Details:
----------------
-Order Number: #{order_id}
-Total Amount: {order.total_amount} {settings.CURRENCY}
-Payment Method: {order.get_payment_method_display()}
-Payment Status: Paid
-
-Shipping Address:
-{order.street}, {order.city}, {order.country}
-Phone: {order.phone}
-
-Track your order: {tracking_link}
-
-Thank you for choosing {site_config.site_name}!
-            """.strip()
-
-        elif notification_type == 'order_placed':
-            subject_prefix = "Order Received"
-            message_body = f"""
-Dear {customer_name},
-
-Thank you for your order! We have received your order and it is being processed.
-
-Order Details:
----------------
-Order Number: #{order_id}
-Total Amount: {order.total_amount} {settings.CURRENCY}
-Payment Method: {order.get_payment_method_display()}
-Status: {status_label}
-
-Shipping Address:
-{order.street}, {order.city}, {order.country}
-Phone: {order.phone}
-
-Track your order: {tracking_link}
-
-We will send you updates as your order progresses.
-
-Thank you for choosing {site_config.site_name}!
-            """.strip()
-
-        else:  # status_change
-            status_messages = {
-                'pending': 'Your order has been received and is being processed.',
-                'packaging': 'Your order is being carefully packaged.',
-                'ready_for_shipment': 'Your order is ready and awaiting shipment.',
-                'shipped': 'Your order has been shipped! It is on its way to you.',
-                'delivered': 'Your order has been delivered. We hope you enjoy your purchase!',
-                'return_to_origin': 'Your order is being returned to sender.',
-                'refund': 'Your refund is being processed.',
-            }
-            status_message = status_messages.get(order.status, f'Your order status is now: {status_label}')
-
-            subject_prefix = f"Order Update - {status_label}"
-            message_body = f"""
-Dear {customer_name},
-
-{status_message}
-
-Order Details:
----------------
-Order Number: #{order_id}
-Current Status: {status_label}
-Total Amount: {order.total_amount} {settings.CURRENCY}
-
-Shipping To:
-{order.street}, {order.city}, {order.country}
-Phone: {order.phone}
-
-Track your order: {tracking_link}
-
-Thank you for choosing {site_config.site_name}!
-            """.strip()
-
-        full_subject = f"{subject_prefix} - Order #{order_id}"
-
-        # Email Channel
+        # ── E-mail ────────────────────────────────────────────────────────────
         if site_config.enable_email_notifications:
-            def send_async_email(subject, message, to_email):
-                try:
-                    from_email = settings.DEFAULT_FROM_EMAIL
-                    if from_email == 'EMAIL_HOST_USER':
-                        from_email = settings.EMAIL_HOST_USER
+            from accounts.email_notifications import send_order_email
+            send_order_email(order, notification_type=notification_type)
 
-                    send_mail(
-                        subject,
-                        message,
-                        from_email,
-                        [to_email],
-                        fail_silently=True,
-                    )
-                    logger.info(f"Email sent for order {order_id}: {subject}")
-                except Exception as e:
-                    logger.error(f"Email failure: {e}")
+        # ── SMS (placeholder — wire up Twilio / Vonage here) ─────────────────
+        if getattr(site_config, "enable_sms_notifications", False) and order.phone:
+            logger.info("SMS notification triggered for order %s", order.pk)
+            # from twilio.rest import Client
+            # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+            # client.messages.create(
+            #     body=f"JKR-{order.pk:05d} status: {order.get_status_display()}",
+            #     from_=settings.TWILIO_PHONE_NUMBER,
+            #     to=order.phone,
+            # )
 
-            # Start notification in background thread
-            import threading
-            email_thread = threading.Thread(
-                target=send_async_email,
-                args=(full_subject, message_body, order.email)
-            )
-            email_thread.daemon = True
-            email_thread.start()
+        # ── WhatsApp (placeholder) ────────────────────────────────────────────
+        if getattr(site_config, "enable_whatsapp_notifications", False) and order.phone:
+            logger.info("WhatsApp notification triggered for order %s", order.pk)
 
-        # SMS Channel (Placeholder - requires Twilio/nexmo integration)
-        if site_config.enable_sms_notifications and order.phone:
-            logger.info(f"SMS notification triggered for {order_id}")
-
-        # WhatsApp Channel (Placeholder)
-        if site_config.enable_whatsapp_notifications and order.phone:
-            logger.info(f"WhatsApp notification triggered for {order_id}")
-
-    except Exception as e:
-        logger.error(f"Notification error: {e}")
+    except Exception as exc:
+        logger.error("Notification error for order %s: %s", order.pk, exc)
