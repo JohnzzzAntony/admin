@@ -1,44 +1,73 @@
-/* Fix for django-import-export preview table in Jazzmin theme */
-.import-preview table {
+/* Aggressive fix for django-import-export preview table in Jazzmin/Dark themes */
+
+/* Target the wrapper and everything inside */
+div.import-preview, 
+.import-preview {
+    background: #ffffff !important;
+    padding: 20px !important;
+    border-radius: 8px !important;
+}
+
+.import-preview table,
+.import-preview .table,
+.import-preview table.import-preview {
     background-color: #ffffff !important;
-    color: #333333 !important;
-    border-collapse: collapse !important;
+    color: #000000 !important;
+    border: 1px solid #dee2e6 !important;
     width: 100% !important;
-    margin-bottom: 20px !important;
+    border-collapse: collapse !important;
 }
 
-.import-preview table th {
-    background-color: #f4f6f9 !important;
-    color: #333 !important;
-    padding: 12px 8px !important;
-    border: 1px solid #dee2e6 !important;
-    font-weight: 600 !important;
-}
-
-.import-preview table td {
+/* Ensure all cells have white background and black text */
+.import-preview table th,
+.import-preview table td,
+.import-preview .table th,
+.import-preview .table td {
     background-color: #ffffff !important;
-    color: #333 !important;
-    padding: 8px !important;
+    color: #000000 !important;
     border: 1px solid #dee2e6 !important;
+    padding: 10px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-.import-preview table tr:nth-child(even) td {
-    background-color: #f9f9f9 !important;
+/* Specific fix for the 'black rectangle' look which is often caused by dark background in Jazzmin */
+.import-preview table tr,
+.import-preview .table tr {
+    background-color: #ffffff !important;
 }
 
-/* Ensure text inside spans/divs is also visible */
-.import-preview table td span, 
-.import-preview table td div {
-    color: #333 !important;
+/* Override stripped rows */
+.import-preview .table-striped tbody tr:nth-of-type(odd),
+.import-preview table tr:nth-child(odd) td {
+    background-color: #f8f9fa !important;
 }
 
-/* Fix for the "New" / "Update" labels */
-.import-preview .new {
+/* Force text visibility for any nested elements */
+.import-preview * {
+    color: #000000 !important;
+}
+
+/* Status labels */
+.import-preview .new, 
+.import-preview span.new {
     color: #28a745 !important;
+    background: #e8f5e9 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
     font-weight: bold !important;
 }
 
-.import-preview .update {
-    color: #ffc107 !important;
+.import-preview .update, 
+.import-preview span.update {
+    color: #fd7e14 !important;
+    background: #fff3e6 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
     font-weight: bold !important;
+}
+
+/* Breadcrumbs or other elements that might be in the preview area */
+.import-preview .breadcrumb {
+    background: transparent !important;
 }
