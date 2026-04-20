@@ -7,13 +7,7 @@ from .forms import ProductAdminForm
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
 
-# ─── Resources for Import/Export ─────────────────────────────────────────────
-
-class CategoryResource(resources.ModelResource):
-    class Meta: model = Category
-
-class ProductResource(resources.ModelResource):
-    class Meta: model = Product
+from .resources import CategoryResource, ProductResource
 
 # ─── Inlines ─────────────────────────────────────────────────────────────────
 
@@ -76,9 +70,10 @@ class ProductAdmin(ImportExportModelAdmin):
         sample_row_1 = [
             "", # id
             "Medical Equipment", # category
+            "Brand Name", # brand
             "Sample Premium Stethoscope", # name
             "sample-premium-stethoscope", # slug
-            "", # image
+            "", # image field (physical path)
             "https://res.cloudinary.com/demo/image/upload/sample.jpg", # image_url
             "MED-STETH-001", # sku_id
             10, # quantity
@@ -89,28 +84,37 @@ class ProductAdmin(ImportExportModelAdmin):
             True, # free_shipping
             0.00, # additional_shipping_charge
             "2-3 business days", # delivery_time
-            5.00, # tax_percentage (VAT %)
+            5.00, # tax_percentage
             0.5, # weight
-            30, # length
-            15, # width
-            5, # height
+            30.0, # length
+            15.0, # width
+            5.0, # height
             "Professional grade stethoscope for cardiologists.", # features
             "<p>Superb acoustics; Dual-lumen tubing; Stainless steel chestpiece.</p>", # overview
             "<p>Weight: 150g; Length: 69cm.</p>", # technical_info
-            "2024-01-01 10:00:00", # created_at
+            "<p>Free returns within 14 days.</p>", # shipping_returns
+            4.8, # avg_rating
+            120, # review_count
+            "NEW", # badge
+            "blue", # badge_color
+            True, # is_featured
             True, # show_on_homepage
             True, # is_active
+            "2024-01-01 10:00:00", # created_at
             "Best Stethoscope UAE", # meta_title
             "Buy the best medical stethoscope in Dubai with fast delivery.", # meta_description
             "stethoscope, medical, cardiology, uae", # meta_keywords
+            "", # gallery_image_urls
+            "", # category_image_url
         ]
         
         sample_row_2 = [
             "", # id
             "Medical Consumables", # category
+            "HealthBrand", # brand
             "Digital Blood Pressure Monitor", # name
             "digital-bp-monitor", # slug
-            "", # image
+            "", # image field
             "https://res.cloudinary.com/demo/image/upload/sample_bp.jpg", # image_url
             "MED-BPM-002", # sku_id
             5, # quantity
@@ -121,33 +125,33 @@ class ProductAdmin(ImportExportModelAdmin):
             False, # free_shipping
             15.00, # additional_shipping_charge
             "1-2 business days", # delivery_time
-            5.00, # tax_percentage (VAT %)
+            5.00, # tax_percentage
             0.8, # weight
-            20, # length
-            20, # width
-            15, # height
+            20.0, # length
+            20.0, # width
+            15.0, # height
             "Automatic digital BP monitor with large display.", # features
             "<p>One-touch operation; Irregular heartbeat detection; Memory for 2 users.</p>", # overview
             "<p>Accuracy: +/- 3mmHg.</p>", # technical_info
-            "2024-01-01 11:00:00", # created_at
+            "<p>Standard shipping policy applies.</p>", # shipping_returns
+            4.5, # avg_rating
+            45, # review_count
+            "TRENDING", # badge
+            "red", # badge_color
+            False, # is_featured
             True, # show_on_homepage
             True, # is_active
+            "2024-01-01 11:00:00", # created_at
             "Digital BP Monitor Dubai", # meta_title
             "Reliable blood pressure monitoring at home.", # meta_description
             "bp monitor, blood pressure, health, uae", # meta_keywords
+            "", # gallery_image_urls
+            "" # category_image_url
         ]
         
-        # Verify length matches headers
-        if len(sample_row_1) == len(headers):
-            dataset.append(sample_row_1)
-            dataset.append(sample_row_2)
-        else:
-            # Fallback or log error if mismatch
-            # This helps prevent 500 errors if model changes
-            print(f"DEBUG: Dataset header mismatch! Expected {len(headers)}, got {len(sample_row_1)}")
-            # Even if mismatch, try to append what we have if length is equal to some common set
-            dataset.append(sample_row_1[:len(headers)])
-            dataset.append(sample_row_2[:len(headers)])
+        # Helper to ensure exact length matching
+        dataset.append(sample_row_1[:len(headers)])
+        dataset.append(sample_row_2[:len(headers)])
             
         return dataset
 
@@ -169,6 +173,9 @@ class ProductAdmin(ImportExportModelAdmin):
         js = (
             'admin/js/dynamic_categories.js',
         )
+        css = {
+            'all': ('admin/css/import_preview_fix.css',)
+        }
 
     def preview(self, obj):
         url = obj.get_image_url

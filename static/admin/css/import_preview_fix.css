@@ -1,0 +1,44 @@
+/* Fix for django-import-export preview table in Jazzmin theme */
+.import-preview table {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+    margin-bottom: 20px !important;
+}
+
+.import-preview table th {
+    background-color: #f4f6f9 !important;
+    color: #333 !important;
+    padding: 12px 8px !important;
+    border: 1px solid #dee2e6 !important;
+    font-weight: 600 !important;
+}
+
+.import-preview table td {
+    background-color: #ffffff !important;
+    color: #333 !important;
+    padding: 8px !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+.import-preview table tr:nth-child(even) td {
+    background-color: #f9f9f9 !important;
+}
+
+/* Ensure text inside spans/divs is also visible */
+.import-preview table td span, 
+.import-preview table td div {
+    color: #333 !important;
+}
+
+/* Fix for the "New" / "Update" labels */
+.import-preview .new {
+    color: #28a745 !important;
+    font-weight: bold !important;
+}
+
+.import-preview .update {
+    color: #ffc107 !important;
+    font-weight: bold !important;
+}

@@ -8,6 +8,23 @@
     .tab-content-panel { display: none; }
     .tab-content-panel.active { display: block; animation: fadeIn 0.5s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Fix for oversized trust badge and product badge SVGs */
+    .trust-badge-icon svg, .product-badge-container svg {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    .product-badge-container {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
 </style>
 {% endblock %}
 
@@ -33,7 +50,7 @@
                         <img id="main-product-image" src="{{ product.get_image_url }}" alt="{{ product.name }}" class="w-full h-full object-contain p-12 transition-transform duration-700 group-hover:scale-110">
                         
                         {% if product.badge %}
-                        <div class="absolute top-8 left-8 bg-{{ product.badge_color|default:'primary' }} text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
+                        <div class="absolute top-8 left-8 bg-{{ product.badge_color|default:'primary' }}/90 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl z-20 product-badge-container max-w-[140px] truncate">
                             {{ product.badge }}
                         </div>
                         {% endif %}
@@ -156,13 +173,13 @@
                         <div class="flex items-center gap-3 px-4 py-3 rounded-2xl border" 
                              style="background-color: {{ badge.background_color }}; border-color: {{ badge.border_color }};">
                             {% if badge.icon_svg %}
-                                <div class="flex-shrink-0 w-4 h-4" style="color: {{ badge.text_color }};">
+                                <div class="flex-shrink-0 w-5 h-5 flex items-center justify-center trust-badge-icon" style="color: {{ badge.text_color }};">
                                     {{ badge.icon_svg|safe }}
                                 </div>
                             {% else %}
-                                <i class="fas fa-check" style="color: {{ badge.text_color }};"></i>
+                                <i class="fas fa-check text-[10px]" style="color: {{ badge.text_color }};"></i>
                             {% endif %}
-                            <span class="text-[10px] font-black uppercase tracking-widest" style="color: {{ badge.text_color }};">
+                            <span class="text-[10px] font-black uppercase tracking-widest leading-none" style="color: {{ badge.text_color }};">
                                 {{ badge.name }}
                             </span>
                         </div>
