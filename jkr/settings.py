@@ -41,6 +41,7 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 IS_PRODUCTION = env.bool("IS_PRODUCTION", default=False)
 
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[
+    "https://shop.creativegradientz.com",
     "https://ecom.creativegradientz.com",
     "https://admin.creativegradientz.com",
     "https://creativegradientz.com",
