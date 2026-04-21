@@ -29,7 +29,7 @@
                 <div class="col-lg-3 col-md-4 col-6 p-2" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0 }}00">
                     <div class="overflow-hidden shadow-sm social-hover-box h-100 position-relative hover-lift" style="border-radius: var(--border-radius-card);">
                         <a href="{{ item.image.url }}" data-fancybox="gallery">
-                            <img src="{{ item.image.url }}" class="img-fluid w-100 h-100 transition-all" style="object-fit:cover; min-height: 300px;">
+                            <img src="{{ item.image.url }}" alt="{{ item.title|default:item.category|default:'JKR International Gallery Image' }}" class="img-fluid w-100 h-100 transition-all" style="object-fit:cover; min-height: 300px;">
                         </a>
                         <div class="position-absolute p-3 text-white w-100 transition-all opacity-0 item-overlay" style="bottom:0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); pointer-events: none;">
                             <h6 class="m-0 font-weight-bold">{{ item.title|default:item.category|default:"JKR Gallery" }}</h6>

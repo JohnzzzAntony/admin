@@ -12,7 +12,7 @@
 <!-- Cinematic Hero Section -->
 <section class="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-slate-900">
     <div class="absolute inset-0 scale-110">
-        <img src="{{ page_heroes.about.get_image_url|default:'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069' }}" class="w-full h-full object-cover">
+        <img src="{{ page_heroes.about.get_image_url|default:'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069' }}" alt="{{ page_heroes.about.title|default:'About JKR International' }}" class="w-full h-full object-cover">
     </div>
     <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]"></div>
     <div class="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-slate-50 to-transparent"></div>

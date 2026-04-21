@@ -1,12 +1,58 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block meta_title %}{% if current_category.meta_title %}{{ current_category.meta_title }}{% elif current_category %}{{ current_category.name }} | {{ site_settings.site_name }}{% else %}{{ site_settings.meta_title|default:site_settings.site_name }}{% endif %}{% endblock %}
-{% block meta_description %}{% if current_category.meta_description %}{{ current_category.meta_description }}{% elif current_category %}{{ current_category.description|striptags|truncatewords:25 }}{% else %}{{ site_settings.meta_description }}{% endif %}{% endblock %}
-{% block meta_keywords %}{% if current_category.meta_keywords %}{{ current_category.meta_keywords }}{% else %}{{ site_settings.meta_keywords }}{% endif %}{% endblock %}
+{% block meta_title %}
+    {% if current_category.meta_title %}{{ current_category.meta_title }}
+    {% elif current_brand.meta_title %}{{ current_brand.meta_title }}
+    {% elif current_category %}{{ current_category.name }} | {{ site_settings.site_name }}
+    {% elif current_brand %}{{ current_brand.name }} | {{ site_settings.site_name }}
+    {% else %}{{ site_settings.meta_title|default:site_settings.site_name }}{% endif %}
+{% endblock %}
 
-{% block og_title %}{% if current_category %}{{ current_category.name }} - {{ site_settings.site_name }}{% else %}{{ site_settings.site_name }}{% endif %}{% endblock %}
-{% block og_description %}{% if current_category %}{{ current_category.meta_description|default:current_category.description|striptags|truncatewords:25 }}{% else %}{{ site_settings.meta_description }}{% endif %}{% endblock %}
+{% block meta_description %}
+    {% if current_category.meta_description %}{{ current_category.meta_description }}
+    {% elif current_brand.meta_description %}{{ current_brand.meta_description }}
+    {% elif current_category %}{{ current_category.description|striptags|truncatewords:25 }}
+    {% elif current_brand %}{{ current_brand.description|striptags|truncatewords:25 }}
+    {% else %}{{ site_settings.meta_description }}{% endif %}
+{% endblock %}
+
+{% block meta_keywords %}
+    {% if current_category.meta_keywords %}{{ current_category.meta_keywords }}
+    {% elif current_brand.meta_keywords %}{{ current_brand.meta_keywords }}
+    {% else %}{{ site_settings.meta_keywords }}{% endif %}
+{% endblock %}
+
+{% block og_title %}
+    {% if current_category %}{{ current_category.name }} - {{ site_settings.site_name }}
+    {% elif current_brand %}{{ current_brand.name }} - {{ site_settings.site_name }}
+    {% else %}{{ site_settings.meta_title|default:site_settings.site_name }}{% endif %}
+{% endblock %}
+
+{% block og_description %}
+    {% if current_category %}{{ current_category.meta_description|default:current_category.description|striptags|truncatewords:25 }}
+    {% elif current_brand %}{{ current_brand.meta_description|default:current_brand.description|striptags|truncatewords:25 }}
+    {% else %}{{ site_settings.meta_description }}{% endif %}
+{% endblock %}
+
+{% block extra_json_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "{% if current_category %}{{ current_category.name }}{% elif current_brand %}{{ current_brand.name }}{% else %}Products{% endif %}",
+  "itemListElement": [
+    {% for product in products %}
+    {
+      "@type": "ListItem",
+      "position": {{ forloop.counter }},
+      "url": "{{ request.scheme }}://{{ request.get_host }}{{ product.get_absolute_url }}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <section class="py-12 bg-surface min-h-screen">
@@ -29,9 +75,9 @@
             <!-- Banner -->
             <div class="relative h-64 lg:h-80 rounded-[40px] overflow-hidden bg-slate-900 group">
                 {% if current_category and current_category.image %}
-                    <img src="{{ current_category.get_image_url }}" class="w-full h-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-110">
+                    <img src="{{ current_category.get_image_url }}" alt="{{ current_category.name }}" class="w-full h-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-110">
                 {% elif collection and collection.cover_image %}
-                    <img src="{{ collection.get_image_url }}" class="w-full h-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-110">
+                    <img src="{{ collection.get_image_url }}" alt="{{ collection.name }}" class="w-full h-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-110">
                 {% else %}
                     <div class="w-full h-full bg-gradient-to-br from-slate-950 to-primary/20"></div>
                 {% endif %}

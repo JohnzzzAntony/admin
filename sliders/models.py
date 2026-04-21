@@ -12,6 +12,7 @@ class HeroSlider(models.Model):
         help_text="Desktop slider image. Recommended: 1920x800px. JPG, WEBP. Max 2MB."
     )
     image_url = models.URLField(blank=True, null=True, help_text="External URL for background image.")
+    image_alt = models.CharField(max_length=255, blank=True, help_text="Alt text for the slider background image.")
     video = models.FileField(
         upload_to="sliders/videos/", 
         null=True, 

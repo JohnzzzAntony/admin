@@ -17,6 +17,7 @@ class Post(models.Model):
     # Meta
     meta_title = models.CharField(max_length=255, blank=True)
     meta_description = models.TextField(blank=True)
+    meta_keywords = models.TextField(blank=True, help_text="SEO Keywords.")
     
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -11,6 +11,36 @@
 {% block og_description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}{{ product.overview|striptags|truncatewords:30 }}{% endif %}{% endblock %}
 {% block og_image %}{{ product.get_image_url }}{% endblock %}
 
+{% block extra_json_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ product.name }}",
+  "image": [
+    "{{ request.scheme }}://{{ request.get_host }}{{ product.get_image_url }}"
+    {% for pimg in product.images.all %}
+    ,"{{ request.scheme }}://{{ request.get_host }}{{ pimg.image.url }}"
+    {% endfor %}
+  ],
+  "description": "{{ product.meta_description|default:product.overview|striptags|truncatewords:50 }}",
+  "sku": "{{ product.sku_id }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "{{ product.brand.name|default:site_settings.site_name }}"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request.build_absolute_uri }}",
+    "priceCurrency": "AED",
+    "price": "{{ product.sale_price|default:product.regular_price }}",
+    "availability": "https://schema.org/{% if product.quantity > 0 %}InStock{% else %}OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+}
+</script>
+{% endblock %}
+
 {% block split_css %}
 <style>
     .product-gallery-thumb.active { border-color: var(--primary); }
@@ -70,11 +100,11 @@
                     {% if product.images.all %}
                     <div class="flex gap-4 mt-6 overflow-x-auto pb-4 px-2">
                         <button onclick="updateMainImage('{{ product.get_image_url }}', this)" class="product-gallery-thumb active flex-shrink-0 w-24 h-24 rounded-2xl border-2 bg-slate-50 p-2 transition-all">
-                            <img src="{{ product.get_image_url }}" class="w-full h-full object-contain">
+                            <img src="{{ product.get_image_url }}" alt="{{ product.name }}" class="w-full h-full object-contain">
                         </button>
                         {% for pimg in product.images.all %}
                         <button onclick="updateMainImage('{{ pimg.image.url }}', this)" class="product-gallery-thumb flex-shrink-0 w-24 h-24 rounded-2xl border-2 border-transparent bg-slate-50 p-2 hover:border-slate-200 transition-all">
-                            <img src="{{ pimg.image.url }}" class="w-full h-full object-contain">
+                            <img src="{{ pimg.image.url }}" alt="{{ product.name }} - Gallery Image {{ forloop.counter }}" class="w-full h-full object-contain">
                         </button>
                         {% endfor %}
                     </div>

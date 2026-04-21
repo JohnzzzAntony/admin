@@ -341,6 +341,10 @@ class BrandAdmin(admin.ModelAdmin):
             'fields': ('show_on_homepage',),
             'description': 'Toggle visibility in the "We Deal With" section on the homepage.'
         }),
+        ('SEO Presence', {
+            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
+            'classes': ('collapse',),
+        }),
     )
     radio_fields = {"show_on_homepage": admin.HORIZONTAL}
 

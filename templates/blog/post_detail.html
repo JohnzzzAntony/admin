@@ -3,10 +3,37 @@
 
 {% block meta_title %}{% if post.meta_title %}{{ post.meta_title }}{% else %}{{ post.title }} | {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block meta_description %}{% if post.meta_description %}{{ post.meta_description }}{% else %}{{ post.excerpt|default:post.content|striptags|truncatewords:30 }}{% endif %}{% endblock %}
+{% block meta_keywords %}{% if post.meta_keywords %}{{ post.meta_keywords }}{% else %}{{ site_settings.meta_keywords }}{% endif %}{% endblock %}
 
 {% block og_title %}{% if post.meta_title %}{{ post.meta_title }}{% else %}{{ post.title }} - {{ site_settings.site_name }}{% endif %}{% endblock %}
 {% block og_description %}{% if post.meta_description %}{{ post.meta_description }}{% else %}{{ post.excerpt|default:post.content|striptags|truncatewords:30 }}{% endif %}{% endblock %}
 {% block og_image %}{{ post.get_image_url }}{% endblock %}
+
+{% block extra_json_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ post.title }}",
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ post.get_image_url }}",
+  "datePublished": "{{ post.created_at|date:'c' }}",
+  "dateModified": "{{ post.updated_at|default:post.created_at|date:'c' }}",
+  "author": {
+    "@type": "Organization",
+    "name": "JKR International"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "JKR International",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{{ site_settings.logo.url }}"
+    }
+  },
+  "description": "{{ post.meta_description|default:post.excerpt|striptags|truncatewords:40 }}"
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <section class="py-12 bg-surface min-h-screen">

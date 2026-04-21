@@ -17,7 +17,69 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="{% block og_title %}{{ site_settings.meta_title|default:site_settings.site_name }}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}{{ site_settings.meta_description }}{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
     {% if site_settings.logo %}<meta property="og:image" content="{{ site_settings.logo.url }}">{% endif %}
+    
+    <!-- Technical SEO -->
+    <link rel="canonical" href="{{ request.build_absolute_uri }}" />
+    
+    <!-- JSON-LD Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "{{ site_settings.site_name }}",
+      "url": "{{ request.scheme }}://{{ request.get_host }}",
+      "logo": "{% if site_settings.logo %}{{ site_settings.logo.url }}{% endif %}",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "{{ site_settings.phone }}",
+        "contactType": "customer service",
+        "email": "{{ site_settings.email }}"
+      },
+      "sameAs": [
+        "{{ social_settings.facebook }}",
+        "{{ social_settings.instagram }}",
+        "{{ social_settings.linkedin }}",
+        "{{ social_settings.twitter }}"
+      ]
+    }
+    </script>
+    {% block extra_json_ld %}{% endblock %}
+    
+    <!-- Tracking & Analytics -->
+    {% if site_settings.google_analytics_id %}
+    <!-- Google Analytics (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ site_settings.google_analytics_id }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ site_settings.google_analytics_id }}');
+    </script>
+    {% endif %}
+
+    {% if site_settings.facebook_pixel_id %}
+    <!-- Meta Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+      document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '{{ site_settings.facebook_pixel_id }}');
+      fbq('track', 'PageView');
+    </script>
+    {% endif %}
+
+    {% if site_settings.google_site_verification_id %}
+    <meta name="google-site-verification" content="{{ site_settings.google_site_verification_id }}" />
+    {% endif %}
+
+    {% if site_settings.schema_markup %}
+    <!-- Custom Schema Markup -->
+    {{ site_settings.schema_markup|safe }}
+    {% endif %}
     
     {% if site_settings.favicon %}
     <link rel="icon" type="image/png" href="{{ site_settings.favicon.url }}" />

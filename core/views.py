@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
+from .models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation
 from django.db import models
 from products.models import Category, Product, Collection, Brand
 from sliders.models import HeroSlider, PromoBanner
@@ -158,3 +159,13 @@ def store_locations_view(request):
 def health_check(request):
     """Simple health check endpoint for monitoring."""
     return JsonResponse({'status': 'healthy', 'timestamp': timezone.now().isoformat()})
+def robots_txt_view(request):
+    """Serve dynamic robots.txt content from SiteSettings."""
+    settings = SiteSettings.objects.first()
+    content = ""
+    if settings and settings.robots_txt:
+        content = settings.robots_txt
+    else:
+        content = "User-agent: *\nDisallow: /admin/\nDisallow: /checkout/\nAllow: /"
+    
+    return HttpResponse(content, content_type="text/plain")

@@ -22,6 +22,15 @@ class SiteSettings(models.Model):
     
     meta_title = models.CharField(max_length=255, blank=True)
     meta_description = models.TextField(blank=True)
+    meta_keywords = models.CharField(max_length=512, blank=True, help_text="Global SEO Keywords.")
+    
+    # ── Tracking & SEO Analytics ───────────────────────────────────────────
+    google_analytics_id = models.CharField(max_length=100, blank=True, help_text="GA4 Measurement ID (e.g. G-XXXXXXX)")
+    facebook_pixel_id = models.CharField(max_length=100, blank=True, help_text="Meta Pixel ID")
+    google_site_verification_id = models.CharField(max_length=255, blank=True, help_text="Verification token for Google Search Console.")
+    robots_txt = models.TextField(blank=True, help_text="Custom robots.txt content. Leave blank to use default.")
+    schema_markup = models.TextField(blank=True, help_text="Custom JSON-LD schema markup for the homepage.")
+
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=50, blank=True)
     whatsapp = models.CharField(max_length=50, blank=True)
@@ -34,6 +43,7 @@ class SiteSettings(models.Model):
     linkedin = models.URLField(blank=True)
     twitter = models.URLField(blank=True)
     instagram_handle = models.CharField(max_length=100, default="@demo_intl", blank=True)
+    
     
     
     
@@ -79,6 +89,7 @@ class Testimonial(models.Model):
         help_text="Client Photo. Recommended: 200x200px (1:1). JPG, PNG. Max 500KB."
     )
     image_url = models.URLField(blank=True, null=True)
+    image_alt = models.CharField(max_length=255, blank=True, help_text="Alt text for the client photo.")
     rating = models.PositiveIntegerField(default=5)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
@@ -102,6 +113,7 @@ class Client(models.Model):
         help_text="Client Logo. Recommended: 300x120px (Transparent PNG). Max 500KB."
     )
     logo_url = models.URLField(blank=True, null=True)
+    image_alt = models.CharField(max_length=255, blank=True, help_text="Alt text for the client logo.")
     icon_svg = models.TextField(blank=True, help_text="Paste SVG code for logo here.")
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='Public')
     order = models.PositiveIntegerField(default=0)
@@ -124,6 +136,7 @@ class SocialPost(models.Model):
         help_text="Instagram Preview. Recommended: 1080x1080px (Square). JPG, WEBP. Max 2MB."
     )
     image_url = models.URLField(blank=True, null=True)
+    image_alt = models.CharField(max_length=255, blank=True, help_text="Alt text for the social post image.")
     icon_svg = models.TextField(blank=True, help_text="Paste SVG code here.")
     link = models.URLField(blank=True)
     order = models.PositiveIntegerField(default=0)
@@ -145,6 +158,7 @@ class StoreLocation(models.Model):
         help_text="Storefront Photo. Recommended: 800x600px. JPG, WEBP. Max 1MB."
     )
     image_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted image.")
+    image_alt = models.CharField(max_length=255, blank=True, help_text="Alt text for the store photo.")
     address = models.TextField()
     city = models.CharField(max_length=100, help_text="e.g. Dubai, Sharjah, Abu Dhabi")
     phone = models.CharField(max_length=50)

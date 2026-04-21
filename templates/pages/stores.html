@@ -22,7 +22,7 @@
 
             <div class="relative h-64 lg:h-96 rounded-[40px] overflow-hidden bg-slate-900 group shadow-2xl">
                 {% if page_heroes.stores.image %}
-                    <img src="{{ page_heroes.stores.get_image_url }}" class="w-full h-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-105">
+                    <img src="{{ page_heroes.stores.get_image_url }}" alt="{{ page_heroes.stores.title|default:'Store Locations' }}" class="w-full h-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-105">
                 {% else %}
                     <div class="w-full h-full bg-gradient-to-br from-slate-950 to-secondary/30"></div>
                 {% endif %}

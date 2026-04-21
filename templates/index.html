@@ -40,7 +40,7 @@
             <div class="swiper-slide relative h-full w-full flex items-center">
                 <!-- BG Media -->
                 <div class="absolute inset-0 z-0">
-                    <img src="{{ slider.get_image_url }}" alt="{{ slider.title }}" class="w-full h-full object-cover opacity-60 transition-transform duration-[10000ms] ease-linear group-hover:scale-110">
+                    <img src="{{ slider.get_image_url }}" alt="{{ slider.title|striptags }}" class="w-full h-full object-cover opacity-60 transition-transform duration-[10000ms] ease-linear group-hover:scale-110">
                     <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent"></div>
                 </div>
                 
@@ -51,9 +51,9 @@
                             {{ slider.badge_text|default:"Elite Collection"|safe }}
                         </div>
                         
-                        <h1 class="text-3xl sm:text-6xl lg:text-7xl font-black text-white leading-[0.9] tracking-tighter">
+                        <h2 class="text-3xl sm:text-6xl lg:text-7xl font-black text-white leading-[0.9] tracking-tighter">
                             {{ slider.title|safe }}
-                        </h1>
+                        </h2>
                         
                         <p class="text-lg text-slate-300 max-w-lg leading-relaxed font-medium">
                             {{ slider.description|safe|linebreaksbr }}
@@ -64,11 +64,14 @@
             {% empty %}
             <div class="swiper-slide h-full flex items-center justify-center bg-slate-900">
                 <div class="text-center space-y-6">
-                    <h1 class="text-5xl font-black text-white">Welcome to Premium Store</h1>
+                    <h2 class="text-5xl font-black text-white">Welcome to {{ site_settings.site_name }}</h2>
                 </div>
             </div>
             {% endfor %}
         </div>
+        
+        <!-- Visually Hidden Primary H1 for SEO -->
+        <h1 class="sr-only">{{ site_settings.meta_title|default:site_settings.site_name }}</h1>
         
         <!-- Hero Controls -->
         <div class="absolute bottom-12 right-12 z-20 flex gap-4">
@@ -105,7 +108,7 @@
                         <div class="relative w-28 h-28 sm:w-40 sm:h-40">
                             <div class="cat-ring absolute inset-[-10px] border-2 border-primary/20 rounded-full scale-90 opacity-0 transition-all duration-500"></div>
                             <div class="w-full h-full rounded-full overflow-hidden border-4 border-white shadow-xl bg-slate-50 relative z-10 transition-transform duration-500 group-hover:scale-105">
-                                <img src="{{ cat.get_image_url }}" alt="{{ cat.name }}" class="cat-img w-full h-full object-cover transition-transform duration-700">
+                                <img src="{{ cat.get_image_url }}" alt="{{ cat.name }}" class="cat-img w-full h-full object-cover transition-transform duration-700" loading="lazy">
                             </div>
                         </div>
                         <div class="text-center">
@@ -140,7 +143,7 @@
             {% for collection in collections %}
             <div class="px-4 {% if collection.layout == '1_col' %}w-full{% elif collection.layout == '2_col' %}w-full md:w-1/2{% else %}w-full md:w-1/2 lg:w-1/3{% endif %}">
                 <div class="relative group {% if collection.layout == '1_col' %}h-[300px] sm:h-[550px]{% else %}h-[250px] sm:h-[450px]{% endif %} overflow-hidden rounded-[40px] shadow-2xl">
-                    <img src="{{ collection.get_image_url }}" alt="{{ collection.name }}" class="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110">
+                    <img src="{{ collection.get_image_url }}" alt="{{ collection.name }}" class="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
                     <div class="absolute inset-0 p-8 sm:p-12 flex flex-col justify-end gap-4 transform transition-all duration-700 group-hover:translate-y-[-10px]">
                         <span class="text-[10px] font-black text-white/50 uppercase tracking-[0.4em]">Curated Theme</span>
@@ -211,8 +214,8 @@
         <div class="{% if section.data.layout == '1_col' %}max-w-none px-0{% else %}max-w-screen-2xl mx-auto px-4 sm:px-6{% endif %}">
             <div class="grid grid-cols-1 {% if section.data.layout == '2_col' %}lg:grid-cols-2{% elif section.data.layout == '3_col' %}lg:grid-cols-3{% else %}grid-cols-1{% endif %} gap-6">
                 {% for item in section.data.items.all %}
-                <a href="{% if item.link %}{{ item.link }}{% else %}{% url 'products:product_list' %}{% endif %}" class="group relative block overflow-hidden h-[400px] sm:h-[550px] {% if section.data.shape == 'rounded' and section.data.layout != '1_col' %}rounded-[48px]{% elif section.data.shape == 'pill' %}rounded-full{% else %}rounded-none{% endif %} shadow-2xl">
-                    <img src="{{ item.get_image_url }}" alt="{{ item.title }}" class="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105">
+                <a href="{% if item.link %}{{ item.link }}{% else %}{% url 'products:product_list' %}" class="group relative block overflow-hidden h-[400px] sm:h-[550px] {% if section.data.shape == 'rounded' and section.data.layout != '1_col' %}rounded-[48px]{% elif section.data.shape == 'pill' %}rounded-full{% else %}rounded-none{% endif %} shadow-2xl">
+                    <img src="{{ item.get_image_url }}" alt="{{ item.title }}" class="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
                     <div class="absolute inset-0 p-8 sm:p-16 flex flex-col justify-end gap-4 transform transition-all duration-700 group-hover:translate-y-[-10px]">
                         {% if item.subtitle %}<span class="text-[10px] font-black text-white/50 uppercase tracking-[0.4em]">{{ item.subtitle }}</span>{% endif %}
@@ -244,7 +247,7 @@
                 <div class="swiper-slide px-6 py-4 text-center group">
                     {% if partner.website_url %}<a href="{{ partner.website_url }}" target="_blank">{% endif %}
                         <div class="h-16 flex items-center justify-center mb-3 grayscale group-hover:grayscale-0 opacity-40 group-hover:opacity-100 transition-all">
-                            <img src="{{ partner.get_image_url }}" alt="{{ partner.name }}" class="h-full w-auto object-contain mx-auto">
+                            <img src="{{ partner.get_image_url }}" alt="{{ partner.name }}" class="h-full w-auto object-contain mx-auto" loading="lazy">
                         </div>
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{{ partner.name }}</p>
                     {% if partner.website_url %}</a>{% endif %}
@@ -256,7 +259,7 @@
                     <div class="swiper-slide px-6 py-4 text-center group">
                         {% if partner.website_url %}<a href="{{ partner.website_url }}" target="_blank">{% endif %}
                             <div class="h-16 flex items-center justify-center mb-3 grayscale group-hover:grayscale-0 opacity-40 group-hover:opacity-100 transition-all">
-                                <img src="{{ partner.get_image_url }}" alt="{{ partner.name }}" class="h-full w-auto object-contain mx-auto">
+                                <img src="{{ partner.get_image_url }}" alt="{{ partner.name }}" class="h-full w-auto object-contain mx-auto" loading="lazy">
                             </div>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">{{ partner.name }}</p>
                         {% if partner.website_url %}</a>{% endif %}

@@ -144,6 +144,11 @@ class Brand(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
     order = models.PositiveIntegerField(default=0)
 
+    # SEO Fields
+    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title")
+    meta_description = models.TextField(blank=True, verbose_name="Meta Description")
+    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords")
+
     def save(self, *args, **kwargs):
         if not self.slug: self.slug = slugify(self.name)
         super().save(*args, **kwargs)

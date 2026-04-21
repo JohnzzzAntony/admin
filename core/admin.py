@@ -25,7 +25,7 @@ class StoreLocationAdmin(admin.ModelAdmin):
             'fields': ('phone', 'map_url'),
         }),
         ('Branding Image', {
-            'fields': ('image', 'image_url'),
+            'fields': ('image', 'image_url', 'image_alt'),
         }),
     )
     radio_fields = {"is_active": admin.HORIZONTAL}
@@ -48,7 +48,11 @@ class SiteSettingsAdmin(admin.ModelAdmin):
             'description': 'Main site identification and logo assets.'
         }),
         ('SEO Presence', {
-            'fields': ('meta_title', 'meta_description'),
+            'fields': ('meta_title', 'meta_description', 'meta_keywords', 'google_site_verification_id', 'robots_txt', 'schema_markup'),
+            'classes': ('collapse',),
+        }),
+        ('Tracking & Analytics', {
+            'fields': ('google_analytics_id', 'facebook_pixel_id'),
             'classes': ('collapse',),
         }),
         ('Communication Channels', {
@@ -217,7 +221,7 @@ class TestimonialAdmin(admin.ModelAdmin):
             'fields': ('content',),
         }),
         ('Media', {
-            'fields': ('image', 'image_url'),
+            'fields': ('image', 'image_url', 'image_alt'),
         }),
     )
 
@@ -248,7 +252,7 @@ class ClientAdmin(admin.ModelAdmin):
             'fields': ('name', 'category', 'order'),
         }),
         ('Assets (Logo/Icon)', {
-            'fields': ('logo', 'logo_url', 'icon_svg'),
+            'fields': ('logo', 'logo_url', 'image_alt', 'icon_svg'),
             'description': 'Provide either a traditional logo or a custom SVG path.'
         }),
     )
@@ -278,7 +282,7 @@ class SocialPostAdmin(admin.ModelAdmin):
             'fields': ('link', 'order'),
         }),
         ('Media Assets', {
-            'fields': ('image', 'image_url', 'icon_svg'),
+            'fields': ('image', 'image_url', 'image_alt', 'icon_svg'),
         }),
     )
 

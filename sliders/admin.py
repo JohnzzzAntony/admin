@@ -25,7 +25,7 @@ class HeroSliderAdmin(admin.ModelAdmin):
             'fields': ('title', 'badge_text', 'order'),
         }),
         ('Background Media', {
-            'fields': ('image', 'image_url', 'video', 'video_url'),
+            'fields': ('image', 'image_url', 'image_alt', 'video', 'video_url'),
             'description': 'Upload a file or provide an external URL. Images are prioritized.'
         }),
     )
@@ -47,6 +47,7 @@ class BannerItemInline(admin.StackedInline):
             'fields': (
                 'image', 
                 'image_url',
+                'image_alt',
                 'title', 
                 'subtitle',
                 'link', 

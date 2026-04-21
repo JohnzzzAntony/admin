@@ -19,7 +19,7 @@ class PostAdmin(admin.ModelAdmin):
         }),
         ('SEO & Discovery', {
             'classes': ('collapse',),
-            'fields': ('meta_title', 'meta_description'),
+            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
         }),
     )
 
