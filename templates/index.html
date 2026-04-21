@@ -214,7 +214,7 @@
         <div class="{% if section.data.layout == '1_col' %}max-w-none px-0{% else %}max-w-screen-2xl mx-auto px-4 sm:px-6{% endif %}">
             <div class="grid grid-cols-1 {% if section.data.layout == '2_col' %}lg:grid-cols-2{% elif section.data.layout == '3_col' %}lg:grid-cols-3{% else %}grid-cols-1{% endif %} gap-6">
                 {% for item in section.data.items.all %}
-                <a href="{% if item.link %}{{ item.link }}{% else %}{% url 'products:product_list' %}" class="group relative block overflow-hidden h-[400px] sm:h-[550px] {% if section.data.shape == 'rounded' and section.data.layout != '1_col' %}rounded-[48px]{% elif section.data.shape == 'pill' %}rounded-full{% else %}rounded-none{% endif %} shadow-2xl">
+                <a href="{% if item.link %}{{ item.link }}{% else %}{% url 'products:product_list' %}{% endif %}" class="group relative block overflow-hidden h-[400px] sm:h-[550px] {% if section.data.shape == 'rounded' and section.data.layout != '1_col' %}rounded-[48px]{% elif section.data.shape == 'pill' %}rounded-full{% else %}rounded-none{% endif %} shadow-2xl">
                     <img src="{{ item.get_image_url }}" alt="{{ item.title }}" class="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
                     <div class="absolute inset-0 p-8 sm:p-16 flex flex-col justify-end gap-4 transform transition-all duration-700 group-hover:translate-y-[-10px]">
