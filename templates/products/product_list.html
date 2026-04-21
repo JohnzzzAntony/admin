@@ -146,7 +146,7 @@
                             <button class="w-10 h-10 flex items-center justify-center text-primary"><i class="fas fa-grid-2"></i></button>
                             <button class="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-slate-900 transition-colors"><i class="fas fa-list"></i></button>
                         </div>
-                        <select onchange="location = this.value;" class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
+                        <select id="product-sort-select" class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
                             <option value="?sort=featured" {% if request.GET.sort == 'featured' %}selected{% endif %}>Featured</option>
                             <option value="?sort=price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
                             <option value="?sort=price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
@@ -201,4 +201,19 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortSelect = document.getElementById('product-sort-select');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                if (this.value) {
+                    window.location = this.value;
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

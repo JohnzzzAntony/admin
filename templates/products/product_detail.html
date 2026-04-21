@@ -98,12 +98,16 @@
 
                     <!-- Thumbnails -->
                     {% if product.images.all %}
-                    <div class="flex gap-4 mt-6 overflow-x-auto pb-4 px-2">
-                        <button onclick="updateMainImage('{{ product.get_image_url }}', this)" class="product-gallery-thumb active flex-shrink-0 w-24 h-24 rounded-2xl border-2 bg-slate-50 p-2 transition-all">
+                    <div class="flex gap-4 mt-6 overflow-x-auto pb-4 px-2" id="product-gallery">
+                        <button type="button" 
+                                data-image-url="{{ product.get_image_url }}"
+                                class="gallery-thumb-btn active flex-shrink-0 w-24 h-24 rounded-2xl border-2 bg-slate-50 p-2 transition-all">
                             <img src="{{ product.get_image_url }}" alt="{{ product.name }}" class="w-full h-full object-contain">
                         </button>
                         {% for pimg in product.images.all %}
-                        <button onclick="updateMainImage('{{ pimg.image.url }}', this)" class="product-gallery-thumb flex-shrink-0 w-24 h-24 rounded-2xl border-2 border-transparent bg-slate-50 p-2 hover:border-slate-200 transition-all">
+                        <button type="button" 
+                                data-image-url="{{ pimg.image.url }}"
+                                class="gallery-thumb-btn flex-shrink-0 w-24 h-24 rounded-2xl border-2 border-transparent bg-slate-50 p-2 hover:border-slate-200 transition-all">
                             <img src="{{ pimg.image.url }}" alt="{{ product.name }} - Gallery Image {{ forloop.counter }}" class="w-full h-full object-contain">
                         </button>
                         {% endfor %}
@@ -180,9 +184,13 @@
                         <div class="space-y-2">
                             <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Select Quantity</p>
                             <div class="flex items-center bg-slate-100 rounded-2xl p-1 w-fit">
-                                <button onclick="changeQty(-1)" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"><i class="fas fa-minus text-xs"></i></button>
+                                <button type="button" data-qty-delta="-1" class="qty-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary transition-colors">
+                                    <i class="fas fa-minus text-xs"></i>
+                                </button>
                                 <input id="final-qty" type="number" value="1" min="1" max="{{ product.quantity }}" class="w-12 bg-transparent text-center border-none focus:ring-0 font-black text-slate-900">
-                                <button onclick="changeQty(1)" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"><i class="fas fa-plus text-xs"></i></button>
+                                <button type="button" data-qty-delta="1" class="qty-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary transition-colors">
+                                    <i class="fas fa-plus text-xs"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg">
@@ -192,7 +200,11 @@
 
                     <div class="flex gap-4">
                         {% if product.quantity > 0 %}
-                        <button onclick="addToCartRequest()" class="flex-1 py-5 bg-primary text-white rounded-3xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3">
+                        <button type="button" 
+                                id="add-to-cart-main"
+                                data-product-id="{{ product.id }}"
+                                data-url="{% url 'orders:add_to_cart' product_id=product.id %}"
+                                class="flex-1 py-5 bg-primary text-white rounded-3xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3">
                             <i class="fas fa-shopping-bag"></i> Add to Cart
                         </button>
                         {% else %}
@@ -206,20 +218,19 @@
                     </div>
                 </div>
 
-                <!-- Trust Badges (Dynamic) -->
                 <div class="grid grid-cols-2 gap-4 py-6 border-t border-slate-100">
                     {% for badge in product.trust_badges.all %}
                         {% if badge.is_active %}
                         <div class="flex items-center gap-3 px-4 py-3 rounded-2xl border" 
-                             style="background-color: {{ badge.background_color }}; border-color: {{ badge.border_color }};">
+                             style="--badge-bg: {{ badge.background_color|default:'#f8fafc' }}; --badge-border: {{ badge.border_color|default:'#e2e8f0' }}; --badge-text: {{ badge.text_color|default:'#1e293b' }}; background-color: var(--badge-bg); border-color: var(--badge-border);">
                             {% if badge.icon_svg %}
-                                <div class="flex-shrink-0 w-5 h-5 flex items-center justify-center trust-badge-icon" style="color: {{ badge.text_color }};">
+                                <div class="flex-shrink-0 w-5 h-5 flex items-center justify-center trust-badge-icon" style="color: var(--badge-text);">
                                     {{ badge.icon_svg|safe }}
                                 </div>
                             {% else %}
-                                <i class="fas fa-check text-[10px]" style="color: {{ badge.text_color }};"></i>
+                                <i class="fas fa-check text-[10px]" style="color: var(--badge-text);"></i>
                             {% endif %}
-                            <span class="text-[10px] font-black uppercase tracking-widest leading-none" style="color: {{ badge.text_color }};">
+                            <span class="text-[10px] font-black uppercase tracking-widest leading-none" style="color: var(--badge-text);">
                                 {{ badge.name }}
                             </span>
                         </div>
@@ -232,9 +243,11 @@
         <!-- Information Tabs -->
         <div class="mt-32 max-w-5xl mx-auto">
             <div class="flex items-center justify-center gap-4 mb-12">
-                <button onclick="switchTab('overview', this)" class="tab-btn active px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Overview</button>
-                {% if product.technical_info %}<button onclick="switchTab('specs', this)" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Specifications</button>{% endif %}
-                <button onclick="switchTab('shipping', this)" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Shipping & Returns</button>
+                <button type="button" data-tab-trigger="overview" class="tab-btn active px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Overview</button>
+                {% if product.technical_info %}
+                <button type="button" data-tab-trigger="specs" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Specifications</button>
+                {% endif %}
+                <button type="button" data-tab-trigger="shipping" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Shipping & Returns</button>
             </div>
 
             <div class="bg-slate-50/50 rounded-[40px] p-8 lg:p-16 border border-slate-100 min-h-[300px]">
@@ -293,31 +306,55 @@
 
 {% block scripts %}
 <script>
-    function updateMainImage(src, thumb) {
-        document.getElementById('main-product-image').src = src;
-        document.querySelectorAll('.product-gallery-thumb').forEach(t => t.classList.remove('active', 'border-primary'));
-        thumb.classList.add('active', 'border-primary');
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Gallery Logic
+        const galleryContainer = document.getElementById('product-gallery');
+        if (galleryContainer) {
+            galleryContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('.gallery-thumb-btn');
+                if (btn) {
+                    const src = btn.dataset.imageUrl;
+                    document.getElementById('main-product-image').src = src;
+                    document.querySelectorAll('.gallery-thumb-btn').forEach(t => t.classList.remove('active', 'border-primary'));
+                    btn.classList.add('active', 'border-primary');
+                }
+            });
+        }
 
-    function changeQty(delta) {
-        const input = document.getElementById('final-qty');
-        let val = parseInt(input.value) + delta;
-        if (val < 1) val = 1;
-        if (val > {{ product.quantity }}) val = {{ product.quantity }};
-        input.value = val;
-    }
+        // 2. Quantity Logic
+        document.querySelectorAll('.qty-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const delta = parseInt(btn.dataset.qtyDelta);
+                const input = document.getElementById('final-qty');
+                const max = parseInt(input.getAttribute('max')) || 1;
+                let val = parseInt(input.value) + delta;
+                if (val < 1) val = 1;
+                if (val > max) val = max;
+                input.value = val;
+            });
+        });
 
-    function switchTab(tabId, btn) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(tabId + '-tab').classList.add('active');
-    }
+        // 3. Tab Logic
+        document.querySelectorAll('[data-tab-trigger]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tabTrigger;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
 
-    function addToCartRequest() {
-        const qty = document.getElementById('final-qty').value;
-        const baseUrl = "{% url 'orders:add_to_cart' product_id=product.id %}";
-        window.location.href = `${baseUrl}?qty=${qty}`;
-    }
+        // 4. Add to Cart Logic
+        const addToCartBtn = document.getElementById('add-to-cart-main');
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', () => {
+                const qty = document.getElementById('final-qty').value;
+                const baseUrl = addToCartBtn.dataset.url;
+                window.location.href = `${baseUrl}?qty=${qty}`;
+            });
+        }
+    });
 </script>
 {% endblock %}
+

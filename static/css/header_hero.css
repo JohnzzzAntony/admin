@@ -176,9 +176,7 @@ body:not(.is-home) .categories-trigger {
     color: var(--primary);
 }
 
-.subcategory-panel {
-    /* Tailwind classes handle visibility and transitions now */
-}
+
 
 /* Animations */
 @keyframes slideDownFade {

@@ -1,9 +1,13 @@
 
-function togglePermissionApp(id) {
+
+document.addEventListener('click', (e) => {
+    const header = e.target.closest('.permission-app-header');
+    if (!header) return;
+
+    const id = header.dataset.appId;
     const content = document.getElementById('section-' + id);
     if (!content) return;
     
-    const header = content.previousElementSibling;
     const icon = header.querySelector('.fa-chevron-down');
     
     if (content.classList.contains('hidden')) {
@@ -13,4 +17,4 @@ function togglePermissionApp(id) {
         content.classList.add('hidden');
         if (icon) icon.style.transform = 'rotate(0deg)';
     }
-}
+});

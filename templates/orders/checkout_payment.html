@@ -47,7 +47,7 @@
                         <!-- Payment Method Grid -->
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <!-- Card -->
-                            <label class="payment-card-option relative cursor-pointer group" onclick="selectPayment('card')">
+                            <label class="payment-card-option relative cursor-pointer group">
                                 <input type="radio" name="payment_method" value="card" checked class="hidden peer">
                                 <div class="p-6 bg-slate-50 rounded-[28px] border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-all flex flex-col items-center gap-4 text-center">
                                     <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center transition-transform group-hover:scale-110">
@@ -59,7 +59,7 @@
                             </label>
 
                             <!-- Tabby -->
-                            <label class="payment-card-option relative cursor-pointer group" onclick="selectPayment('tabby')">
+                            <label class="payment-card-option relative cursor-pointer group">
                                 <input type="radio" name="payment_method" value="tabby" class="hidden peer">
                                 <div class="p-6 bg-slate-50 rounded-[28px] border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-all flex flex-col items-center gap-4 text-center">
                                     <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center transition-transform group-hover:scale-110">
@@ -71,7 +71,7 @@
                             </label>
 
                             <!-- Tamara -->
-                            <label class="payment-card-option relative cursor-pointer group" onclick="selectPayment('tamara')">
+                            <label class="payment-card-option relative cursor-pointer group">
                                 <input type="radio" name="payment_method" value="tamara" class="hidden peer">
                                 <div class="p-6 bg-slate-50 rounded-[28px] border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-all flex flex-col items-center gap-4 text-center">
                                     <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center transition-transform group-hover:scale-110">
@@ -83,7 +83,7 @@
                             </label>
 
                             <!-- COD -->
-                            <label class="payment-card-option relative cursor-pointer group" onclick="selectPayment('cod')">
+                            <label class="payment-card-option relative cursor-pointer group">
                                 <input type="radio" name="payment_method" value="cod" class="hidden peer">
                                 <div class="p-6 bg-slate-50 rounded-[28px] border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-all flex flex-col items-center gap-4 text-center">
                                     <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center transition-transform group-hover:scale-110">
@@ -192,28 +192,38 @@
     </div>
 </section>
 
+{% block extra_js %}
 <script>
-function selectPayment(method) {
-    const stripeNotice = document.getElementById('stripe-notice');
-    const bnplNotice = document.getElementById('bnpl-notice');
-    const codNotice = document.getElementById('cod-notice');
-    const bnplText = document.getElementById('bnpl-text');
+document.addEventListener('DOMContentLoaded', () => {
+    const paymentForm = document.getElementById('payment-form');
+    if (paymentForm) {
+        paymentForm.addEventListener('change', (e) => {
+            if (e.target.name === 'payment_method') {
+                const method = e.target.value;
+                const stripeNotice = document.getElementById('stripe-notice');
+                const bnplNotice = document.getElementById('bnpl-notice');
+                const codNotice = document.getElementById('cod-notice');
+                const bnplText = document.getElementById('bnpl-text');
 
-    // Reset visibility
-    stripeNotice.style.display = (method === 'card') ? 'flex' : 'none';
-    bnplNotice.classList.add('hidden');
-    codNotice.classList.add('hidden');
+                // Reset visibility
+                stripeNotice.style.display = (method === 'card') ? 'flex' : 'none';
+                bnplNotice.classList.add('hidden');
+                codNotice.classList.add('hidden');
 
-    if (['tabby', 'tamara'].includes(method)) {
-        bnplNotice.classList.remove('hidden');
-        bnplText.textContent = method === 'tabby' 
-            ? "Redirecting to Tabby securely. Split your purchase into 4 monthly interest-free payments."
-            : "Redirecting to Tamara securely. Split your purchase into 3 monthly easy payments.";
-    } else if (method === 'cod') {
-        codNotice.classList.remove('hidden');
+                if (['tabby', 'tamara'].includes(method)) {
+                    bnplNotice.classList.remove('hidden');
+                    bnplText.textContent = method === 'tabby' 
+                        ? "Redirecting to Tabby securely. Split your purchase into 4 monthly interest-free payments."
+                        : "Redirecting to Tamara securely. Split your purchase into 3 monthly easy payments.";
+                } else if (method === 'cod') {
+                    codNotice.classList.remove('hidden');
+                }
+            }
+        });
     }
-}
+});
 </script>
+{% endblock %}
 
 <style>
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }

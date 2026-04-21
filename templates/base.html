@@ -285,7 +285,7 @@
                 </div>
             </div>
             <!-- Close Button -->
-            <button onclick="dismissAnnouncement()" class="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-all z-10 opacity-0 group-hover:opacity-100">
+            <button id="dismiss-announcement" class="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-all z-10 opacity-0 group-hover:opacity-100">
                 <i class="fas fa-times text-[10px]"></i>
             </button>
         </div>
@@ -447,7 +447,7 @@
                 {% endif %}
 
                 <!-- Mobile Hamburger -->
-                <button onclick="toggleMobileMenu()" class="premium-icon-box lg:hidden w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/10 text-white" aria-label="Menu">
+                <button id="mobile-menu-trigger" class="premium-icon-box lg:hidden w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/10 text-white" aria-label="Menu">
                     <i class="fas fa-bars text-lg" id="hamburger-icon"></i>
                 </button>
             </div>
@@ -468,9 +468,8 @@
                 <nav class="space-y-2">
                     <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] ml-2 mb-4">Shop Categories</p>
                     {% for cat in categories %}
-                    <div class="rounded-2xl border border-white/5 bg-white/[0.02]">
-                        <button onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('rotate-180')" 
-                                class="w-full flex items-center justify-between p-5 text-sm font-black text-white hover:text-primary transition-all">
+                    <div class="rounded-2xl border border-white/5 bg-white/[0.02] mobile-accordion">
+                        <button class="w-full flex items-center justify-between p-5 text-sm font-black text-white hover:text-primary transition-all accordion-trigger">
                             {{ cat.name }}
                             <i class="fas fa-chevron-down text-[10px] opacity-40 chevron transition-transform"></i>
                         </button>
@@ -636,6 +635,38 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     
     <script>
+        // Global commerce functionality
+        const Commerce = {
+            toggleMobileMenu: () => {
+                const menu = document.getElementById('mobile-menu');
+                const icon = document.getElementById('hamburger-icon');
+                const isHidden = menu.classList.contains('hidden');
+                
+                menu.classList.toggle('hidden', !isHidden);
+                if (isHidden) {
+                    icon.classList.replace('fa-bars', 'fa-times');
+                    menu.style.animation = 'slideDownFade 0.4s ease forwards';
+                } else {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                }
+            },
+            dismissAnnouncement: () => {
+                const bar = document.getElementById('announcement-bar');
+                if (bar) bar.remove();
+            },
+            showToast: (message, type = 'success') => {
+                const toast = document.getElementById('premium-toast');
+                const toastMsg = document.getElementById('toast-message');
+                const toastTitle = document.getElementById('toast-title');
+                
+                toastMsg.innerText = message;
+                toastTitle.innerText = type === 'success' ? 'Success' : 'Attention';
+                
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 4000);
+            }
+        };
+
         // Premium Core Interface Logic
         document.addEventListener('DOMContentLoaded', () => {
             // 1. Unified Scroll Handler
@@ -659,49 +690,43 @@
                     speed: 800
                 });
             }
-        });
 
-        // Mobile Navigation Interaction
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const icon = document.getElementById('hamburger-icon');
-            const isHidden = menu.classList.contains('hidden');
-            
-            menu.classList.toggle('hidden', !isHidden);
-            if (isHidden) {
-                icon.classList.replace('fa-bars', 'fa-times');
-                menu.style.animation = 'slideDownFade 0.4s ease forwards';
-            } else {
-                icon.classList.replace('fa-times', 'fa-bars');
+            // 3. Mobile Menu Handlers
+            const menuTrigger = document.getElementById('mobile-menu-trigger');
+            if (menuTrigger) {
+                menuTrigger.addEventListener('click', Commerce.toggleMobileMenu);
             }
-        }
 
-        // Dismiss Announcement Bar
-        function dismissAnnouncement() {
-            const bar = document.getElementById('announcement-bar');
-            if (bar) {
-                bar.remove();
-                // Adjust main content padding if on subpages
-                if (document.body.classList.contains('pt-32')) {
-                    // Logic to shrink padding if necessary
+            const dismissTrigger = document.getElementById('dismiss-announcement');
+            if (dismissTrigger) {
+                dismissTrigger.addEventListener('click', Commerce.dismissAnnouncement);
+            }
+
+            // 4. Mobile Accordion Logic
+            document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+                trigger.addEventListener('click', () => {
+                    const panel = trigger.nextElementSibling;
+                    const chevron = trigger.querySelector('.chevron');
+                    panel.classList.toggle('hidden');
+                    if (chevron) chevron.classList.toggle('rotate-180');
+                });
+            });
+
+            // 5. Close mobile menu on outside click
+            document.addEventListener('click', (e) => {
+                const menu = document.getElementById('mobile-menu');
+                const trigger = document.getElementById('mobile-menu-trigger');
+                if (menu && !menu.contains(e.target) && trigger && !trigger.contains(e.target) && !menu.classList.contains('hidden')) {
+                    Commerce.toggleMobileMenu();
                 }
-            }
-        }
+            });
 
-        // Close dropdowns on outside click
-        document.addEventListener('click', (e) => {
-            const header = document.getElementById('main-header');
-            const menu  = document.getElementById('mobile-menu');
-            if (header && !header.contains(e.target) && !menu.classList.contains('hidden')) {
-                toggleMobileMenu();
-            }
-        });
-
-        // Smart Category Selection
-        document.querySelectorAll('.category-item').forEach(item => {
-            item.addEventListener('mouseenter', () => {
-                document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
+            // 6. Smart Category Selection
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                });
             });
         });
 
@@ -717,6 +742,76 @@
             
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // Global Wishlist Toggle Function
+        async function toggleWishlist(productId, btn) {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const url = `/products/wishlist/toggle/${productId}/`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': csrfToken
+                    }
+                });
+                
+                if (response.status === 401 || response.url.includes('/login')) {
+                    window.location.href = `/accounts/login/?next=${window.location.pathname}`;
+                    return;
+                }
+
+                const data = await response.json();
+                
+                if (data.status === 'added' || data.status === 'removed') {
+                    const icon = btn.querySelector('i');
+                    const wishCountBadge = document.querySelector('.wishlist-count-badge');
+                    
+                    // Update UI State
+                    if (data.status === 'added') {
+                        if (icon) icon.classList.replace('far', 'fas');
+                        btn.classList.add('bg-red-500', 'text-white', 'border-red-500');
+                        btn.classList.remove('bg-slate-900/40');
+                        showToast('Added to wishlist');
+                    } else {
+                        if (icon) icon.classList.replace('fas', 'far');
+                        btn.classList.remove('bg-red-500', 'text-white', 'border-red-500');
+                        btn.classList.add('bg-slate-900/40');
+                        showToast('Removed from wishlist');
+                        
+                        // If we are on the wishlist page, remove the item card
+                        if (window.location.pathname.includes('/wishlist/')) {
+                            const itemCard = btn.closest('[data-item-id]');
+                            if (itemCard) {
+                                itemCard.style.opacity = '0';
+                                itemCard.style.transform = 'scale(0.9)';
+                                setTimeout(() => {
+                                    itemCard.remove();
+                                    // Check if wishlist is now empty
+                                    const remainingItems = document.querySelectorAll('[data-item-id]');
+                                    if (remainingItems.length === 0) {
+                                        location.reload(); // Reload to show empty state
+                                    }
+                                }, 300);
+                            }
+                        }
+                    }
+
+                    // Update Badge
+                    if (wishCountBadge) {
+                        if (data.count > 0) {
+                            wishCountBadge.classList.remove('hidden');
+                            wishCountBadge.innerText = data.count;
+                        } else {
+                            wishCountBadge.classList.add('hidden');
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Wishlist failed:', err);
+            }
         }
 
         // Global Commerce AJAX Handlers
@@ -746,65 +841,17 @@
                         });
                     }
                 } catch (err) {
-                    // Failover if view doesn't handle AJAX Redirects well
-                    const btn = e.target.closest('.cart-action-btn');
-                    window.location.href = btn.getAttribute('data-url');
+                    // Failover
+                    window.location.href = url;
                 }
             }
 
-            // 2. Wishlist Toggle Logic
-            if (e.target.closest('.wishlist-btn')) {
+            // 2. Wishlist Toggle Logic (Legacy support for purely class-based triggers)
+            if (e.target.closest('.wishlist-btn') && !e.target.closest('[onclick]')) {
                 e.preventDefault();
                 const btn = e.target.closest('.wishlist-btn');
                 const productId = btn.getAttribute('data-product-id');
-                const url = `/products/wishlist/toggle/${productId}/`;
-                
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRFToken': csrfToken
-                        }
-                    });
-                    
-                    if (response.status === 401 || response.url.includes('/login')) {
-                        window.location.href = `/accounts/login/?next=${window.location.pathname}`;
-                        return;
-                    }
-
-                    const data = await response.json();
-                    
-                    if (data.status === 'added' || data.status === 'removed') {
-                        const icon = btn.querySelector('i');
-                        const wishCountBadge = document.querySelector('.wishlist-count-badge');
-                        
-                        // Update UI State
-                        if (data.status === 'added') {
-                            icon.classList.replace('far', 'fas');
-                            btn.classList.add('bg-red-500', 'text-white', 'border-red-500');
-                            btn.classList.remove('bg-slate-900/40');
-                            showToast('Added to wishlist');
-                        } else {
-                            icon.classList.replace('fas', 'far');
-                            btn.classList.remove('bg-red-500', 'text-white', 'border-red-500');
-                            btn.classList.add('bg-slate-900/40');
-                            showToast('Removed from wishlist');
-                        }
-
-                        // Update Badge
-                        if (wishCountBadge) {
-                            if (data.count > 0) {
-                                wishCountBadge.classList.remove('hidden');
-                                wishCountBadge.innerText = data.count;
-                            } else {
-                                wishCountBadge.classList.add('hidden');
-                            }
-                        }
-                    }
-                } catch (err) {
-                    console.error('Wishlist failed:', err);
-                }
+                if (productId) toggleWishlist(productId, btn);
             }
         });
     </script>

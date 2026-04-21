@@ -43,7 +43,7 @@
                 btn.innerHTML = '&times;';
                 btn.type = 'button';
                 btn.title = 'Remove image';
-                btn.onclick = () => {
+                btn.addEventListener('click', () => {
                     input.value = '';
                     const cb = fieldBox.querySelector('input[type="checkbox"][name*="-clear"]');
                     if (cb) {
@@ -51,7 +51,7 @@
                         // Trigger change event to fire setupInstantClear's update logic
                         cb.dispatchEvent(new Event('change'));
                     }
-                };
+                });
                 wrap.appendChild(btn);
 
                 const label = fieldBox.querySelector('label');

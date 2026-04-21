@@ -25,8 +25,14 @@
 </head>
 <body>
     <div class="no-print" style="margin-bottom: 20px;">
-        <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer; background: #2563eb; color: white; border: none; border-radius: 5px;">Click to Print</button>
+        <button id="print-order-btn" style="padding: 10px 20px; cursor: pointer; background: #2563eb; color: white; border: none; border-radius: 5px;">Click to Print</button>
     </div>
+
+    <script>
+        document.getElementById('print-order-btn').addEventListener('click', () => {
+            window.print();
+        });
+    </script>
 
     <div class="header">
         <div>

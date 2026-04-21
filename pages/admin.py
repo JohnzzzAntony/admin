@@ -145,7 +145,7 @@ class CounterAdmin(admin.ModelAdmin):
         for name, code in icons:
             # Safely build each card
             card = format_html(
-                '<div class="svg-card" onclick="document.getElementById(\'id_icon_svg\').value = \'{}\'; return false;">'
+                '<div class="svg-card js-svg-selector" data-svg-code="{}">'
                 '<div class="svg-card-icon">{}</div>'
                 '<span class="svg-card-name">{}</span>'
                 '</div>',
@@ -161,6 +161,20 @@ class CounterAdmin(admin.ModelAdmin):
             'Need more? Visit <a href="https://lucide.dev/icons" target="_blank">Lucide Icons</a>, '
             'copy the "SVG" code, and paste it above.'
             '</div>'
+            '<script>'
+            'document.addEventListener("click", function(e) {'
+            '    const card = e.target.closest(".js-svg-selector");'
+            '    if (card) {'
+            '        const svgCode = card.getAttribute("data-svg-code");'
+            '        const input = document.getElementById("id_icon_svg");'
+            '        if (input) {'
+            '            input.value = svgCode;'
+            '            card.style.borderColor = "#22c55e";'
+            '            setTimeout(() => card.style.borderColor = "", 1000);'
+            '        }'
+            '    }'
+            '});'
+            '</script>'
         )
         html_parts.append('</div>')
         

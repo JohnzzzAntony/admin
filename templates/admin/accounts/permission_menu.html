@@ -3,7 +3,7 @@
     <div class="permission-menu-list">
         {% for app, perms in grouped_permissions.items %}
         <div class="permission-app-section">
-            <div class="permission-app-header" onclick="togglePermissionApp('{{ app|slugify }}')">
+            <div class="permission-app-header" data-app-id="{{ app|slugify }}">
                 <span class="app-name">{{ app }}</span>
                 <span class="app-badge">{{ perms|length }} Permissions</span>
                 <i class="fas fa-chevron-down"></i>
