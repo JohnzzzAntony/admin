@@ -4,20 +4,29 @@ from .models import ContactFormSubmission, NewsletterSubscriber
 from pages.models import ContactPage
 
 def contact(request):
-    """Image 2 redesign: Handles contact form submission from the new layout."""
+    """View to handle both GET (display form) and POST (submit form)."""
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
-        phone = request.POST.get('phone') # Mapped from 'mobile' in frontend
+        phone = request.POST.get('phone')
         message = request.POST.get('message')
-        
-        ContactFormSubmission.objects.create(
-            name=name, email=email, phone=phone, message=message
-        )
-        messages.success(request, "Hi! Thanks for reaching out. We will get back to you soon.")
+
+        try:
+            ContactFormSubmission.objects.create(
+                name=name, email=email, phone=phone, message=message
+            )
+            messages.success(request, "Thank you! Your message has been sent successfully.")
+        except Exception:
+            messages.error(request, "There was an error sending your message. Please try again.")
+            
         return redirect('contact:contact')
 
+    # GET request
     contact_settings = ContactPage.objects.first()
+    if not contact_settings:
+        # Create a dummy instance to avoid None attribute access in templates
+        contact_settings = ContactPage()
+        
     return render(request, 'contact/contact.html', {'contact_settings': contact_settings})
 
 def subscribe(request):
