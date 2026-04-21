@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block meta_title %}{% if current_category.meta_title %}{{ current_category.meta_title }}{% elif current_category %}{{ current_category.name }} | {{ site_settings.site_name }}{% else %}{{ site_settings.meta_title|default:site_settings.site_name }}{% endif %}{% endblock %}
+{% block meta_description %}{% if current_category.meta_description %}{{ current_category.meta_description }}{% elif current_category %}{{ current_category.description|striptags|truncatewords:25 }}{% else %}{{ site_settings.meta_description }}{% endif %}{% endblock %}
+{% block meta_keywords %}{% if current_category.meta_keywords %}{{ current_category.meta_keywords }}{% else %}{{ site_settings.meta_keywords }}{% endif %}{% endblock %}
+
+{% block og_title %}{% if current_category %}{{ current_category.name }} - {{ site_settings.site_name }}{% else %}{{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block og_description %}{% if current_category %}{{ current_category.meta_description|default:current_category.description|striptags|truncatewords:25 }}{% else %}{{ site_settings.meta_description }}{% endif %}{% endblock %}
+
 {% block content %}
 <section class="py-12 bg-surface min-h-screen">
     <div class="max-w-screen-xl mx-auto px-6">

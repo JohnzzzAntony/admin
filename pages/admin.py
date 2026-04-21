@@ -17,6 +17,9 @@ class PageHeroAdmin(admin.ModelAdmin):
         ('Imagery', {
             'fields': (('hero_image', 'hero_image_url'),),
         }),
+        ('SEO Optimization', {
+            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
+        }),
     )
     
     def hero_preview(self, obj):
@@ -78,6 +81,9 @@ class ServiceAdmin(admin.ModelAdmin):
         }),
         ('Narrative', {
             'fields': ('description',),
+        }),
+        ('SEO Optimization', {
+            'fields': ('meta_title', 'meta_description', 'meta_keywords'),
         }),
     )
     

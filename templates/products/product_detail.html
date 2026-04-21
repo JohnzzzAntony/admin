@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
+
+{% block meta_title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} | {{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block meta_description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}{{ product.overview|striptags|truncatewords:30 }}{% endif %}{% endblock %}
+{% block meta_keywords %}{% if product.meta_keywords %}{{ product.meta_keywords }}{% else %}{{ site_settings.meta_keywords }}{% endif %}{% endblock %}
+
+{% block og_title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} - {{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block og_description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}{{ product.overview|striptags|truncatewords:30 }}{% endif %}{% endblock %}
+{% block og_image %}{{ product.get_image_url }}{% endblock %}
+
 {% block split_css %}
 <style>
     .product-gallery-thumb.active { border-color: var(--primary); }

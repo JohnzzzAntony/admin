@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block meta_title %}{% if page_heroes.stores.meta_title %}{{ page_heroes.stores.meta_title }}{% elif page_heroes.stores.title %}{{ page_heroes.stores.title }} | {{ site_settings.site_name }}{% else %}Store Locations | {{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block meta_description %}{% if page_heroes.stores.meta_description %}{{ page_heroes.stores.meta_description }}{% else %}{{ site_settings.meta_description }}{% endif %}{% endblock %}
+{% block meta_keywords %}{% if page_heroes.stores.meta_keywords %}{{ page_heroes.stores.meta_keywords }}{% else %}{{ site_settings.meta_keywords }}{% endif %}{% endblock %}
+
+{% block og_title %}{% if page_heroes.stores.title %}{{ page_heroes.stores.title }}{% else %}Store Locations{% endif %} - {{ site_settings.site_name }}{% endblock %}
+{% block og_description %}{% if page_heroes.stores.meta_description %}{{ page_heroes.stores.meta_description }}{% else %}{{ site_settings.meta_description }}{% endif %}{% endblock %}
+
 {% block content %}
 <section class="py-12 bg-surface min-h-screen">
     <div class="max-w-screen-xl mx-auto px-6">

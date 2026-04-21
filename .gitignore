@@ -51,4 +51,5 @@ logs/
 .env
 .env.local
 .env.*
+!.env.example
 secret_key.txt

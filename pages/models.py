@@ -31,6 +31,11 @@ class PageHero(models.Model):
     alignment = models.CharField(max_length=20, choices=(('center', 'Center'), ('left', 'Left'), ('right', 'Right')), default='center')
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Hidden')))
     
+    # SEO Optimization
+    meta_title = models.CharField(max_length=255, blank=True, null=True, help_text="SEO Title Tag. If empty, Page Title will be used.")
+    meta_description = models.TextField(blank=True, null=True, help_text="SEO Meta Description.")
+    meta_keywords = models.CharField(max_length=512, blank=True, null=True, help_text="SEO Keywords.")
+    
     @property
     def get_image_url(self):
         try:
@@ -129,6 +134,12 @@ class Service(models.Model):
     description = models.TextField()
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Removed')))
+    
+    # SEO Optimization
+    meta_title = models.CharField(max_length=255, blank=True, null=True, help_text="SEO Title Tag. If empty, Service Title will be used.")
+    meta_description = models.TextField(blank=True, null=True, help_text="SEO Meta Description.")
+    meta_keywords = models.CharField(max_length=512, blank=True, null=True, help_text="SEO Keywords (comma separated).")
+    
     class Meta: ordering = ['order']
     def __str__(self): return self.title
     @property

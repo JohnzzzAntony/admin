@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block meta_title %}{{ page_heroes.contact.meta_title|default:contact_settings.badge|default:"Contact Us" }} | {{ site_settings.site_name }}{% endblock %}
+{% block meta_description %}{{ page_heroes.contact.meta_description|default:site_settings.meta_description }}{% endblock %}
+{% block meta_keywords %}{{ page_heroes.contact.meta_keywords|default:site_settings.meta_keywords }}{% endblock %}
+
+{% block og_title %}{{ contact_settings.badge|default:"Contact Us" }} - {{ site_settings.site_name }}{% endblock %}
+{% block og_description %}{{ page_heroes.contact.meta_description|default:site_settings.meta_description }}{% endblock %}
+
 {% block content %}
 <!-- Hero Section -->
 <section class="relative min-h-[50vh] flex items-center justify-center overflow-hidden bg-slate-900">

@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block meta_title %}{% if page_heroes.about.meta_title %}{{ page_heroes.about.meta_title }}{% elif about_us.title %}{{ about_us.title }} | {{ site_settings.site_name }}{% else %}About Us | {{ site_settings.site_name }}{% endif %}{% endblock %}
+{% block meta_description %}{% if page_heroes.about.meta_description %}{{ page_heroes.about.meta_description }}{% else %}{{ site_settings.meta_description }}{% endif %}{% endblock %}
+{% block meta_keywords %}{% if page_heroes.about.meta_keywords %}{{ page_heroes.about.meta_keywords }}{% else %}{{ site_settings.meta_keywords }}{% endif %}{% endblock %}
+
+{% block og_title %}{% if about_us.title %}{{ about_us.title }}{% else %}About Us{% endif %} - {{ site_settings.site_name }}{% endblock %}
+{% block og_description %}{% if page_heroes.about.meta_description %}{{ page_heroes.about.meta_description }}{% else %}{{ site_settings.meta_description }}{% endif %}{% endblock %}
+
 {% block content %}
 <!-- Cinematic Hero Section -->
 <section class="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-slate-900">

@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
-    <!-- Production Meta Tags -->
-    <title>{{ site_settings.meta_title|default:site_settings.site_name|default:"Premium E-commerce" }}</title>
-    <meta name="description" content="{{ site_settings.meta_description|default:'Quality medical equipment and healthcare products.' }}"/>
-    <meta name="keywords" content="{{ site_settings.meta_keywords }}"/>
+    <!-- SEO Meta Tags -->
+    <title>{% block meta_title %}{{ site_settings.meta_title|default:site_settings.site_name }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ site_settings.meta_description }}{% endblock %}"/>
+    <meta name="keywords" content="{% block meta_keywords %}{{ site_settings.meta_keywords }}{% endblock %}"/>
     <meta name="author" content="JKR International"/>
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
 
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="{{ site_settings.site_name }}">
-    <meta property="og:description" content="{{ site_settings.meta_description }}">
+    <meta property="og:title" content="{% block og_title %}{{ site_settings.meta_title|default:site_settings.site_name }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ site_settings.meta_description }}{% endblock %}">
     {% if site_settings.logo %}<meta property="og:image" content="{{ site_settings.logo.url }}">{% endif %}
     
     {% if site_settings.favicon %}
