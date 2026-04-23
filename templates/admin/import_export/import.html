@@ -26,32 +26,41 @@
             color: #000000 !important;
         }
 
-        /* Force all nested text to be black */
+        /* Force all nested text to be black and remove any background highlights */
         .import-preview td, 
         .import-preview th,
         .import-preview td *, 
         .import-preview th * {
             color: #000000 !important;
+            background-color: transparent !important; /* Crucial for removing the 'black box' on diffs */
+            text-decoration: none !important;
         }
 
-        /* Status-specific background colors for rows */
+        /* Specifically target the diff tags used by django-import-export */
+        .import-preview ins, 
+        .import-preview del,
+        .import-preview .dtt,
+        .import-preview .dti {
+            background-color: transparent !important;
+            color: #000000 !important;
+            text-decoration: none !important;
+        }
+
+        /* Status-specific background colors for rows - Re-apply after the universal transparent reset */
         .import-preview tr.new td, 
         .import-preview .new td,
         tr.new td {
             background-color: #e8f5e9 !important;
-            color: #2e7d32 !important;
         }
         .import-preview tr.update td, 
         .import-preview .update td,
         tr.update td {
             background-color: #fff3e0 !important;
-            color: #ef6c00 !important;
         }
         .import-preview tr.delete td, 
         .import-preview .delete td,
         tr.delete td {
             background-color: #ffebee !important;
-            color: #c62828 !important;
         }
 
         /* Ensure the 'import-type' column is clearly visible */
