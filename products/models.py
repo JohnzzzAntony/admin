@@ -330,6 +330,8 @@ class Product(models.Model):
             'free_shipping': self.free_shipping,
             'total_with_shipping': round(final_price + ship, 2),
             'offer': best_offer_obj,  # The actual Offer object (for cart bogo logic)
+            'tabby_payment': round(final_price / 4, 2),
+            'tamara_payment': round(final_price / 3, 2),
         }
 
     @property
