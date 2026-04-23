@@ -25,10 +25,10 @@ class ProductResource(resources.ModelResource):
 
     class Meta:
         model = Product
-        import_id_fields = ('name',)
+        import_id_fields = ('id',)
         # Comprehensive list of fields for a full export/import cycle
         fields = (
-            'id', 'category', 'brand', 'name', 'slug', 'image', 'image_url', 'sku_id', 'quantity', 'unit',
+            'id', 'name', 'sku_id', 'category', 'brand', 'slug', 'image', 'image_url', 'quantity', 'unit',
             'regular_price', 'sale_price', 'shipping_status', 'free_shipping', 
             'additional_shipping_charge', 'delivery_time', 'tax_percentage', 
             'weight', 'length', 'width', 'height', 'features', 'overview',
@@ -38,6 +38,43 @@ class ProductResource(resources.ModelResource):
             'gallery_image_urls', 'category_image_url'
         )
         export_order = fields
+
+    def get_instance(self, instance_loader, row):
+        """
+        Custom matching logic: 
+        1. Try by ID
+        2. Try by SKU (if provided)
+        3. Try by Name (fallback)
+        """
+        instance = None
+        
+        # Match by ID
+        obj_id = row.get('id')
+        if obj_id:
+            try:
+                return Product.objects.get(id=obj_id)
+            except (Product.DoesNotExist, ValueError):
+                pass
+        
+        # Match by SKU
+        sku = row.get('sku_id')
+        if sku:
+            try:
+                sku_clean = str(sku).strip()
+                return Product.objects.filter(sku_id=sku_clean).first()
+            except Exception:
+                pass
+        
+        # Match by Name (strip to be safe)
+        name = row.get('name')
+        if name:
+            try:
+                name_clean = str(name).strip()
+                return Product.objects.filter(name=name_clean).first()
+            except Exception:
+                pass
+                
+        return None
 
     def before_import_row(self, row, **kwargs):
         # 1. Create/Update Category automatically (Supports hierarchical paths like 'Parent > Child')

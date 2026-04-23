@@ -21,19 +21,29 @@
         .table.import-preview td,
         .table.import-preview th,
         .card-body.table-responsive,
-        .card-body.table-responsive table {
+        .card-body.table-responsive table,
+        /* Specific dark mode overrides for Jazzmin */
+        .dark-mode .import-preview,
+        .dark-mode .table.import-preview,
+        .dark-mode .card,
+        .dark-mode .card-body.table-responsive,
+        .import-vertical-list,
+        .product-import-item {
             background-color: #ffffff !important;
             color: #000000 !important;
         }
 
         /* Force all nested text to be black and remove any background highlights */
-        /* This targets spans, divs, and even pseudo-elements used for diffing */
         .import-preview td, 
         .import-preview th,
         .import-preview td *, 
         .import-preview th *,
-        .import-preview td *::before,
-        .import-preview td *::after {
+        .dark-mode .import-preview td,
+        .dark-mode .import-preview th,
+        .dark-mode .import-preview td *,
+        .dark-mode .import-preview th *,
+        .product-import-item *,
+        .import-vertical-list * {
             color: #000000 !important;
             background-color: transparent !important; 
             text-decoration: none !important;
@@ -44,49 +54,87 @@
         .import-preview del,
         .import-preview .dtt,
         .import-preview .dti,
-        .import-preview .diff {
+        .import-preview .diff,
+        .dark-mode .import-preview ins,
+        .dark-mode .import-preview del,
+        .product-import-item ins,
+        .product-import-item del {
             background-color: transparent !important;
             color: #000000 !important;
             text-decoration: none !important;
         }
 
-        /* Status-specific background colors for rows - Re-apply after the universal transparent reset */
-        .import-preview tr.new td, 
-        .import-preview .new td,
-        tr.new {
-            background-color: #e8f5e9 !important;
+        /* Status-specific background colors for items */
+        .product-import-item.new { background-color: #e8f5e9 !important; border-left: 5px solid #28a745 !important; }
+        .product-import-item.update { background-color: #fff3e0 !important; border-left: 5px solid #ffc107 !important; }
+        .product-import-item.delete { background-color: #ffebee !important; border-left: 5px solid #dc3545 !important; }
+        .product-import-item.skip { background-color: #f5f5f5 !important; border-left: 5px solid #6c757d !important; }
+
+        /* Vertical List Styling */
+        .import-vertical-list {
+            padding: 20px;
         }
-        .import-preview tr.update td, 
-        .import-preview .update td,
-        tr.update td {
-            background-color: #fff3e0 !important;
+        .product-import-item {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .import-preview tr.delete td, 
-        .import-preview .delete td,
-        tr.delete td {
-            background-color: #ffebee !important;
+        .product-import-item h4 {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .product-import-item dl {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 10px;
+            margin: 0;
+        }
+        .product-import-item dt {
+            font-weight: bold;
+            color: #495057 !important;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 5px 0;
+        }
+        .product-import-item dd {
+            margin: 0;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 5px 0;
+            word-break: break-all;
         }
 
-        /* Ensure the 'import-type' column is clearly visible */
-        .import-type {
-            font-weight: bold !important;
-            text-transform: uppercase !important;
-            font-size: 0.75rem !important;
-            padding: 8px !important;
-            border-right: 2px solid #dee2e6 !important;
+        /* Initial Fields List */
+        .import-fields-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .import-fields-list li {
+            background: #f1f5f9;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #475569 !important;
+            border: 1px solid #e2e8f0;
         }
 
-        /* Fixing the overall card contrast */
-        .card-body.table-responsive {
-            border: 1px solid #dee2e6 !important;
-            border-radius: 4px !important;
-        }
-
-        /* Ensure table header is distinct */
-        .import-preview thead th {
-            background-color: #f8f9fa !important;
-            border-bottom: 2px solid #dee2e6 !important;
-            color: #1e293b !important;
+        /* Status badges inside vertical items */
+        .import-type-badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
         }
     </style>
 {% endblock %}
@@ -166,10 +214,10 @@
                                         </div>
                                     </div>
                                 {% endfor %}
-                                <div class="col-12 col-lg-9">
+                                <div class="col-12">
                                     <p>
                                         <b>{% trans "This importer will import the following fields: " %}</b>
-                                        <ul>
+                                        <ul class="import-fields-list">
                                         {% for field in fields %}
                                             <li>{{ field }}</li>
                                         {% endfor %}
@@ -323,7 +371,7 @@
                             <table class="table table-hover text-nowrap import-preview">
                                 <thead>
                                     <tr>
-                                        <th></th>
+                                        <th class="import-type-header">{% trans "Status" %}</th>
                                         {% for field in result.diff_headers %}
                                             <th>{{ field }}</th>
                                         {% endfor %}
@@ -334,13 +382,13 @@
                                     <tr class="{{ row.import_type }}">
                                         <td class="import-type">
                                             {% if row.import_type == 'new' %}
-                                                {% trans "New" %}
+                                                <span class="badge badge-success" style="color: #fff !important; background-color: #28a745 !important; padding: 5px 10px;">{% trans "NEW" %}</span>
                                             {% elif row.import_type == 'skip' %}
-                                                {% trans "Skipped" %}
+                                                <span class="badge badge-secondary" style="color: #fff !important; background-color: #6c757d !important; padding: 5px 10px;">{% trans "SKIPPED" %}</span>
                                             {% elif row.import_type == 'delete' %}
-                                                {% trans "Delete" %}
+                                                <span class="badge badge-danger" style="color: #fff !important; background-color: #dc3545 !important; padding: 5px 10px;">{% trans "DELETE" %}</span>
                                             {% elif row.import_type == 'update' %}
-                                                {% trans "Update" %}
+                                                <span class="badge badge-warning" style="color: #000 !important; background-color: #ffc107 !important; padding: 5px 10px;">{% trans "UPDATE" %}</span>
                                             {% endif %}
                                         </td>
                                         {% for field in row.diff %}
@@ -361,7 +409,84 @@
 {% endblock %}
 
 {% block extrajs %}
-    {{  block.super }}
     <script type="text/javascript" src="{% static 'vendor/select2/js/select2.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'jazzmin/js/change_form.js' %}"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.querySelector('table.import-preview');
+            if (!table) return;
+
+            // 1. Get Headers
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText.trim());
+            
+            // 2. Get Rows
+            const rows = table.querySelectorAll('tbody tr');
+            if (rows.length === 0) return;
+
+            const listContainer = document.createElement('div');
+            listContainer.className = 'import-vertical-list';
+
+            rows.forEach((row, rowIndex) => {
+                const cells = row.querySelectorAll('td');
+                const productDiv = document.createElement('div');
+                
+                // Carry over the row class (new, update, delete)
+                productDiv.className = 'product-import-item ' + row.className;
+                
+                // Create Header with Status
+                const header = document.createElement('h4');
+                const titleText = document.createElement('span');
+                
+                // Try to find a name for the title (case-insensitive)
+                let productName = "Product Record";
+                const nameIdx = headers.findIndex(h => h.toLowerCase() === 'name');
+                if (nameIdx !== -1 && cells[nameIdx]) {
+                    productName = cells[nameIdx].innerText.trim() || productName;
+                }
+                
+                titleText.innerText = `#${rowIndex + 1}: ${productName}`;
+                header.appendChild(titleText);
+
+                // Add status badge from first cell
+                const statusCell = cells[0]; 
+                if (statusCell) {
+                    const badge = statusCell.querySelector('.badge');
+                    if (badge) {
+                        const statusBadge = badge.cloneNode(true);
+                        header.appendChild(statusBadge);
+                    }
+                }
+                
+                productDiv.appendChild(header);
+
+                // Create Data List
+                const dl = document.createElement('dl');
+                cells.forEach((cell, cellIndex) => {
+                    const label = headers[cellIndex];
+                    // Skip the status column label in the list
+                    if (!label || label === 'Status' || label === 'Row' || label === 'Errors') return;
+
+                    const dt = document.createElement('dt');
+                    dt.innerText = label;
+                    
+                    const dd = document.createElement('dd');
+                    dd.innerHTML = cell.innerHTML;
+                    
+                    dl.appendChild(dt);
+                    dl.appendChild(dd);
+                });
+                
+                productDiv.appendChild(dl);
+                listContainer.appendChild(productDiv);
+            });
+
+            // Replace table parent's content
+            const parent = table.closest('.table-responsive');
+            if (parent) {
+                parent.style.overflowX = 'visible';
+                parent.innerHTML = '';
+                parent.appendChild(listContainer);
+            }
+        });
+    </script>
 {% endblock %}
