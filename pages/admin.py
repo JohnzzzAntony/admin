@@ -88,6 +88,9 @@ class ServiceAdmin(admin.ModelAdmin):
     )
     
     def image_tag(self, obj):
+        from django.utils.safestring import mark_safe
+        if obj.icon_svg:
+            return format_html('<div style="width: 45px; height: 45px; color: #007bff;">{}</div>', mark_safe(obj.icon_svg))
         url = obj.get_image_url
         return format_html('<img src="{}" style="width: 45px; height:45px; border-radius: 5px; object-fit: contain;" />', url) if url else "-"
     image_tag.short_description = 'Icon'
