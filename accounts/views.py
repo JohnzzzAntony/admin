@@ -18,7 +18,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from ratelimit.decorators import ratelimit
+try:
+    from ratelimit.decorators import ratelimit
+except ImportError:
+    from django_ratelimit.decorators import ratelimit
+
 
 from .forms import CustomUserCreationForm
 from .email_notifications import send_welcome_email, send_login_alert
