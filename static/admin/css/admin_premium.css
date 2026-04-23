@@ -147,3 +147,43 @@ textarea, .vLargeTextField {
 /* Fixing Jazzmin Tab Labels */
 .nav-tabs .nav-link { font-weight: 600 !important; color: var(--text-muted) !important; }
 .nav-tabs .nav-link.active { color: var(--admin-accent) !important; border-bottom: 3px solid var(--admin-accent) !important; }
+
+/* ─────────────────────────────────────────────
+   7. IMPORT/EXPORT PREVIEW VISIBILITY (FORCE LIGHT MODE)
+   ───────────────────────────────────────────── */
+/* Target the main containers used by django-import-export */
+.import-preview, 
+.results, 
+.import-confirm,
+form[method="post"] > table,
+.content table.import-preview {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    margin-top: 20px !important;
+}
+
+/* Force table cells to be white/black */
+.import-preview td, 
+.import-preview th, 
+.results td, 
+.results th,
+.content table td,
+.content table th {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #dee2e6 !important;
+    padding: 12px !important;
+}
+
+/* Ensure nested elements inherit the color */
+.import-preview *, .results *, .import-confirm * {
+    color: #000000 !important;
+}
+
+/* Status markers */
+.new, span.new { color: #157347 !important; background-color: #d1e7dd !important; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; }
+.update, span.update { color: #997404 !important; background-color: #fff3cd !important; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; }
+.delete, span.delete { color: #bb2d3b !important; background-color: #f8d7da !important; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; }
+
+/* Breadcrumbs in preview */
+.breadcrumb { background: transparent !important; }
