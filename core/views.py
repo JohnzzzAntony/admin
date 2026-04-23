@@ -50,8 +50,8 @@ def home(request):
     
     # 2. Prepare Banners
     banner_sections = []
-    banners_queryset = PromoBanner.objects.filter(is_active=True).prefetch_related('items')
-    for banner in banners_queryset:
+    banners = PromoBanner.objects.filter(is_active=True).prefetch_related('items')
+    for banner in banners:
         banner_sections.append({
             'type': 'banner', 
             'data': banner, 
