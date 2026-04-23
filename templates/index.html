@@ -234,6 +234,49 @@
     {% endif %}
 {% endfor %}
 
+<!-- Premium Services Section -->
+{% if services %}
+<section class="py-24 bg-slate-50">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+            <div class="space-y-4">
+                <p class="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Our Expertise</p>
+                <h3 class="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter">Healthcare Specialized <span class="italic text-primary">Solutions</span></h3>
+            </div>
+            <a href="{% url 'core:services' %}" class="inline-flex items-center gap-3 text-primary text-xs font-black uppercase tracking-widest group">
+                Explore All Services
+                <span class="w-12 h-px bg-primary/20 group-hover:w-20 group-hover:bg-primary transition-all"></span>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for service in services|slice:":6" %}
+            <div class="group relative p-8 bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-black/5 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-2">
+                <div class="w-16 h-16 rounded-3xl bg-primary/5 flex items-center justify-center mb-8 group-hover:bg-primary group-hover:rotate-12 transition-all duration-500">
+                    {% if service.icon_svg %}
+                        <div class="w-8 h-8 text-primary group-hover:text-white transition-colors">
+                            {{ service.icon_svg|safe }}
+                        </div>
+                    {% elif service.icon %}
+                        <img src="{{ service.icon.url }}" alt="{{ service.title }}" class="w-10 h-10 object-contain group-hover:brightness-0 group-hover:invert transition-all">
+                    {% else %}
+                        <i class="fas fa-hand-holding-medical text-2xl text-primary group-hover:text-white"></i>
+                    {% endif %}
+                </div>
+                <h4 class="text-xl font-black text-slate-900 mb-4 group-hover:text-primary transition-colors">{{ service.title }}</h4>
+                <p class="text-slate-500 text-sm font-medium leading-relaxed mb-8 line-clamp-3">{{ service.description }}</p>
+                
+                <a href="{% url 'core:services' %}" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-primary transition-colors">
+                    Learn More
+                    <i class="fas fa-arrow-right text-[8px] transform group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <!-- Brands Marquee -->
 {% if design_settings.show_hp_brands %}
 <section class="py-12 md:py-24 bg-white border-t border-slate-50">
