@@ -6,6 +6,7 @@ div.import-preview,
     background: #ffffff !important;
     padding: 20px !important;
     border-radius: 8px !important;
+    color: #000000 !important;
 }
 
 .import-preview table,
@@ -31,14 +32,24 @@ div.import-preview,
     opacity: 1 !important;
 }
 
+/* Fix for nested elements like spans, divs, strong, b */
+.import-preview table td *,
+.import-preview table th * {
+    color: #000000 !important;
+}
+
 /* Specific fix for the 'black rectangle' look which is often caused by dark background in Jazzmin */
 .import-preview table tr,
-.import-preview .table tr {
+.import-preview .table tr,
+.import-preview table tr td,
+.import-preview .table tr td {
     background-color: #ffffff !important;
+    color: #000000 !important;
 }
 
 /* Override stripped rows */
 .import-preview .table-striped tbody tr:nth-of-type(odd),
+.import-preview table tr:nth-child(odd),
 .import-preview table tr:nth-child(odd) td {
     background-color: #f8f9fa !important;
 }
@@ -56,6 +67,7 @@ div.import-preview,
     padding: 2px 6px !important;
     border-radius: 4px !important;
     font-weight: bold !important;
+    display: inline-block !important;
 }
 
 .import-preview .update, 
@@ -65,9 +77,21 @@ div.import-preview,
     padding: 2px 6px !important;
     border-radius: 4px !important;
     font-weight: bold !important;
+    display: inline-block !important;
+}
+
+.import-preview .delete, 
+.import-preview span.delete {
+    color: #dc3545 !important;
+    background: #f8d7da !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-weight: bold !important;
+    display: inline-block !important;
 }
 
 /* Breadcrumbs or other elements that might be in the preview area */
 .import-preview .breadcrumb {
     background: transparent !important;
 }
+

@@ -40,19 +40,33 @@ class ProductResource(resources.ModelResource):
         export_order = fields
 
     def before_import_row(self, row, **kwargs):
-        # 1. Create/Update Category automatically
+        # 1. Create/Update Category automatically (Supports hierarchical paths like 'Parent > Child')
         category_name = row.get('category')
         cat_img_url = row.get('category_image_url')
         if category_name:
-            cat, created = Category.objects.get_or_create(name=category_name)
-            if cat_img_url:
-                cat.image_url = cat_img_url
-                cat.save()
+            category_name = str(category_name).strip()
+            if " > " in category_name:
+                # Resolve hierarchy: Parent > Child > Subchild
+                parts = [p.strip() for p in category_name.split(" > ")]
+                parent = None
+                for part in parts:
+                    cat, created = Category.objects.get_or_create(name=part, parent=parent)
+                    parent = cat
+                # Final category is the leaf
+                final_cat = parent
+            else:
+                final_cat, created = Category.objects.get_or_create(name=category_name)
+            
+            if cat_img_url and final_cat:
+                final_cat.image_url = cat_img_url
+                final_cat.save()
+            
+            # Crucial: update the row value to just the leaf name so ForeignKeyWidget finds it
+            row['category'] = final_cat.name
 
         # 2. Create/Update Brand automatically
         brand_name = row.get('brand')
         if brand_name:
-            # Handle possible string/None cases safely
             brand_name = str(brand_name).strip()
             if brand_name:
                 Brand.objects.get_or_create(name=brand_name)
