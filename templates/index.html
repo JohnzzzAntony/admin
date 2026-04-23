@@ -46,18 +46,24 @@
                 
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 relative z-10 pt-32 sm:pt-40">
                     <div class="max-w-3xl mx-auto text-center space-y-8 animate-hero flex flex-col items-center">
+                        {% if slider.badge_text %}
                         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full hero-glass text-white/90 text-xs font-black uppercase tracking-[0.2em]">
                             <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                            {{ slider.badge_text|default:"Elite Collection"|safe }}
+                            {{ slider.badge_text|safe }}
                         </div>
+                        {% endif %}
                         
+                        {% if slider.title %}
                         <h2 class="text-3xl sm:text-6xl lg:text-7xl font-black text-white leading-[0.9] tracking-tighter">
                             {{ slider.title|safe }}
                         </h2>
+                        {% endif %}
                         
+                        {% if slider.description %}
                         <p class="text-lg text-slate-300 max-w-lg leading-relaxed font-medium">
                             {{ slider.description|safe|linebreaksbr }}
                         </p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -219,7 +225,7 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
                     <div class="absolute inset-0 p-8 sm:p-16 flex flex-col justify-end gap-4 transform transition-all duration-700 group-hover:translate-y-[-10px]">
                         {% if item.subtitle %}<span class="text-[10px] font-black text-white/50 uppercase tracking-[0.4em]">{{ item.subtitle }}</span>{% endif %}
-                        <h3 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tighter">{{ item.title }}</h3>
+                        {% if item.title %}<h3 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tighter">{{ item.title }}</h3>{% endif %}
                         <div class="pt-6">
                             <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white text-slate-950 group-hover:bg-primary group-hover:text-white transition-all transform group-hover:rotate-[-45deg] scale-100 ring-4 ring-white/10">
                                 <i class="fas fa-arrow-right"></i>

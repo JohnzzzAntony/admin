@@ -1,9 +1,9 @@
 from django.db import models
 
 class HeroSlider(models.Model):
-    badge_text = models.CharField(max_length=100, default="Elite Collection", blank=True)
-    title = models.CharField(max_length=255, default="Royal Quality Healthcare")
-    description = models.TextField(blank=True, default="Precision medical equipment delivered with royalty-class service.")
+    badge_text = models.CharField(max_length=100, blank=True, null=True)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     
     image = models.ImageField(
         upload_to="sliders/", 
@@ -36,7 +36,7 @@ class HeroSlider(models.Model):
         if self.video_url: return self.video_url
         return self.video.url if self.video else ""
 
-    def __str__(self): return self.title
+    def __str__(self): return self.title if self.title else f"Banner {self.pk or 'New'}"
     class Meta:
         ordering = ['order']
         verbose_name = "Banner"
