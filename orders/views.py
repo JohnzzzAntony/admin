@@ -12,6 +12,27 @@ from .notifications import send_customer_notification
 from .tabby_payment import create_tabby_session
 from .tamara_payment import create_tamara_checkout
 
+def buy_now(request, product_id):
+    """
+    Fast checkout from product page.
+    Adds item to cart and redirects directly to billing.
+    """
+    product = get_object_or_404(Product, id=product_id)
+    cart = request.session.get('enquiry_cart', {})
+    item_key = str(product.id)
+    
+    qty = int(request.GET.get('qty', 1))
+    # For buy now, we usually override or ensure the item is there with at least the requested qty
+    cart[item_key] = {'quantity': qty}
+    
+    request.session['enquiry_cart'] = cart
+    
+    method = request.GET.get('method')
+    if method:
+        request.session['preferred_payment_method'] = method
+        
+    return redirect('orders:checkout_billing')
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def _get_cart_items(request):
@@ -184,7 +205,9 @@ def checkout_payment(request):
         import traceback
         from django.utils import timezone
         try:
-            payment_method = request.POST.get('payment_method', 'card')
+            # Check for pre-selected method from "Buy Now" flow
+            preferred_method = request.session.pop('preferred_payment_method', None)
+            payment_method = request.POST.get('payment_method', preferred_method or 'card')
 
             # Create the CustomerOrder record
             order = CustomerOrder.objects.create(
@@ -316,13 +339,17 @@ def checkout_payment(request):
             messages.error(request, f"❌ Order Processing Failed: {str(e)}")
             return redirect('orders:checkout_payment')
 
+    # Get preferred method from session (don't pop yet, as we might need it for GET)
+    preferred_method = request.session.get('preferred_payment_method')
+
     return render(request, 'orders/checkout_payment.html', {
         'cart_items': cart_items,
         'billing': billing,
         'subtotal': subtotal,
         'total_tax': total_tax,
         'total_shipping': total_shipping,
-        'grand_total': grand_total
+        'grand_total': grand_total,
+        'preferred_method': preferred_method
     })
 
 

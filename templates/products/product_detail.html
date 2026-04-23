@@ -117,7 +117,7 @@
             </div>
 
             <!-- Right: Details -->
-            <div class="lg:col-span-5 space-y-8">
+            <div class="lg:col-span-5 space-y-8 sticky top-32">
                 <div class="space-y-4">
                     {% if product.brand %}
                     <a href="{{ product.brand.get_absolute_url }}" class="inline-block text-[10px] font-black uppercase tracking-[0.3em] text-primary hover:text-slate-900 transition-colors">
@@ -218,6 +218,52 @@
                     </div>
                 </div>
 
+                <!-- Payment Installments -->
+                {% with price_info=product.get_best_price_info %}
+                <div class="space-y-3 py-6 border-t border-slate-100">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Tabby -->
+                        <a href="{% url 'orders:buy_now' product_id=product.id %}?method=tabby&qty=1" 
+                           id="tabby-link" 
+                           class="payment-box-link flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 transition-all group">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <img src="{% static 'assets/logos/tabby.png' %}" alt="Tabby" class="h-3 object-contain">
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-emerald-500 transition-colors">Installments</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-900 leading-none">
+                                    <span class="installment-amount text-emerald-600" data-unit-price="{{ price_info.final_price }}" data-divisor="4">
+                                        {{ price_info.tabby_payment|floatformat:2 }}
+                                    </span> 
+                                    <span class="text-[8px] text-slate-400 font-medium">AED x 4</span>
+                                </p>
+                            </div>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-200 group-hover:text-emerald-500 transform group-hover:translate-x-1 transition-all"></i>
+                        </a>
+
+                        <!-- Tamara -->
+                        <a href="{% url 'orders:buy_now' product_id=product.id %}?method=tamara&qty=1" 
+                           id="tamara-link" 
+                           class="payment-box-link flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-amber-500 transition-all group">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <img src="{% static 'assets/logos/tamara.png' %}" alt="Tamara" class="h-3 object-contain">
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-amber-600 transition-colors">Split Pay</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-900 leading-none">
+                                    <span class="installment-amount text-amber-600" data-unit-price="{{ price_info.final_price }}" data-divisor="3">
+                                        {{ price_info.tamara_payment|floatformat:2 }}
+                                    </span> 
+                                    <span class="text-[8px] text-slate-400 font-medium">AED x 3</span>
+                                </p>
+                            </div>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-200 group-hover:text-amber-600 transform group-hover:translate-x-1 transition-all"></i>
+                        </a>
+                    </div>
+                    <p class="text-[9px] text-slate-400 font-medium italic text-center">Interest-free payments. No hidden fees.</p>
+                </div>
+                {% endwith %}
+
                 <div class="grid grid-cols-2 gap-4 py-6 border-t border-slate-100">
                     {% for badge in product.trust_badges.all %}
                         {% if badge.is_active %}
@@ -236,6 +282,31 @@
                         </div>
                         {% endif %}
                     {% endfor %}
+                </div>
+
+                <!-- B2B Support Section -->
+                <div class="pt-6 border-t border-slate-100 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                            <i class="fas fa-headset text-sm"></i>
+                        </div>
+                        <h4 class="text-xs font-black uppercase tracking-widest text-slate-900">Need expert Help?</h4>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2">
+                        <a href="tel:{{ site_settings.phone }}" class="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-primary hover:bg-primary/5 transition-all group">
+                            <i class="fas fa-phone-alt text-slate-400 group-hover:text-primary mb-2 text-sm"></i>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-slate-500">Call</span>
+                        </a>
+                        <a href="mailto:{{ site_settings.email }}?subject=Inquiry: {{ product.name }} (SKU: {{ product.sku }})" class="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-primary hover:bg-primary/5 transition-all group">
+                            <i class="fas fa-envelope text-slate-400 group-hover:text-primary mb-2 text-sm"></i>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-slate-500">Email</span>
+                        </a>
+                        <a href="https://wa.me/{{ site_settings.whatsapp }}?text=Hello, I am interested in {{ product.name }} (SKU: {{ product.sku }}). Link: {{ request.build_absolute_uri }}" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all group">
+                            <i class="fab fa-whatsapp text-slate-400 group-hover:text-emerald-500 mb-2 text-sm"></i>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-slate-500">WhatsApp</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -331,6 +402,21 @@
                 if (val < 1) val = 1;
                 if (val > max) val = max;
                 input.value = val;
+
+                // Update Installment Amounts
+                document.querySelectorAll('.installment-amount').forEach(el => {
+                    const unitPrice = parseFloat(el.dataset.unitPrice);
+                    const divisor = parseInt(el.dataset.divisor) || 4;
+                    const total = unitPrice * val;
+                    el.textContent = (total / divisor).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                });
+
+                // Update Payment Links
+                document.querySelectorAll('.payment-box-link').forEach(link => {
+                    const url = new URL(link.href, window.location.origin);
+                    url.searchParams.set('qty', val);
+                    link.href = url.pathname + url.search;
+                });
             });
         });
 

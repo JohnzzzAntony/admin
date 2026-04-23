@@ -9,6 +9,7 @@ urlpatterns = [
     path('enquiry-cart/', views.enquiry_cart),          # legacy redirect
 
     path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('cart/buy-now/<int:product_id>/', views.buy_now, name='buy_now'),
     path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('checkout/guest/', views.checkout_as_guest, name='checkout_as_guest'),
 
