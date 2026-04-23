@@ -21,8 +21,11 @@ def home(request):
     if not categories_circles.exists():
         categories_circles = Category.objects.filter(parent__isnull=True, is_active=True)[:10]
     
-    # Merge and Sort
-    homepage_sections = []
+    # ─── Homepage Interleaving Logic ──────────────────────────────────────────
+    # Interleaving Pattern: Category -> Banner -> Category -> Banner
+    
+    # 1. Prepare Categories
+    category_sections = []
     for cat in homepage_sections_raw:
         # Aggregated products for this category and all its children
         all_cat_ids = [c.id for c in cat.get_all_children(include_self=True)]
@@ -36,14 +39,43 @@ def home(request):
         cat.aggregated_products = cat_products
         
         if cat_products.exists():
-            homepage_sections.append({'type': 'category', 'data': cat, 'order': cat.homepage_order})
+            category_sections.append({
+                'type': 'category', 
+                'data': cat, 
+                'order': cat.homepage_order
+            })
     
-    banners = PromoBanner.objects.filter(is_active=True).prefetch_related('items')
-    for banner in banners:
-        homepage_sections.append({'type': 'banner', 'data': banner, 'order': banner.homepage_order})
+    # Sort categories by their defined order
+    category_sections.sort(key=lambda x: x['order'])
     
-    # Sort everything by the order value
-    homepage_sections.sort(key=lambda x: x['order'])
+    # 2. Prepare Banners
+    banner_sections = []
+    banners_queryset = PromoBanner.objects.filter(is_active=True).prefetch_related('items')
+    for banner in banners_queryset:
+        banner_sections.append({
+            'type': 'banner', 
+            'data': banner, 
+            'order': banner.homepage_order
+        })
+    
+    # Sort banners by their defined order
+    banner_sections.sort(key=lambda x: x['order'])
+
+    # 3. Interleave
+    homepage_sections = []
+    max_len = max(len(category_sections), len(banner_sections))
+    cat_display_count = 1
+    
+    for i in range(max_len):
+        if i < len(category_sections):
+            cat_sec = category_sections[i]
+            cat_sec['display_index'] = cat_display_count
+            homepage_sections.append(cat_sec)
+            cat_display_count += 1
+            
+        if i < len(banner_sections):
+            homepage_sections.append(banner_sections[i])
+
 
     about_us = AboutUs.objects.filter(is_active=True).first()
     
