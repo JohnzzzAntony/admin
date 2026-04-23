@@ -27,3 +27,5 @@ openpyxl>=3.1.5
 reportlab>=4.4.10
 pytest>=8.0.0
 pytest-django>=4.8.0
+django-csp>=3.8
+django-ratelimit>=4.1.0

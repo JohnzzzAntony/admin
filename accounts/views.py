@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
+from ratelimit.decorators import ratelimit
 
 from .forms import CustomUserCreationForm
 from .email_notifications import send_welcome_email, send_login_alert
@@ -84,6 +85,7 @@ def _get_or_create_user(email: str, full_name: str = "", provider: str = ""):
 
 # ─── Standard Registration ────────────────────────────────────────────────────
 
+@ratelimit(key="ip", rate="5/m", method="POST", block=True)
 def register_view(request):
     """Standard username + password registration with welcome e-mail."""
     if request.user.is_authenticated:
@@ -112,6 +114,7 @@ def register_view(request):
 
 # ─── Standard Login / Logout ──────────────────────────────────────────────────
 
+@ratelimit(key="ip", rate="5/m", method="POST", block=True)
 def login_view(request):
     """Standard username + password login."""
     if request.user.is_authenticated:

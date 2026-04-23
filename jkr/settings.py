@@ -40,6 +40,7 @@ DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 IS_PRODUCTION = env.bool("IS_PRODUCTION", default=False)
 
+ADMIN_URL = env("ADMIN_URL", default="admin/")
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[
     "https://shop.creativegradientz.com",
     "https://ecom.creativegradientz.com",
@@ -97,7 +98,9 @@ LOGOUT_REDIRECT_URL = "core:home"
 # =============================================================================
 
 MIDDLEWARE = [
+    "core.security_middleware.SecurityShieldMiddleware",  # Bot/Probe blocking
     "django.middleware.security.SecurityMiddleware",
+    "csp.middleware.CSPMiddleware",  # Content Security Policy protection
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Serve static files in prod
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -122,6 +125,18 @@ SILENCED_SYSTEM_CHECKS = [
     "ckeditor.W001",  # CKEditor 4 EOL — will migrate to CKEditor 5 in a future sprint
 ]
 
+# --- Content Security Policy (CSP) ---
+# This prevents XSS by restricting where resources can be loaded from.
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://ka-f.fontawesome.com")
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://js.stripe.com", "https://kit.fontawesome.com", "https://checkout.tabby.ai")
+CSP_IMG_SRC = ("'self'", "data:", "https://res.cloudinary.com", "https://*.stripe.com", "https://*.tabby.ai")
+CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com", "https://ka-f.fontawesome.com")
+CSP_CONNECT_SRC = ("'self'", "https://ka-f.fontawesome.com", "https://api.stripe.com", "https://api.tabby.ai", "https://checkout.tabby.ai")
+CSP_FRAME_SRC = ("'self'", "https://js.stripe.com", "https://checkout.tabby.ai")
+CSP_OBJECT_SRC = ("'none'",)
+CSP_BASE_URI = ("'self'",)
+
 # Production-only security headers (proxy-aware for Railway / Hostinger)
 if IS_PRODUCTION:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -142,6 +157,7 @@ if IS_PRODUCTION:
         SECURE_HSTS_INCLUDE_SUBDOMAINS = True
         SECURE_HSTS_PRELOAD = True
         X_FRAME_OPTIONS = "DENY"
+        CSP_UPGRADE_INSECURE_REQUESTS = True
 
 # =============================================================================
 # URL & WSGI CONFIGURATION
