@@ -90,8 +90,8 @@
 {% endblock %}
 
 {% block content %}
-<section class="py-12 bg-white">
-    <div class="container mx-auto px-6">
+<section class="py-8 lg:py-12 bg-white">
+    <div class="container mx-auto px-4 lg:px-6">
         <!-- Breadcrumb -->
         <nav class="flex mb-10 text-[11px] font-black uppercase tracking-widest text-slate-400">
             <a href="{% url 'core:home' %}" class="hover:text-primary transition-colors">Home</a>
@@ -103,20 +103,20 @@
             <span class="text-slate-900 truncate max-w-[200px]">{{ product.name }}</span>
         </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
             <!-- Left: Gallery -->
             <div class="lg:col-span-7 space-y-6">
-                <div class="sticky top-32">
+                <div class="lg:sticky lg:top-32">
                     <!-- Main Swiper -->
-                    <div class="swiper swiper-main aspect-square bg-slate-50 rounded-[40px] overflow-hidden border border-slate-100 relative group">
+                    <div class="swiper swiper-main aspect-square bg-slate-50 rounded-3xl lg:rounded-[40px] overflow-hidden border border-slate-100 relative group">
                         <div class="swiper-wrapper">
                             <!-- Primary Image -->
-                            <div class="swiper-slide p-12">
+                            <div class="swiper-slide p-6 lg:p-12">
                                 <img src="{{ product.get_image_url }}" alt="{{ product.name }}" class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110">
                             </div>
                             <!-- Gallery Images -->
                             {% for pimg in product.images.all %}
-                            <div class="swiper-slide p-12">
+                            <div class="swiper-slide p-6 lg:p-12">
                                 <img src="{{ pimg.image.url }}" alt="{{ product.name }} - Gallery Image {{ forloop.counter }}" class="w-full h-full object-contain">
                             </div>
                             {% endfor %}
@@ -134,18 +134,18 @@
                     </div>
 
                     <!-- Thumbnails Swiper -->
-                    <div class="swiper swiper-thumbs mt-6" id="product-gallery">
+                    <div class="swiper swiper-thumbs mt-4 lg:mt-6" id="product-gallery">
                         <div class="swiper-wrapper">
                             <!-- Primary Thumbnail -->
                             <div class="swiper-slide">
-                                <div class="gallery-thumb-btn w-24 h-24 rounded-2xl border-2 bg-slate-50 p-2 transition-all">
+                                <div class="gallery-thumb-btn w-16 lg:w-24 h-16 lg:h-24 rounded-2xl border-2 bg-slate-50 p-2 transition-all">
                                     <img src="{{ product.get_image_url }}" alt="{{ product.name }}" class="w-full h-full object-contain">
                                 </div>
                             </div>
                             <!-- Gallery Thumbnails -->
                             {% for pimg in product.images.all %}
                             <div class="swiper-slide">
-                                <div class="gallery-thumb-btn w-24 h-24 rounded-2xl border-2 border-transparent bg-slate-50 p-2 transition-all">
+                                <div class="gallery-thumb-btn w-16 lg:w-24 h-16 lg:h-24 rounded-2xl border-2 border-transparent bg-slate-50 p-2 transition-all">
                                     <img src="{{ pimg.image.url }}" alt="{{ product.name }} - Gallery Image {{ forloop.counter }}" class="w-full h-full object-contain">
                                 </div>
                             </div>
@@ -156,15 +156,15 @@
             </div>
 
             <!-- Right: Details -->
-            <div class="lg:col-span-5 space-y-8 sticky top-32">
-                <div class="space-y-4">
+            <div class="lg:col-span-5 space-y-8 lg:sticky lg:top-32">
+                <div class="space-y-3 lg:space-y-4">
                     {% if product.brand %}
                     <a href="{{ product.brand.get_absolute_url }}" class="inline-block text-[10px] font-black uppercase tracking-[0.3em] text-primary hover:text-slate-900 transition-colors">
                         {{ product.brand.name }}
                     </a>
                     {% endif %}
                     
-                    <h1 class="text-3xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tighter">
+                    <h1 class="text-2xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tighter">
                         {{ product.name }}
                     </h1>
 
@@ -185,14 +185,14 @@
                 <!-- Price -->
                 {% with price_info=product.get_best_price_info %}
                 <div class="space-y-2">
-                    <div class="flex items-baseline gap-4">
-                        <span class="text-4xl lg:text-5xl font-black text-primary tracking-tighter">{{ price_info.final_price }} <span class="text-xs uppercase ml-1">AED</span></span>
+                    <div class="flex items-baseline gap-3 lg:gap-4">
+                        <span class="text-3xl lg:text-5xl font-black text-primary tracking-tighter">{{ price_info.final_price }} <span class="text-[10px] uppercase ml-1">AED</span></span>
                         {% if price_info.has_offer %}
-                        <span class="text-xl text-slate-300 line-through font-bold">{{ price_info.regular_price }}</span>
+                        <span class="text-lg lg:text-xl text-slate-300 line-through font-bold">{{ price_info.regular_price }}</span>
                         {% endif %}
                     </div>
                     {% if price_info.has_offer %}
-                    <div class="inline-block px-4 py-1.5 bg-red-50 text-red-600 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                    <div class="inline-block px-3 lg:px-4 py-1.5 bg-red-50 text-red-600 rounded-lg text-[10px] font-black uppercase tracking-widest">
                         Save {{ price_info.discount_percentage }}% ({{ price_info.discount_amount }} AED)
                     </div>
                     {% endif %}
@@ -237,22 +237,23 @@
                         </div>
                     </div>
 
-                    <div class="flex gap-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
                         {% if product.quantity > 0 %}
                         <button type="button" 
                                 id="add-to-cart-main"
                                 data-product-id="{{ product.id }}"
                                 data-url="{% url 'orders:add_to_cart' product_id=product.id %}"
-                                class="flex-1 py-5 bg-primary text-white rounded-3xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3">
+                                class="flex-1 py-4 lg:py-5 bg-primary text-white rounded-2xl lg:rounded-3xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3">
                             <i class="fas fa-shopping-bag"></i> Add to Cart
                         </button>
                         {% else %}
-                        <button disabled class="flex-1 py-5 bg-slate-200 text-slate-400 rounded-3xl font-black text-xs uppercase tracking-widest cursor-not-allowed">
+                        <button disabled class="flex-1 py-4 lg:py-5 bg-slate-200 text-slate-400 rounded-2xl lg:rounded-3xl font-black text-xs uppercase tracking-widest cursor-not-allowed">
                             Product Unavailable
                         </button>
                         {% endif %}
-                        <button data-product-id="{{ product.id }}" class="wishlist-btn w-16 h-16 rounded-3xl border-2 border-slate-100 flex items-center justify-center transition-all hover:bg-slate-50 hover:border-slate-200 group">
+                        <button data-product-id="{{ product.id }}" class="wishlist-btn w-full sm:w-16 h-14 sm:h-16 rounded-2xl lg:rounded-3xl border-2 border-slate-100 flex items-center justify-center transition-all hover:bg-slate-50 hover:border-slate-200 group">
                             <i class="{% if product.id in wishlist_ids %}fas text-red-500{% else %}far text-slate-400{% endif %} fa-heart text-xl transition-transform group-hover:scale-110"></i>
+                            <span class="sm:hidden ml-2 text-[10px] font-black uppercase tracking-widest text-slate-400">Wishlist</span>
                         </button>
                     </div>
                 </div>
@@ -351,16 +352,16 @@
         </div>
 
         <!-- Information Tabs -->
-        <div class="mt-32 max-w-5xl mx-auto">
-            <div class="flex items-center justify-center gap-4 mb-12">
-                <button type="button" data-tab-trigger="overview" class="tab-btn active px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Overview</button>
+        <div class="mt-16 lg:mt-32 max-w-5xl mx-auto">
+            <div class="flex items-center lg:justify-center gap-2 lg:gap-4 mb-8 lg:mb-12 overflow-x-auto pb-4 scrollbar-hide no-scrollbar">
+                <button type="button" data-tab-trigger="overview" class="tab-btn active whitespace-nowrap px-6 lg:px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Overview</button>
                 {% if product.technical_info %}
-                <button type="button" data-tab-trigger="specs" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Specifications</button>
+                <button type="button" data-tab-trigger="specs" class="tab-btn whitespace-nowrap px-6 lg:px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Specifications</button>
                 {% endif %}
-                <button type="button" data-tab-trigger="shipping" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Shipping & Returns</button>
+                <button type="button" data-tab-trigger="shipping" class="tab-btn whitespace-nowrap px-6 lg:px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Shipping & Returns</button>
             </div>
 
-            <div class="bg-slate-50/50 rounded-[40px] p-8 lg:p-16 border border-slate-100 min-h-[300px]">
+            <div class="bg-slate-50/50 rounded-3xl lg:rounded-[40px] p-6 lg:p-16 border border-slate-100 min-h-[300px]">
                 <div id="overview-tab" class="tab-content-panel active">
                     <div class="prose prose-slate max-w-none prose-headings:font-black prose-headings:tracking-tighter prose-p:font-medium prose-p:leading-relaxed text-slate-600">
                         {{ product.overview|safe }}
