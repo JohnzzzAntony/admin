@@ -44,9 +44,9 @@ class Category(models.Model):
     product_count    = models.PositiveIntegerField(default=0, verbose_name="Cached Product Count", help_text="Denormalized count for performance.")
 
     # SEO Fields
-    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title")
-    meta_description = models.TextField(blank=True, verbose_name="Meta Description")
-    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords")
+    meta_title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Meta Title")
+    meta_description = models.TextField(blank=True, null=True, verbose_name="Meta Description")
+    meta_keywords = models.TextField(blank=True, null=True, verbose_name="Meta Keywords")
     
     @property
     def get_image_url(self):
@@ -158,9 +158,9 @@ class Brand(models.Model):
     order = models.PositiveIntegerField(default=0)
 
     # SEO Fields
-    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title")
-    meta_description = models.TextField(blank=True, verbose_name="Meta Description")
-    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords")
+    meta_title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Meta Title")
+    meta_description = models.TextField(blank=True, null=True, verbose_name="Meta Description")
+    meta_keywords = models.TextField(blank=True, null=True, verbose_name="Meta Keywords")
 
     def save(self, *args, **kwargs):
         if not self.slug: self.slug = slugify(self.name)
@@ -263,9 +263,9 @@ class Product(models.Model):
 
     # SEO Fields (Multilingual)
     # SEO Fields
-    meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title")
-    meta_description = models.TextField(blank=True, verbose_name="Meta Description")
-    meta_keywords = models.TextField(blank=True, verbose_name="Meta Keywords")
+    meta_title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Meta Title")
+    meta_description = models.TextField(blank=True, null=True, verbose_name="Meta Description")
+    meta_keywords = models.TextField(blank=True, null=True, verbose_name="Meta Keywords")
     
     @property
     def get_image_url(self):
