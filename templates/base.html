@@ -156,7 +156,7 @@
             --radius-img: {{ design_settings.image_radius|default:"20px" }};
         }
 
-        html { scroll-behavior: smooth; overflow-x: hidden; }
+        html { overflow-x: hidden; }
         body { 
             font-family: var(--font-sans);
             background-color: var(--surface);
@@ -256,8 +256,6 @@
     <!-- Global Premium Styles -->
     <link rel="stylesheet" href="{% static 'css/header_hero.css' %}?v=1.6">
     
-    {# Premium Smooth Scroll (Lenis) #}
-    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 
     {% block split_css %}{% endblock %}
 </head>
@@ -873,24 +871,7 @@
                 document.body.classList.add('loaded');
             });
 
-            // 2. Smooth Scroll (Lenis)
-            const lenis = new Lenis({
-                duration: 1.2,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                direction: 'vertical',
-                gestureDirection: 'vertical',
-                smooth: true,
-                mouseMultiplier: 1,
-                smoothTouch: false,
-                touchMultiplier: 2,
-                infinite: false,
-            });
 
-            function raf(time) {
-                lenis.raf(time);
-                requestAnimationFrame(raf);
-            }
-            requestAnimationFrame(raf);
 
             // 3. Security Deterrents (Requested by User)
             // Note: These are deterrents, not absolute protection

@@ -68,20 +68,17 @@ def home(request):
     # Sort banners by their defined order
     banner_sections.sort(key=lambda x: x['order'])
 
-    # 3. Interleave
-    homepage_sections = []
-    max_len = max(len(category_sections), len(banner_sections))
-    cat_display_count = 1
+    # 3. Interleave and Sort Globally
+    # Combine and sort by homepage_order to allow flexible positioning
+    homepage_sections = category_sections + banner_sections
+    homepage_sections.sort(key=lambda x: x.get('order', 0))
     
-    for i in range(max_len):
-        if i < len(category_sections):
-            cat_sec = category_sections[i]
-            cat_sec['display_index'] = cat_display_count
-            homepage_sections.append(cat_sec)
+    # Apply display index for category labeling (e.g. "Section 1")
+    cat_display_count = 1
+    for section in homepage_sections:
+        if section['type'] == 'category':
+            section['display_index'] = cat_display_count
             cat_display_count += 1
-            
-        if i < len(banner_sections):
-            homepage_sections.append(banner_sections[i])
 
 
     about_us = AboutUs.objects.filter(is_active=True).first()

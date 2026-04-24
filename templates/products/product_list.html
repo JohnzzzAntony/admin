@@ -1,6 +1,5 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% load static %}
-{% load custom_filters %}
 
 {% block meta_title %}
     {% if current_category.meta_title %}{{ current_category.meta_title }}
@@ -62,8 +61,8 @@
         <!-- Header Section -->
         <div class="mb-12">
             <!-- Breadcrumbs -->
-            <nav class="flex mb-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
-                <a href="{% url 'core:home' %}" class="hover:text-primary transition-all duration-300">Frontier</a>
+            <nav class="flex mb-8 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                <a href="{% url 'core:home' %}" class="hover:text-primary transition-colors">Frontier</a>
                 <span class="mx-3 opacity-30">/</span>
                 <span class="text-slate-900">
                     {% if current_category %}{{ current_category.name }}
@@ -73,288 +72,93 @@
                 </span>
             </nav>
 
-            <!-- Banner: Refined Aesthetics, Reduced Black, Premium Glass -->
-            <div class="relative h-64 lg:h-80 rounded-[48px] overflow-hidden bg-white group shadow-2xl shadow-primary/5 border border-slate-100">
+            <!-- Banner -->
+            <div class="relative h-64 lg:h-80 rounded-[40px] overflow-hidden bg-slate-900 group">
                 {% if current_category and current_category.image %}
-                    <img src="{{ current_category.get_image_url }}" alt="{{ current_category.name }}" class="w-full h-full object-cover opacity-40 transition-transform duration-1000 group-hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent"></div>
+                    <img src="{{ current_category.get_image_url }}" alt="{{ current_category.name }}" class="w-full h-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-110">
                 {% elif collection and collection.cover_image %}
-                    <img src="{{ collection.get_image_url }}" alt="{{ collection.name }}" class="w-full h-full object-cover opacity-40 transition-transform duration-1000 group-hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent"></div>
+                    <img src="{{ collection.get_image_url }}" alt="{{ collection.name }}" class="w-full h-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-110">
                 {% else %}
-                    <div class="w-full h-full bg-gradient-to-br from-primary/5 via-white to-secondary/5"></div>
-                    <!-- Decorative Elements -->
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-32 -mt-32 animate-pulse"></div>
-                    <div class="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -ml-32 -mb-32 animate-pulse" style="animation-delay: 1s"></div>
+                    <div class="w-full h-full bg-gradient-to-br from-slate-950 to-primary/20"></div>
                 {% endif %}
                 
                 <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
-                    <div class="glass-morph p-8 lg:p-12 rounded-[40px] border-white/60 shadow-xl hero-content-box">
-                        <div class="overflow-hidden mb-3">
-                            <h1 class="text-4xl lg:text-7xl font-black text-primary tracking-tighter hero-title">
-                                {% if current_category %}{{ current_category.name }}
-                                {% elif collection %}{{ collection.name }}
-                                {% elif current_brand %}{{ current_brand.name }}
-                                {% else %}The Collection{% endif %}
-                            </h1>
-                        </div>
-                        <p class="text-slate-500 max-w-xl mx-auto font-bold leading-relaxed hero-subtitle">
-                            {% if current_category.description %}{{ current_category.description }}
-                            {% elif current_brand.description %}{{ current_brand.description }}
-                            {% else %}Curated excellence and timeless design for the modern connoisseur.{% endif %}
-                        </p>
-                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-black text-white tracking-tighter mb-4 animate__animated animate__fadeInUp">
+                        {% if current_category %}{{ current_category.name }}
+                        {% elif collection %}{{ collection.name }}
+                        {% elif current_brand %}{{ current_brand.name }}
+                        {% else %}Our Collection{% endif %}
+                    </h1>
+                    <p class="text-slate-300 max-w-2xl font-medium leading-relaxed animate__animated animate__fadeInUp animate__delay-1s">
+                        {% if current_category.description %}{{ current_category.description }}
+                        {% else %}Exquisite craftsmanship meets unparalleled quality in every piece.{% endif %}
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
-            <!-- Sidebar: Significantly Wider for Brand Impact (lg:col-span-8) -->
-            <aside class="lg:col-span-8 space-y-12 sidebar-filter">
-                
-                <form id="filter-form" method="GET" action="" class="space-y-12">
-                    <!-- Keep existing sort and search in the form -->
-                    {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
-                    <input type="hidden" name="sort" value="{{ current_sort }}">
-
-                    <!-- Price Range Filter -->
-                    <div class="space-y-8 animate__animated animate__fadeInLeft">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-xs font-black uppercase tracking-[0.4em] text-primary">Price Range</h3>
-                            <button type="button" onclick="resetPriceRange()" class="text-[9px] font-black text-slate-400 hover:text-primary uppercase tracking-widest transition-colors">Reset</button>
-                        </div>
-                        
-                        <div class="space-y-6">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-2">
-                                    <label class="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-2">Min Price</label>
-                                    <input type="number" name="min_price" id="min_price" value="{{ current_filters.min_price|default:'' }}" placeholder="{{ price_bounds.min_p|floatformat:0 }}" class="w-full bg-white border border-slate-100 rounded-2xl px-6 py-4 text-xs font-bold focus:outline-none focus:border-primary transition-all">
-                                </div>
-                                <div class="space-y-2">
-                                    <label class="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-2">Max Price</label>
-                                    <input type="number" name="max_price" id="max_price" value="{{ current_filters.max_price|default:'' }}" placeholder="{{ price_bounds.max_p|floatformat:0 }}" class="w-full bg-white border border-slate-100 rounded-2xl px-6 py-4 text-xs font-bold focus:outline-none focus:border-primary transition-all">
-                                </div>
-                            </div>
-                            <button type="submit" class="w-full py-4 bg-slate-50 hover:bg-slate-100 text-slate-900 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all">Apply Range</button>
-                        </div>
-                    </div>
-
-                    <!-- Brand Showcase Section -->
-                    <div class="space-y-8 animate-brand-list">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-xs font-black uppercase tracking-[0.4em] text-primary">Master Brands</h3>
-                            <span class="text-[10px] font-black text-slate-400">{{ all_brands_count }} TOTAL</span>
-                        </div>
-
-                        {% if current_filters.selected_brands %}
-                            {# ── FILTERED MODE: show only selected brand(s) prominently ── #}
-                            <div class="space-y-3">
-                                {% for brand in all_brands %}
-                                    {% if brand.id in current_filters.selected_brands %}
-                                        <div class="flex items-center gap-5 p-5 bg-white border border-primary ring-2 ring-primary/10 rounded-[28px] shadow-lg shadow-primary/5">
-                                            {% if brand.logo %}
-                                                <div class="w-16 h-16 flex-shrink-0 flex items-center justify-center bg-slate-50 rounded-2xl p-2">
-                                                    <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="max-w-full max-h-full object-contain">
-                                                </div>
-                                            {% else %}
-                                                <div class="w-16 h-16 flex-shrink-0 flex items-center justify-center bg-primary/5 rounded-2xl">
-                                                    <i class="fas fa-tag text-primary text-xl"></i>
-                                                </div>
-                                            {% endif %}
-                                            <div class="flex-1 min-w-0">
-                                                <p class="text-[9px] font-black uppercase tracking-[0.3em] text-primary mb-1">Selected Brand</p>
-                                                <p class="text-base font-black text-slate-900 truncate">{{ brand.name }}</p>
-                                                {# Hidden checkbox to keep the filter active on submit #}
-                                                <input type="checkbox" name="brands" value="{{ brand.id }}" class="hidden" checked>
-                                            </div>
-                                            <div class="w-3 h-3 bg-primary rounded-full animate-pulse flex-shrink-0"></div>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-
-                            {# Toggle to expose the full brand list #}
-                            <button type="button" id="brand-expand-btn"
-                                class="w-full py-4 border border-dashed border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-2">
-                                <i class="fas fa-th-large text-[8px]"></i>
-                                Browse All Brands
-                            </button>
-
-                            {# Full brand list (hidden by default when filter is active) #}
-                            <div id="brand-full-list" class="hidden space-y-2 pt-2">
-                                <div class="grid grid-cols-1 gap-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-thin">
-                                    {% for brand in all_brands %}
-                                        <label class="brand-item flex items-center justify-between p-4 bg-white border {% if brand.id in current_filters.selected_brands %}border-primary ring-1 ring-primary/20{% else %}border-slate-100{% endif %} rounded-[20px] cursor-pointer hover:border-primary/40 transition-all group">
-                                            <div class="flex items-center gap-3">
-                                                <div class="relative flex items-center justify-center">
-                                                    <input type="checkbox" name="brands" value="{{ brand.id }}" class="brand-filter-checkbox appearance-none w-4 h-4 border-2 border-slate-200 rounded-md checked:bg-primary checked:border-primary transition-all cursor-pointer" {% if brand.id in current_filters.selected_brands %}checked{% endif %}>
-                                                    <i class="fas fa-check absolute text-[8px] text-white {% if brand.id in current_filters.selected_brands %}opacity-100{% else %}opacity-0{% endif %} transition-opacity"></i>
-                                                </div>
-                                                {% if brand.logo %}
-                                                    <div class="w-8 h-8 flex items-center justify-center">
-                                                        <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="max-w-full max-h-full object-contain {% if brand.id in current_filters.selected_brands %}grayscale-0{% else %}grayscale group-hover:grayscale-0{% endif %} transition-all">
-                                                    </div>
-                                                {% endif %}
-                                                <span class="text-xs font-bold {% if brand.id in current_filters.selected_brands %}text-slate-900{% else %}text-slate-500{% endif %} group-hover:text-slate-900 transition-colors">{{ brand.name }}</span>
-                                            </div>
-                                        </label>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <!-- Sidebar: Categories -->
+            <aside class="lg:col-span-3 space-y-10">
+                <div class="space-y-6">
+                    <h3 class="text-xs font-black uppercase tracking-[0.3em] text-primary">Browse Categories</h3>
+                    <div class="space-y-1">
+                        <a href="{% url 'products:product_list' %}" class="flex items-center justify-between p-4 rounded-2xl text-sm font-bold {% if not current_category %}bg-primary text-white shadow-xl shadow-primary/20{% else %}text-slate-500 hover:bg-slate-50{% endif %} transition-all">
+                            <span>All Collection</span>
+                            <span class="text-[10px] opacity-60">{{ products.paginator.count }}</span>
+                        </a>
+                        {% for cat in categories %}{% if not cat.parent %}
+                            <a href="{{ cat.get_absolute_url }}" class="flex items-center justify-between p-4 rounded-2xl text-sm font-bold {% if current_category.slug == cat.slug %}bg-primary text-white shadow-xl shadow-primary/20{% else %}text-slate-500 hover:bg-slate-50{% endif %} transition-all">
+                                <span>{{ cat.name }}</span>
+                                <i class="fas fa-arrow-right text-[10px] opacity-30"></i>
+                            </a>
+                            {% if current_category.slug == cat.slug or current_category.parent.slug == cat.slug %}
+                                <div class="pl-4 py-2 space-y-1">
+                                    {% for sub in cat.active_subcategories %}
+                                    <a href="{{ sub.get_absolute_url }}" class="flex items-center justify-between p-3 rounded-xl text-xs font-black uppercase tracking-widest {% if current_category.slug == sub.slug %}text-primary bg-primary/5{% else %}text-slate-400 hover:text-slate-600{% endif %} transition-all">
+                                        {{ sub.name }}
+                                    </a>
                                     {% endfor %}
                                 </div>
-                            </div>
-
-                        {% else %}
-                            {# ── DEFAULT MODE: all brands as selectable grid ── #}
-                            <div class="grid grid-cols-1 gap-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin">
-                                {% for brand in all_brands %}
-                                    <label class="brand-item flex items-center justify-between p-4 bg-white border border-slate-100 rounded-[24px] cursor-pointer hover:border-primary/30 hover:shadow-md transition-all group">
-                                        <div class="flex items-center gap-4">
-                                            <div class="relative flex items-center justify-center">
-                                                <input type="checkbox" name="brands" value="{{ brand.id }}" class="brand-filter-checkbox appearance-none w-5 h-5 border-2 border-slate-200 rounded-lg checked:bg-primary checked:border-primary transition-all cursor-pointer">
-                                                <i class="fas fa-check absolute text-[10px] text-white opacity-0 transition-opacity"></i>
-                                            </div>
-                                            <div class="flex items-center gap-4">
-                                                {% if brand.logo %}
-                                                    <div class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-xl p-1.5">
-                                                        <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="max-w-full max-h-full object-contain grayscale group-hover:grayscale-0 transition-all">
-                                                    </div>
-                                                {% else %}
-                                                    <div class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-xl">
-                                                        <i class="fas fa-tag text-slate-300 group-hover:text-primary transition-colors"></i>
-                                                    </div>
-                                                {% endif %}
-                                                <span class="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors">{{ brand.name }}</span>
-                                            </div>
-                                        </div>
-                                        <i class="fas fa-plus text-[9px] text-slate-300 group-hover:text-primary group-hover:rotate-90 transition-all"></i>
-                                    </label>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                            {% endif %}
+                        {% endif %}{% endfor %}
                     </div>
+                </div>
 
-                    <!-- Rating Filter -->
-                    <div class="space-y-8 animate__animated animate__fadeInLeft" style="animation-delay: 0.2s">
-                        <h3 class="text-xs font-black uppercase tracking-[0.4em] text-primary">Minimum Rating</h3>
-                        <div class="space-y-3">
-                            {% for r in "4321" %}
-                                <label class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl cursor-pointer hover:border-primary/30 transition-all group">
-                                    <input type="radio" name="rating" value="{{ r }}" class="appearance-none w-5 h-5 border-2 border-slate-200 rounded-full checked:border-primary checked:border-[6px] transition-all cursor-pointer" {% if current_filters.min_rating == r %}checked{% endif %}>
-                                    <div class="flex items-center gap-1">
-                                        {% for i in "12345" %}
-                                            <i class="fas fa-star text-[10px] {% if forloop.counter <= r|add:0 %}text-gold{% else %}text-slate-200{% endif %}"></i>
-                                        {% endfor %}
-                                        <span class="text-[10px] font-black text-slate-400 ml-2 uppercase tracking-widest">& Up</span>
-                                    </div>
-                                </label>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <!-- Categories Section -->
-                    <div class="space-y-8 animate__animated animate__fadeInLeft" style="animation-delay: 0.3s">
-                        <h3 class="text-xs font-black uppercase tracking-[0.4em] text-primary">Categories</h3>
-                        <div class="space-y-2">
-                            <a href="{% url 'products:product_list' %}" class="group flex items-center justify-between p-5 rounded-[24px] text-sm font-bold {% if not current_category %}bg-primary text-white shadow-2xl shadow-primary/30{% else %}bg-white text-slate-500 border border-slate-100 hover:border-primary/30 hover:shadow-lg transition-all duration-300{% endif %}">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 flex items-center justify-center rounded-xl {% if not current_category %}bg-white/20{% else %}bg-slate-50 group-hover:bg-primary/10 transition-colors{% endif %}">
-                                        <i class="fas fa-layer-group {% if not current_category %}text-white{% else %}text-slate-400 group-hover:text-primary{% endif %}"></i>
-                                    </div>
-                                    <span>All Masterpieces</span>
-                                </div>
-                            </a>
-
-                            {% for cat in categories %}{% if not cat.parent %}
-                                <div class="space-y-2">
-                                    <a href="{{ cat.get_absolute_url }}" class="group flex items-center justify-between p-5 rounded-[24px] text-sm font-bold {% if current_category.slug == cat.slug or current_category.parent.slug == cat.slug %}bg-slate-900 text-white shadow-xl{% else %}bg-white text-slate-500 border border-slate-100 hover:border-primary/30 hover:shadow-lg transition-all duration-300{% endif %}">
-                                        <div class="flex items-center gap-4">
-                                            <div class="w-10 h-10 flex items-center justify-center rounded-xl {% if current_category.slug == cat.slug or current_category.parent.slug == cat.slug %}bg-white/10{% else %}bg-slate-50 group-hover:bg-primary/10 transition-colors{% endif %}">
-                                                <i class="fas fa-tag {% if current_category.slug == cat.slug or current_category.parent.slug == cat.slug %}text-white{% else %}text-slate-400 group-hover:text-primary{% endif %}"></i>
-                                            </div>
-                                            <span>{{ cat.name }}</span>
-                                        </div>
-                                        <i class="fas fa-chevron-right text-[10px] {% if current_category.slug == cat.slug %}rotate-90 text-primary{% else %}opacity-20{% endif %} transition-transform"></i>
-                                    </a>
-                                    
-                                    {% if current_category.slug == cat.slug or current_category.parent.slug == cat.slug %}
-                                        <div class="grid grid-cols-1 gap-2 pl-6 py-2">
-                                            {% for sub in cat.active_subcategories %}
-                                            <a href="{{ sub.get_absolute_url }}" class="flex items-center justify-between p-4 rounded-2xl text-xs font-black uppercase tracking-[0.2em] {% if current_category.slug == sub.slug %}text-primary bg-primary/5 shadow-inner{% else %}text-slate-400 hover:text-slate-900 bg-slate-50/50 hover:bg-white transition-all{% endif %}">
-                                                <span>{{ sub.name }}</span>
-                                                {% if current_category.slug == sub.slug %}
-                                                    <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>
-                                                {% endif %}
-                                            </a>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            {% endif %}{% endfor %}
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="pt-8 border-t border-slate-100 flex flex-col gap-4">
-                        <button type="submit" class="w-full py-6 bg-primary text-white rounded-3xl text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all">
-                            Apply Filters
-                        </button>
-                        <a href="{{ request.path }}" class="w-full py-6 bg-slate-100 text-slate-500 rounded-3xl text-[11px] font-black uppercase tracking-[0.3em] text-center hover:bg-slate-200 transition-all">
-                            Clear All
-                        </a>
-                    </div>
-                </form>
-
-                <!-- Premium Support Card -->
-                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-dark rounded-[48px] p-10 text-white group animate__animated animate__fadeInUp">
-                    <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000"></div>
-                    <div class="relative z-10">
-                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-8 backdrop-blur-md">
-                            <i class="fas fa-headset text-2xl"></i>
-                        </div>
-                        <h4 class="text-2xl font-black tracking-tighter mb-4">Concierge Support</h4>
-                        <p class="text-sm font-bold text-white/70 mb-10 leading-relaxed">Our specialists are ready to help you find the perfect masterpiece for your collection.</p>
-                        <a href="{% url 'contact:contact' %}" class="inline-flex items-center gap-4 py-5 px-8 bg-white text-primary rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:shadow-2xl hover:scale-105 transition-all">
-                            Inquire Now <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
+                <!-- Price Filter Mockup -->
+                <div class="p-8 bg-slate-950 rounded-[40px] text-white">
+                    <h4 class="text-sm font-black uppercase tracking-widest mb-4">Support</h4>
+                    <p class="text-xs font-medium text-slate-400 mb-6">Need help finding the right product?</p>
+                    <a href="{% url 'contact:contact' %}" class="block py-4 bg-white/10 hover:bg-white/20 text-white text-center rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">Contact Specialist</a>
                 </div>
             </aside>
 
-            <!-- Main Grid: Adjusted for Wide Sidebar (lg:col-span-4) -->
-            <div class="lg:col-span-4 main-content-grid">
+            <!-- Main Grid -->
+            <div class="lg:col-span-9">
                 <!-- Toolbar -->
-                <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-12 p-6 bg-white rounded-[32px] border border-slate-100 shadow-sm">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-12 p-6 bg-slate-50 rounded-[32px] border border-slate-100">
                     <div class="flex items-center gap-4">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Showing {{ products.paginator.count }} Masterpieces</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Displaying {{ products.paginator.count }} Results</span>
                     </div>
                     
-                    <div class="flex items-center gap-6">
-                        <!-- Sorting Dropdown -->
-                        <div class="relative group">
-                            <select id="product-sort-select" class="appearance-none bg-slate-50 border border-slate-100 rounded-2xl pl-6 pr-12 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 focus:outline-none focus:border-primary transition-all cursor-pointer">
-                                <option value="?sort=-id" {% if current_sort == '-id' %}selected{% endif %}>Default Sorting</option>
-                                <option value="?sort=newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
-                                <option value="?sort=price_low" {% if current_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
-                                <option value="?sort=price_high" {% if current_sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
-                                <option value="?sort=name_az" {% if current_sort == 'name_az' %}selected{% endif %}>Name: A to Z</option>
-                            </select>
-                            <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-primary transition-colors">
-                                <i class="fas fa-chevron-down text-[8px]"></i>
-                            </div>
-                        </div>
-
-                        <div class="flex bg-slate-50 rounded-xl p-1 border border-slate-100">
+                    <div class="flex items-center gap-4">
+                        <div class="flex bg-white rounded-xl p-1 shadow-sm border border-slate-200">
                             <button class="w-10 h-10 flex items-center justify-center text-primary"><i class="fas fa-grid-2"></i></button>
                             <button class="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-slate-900 transition-colors"><i class="fas fa-list"></i></button>
                         </div>
+                        <select id="product-sort-select" class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
+                            <option value="?sort=featured" {% if request.GET.sort == 'featured' %}selected{% endif %}>Featured</option>
+                            <option value="?sort=price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="?sort=price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="?sort=newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest arrivals</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Grid: 2 columns for the tighter space -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <!-- Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-8">
                     {% for product in products %}
-                        <div class="animate__animated animate__fadeInUp" style="animation-delay: {{ forloop.counter0|add:1|multiply:0.1 }}s">
-                            {% include 'includes/_premium_product_card.html' with product=product %}
-                        </div>
+                        {% include 'includes/_premium_product_card.html' with product=product %}
                     {% empty %}
                     <div class="col-span-full py-24 text-center">
                         <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8 text-slate-200">
@@ -400,109 +204,16 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Premium Entrance Animations with GSAP
-        gsap.from(".hero-content-box", {
-            duration: 1.5,
-            y: 50,
-            opacity: 0,
-            ease: "expo.out"
-        });
-
-        gsap.from(".hero-title", {
-            duration: 1.2,
-            y: 30,
-            opacity: 0,
-            delay: 0.3,
-            ease: "power4.out"
-        });
-
-        gsap.from(".hero-subtitle", {
-            duration: 1.2,
-            y: 20,
-            opacity: 0,
-            delay: 0.5,
-            ease: "power3.out"
-        });
-
-        gsap.from(".sidebar-filter", {
-            duration: 1.2,
-            x: -40,
-            opacity: 0,
-            delay: 0.2,
-            ease: "power2.out"
-        });
-
-        gsap.from(".brand-item", {
-            duration: 0.8,
-            scale: 0.9,
-            opacity: 0,
-            stagger: 0.05,
-            delay: 0.4,
-            ease: "back.out(1.7)"
-        });
-
-        gsap.from(".product-card-anim", {
-            duration: 1,
-            y: 40,
-            opacity: 0,
-            stagger: 0.1,
-            delay: 0.6,
-            ease: "power2.out"
-        });
-
-        // Sort Handler
         const sortSelect = document.getElementById('product-sort-select');
         if (sortSelect) {
             sortSelect.addEventListener('change', function() {
-                const url = new URL(window.location.href);
-                const val = this.value; 
-                const params = new URLSearchParams(val);
-                
-                if (params.has('sort')) {
-                    url.searchParams.set('sort', params.get('sort'));
+                if (this.value) {
+                    window.location = this.value;
                 }
-                
-                url.searchParams.delete('page');
-                window.location.href = url.toString();
-            });
-        }
-
-        // Real-time Brand Highlighting
-        const checkboxes = document.querySelectorAll('.brand-filter-checkbox');
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', function() {
-                const label = this.closest('.brand-item');
-                if (this.checked) {
-                    label.classList.add('border-primary', 'ring-1', 'ring-primary/20');
-                    label.classList.remove('border-slate-100');
-                } else {
-                    label.classList.remove('border-primary', 'ring-1', 'ring-primary/20');
-                    label.classList.add('border-slate-100');
-                }
-            });
-        });
-
-        // "Browse All Brands" toggle
-        const expandBtn = document.getElementById('brand-expand-btn');
-        const fullList  = document.getElementById('brand-full-list');
-        if (expandBtn && fullList) {
-            expandBtn.addEventListener('click', function() {
-                const isHidden = fullList.classList.contains('hidden');
-                fullList.classList.toggle('hidden', !isHidden);
-                this.innerHTML = isHidden
-                    ? '<i class="fas fa-times text-[8px]"></i> Hide Brand List'
-                    : '<i class="fas fa-th-large text-[8px]"></i> Browse All Brands';
             });
         }
     });
-
-    function resetPriceRange() {
-        document.getElementById('min_price').value = '';
-        document.getElementById('max_price').value = '';
-        document.getElementById('filter-form').submit();
-    }
 </script>
 {% endblock %}
