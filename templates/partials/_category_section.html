@@ -22,18 +22,18 @@
                             </button>
                             <img src="{{ product.get_image_url }}" class="card-img-top h-[200px] object-contain p-4" alt="{{ product.name }}">
                             {% if price_info.has_offer %}
-                            <span class="badge badge-danger absolute top-4 left-4 p-2 shadow-sm rounded-lg">
+                            <span class="absolute top-4 left-4 px-2 py-1 bg-red-600 text-white text-[9px] font-black tracking-wider uppercase shadow-lg rounded-lg z-10">
                                 {{ price_info.discount_display }}
                             </span>
                             {% endif %}
                         </div>
                         <div class="card-body p-3">
-                            <h5 class="font-bold mb-2 text-base h-11 overflow-hidden">{{ product.name }}</h5>
-                            <div class="flex items-center justify-between mt-2 pt-2 border-t">
+                            <h5 class="font-bold mb-2 text-[11px] sm:text-base h-9 sm:h-11 overflow-hidden leading-tight">{{ product.name }}</h5>
+                            <div class="flex items-center justify-between mt-1 sm:mt-2 pt-2 border-t">
                                 <div class="price">
-                                    <span class="text-base font-bold mb-0 text-primary">{{ price_info.final_price }} AED</span>
+                                    <span class="text-[12px] sm:text-base font-bold mb-0 text-primary">{{ price_info.final_price }} <span class="text-[8px] sm:text-xs">AED</span></span>
                                     {% if price_info.has_offer %}
-                                    <br><del class="text-xs text-slate-400">{{ price_info.regular_price }} AED</del>
+                                    <br><del class="text-[9px] sm:text-xs text-slate-400">{{ price_info.regular_price }} AED</del>
                                     {% endif %}
                                 </div>
                                 <span class="text-primary"><i class="fas fa-plus-circle"></i></span>
