@@ -239,21 +239,26 @@ def create_invoice_pdf(order):
         Paragraph('#', table_header_style),
         Paragraph('Description', table_header_style),
         Paragraph('Qty', table_header_style),
+        Paragraph('Regular Price', table_header_style),
         Paragraph('Unit Price', table_header_style),
         Paragraph('Amount', table_header_style)
     ]]
     
     for i, item in enumerate(order.items.all(), 1):
+        # We use a muted color for regular price to indicate it's the "before" price
+        regular_p_text = f"<font color='#64748b'>{item.regular_price:,.2f}</font>" if item.regular_price > item.unit_price else f"{item.regular_price:,.2f}"
+        
         item_data.append([
             Paragraph(str(i), table_cell_style),
             Paragraph(f"<b>{escape(item.product_name)}</b>", table_cell_style),
             Paragraph(str(item.quantity), table_cell_style),
+            Paragraph(regular_p_text, table_cell_right_style),
             Paragraph(f"{item.unit_price:,.2f}", table_cell_right_style),
             Paragraph(f"{item.total_price:,.2f}", table_cell_right_style)
         ])
     
-    # Table colWidths: Total ~ 7.25 inch
-    items_table = Table(item_data, colWidths=[0.4*inch, 4.05*inch, 0.6*inch, 1.1*inch, 1.1*inch])
+    # Adjusted colWidths to fit 6 columns (Total ~ 7.25 inch)
+    items_table = Table(item_data, colWidths=[0.3*inch, 3.25*inch, 0.4*inch, 1.1*inch, 1.1*inch, 1.1*inch])
     
     # Style the table
     items_table.setStyle(TableStyle([
@@ -265,7 +270,7 @@ def create_invoice_pdf(order):
         ('BOTTOMPADDING', (0,0), (-1,-1), 10),
         ('LINEBELOW', (0,0), (-1,0), 1.5, PRIMARY_BLUE),
         ('LINEBELOW', (0,1), (-1,-2), 0.5, BORDER_LIGHT),
-        ('ROWBACKGROUNDS', (0,1), (-1,-1), [BG_LIGHT, colors.white]), # Subtle striping
+        ('ROWBACKGROUNDS', (0,1), (-1,-1), [BG_LIGHT, colors.white]),
     ]))
     elements.append(items_table)
     elements.append(Spacer(1, 20))
