@@ -11,6 +11,7 @@ from .models import QuoteEnquiry, QuoteItem, CustomerOrder, CustomerOrderItem
 from .notifications import send_customer_notification
 from .tabby_payment import create_tabby_session
 from .tamara_payment import create_tamara_checkout
+from decimal import Decimal
 
 def buy_now(request, product_id):
     """
@@ -100,21 +101,31 @@ def _get_cart_items(request):
         except (ValueError, TypeError):
             continue
             
-    return items, round(total_shipping, 2)
+    return items, Decimal(str(total_shipping)).quantize(Decimal('0.01'))
 
 
 # ── Cart ─────────────────────────────────────────────────────────────────────
 
 def enquiry_cart(request):
     cart_items, total_shipping = _get_cart_items(request)
-    subtotal = sum(item['total_item'] for item in cart_items)
-    # Calculate tax based on item subtotal & product tax percentage
-    total_tax = sum((item['total_item'] * item['product'].tax_percentage / 100) for item in cart_items)
-    grand_total = subtotal + total_shipping + total_tax
+    
+    # Use direct Decimal operations for better precision and readability
+    subtotal = sum(item['total_item'] for item in cart_items) if cart_items else Decimal('0.00')
+    
+    # Calculate tax safely
+    total_tax = Decimal('0.00')
+    if cart_items:
+        for item in cart_items:
+            tax_rate = item['product'].tax_percentage if item['product'].tax_percentage is not None else Decimal('0.00')
+            item_tax = (item['total_item'] * tax_rate) / Decimal('100')
+            total_tax += item_tax
+            
+    total_tax = total_tax.quantize(Decimal('0.01'))
+    grand_total = (subtotal + total_shipping + total_tax).quantize(Decimal('0.01'))
     
     return render(request, 'orders/enquiry_cart.html', {
         'cart_items': cart_items,
-        'subtotal': subtotal,
+        'subtotal': subtotal.quantize(Decimal('0.01')),
         'total_tax': total_tax,
         'total_shipping': total_shipping,
         'grand_total': grand_total
@@ -195,15 +206,22 @@ def checkout_billing(request):
         return redirect('orders:checkout_payment')
 
     form_data = request.session.get('checkout_billing', {})
-    subtotal = sum(item['total_item'] for item in cart_items)
-    total_tax = sum((item['total_item'] * item['product'].tax_percentage / 100) for item in cart_items)
+    subtotal = sum(Decimal(str(item['total_item'])) for item in cart_items) if cart_items else Decimal('0.00')
+    total_tax = sum(
+        (Decimal(str(item['total_item'])) * Decimal(str(getattr(item['product'], 'tax_percentage', 0) or 0)) / Decimal('100'))
+        for item in cart_items
+    ) if cart_items else Decimal('0.00')
+    
+    total_tax = total_tax.quantize(Decimal('0.01'))
+    grand_total = (subtotal + total_shipping + total_tax).quantize(Decimal('0.01'))
+
     return render(request, 'orders/checkout_billing.html', {
         'cart_items': cart_items,
         'form_data': form_data,
-        'subtotal': subtotal,
+        'subtotal': subtotal.quantize(Decimal('0.01')),
         'total_tax': total_tax,
         'total_shipping': total_shipping,
-        'grand_total': subtotal + total_shipping + total_tax
+        'grand_total': grand_total
     })
 
 
@@ -218,9 +236,14 @@ def checkout_payment(request):
     if not billing:
         return redirect('orders:checkout_billing')
 
-    subtotal = sum(item['total_item'] for item in cart_items)
-    total_tax = sum((item['total_item'] * item['product'].tax_percentage / 100) for item in cart_items)
-    grand_total = subtotal + total_shipping + total_tax
+    subtotal = sum(Decimal(str(item['total_item'])) for item in cart_items) if cart_items else Decimal('0.00')
+    total_tax = sum(
+        (Decimal(str(item['total_item'])) * Decimal(str(getattr(item['product'], 'tax_percentage', 0) or 0)) / Decimal('100'))
+        for item in cart_items
+    ) if cart_items else Decimal('0.00')
+    
+    total_tax = total_tax.quantize(Decimal('0.01'))
+    grand_total = (subtotal + total_shipping + total_tax).quantize(Decimal('0.01'))
 
     if request.method == 'POST':
         import traceback
