@@ -2,10 +2,10 @@
 
 {% with price_info=product.get_best_price_info %}
 <!-- Product Reveal Card (Shadcn-style) -->
-<div class="group relative w-full h-[360px] md:h-[450px] rounded-2xl border border-border/50 bg-card text-card-foreground overflow-hidden shadow-lg shadow-black/5 cursor-pointer bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-xl">
+<div class="group relative w-full h-[300px] sm:h-[360px] md:h-[450px] rounded-2xl border border-border/50 bg-card text-card-foreground overflow-hidden shadow-lg shadow-black/5 cursor-pointer bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-xl">
     
     <!-- Image Container -->
-    <div class="relative h-44 md:h-64 overflow-hidden bg-slate-100 group">
+    <div class="relative h-36 sm:h-44 md:h-64 overflow-hidden bg-slate-100 group">
         <img src="{{ product.get_image_url }}"
              alt="{{ product.name }}"
              class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -41,7 +41,7 @@
     </div>
 
     <!-- Content Area -->
-    <div class="p-5 space-y-3">
+    <div class="p-3 sm:p-4 md:p-5 space-y-2 md:space-y-3">
         <!-- Rating -->
         <div class="flex items-center gap-2">
             <div class="flex text-yellow-400 text-xs">
@@ -65,13 +65,13 @@
             {% endif %}
             
             <a href="{% url 'products:product_detail' slug=product.slug %}" class="block">
-                <h3 class="text-lg font-bold leading-tight tracking-tight text-slate-800 line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
+                <h3 class="text-sm md:text-lg font-bold leading-tight tracking-tight text-slate-800 line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
                     {{ product.name }}
                 </h3>
             </a>
             
-            <div class="flex items-center gap-3 mt-2">
-                <span class="text-xl font-black text-primary">{{ price_info.final_price }} <span class="text-xs uppercase">AED</span></span>
+            <div class="flex items-center gap-2 md:gap-3 mt-1 md:mt-2">
+                <span class="text-base md:text-xl font-black text-primary">{{ price_info.final_price }} <span class="text-[10px] md:text-xs uppercase">AED</span></span>
                 {% if price_info.has_offer %}
                 <span class="text-sm text-muted-foreground line-through opacity-60">
                     {{ price_info.regular_price }} AED
