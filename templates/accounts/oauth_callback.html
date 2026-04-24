@@ -50,6 +50,11 @@ No styling needed here — the user sees it for < 1 second.
     <p>Completing sign-in, please wait…</p>
   </div>
 
+  <form id="oauth_form" method="POST" action="{% url 'accounts:social_callback' %}" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="access_token" id="access_token_input">
+  </form>
+
   <script>
     (function () {
       // Parse the URL fragment: #access_token=xxx&token_type=bearer&...
@@ -72,26 +77,8 @@ No styling needed here — the user sees it for < 1 second.
       }
 
       // POST the token back to this same URL so Django can process it server-side
-      var form = document.createElement("form");
-      form.method = "POST";
-      form.action = "{% url 'accounts:social_callback' %}";
-
-      // CSRF token (required by Django)
-      var csrf = document.createElement("input");
-      csrf.type  = "hidden";
-      csrf.name  = "csrfmiddlewaretoken";
-      csrf.value = "{{ csrf_token }}";
-      form.appendChild(csrf);
-
-      // Access token
-      var tokenField = document.createElement("input");
-      tokenField.type  = "hidden";
-      tokenField.name  = "access_token";
-      tokenField.value = accessToken;
-      form.appendChild(tokenField);
-
-      document.body.appendChild(form);
-      form.submit();
+      document.getElementById("access_token_input").value = accessToken;
+      document.getElementById("oauth_form").submit();
     })();
   </script>
 </body>

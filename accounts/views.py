@@ -292,7 +292,7 @@ def social_callback(request):
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
         messages.success(
             request,
-            f"Welcome{'back' if not created else ''}, "
+            f"Welcome{' back' if not created else ''}, "
             f"{user.first_name or user.username}! "
             f"(Signed in via {provider.capitalize()})"
         )
