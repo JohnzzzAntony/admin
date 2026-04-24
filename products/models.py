@@ -24,7 +24,7 @@ class Category(models.Model):
     )
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
-    description = models.TextField(blank=True, help_text="Optional description for SEO and category page header.")
+    description = models.TextField(blank=True, null=True, help_text="Optional description for SEO and category page header.")
     image = models.ImageField(
         upload_to='categories/', 
         null=True, 
@@ -33,7 +33,7 @@ class Category(models.Model):
     )
     image_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted image.")
     image_alt = models.CharField(max_length=255, blank=True, null=True, help_text="Descriptive text for the category image.")
-    icon_svg = models.TextField(blank=True, help_text="Paste SVG icon code here. Used if provided.")
+    icon_svg = models.TextField(blank=True, null=True, help_text="Paste SVG icon code here. Used if provided.")
     
     # Meta / Controls
     created_at = models.DateTimeField(auto_now_add=True)
@@ -152,7 +152,7 @@ class Brand(models.Model):
         help_text="Brand Logo. Recommended: 300x120px. PNG, WEBP."
     )
     logo_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted logo.")
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
     is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
     order = models.PositiveIntegerField(default=0)
@@ -212,7 +212,7 @@ class Product(models.Model):
     image_url = models.URLField(blank=True, null=True, help_text="Alternative: Direct link to an externally hosted image.")
 
     # Inventory & Details
-    sku_id = models.CharField(max_length=50, unique=True, blank=True, verbose_name="SKU ID")
+    sku_id = models.CharField(max_length=50, unique=True, blank=True, null=True, verbose_name="SKU ID")
     quantity = models.IntegerField(default=0, verbose_name="In-Stock Quantity", db_index=True)
     unit = models.CharField(max_length=20, choices=[('pcs', 'Pieces'), ('box', 'Box'), ('set', 'Set')], default='pcs')
     
@@ -224,7 +224,7 @@ class Product(models.Model):
     ], default='available', db_index=True)
     free_shipping = models.BooleanField(default=False, verbose_name="Free Shipping", choices=((True, 'Enabled'), (False, 'Disabled')))
     additional_shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    delivery_time = models.CharField(max_length=100, blank=True)
+    delivery_time = models.CharField(max_length=100, blank=True, null=True)
     tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=5.00, verbose_name="VAT (%)")
 
     # Dimensions
@@ -234,12 +234,12 @@ class Product(models.Model):
     height = models.FloatField(null=True, blank=True)
 
     # Simplified Content
-    features = models.TextField(help_text="Key features (one per line)", blank=True)
+    features = models.TextField(help_text="Key features (one per line)", blank=True, null=True)
     avg_rating = models.DecimalField(max_digits=3, decimal_places=1, default=4.5, verbose_name="Average Rating")
     review_count = models.PositiveIntegerField(default=0, verbose_name="Review Count")
     
     # UI Enhancements
-    badge = models.CharField(max_length=20, blank=True, help_text="Small badge text (e.g. NEW, TRENDING)")
+    badge = models.CharField(max_length=20, blank=True, null=True, help_text="Small badge text (e.g. NEW, TRENDING)")
     badge_color = models.CharField(max_length=20, default="blue", choices=[
         ("blue", "Blue"), ("red", "Red"), ("green", "Green"), ("dark", "Dark"), ("gold", "Gold")
     ])

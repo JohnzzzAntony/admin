@@ -1,0 +1,2 @@
+id,name,sku_id,category,brand,quantity,unit,regular_price,sale_price
+,Test Product 1,TEST-SKU-001,Hand Tools,JKR,10,pcs,100.00,90.00
