@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
+from django.core.paginator import Paginator
 from django.utils import timezone
 from .models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation
 from django.db import models
-from products.models import Category, Product, Collection, Brand
+from products.models import Category, Product, Collection, Brand, Offer
 from sliders.models import HeroSlider, PromoBanner
 from pages.models import AboutUs, MissionVision, Service, Counter, WhyUsCard, Partner, GalleryItem
 from .models import Testimonial, Client, SocialPost, StoreLocation
@@ -26,14 +27,20 @@ def home(request):
     
     # 1. Prepare Categories
     category_sections = []
-    for cat in homepage_sections_raw:
+    # Optimization: Prefetch subcategories to speed up logic
+    homepage_sections_raw_prefetched = homepage_sections_raw.prefetch_related('subcategories')
+    
+    # Pre-fetch all active category relations once for efficient descendant lookup
+    all_cats_lookup = list(Category.objects.filter(is_active=True).values('id', 'parent_id'))
+    
+    for cat in homepage_sections_raw_prefetched:
         # Aggregated products for this category and all its children
-        all_cat_ids = [c.id for c in cat.get_all_children(include_self=True)]
+        all_cat_ids = cat.get_descendant_ids(include_self=True, all_cats_prefetched=all_cats_lookup)
         cat_products = Product.objects.filter(
             category_id__in=all_cat_ids,
             is_active=True,
             quantity__gt=0
-        ).distinct().order_by('-id')[:8] # Limit to 8 products per section
+        ).select_related('category', 'brand').prefetch_related('offers', 'images').distinct().order_by('-id')[:8]
         
         # Attach aggregated products to the category object for template access
         cat.aggregated_products = cat_products
@@ -99,7 +106,7 @@ def home(request):
     latest_products = Product.objects.filter(
         quantity__gt=0,
         is_active=True
-    ).select_related('category').prefetch_related('offers', 'images').order_by('-id')[:8]
+    ).select_related('category', 'brand').prefetch_related('offers', 'images').order_by('-id')[:8]
 
     # Fetch Products with active offers (either via Offer model or manual sale_price)
     now = timezone.now()
@@ -109,25 +116,47 @@ def home(request):
     ).filter(
         models.Q(offers__start_date__lte=now, offers__end_date__gte=now) |
         models.Q(sale_price__isnull=False, sale_price__lt=models.F('regular_price'))
-    ).distinct().select_related('category').prefetch_related('offers', 'images')
+    ).distinct().select_related('category', 'brand').prefetch_related('offers', 'images')
 
     # Premium Featured Products
     featured_products = Product.objects.filter(
         is_featured=True,
         is_active=True,
         quantity__gt=0
-    ).select_related('category').prefetch_related('offers', 'images').order_by('-id')[:8]
+    ).select_related('category', 'brand').prefetch_related('offers', 'images').order_by('-id')[:8]
     
     # Fallback to latest if none featured
     if not featured_products.exists():
         featured_products = latest_products
+    
+    # Pre-fetch all active offers for price calculation optimization
+    all_active_offers = list(Offer.objects.filter(
+        start_date__lte=now,
+        end_date__gte=now
+    ).prefetch_related('products', 'categories', 'brands'))
+
+    # Helper to attach price info in bulk to avoid N+1 in templates
+    def attach_price_info(product_list):
+        for p in product_list:
+            p.price_info = p.get_best_price_info(prefetched_offers=all_active_offers)
+            
+    attach_price_info(latest_products)
+    attach_price_info(featured_products)
+    attach_price_info(active_offers_products)
+    for section in category_sections:
+        if section['type'] == 'category':
+            attach_price_info(section['data'].aggregated_products)
 
     # Homepage Collections: Filter active ones and prefetch related Products.
     collections = Collection.objects.filter(is_active=True).prefetch_related(
         'products', 
         'products__category',
-        'products__offers'
+        'products__brand',
+        'products__offers',
+        'products__images'
     )
+    for col in collections:
+        attach_price_info(col.products.all())
 
     brands = Brand.objects.filter(show_on_homepage=True, is_active=True).order_by('order')
 
@@ -179,14 +208,23 @@ def gallery_view(request):
     return render(request, 'pages/gallery.html', {'gallery': gallery})
 
 def store_locations_view(request):
-    """Store Locations page with city filtering."""
-    stores = StoreLocation.objects.all().order_by('order', 'name')
-    # Get unique cities for filter tabs
+    """Store Locations page with server-side city filtering and pagination."""
+    selected_city = request.GET.get('city', 'all')
+    stores_qs = StoreLocation.objects.all().order_by('order', 'name')
+    
+    if selected_city != 'all':
+        stores_qs = stores_qs.filter(city=selected_city)
+    
+    paginator = Paginator(stores_qs, 9) # 9 stores per page (3x3 grid)
+    page_number = request.GET.get('page')
+    stores = paginator.get_page(page_number)
+    
     cities = StoreLocation.objects.all().values_list('city', flat=True).distinct().order_by('city')
     
     return render(request, 'pages/stores.html', {
         'stores': stores,
-        'cities': cities
+        'cities': cities,
+        'selected_city': selected_city
     })
 def health_check(request):
     """Simple health check endpoint for monitoring."""

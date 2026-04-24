@@ -89,7 +89,7 @@
     <!-- Fonts Cache -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Inter:wght@400;600;700;900&family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -106,8 +106,8 @@
       const borderCol = "{{ design_settings.border_color|default:'#e2e8f0' }}";
       const textPrimary = "{{ design_settings.text_primary_color|default:'#1e293b' }}";
       
-      const mainFont = "{{ design_settings.font_main|safe|default:'sans-serif' }}";
-      const headingFont = "{{ design_settings.font_secondary|safe|default:'serif' }}";
+      const mainFont = "{{ design_settings.font_main|safe|default:'Inter, sans-serif' }}";
+      const headingFont = "{{ design_settings.font_secondary|safe|default:'Outfit, sans-serif' }}";
 
       tailwind.config = {
         theme: {
@@ -147,8 +147,8 @@
             --border-custom: {{ design_settings.border_color|default:"#e2e8f0" }};
             --txt-main: {{ design_settings.text_primary_color|default:"#1e293b" }};
 
-            --font-sans: {{ design_settings.font_main|safe|default:"'Noto Serif', serif" }};
-            --font-heading: {{ design_settings.font_secondary|safe|default:"'Noto Serif', serif" }};
+            --font-sans: {{ design_settings.font_main|safe|default:"'Inter', sans-serif" }};
+            --font-heading: {{ design_settings.font_secondary|safe|default:"'Outfit', sans-serif" }};
 
             --radius-container: {{ design_settings.container_radius|default:"40px" }};
             --radius-card: {{ design_settings.card_radius|default:"24px" }};
@@ -164,7 +164,10 @@
             -webkit-font-smoothing: antialiased; 
             -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden; 
+            opacity: 0; /* Entrance animation */
+            transition: opacity 1.2s ease-out;
         }
+        body.loaded { opacity: 1; }
         h1, h2, h3, h4, h5, h6 { 
             font-family: var(--font-heading);
             font-weight: 700;
@@ -252,6 +255,9 @@
 
     <!-- Global Premium Styles -->
     <link rel="stylesheet" href="{% static 'css/header_hero.css' %}?v=1.6">
+    
+    {# Premium Smooth Scroll (Lenis) #}
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 
     {% block split_css %}{% endblock %}
 </head>
@@ -315,6 +321,8 @@
                             <i class="fas fa-chevron-down text-[9px] opacity-40 group-hover/label:rotate-180 transition-transform"></i>
 
                             <!-- MEGA MENU (The Powerhouse) -->
+                            {% load cache %}
+                            {% cache 3600 mega_menu categories.count all_brands_count %}
                             <div class="mega-menu">
                                 <!-- Category Sidebar -->
                                 <div class="category-list h-full overflow-y-auto">
@@ -336,7 +344,7 @@
                                                         <div class="space-y-3">
                                                             <!-- Subcategory (No bullet) -->
                                                             <a href="{{ sub.get_absolute_url }}" class="text-sm font-black text-primary uppercase tracking-widest hover:translate-x-1 transition-transform block">{{ sub.name }}</a>
-                                                            <!-- Products under subcategory with bullet -->
+                                                            <!-- Products under subcategory (Now using denormalized count or showing all if small) -->
                                                             <div class="flex flex-col gap-2 pl-3 border-l border-slate-100 ml-0.5">
                                                                 {% for prod in sub.products.all|slice:":3" %}
                                                                 <a href="{{ prod.get_absolute_url }}" class="flex items-center gap-2 text-[13px] font-semibold text-slate-600 hover:text-secondary transition-colors">
@@ -366,6 +374,7 @@
                                     {% endfor %}
                                 </div>
                             </div>
+                            {% endcache %}
                         </div>
 
                         <!-- Search Input Wrapper -->
@@ -848,7 +857,7 @@
                 }
             }
 
-            // 2. Wishlist Toggle Logic (Legacy support for purely class-based triggers)
+        // 2. Wishlist Toggle Logic (Legacy support for purely class-based triggers)
             if (e.target.closest('.wishlist-btn') && !e.target.closest('[onclick]')) {
                 e.preventDefault();
                 const btn = e.target.closest('.wishlist-btn');
@@ -856,6 +865,49 @@
                 if (productId) toggleWishlist(productId, btn);
             }
         });
+
+        // ===== Premium Security & Experience =====
+        (function() {
+            // 1. Entrance Animation
+            window.addEventListener('load', () => {
+                document.body.classList.add('loaded');
+            });
+
+            // 2. Smooth Scroll (Lenis)
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                direction: 'vertical',
+                gestureDirection: 'vertical',
+                smooth: true,
+                mouseMultiplier: 1,
+                smoothTouch: false,
+                touchMultiplier: 2,
+                infinite: false,
+            });
+
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+
+            // 3. Security Deterrents (Requested by User)
+            // Note: These are deterrents, not absolute protection
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+            document.onkeydown = function(e) {
+                if (e.keyCode == 123) return false; // F12
+                if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
+                if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
+                if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
+                if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+            };
+            
+            // Console clearing as a simple deterrent
+            setInterval(() => {
+                // console.clear(); // Uncomment if you want to keep console clean
+            }, 1000);
+        })();
     </script>
 
     {% block scripts %}{% endblock %}

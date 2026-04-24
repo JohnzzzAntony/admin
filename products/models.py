@@ -38,9 +38,10 @@ class Category(models.Model):
     # Meta / Controls
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')))
-    show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')))
-    homepage_order   = models.PositiveIntegerField(default=0, verbose_name="Homepage Display Order")
+    is_active = models.BooleanField(default=True, verbose_name="Status", choices=((True, 'Active'), (False, 'Remove')), db_index=True)
+    show_on_homepage = models.BooleanField(default=False, verbose_name="Homepage Display", choices=((True, 'Enabled'), (False, 'Disabled')), db_index=True)
+    homepage_order   = models.PositiveIntegerField(default=0, verbose_name="Homepage Display Order", db_index=True)
+    product_count    = models.PositiveIntegerField(default=0, verbose_name="Cached Product Count", help_text="Denormalized count for performance.")
 
     # SEO Fields
     meta_title = models.CharField(max_length=255, blank=True, verbose_name="Meta Title")
@@ -55,16 +56,30 @@ class Category(models.Model):
         except Exception: pass
         return "https://via.placeholder.com/512"
 
-    def get_all_children(self, include_self=True, visited=None):
-        """Recursively gets all children with loop detection."""
-        if visited is None: visited = set()
-        if self.id in visited: return []
-        visited.add(self.id)
+    def get_all_children(self, include_self=True):
+        """Returns all descendants as model instances using efficient ID fetching."""
+        descendant_ids = self.get_descendant_ids(include_self=include_self)
+        return Category.objects.filter(id__in=descendant_ids)
+
+    def get_descendant_ids(self, include_self=True, all_cats_prefetched=None):
+        """Returns all descendant IDs using a flat fetch of all categories (efficient for small tables)."""
+        if all_cats_prefetched is None:
+            all_cats_prefetched = Category.objects.filter(is_active=True).values('id', 'parent_id')
+            
+        children_map = {}
+        for c in all_cats_prefetched:
+            pid = c['parent_id']
+            if pid not in children_map: children_map[pid] = []
+            children_map[pid].append(c['id'])
         
-        children = [self] if include_self else []
-        for sub in self.subcategories.all():
-            children.extend(sub.get_all_children(include_self=True, visited=visited))
-        return children
+        descendants = [self.id] if include_self else []
+        stack = list(children_map.get(self.id, []))
+        while stack:
+            curr_id = stack.pop()
+            descendants.append(curr_id)
+            if curr_id in children_map:
+                stack.extend(children_map[curr_id])
+        return descendants
 
     @property
     def active_subcategories(self):
@@ -118,10 +133,8 @@ class Category(models.Model):
 
     @property
     def total_product_count(self):
-        """Recursive count of products in this category and all its children."""
-        from .models import Product
-        child_ids = [c.id for c in self.get_all_children(include_self=True)]
-        return Product.objects.filter(category_id__in=child_ids, is_active=True).count()
+        """Returns the denormalized product count."""
+        return self.product_count
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -200,7 +213,7 @@ class Product(models.Model):
 
     # Inventory & Details
     sku_id = models.CharField(max_length=50, unique=True, blank=True, verbose_name="SKU ID")
-    quantity = models.IntegerField(default=0, verbose_name="In-Stock Quantity")
+    quantity = models.IntegerField(default=0, verbose_name="In-Stock Quantity", db_index=True)
     unit = models.CharField(max_length=20, choices=[('pcs', 'Pieces'), ('box', 'Box'), ('set', 'Set')], default='pcs')
     
     regular_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -208,7 +221,7 @@ class Product(models.Model):
     
     shipping_status = models.CharField(max_length=50, choices=[
         ('available', 'In Stock'), ('out_of_stock', 'Out of Stock'), ('pre_order', 'Pre-Order')
-    ], default='available')
+    ], default='available', db_index=True)
     free_shipping = models.BooleanField(default=False, verbose_name="Free Shipping", choices=((True, 'Enabled'), (False, 'Disabled')))
     additional_shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     delivery_time = models.CharField(max_length=100, blank=True)
@@ -230,7 +243,7 @@ class Product(models.Model):
     badge_color = models.CharField(max_length=20, default="blue", choices=[
         ("blue", "Blue"), ("red", "Red"), ("green", "Green"), ("dark", "Dark"), ("gold", "Gold")
     ])
-    is_featured = models.BooleanField(default=False, verbose_name="Featured Product")
+    is_featured = models.BooleanField(default=False, verbose_name="Featured Product", db_index=True)
     
     overview = RichTextField(blank=True, null=True)
     technical_info = RichTextField(blank=True, null=True, verbose_name="Product Characteristics & Specifications")
@@ -262,7 +275,9 @@ class Product(models.Model):
         except Exception: pass
         return "https://via.placeholder.com/600x400"
 
-    def get_best_price_info(self):
+    def get_best_price_info(self, prefetched_offers=None):
+        if hasattr(self, 'price_info') and prefetched_offers is None:
+            return self.price_info
         from django.utils import timezone
         # Safely handle None prices - use Decimal for consistency
         reg = self.regular_price if self.regular_price is not None else Decimal('0.00')
@@ -271,26 +286,73 @@ class Product(models.Model):
         # Check for active offers
         now = timezone.now()
         
-        # 1. Direct Offers
-        offers_query = Q(products=self)
-        
-        # 2. Category Bulk Offers (including ancestors)
-        if self.category:
-            ancestor_ids = [a.id for a in self.category.get_ancestors()] + [self.category.id]
-            offers_query |= Q(categories__id__in=ancestor_ids)
-            
-        # 3. Brand Bulk Offers
-        if self.brand:
-            offers_query |= Q(brands=self.brand)
-
-        try:
-            active_offers = Offer.objects.filter(
-                offers_query,
-                start_date__lte=now,
-                end_date__gte=now
-            ).distinct()
-        except Exception:
+        if prefetched_offers is not None:
+            # Filter prefetched offers in memory
             active_offers = []
+            ancestor_ids = []
+            if self.category:
+                # We assume ancestors are already prefetched if needed, or we use the cached parent chain
+                curr = self.category
+                while curr:
+                    ancestor_ids.append(curr.id)
+                    curr = curr.parent
+            
+            for offer in prefetched_offers:
+                # Check if offer is active
+                if not (offer.start_date <= now <= offer.end_date):
+                    continue
+                
+                # Check if offer applies to this product
+                is_applicable = False
+                
+                # 1. Direct product check
+                if hasattr(offer, '_prefetched_products_cache'):
+                    if self in offer.products.all():
+                        is_applicable = True
+                elif offer.products.filter(id=self.id).exists(): # Fallback if not prefetched
+                    is_applicable = True
+                
+                # 2. Category check
+                if not is_applicable and ancestor_ids:
+                    if hasattr(offer, '_prefetched_categories_cache'):
+                        offer_cat_ids = [c.id for c in offer.categories.all()]
+                        if any(cat_id in offer_cat_ids for cat_id in ancestor_ids):
+                            is_applicable = True
+                    elif offer.categories.filter(id__in=ancestor_ids).exists():
+                        is_applicable = True
+                
+                # 3. Brand check
+                if not is_applicable and self.brand_id:
+                    if hasattr(offer, '_prefetched_brands_cache'):
+                        offer_brand_ids = [b.id for b in offer.brands.all()]
+                        if self.brand_id in offer_brand_ids:
+                            is_applicable = True
+                    elif offer.brands.filter(id=self.brand_id).exists():
+                        is_applicable = True
+                
+                if is_applicable:
+                    active_offers.append(offer)
+        else:
+            # 1. Direct Offers
+            offers_query = Q(products=self)
+            
+            # 2. Category Bulk Offers (including ancestors)
+            if self.category:
+                ancestor_ids = [a.id for a in self.category.get_ancestors()] + [self.category.id]
+                offers_query |= Q(categories__id__in=ancestor_ids)
+                
+            # 3. Brand Bulk Offers
+            if self.brand:
+                offers_query |= Q(brands=self.brand)
+
+            try:
+                active_offers = Offer.objects.filter(
+                    offers_query,
+                    start_date__lte=now,
+                    end_date__gte=now
+                ).distinct()
+            except Exception:
+                active_offers = []
 
         offer_price = sale
         best_offer_obj = None

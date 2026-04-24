@@ -19,12 +19,25 @@
             <i class="{% if product.id in wishlist_ids %}fas{% else %}far{% endif %} fa-heart text-sm"></i>
         </button>
 
-        <!-- Discount Badge -->
-        {% if price_info.has_offer %}
-        <div class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase shadow-lg shadow-red-600/20">
-            {{ price_info.discount_percentage }}% OFF
+        <!-- Discount & Status Badges -->
+        <div class="absolute top-4 left-4 flex flex-col gap-2 z-30">
+            {% if price_info.has_offer %}
+            <div class="bg-red-600 text-white px-3 py-1.5 rounded-full text-[10px] font-black tracking-wider uppercase shadow-lg shadow-red-600/20 animate__animated animate__fadeInLeft">
+                {{ price_info.discount_percentage }}% OFF
+            </div>
+            {% endif %}
+
+            {% if product.badge %}
+            <div class="px-3 py-1.5 rounded-full text-[10px] font-black tracking-wider uppercase shadow-lg animate__animated animate__fadeInLeft animate__delay-1s
+                {% if product.badge_color == 'blue' %}bg-blue-600 text-white shadow-blue-600/20
+                {% elif product.badge_color == 'red' %}bg-red-600 text-white shadow-red-600/20
+                {% elif product.badge_color == 'green' %}bg-emerald-600 text-white shadow-emerald-600/20
+                {% elif product.badge_color == 'gold' %}bg-amber-500 text-white shadow-amber-500/20
+                {% else %}bg-slate-900 text-white shadow-slate-900/20{% endif %}">
+                {{ product.badge }}
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 
     <!-- Content Area -->

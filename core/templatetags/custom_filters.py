@@ -1,5 +1,6 @@
 from django import template
 from core.models import SiteSettings
+from decimal import Decimal, InvalidOperation
 
 register = template.Library()
 
@@ -10,8 +11,8 @@ def get_site_settings():
 @register.filter(name='multiply')
 def multiply(value, arg):
     try:
-        return int(value) * int(arg)
-    except (ValueError, TypeError):
+        return float(Decimal(str(value)) * Decimal(str(arg)))
+    except (ValueError, TypeError, InvalidOperation):
         return 0
 
 @register.filter(name='split')

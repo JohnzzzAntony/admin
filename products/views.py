@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Min, Max
+from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from .models import Product, Category, ProductImage, Wishlist, Brand, Collection
+from .models import Product, Category, ProductImage, Wishlist, Brand, Collection, Offer
 
 @staff_member_required
 def delete_product_media(request, pk):
@@ -38,11 +39,23 @@ def clear_primary_product_image(request, pk):
 @login_required
 def wishlist_view(request):
     """Displays the user's favorited products."""
+    from django.utils import timezone
     wishlist_items = Wishlist.objects.filter(user=request.user).select_related('product').prefetch_related(
-        'product__offers', 'product__images', 'product__category'
+        'product__images', 'product__category', 'product__brand'
     ).order_by('-added_at')
     
-    products = [item.product for item in wishlist_items]
+    # Pre-fetch all active offers once
+    now = timezone.now()
+    active_offers = list(Offer.objects.filter(
+        start_date__lte=now,
+        end_date__gte=now
+    ).prefetch_related('products', 'categories', 'brands'))
+
+    products = []
+    for item in wishlist_items:
+        p = item.product
+        p.price_info = p.get_best_price_info(prefetched_offers=active_offers)
+        products.append(p)
     
     return render(request, 'products/wishlist.html', {
         'products': products
@@ -76,85 +89,232 @@ def get_subcategories(request, parent_id):
 
 def category_index(request):
     """Shows top-level categories in a professional grid."""
-    categories = Category.objects.filter(parent__isnull=True, is_active=True)
+    categories = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
     if not categories.exists():
-        categories = Category.objects.filter(is_active=True)
+        categories = Category.objects.filter(is_active=True).prefetch_related('subcategories')
     return render(request, 'products/category_index.html', {'categories': categories})
 
 def product_list(request):
     """Shows all products with stock, and categories in sidebar."""
-    parents = Category.objects.filter(parent__isnull=True, is_active=True)
-    categories = parents if parents.count() > 1 else Category.objects.filter(is_active=True)
+    from django.utils import timezone
+    parents = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
+    categories = parents if parents.count() > 1 else Category.objects.filter(is_active=True).prefetch_related('subcategories')
 
-    # Only show active, in-stock products
+    # Pre-fetch all active offers once to avoid N+1 in price calculation
+    now = timezone.now()
+    active_offers = list(Offer.objects.filter(
+        start_date__lte=now,
+        end_date__gte=now
+    ).prefetch_related('products', 'categories', 'brands'))
+
+    # Base Queryset
     products = Product.objects.filter(
         is_active=True,
         quantity__gt=0,
         shipping_status='available'
-    ).select_related('category').prefetch_related(
-        'offers',
+    ).select_related('category', 'brand').prefetch_related(
         'images'
-    ).distinct().order_by('-id')
+    ).annotate(
+        effective_price=Coalesce('sale_price', 'regular_price')
+    ).distinct()
     
+    # Calculate global price bounds for the filter UI
+    price_bounds = products.aggregate(
+        min_p=Min('effective_price'),
+        max_p=Max('effective_price')
+    )
+    
+    # Text Search
     query = request.GET.get('q')
     if query:
         products = products.filter(
             Q(name__icontains=query) | Q(overview__icontains=query) | Q(sku_id__icontains=query)
         )
+
+    # Price Filtering
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    if min_price:
+        try: products = products.filter(effective_price__gte=min_price)
+        except: pass
+    if max_price:
+        try: products = products.filter(effective_price__lte=max_price)
+        except: pass
+
+    # Brand Filtering
+    selected_brands = request.GET.getlist('brands')
+    if selected_brands:
+        products = products.filter(brand_id__in=selected_brands)
+    
+    # Rating Filtering
+    min_rating = request.GET.get('rating')
+    if min_rating:
+        try: products = products.filter(avg_rating__gte=min_rating)
+        except: pass
+
+    # Sorting Logic
+    sort = request.GET.get('sort', '-id')
+    if sort == 'price_low':
+        products = products.order_by('effective_price')
+    elif sort == 'price_high':
+        products = products.order_by('-effective_price')
+    elif sort == 'name_az':
+        products = products.order_by('name')
+    elif sort == 'newest':
+        products = products.order_by('-created_at')
+    else:
+        products = products.order_by('-id')
+    
+    # Pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(products, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Attach price info in-memory using prefetched offers
+    for p in page_obj:
+        p.price_info = p.get_best_price_info(prefetched_offers=active_offers)
     
     return render(request, 'products/product_list.html', {
         'categories': categories,
-        'products': products
+        'products': page_obj,
+        'current_sort': sort,
+        'all_brands': Brand.objects.filter(is_active=True).order_by('order', 'name'),
+        'all_brands_count': Brand.objects.filter(is_active=True).count(),
+        'price_bounds': price_bounds,
+        'current_filters': {
+            'min_price': min_price,
+            'max_price': max_price,
+            'selected_brands': [int(b) for b in selected_brands if b.isdigit()],
+            'min_rating': min_rating,
+        }
     })
 
 def category_detail(request, slug=None, hierarchy_path=None):
     """
     Highly advanced SEO-friendly category view that supports absolute paths.
     """
+    from django.utils import timezone
     if hierarchy_path:
         slug = hierarchy_path.strip('/').split('/')[-1]
     
     category = get_object_or_404(Category, slug=slug, is_active=True)
     
-    all_categories_in_branch = category.get_all_children(include_self=True)
-    cat_ids = [c.id for c in all_categories_in_branch]
+    cat_ids = category.get_descendant_ids(include_self=True)
 
+    # Pre-fetch all active offers once
+    now = timezone.now()
+    active_offers = list(Offer.objects.filter(
+        start_date__lte=now,
+        end_date__gte=now
+    ).prefetch_related('products', 'categories', 'brands'))
+
+    # Base Queryset
     products = Product.objects.filter(
         category_id__in=cat_ids,
         is_active=True,
         quantity__gt=0,
         shipping_status='available'
-    ).select_related('category').prefetch_related(
-        'offers',
+    ).select_related('category', 'brand').prefetch_related(
         'images'
-    ).distinct().order_by('-id')
+    ).annotate(
+        effective_price=Coalesce('sale_price', 'regular_price')
+    ).distinct()
+
+    # Calculate global price bounds for the filter UI
+    price_bounds = products.aggregate(
+        min_p=Min('effective_price'),
+        max_p=Max('effective_price')
+    )
+
+    # Price Filtering
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    if min_price:
+        try: products = products.filter(effective_price__gte=min_price)
+        except: pass
+    if max_price:
+        try: products = products.filter(effective_price__lte=max_price)
+        except: pass
+
+    # Brand Filtering
+    selected_brands = request.GET.getlist('brands')
+    if selected_brands:
+        products = products.filter(brand_id__in=selected_brands)
+    
+    # Rating Filtering
+    min_rating = request.GET.get('rating')
+    if min_rating:
+        try: products = products.filter(avg_rating__gte=min_rating)
+        except: pass
+
+    # Sorting Logic
+    sort = request.GET.get('sort', '-id')
+    if sort == 'price_low':
+        products = products.order_by('effective_price')
+    elif sort == 'price_high':
+        products = products.order_by('-effective_price')
+    elif sort == 'name_az':
+        products = products.order_by('name')
+    elif sort == 'newest':
+        products = products.order_by('-created_at')
+    else:
+        products = products.order_by('-id')
+
+    # Pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(products, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Attach price info
+    for p in page_obj:
+        p.price_info = p.get_best_price_info(prefetched_offers=active_offers)
     
     # Root categories for sidebar
     roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
 
     return render(request, 'products/product_list.html', {
         'current_category': category, 
-        'products': products,
+        'products': page_obj,
         'categories': roots,
-        'ancestors': category.get_ancestors()
+        'ancestors': category.get_ancestors(),
+        'current_sort': sort,
+        'all_brands': Brand.objects.filter(is_active=True).order_by('order', 'name'),
+        'all_brands_count': Brand.objects.filter(is_active=True).count(),
+        'price_bounds': price_bounds,
+        'current_filters': {
+            'min_price': min_price,
+            'max_price': max_price,
+            'selected_brands': [int(b) for b in selected_brands if b.isdigit()],
+            'min_rating': min_rating,
+        }
     })
-
-
 
 from core.design_models import DesignSettings
 
 def product_detail(request, slug=None, pk=None):
     """SEO-friendly product detail page. Supports both slug and PK for administrative legacy tools."""
+    from django.utils import timezone
     if pk:
         product = get_object_or_404(
-            Product.objects.select_related('category').prefetch_related('offers', 'images'), 
+            Product.objects.select_related('category', 'brand').prefetch_related('images'), 
             pk=pk, is_active=True
         )
     else:
         product = get_object_or_404(
-            Product.objects.select_related('category').prefetch_related('offers', 'images'), 
+            Product.objects.select_related('category', 'brand').prefetch_related('images'), 
             slug=slug, is_active=True
         )
+
+    # Pre-fetch all active offers once
+    now = timezone.now()
+    active_offers = list(Offer.objects.filter(
+        start_date__lte=now,
+        end_date__gte=now
+    ).prefetch_related('products', 'categories', 'brands'))
+    
+    product.price_info = product.get_best_price_info(prefetched_offers=active_offers)
 
     # Fetch related products from the same category
     design = DesignSettings.objects.first()
@@ -164,7 +324,10 @@ def product_detail(request, slug=None, pk=None):
         category=product.category,
         is_active=True,
         quantity__gt=0
-    ).exclude(id=product.id).select_related('category').prefetch_related('offers', 'images')[:related_count]
+    ).exclude(id=product.id).select_related('category', 'brand').prefetch_related('images')[:related_count]
+
+    for p in related_products:
+        p.price_info = p.get_best_price_info(prefetched_offers=active_offers)
 
     return render(request, 'products/product_detail.html', {
         'product': product,
@@ -216,24 +379,95 @@ def collection_detail(request, slug):
     """
     Shows products belonging to a specific collection.
     """
+    from django.utils import timezone
     collection = get_object_or_404(Collection, slug=slug, is_active=True)
+    
+    # Pre-fetch all active offers once
+    now = timezone.now()
+    active_offers = list(Offer.objects.filter(
+        start_date__lte=now,
+        end_date__gte=now
+    ).prefetch_related('products', 'categories', 'brands'))
+
+    # Base Queryset
     products = collection.products.filter(
         is_active=True,
         quantity__gt=0,
         shipping_status='available'
-    ).select_related('category').prefetch_related(
-        'offers',
+    ).select_related('category', 'brand').prefetch_related(
         'images'
-    ).distinct().order_by('-id')
+    ).annotate(
+        effective_price=Coalesce('sale_price', 'regular_price')
+    ).distinct()
+
+    # Calculate global price bounds for the filter UI
+    price_bounds = products.aggregate(
+        min_p=Min('effective_price'),
+        max_p=Max('effective_price')
+    )
+
+    # Price Filtering
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    if min_price:
+        try: products = products.filter(effective_price__gte=min_price)
+        except: pass
+    if max_price:
+        try: products = products.filter(effective_price__lte=max_price)
+        except: pass
+
+    # Brand Filtering
+    selected_brands = request.GET.getlist('brands')
+    if selected_brands:
+        products = products.filter(brand_id__in=selected_brands)
+    
+    # Rating Filtering
+    min_rating = request.GET.get('rating')
+    if min_rating:
+        try: products = products.filter(avg_rating__gte=min_rating)
+        except: pass
+
+    # Sorting Logic
+    sort = request.GET.get('sort', '-id')
+    if sort == 'price_low':
+        products = products.order_by('effective_price')
+    elif sort == 'price_high':
+        products = products.order_by('-effective_price')
+    elif sort == 'name_az':
+        products = products.order_by('name')
+    elif sort == 'newest':
+        products = products.order_by('-created_at')
+    else:
+        products = products.order_by('-id')
+
+    # Pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(products, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Attach price info
+    for p in page_obj:
+        p.price_info = p.get_best_price_info(prefetched_offers=active_offers)
     
     # Root categories for sidebar
     roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
 
     return render(request, 'products/product_list.html', {
         'collection': collection, 
-        'products': products,
+        'products': page_obj,
         'categories': roots,
-        'title': collection.name
+        'title': collection.name,
+        'current_sort': sort,
+        'all_brands': Brand.objects.filter(is_active=True).order_by('order', 'name'),
+        'all_brands_count': Brand.objects.filter(is_active=True).count(),
+        'price_bounds': price_bounds,
+        'current_filters': {
+            'min_price': min_price,
+            'max_price': max_price,
+            'selected_brands': [int(b) for b in selected_brands if b.isdigit()],
+            'min_rating': min_rating,
+        }
     })
 
 def brand_list(request):
@@ -243,23 +477,95 @@ def brand_list(request):
 
 def brand_detail(request, slug):
     """Shows products for a specific brand."""
+    from django.utils import timezone
     brand = get_object_or_404(Brand, slug=slug, is_active=True)
+
+    # Pre-fetch all active offers once
+    now = timezone.now()
+    active_offers = list(Offer.objects.filter(
+        start_date__lte=now,
+        end_date__gte=now
+    ).prefetch_related('products', 'categories', 'brands'))
+
+    # Base Queryset
     products = Product.objects.filter(
         brand=brand,
         is_active=True,
         quantity__gt=0,
         shipping_status='available'
     ).select_related('category', 'brand').prefetch_related(
-        'offers',
         'images'
-    ).distinct().order_by('-id')
+    ).annotate(
+        effective_price=Coalesce('sale_price', 'regular_price')
+    ).distinct()
+
+    # Calculate global price bounds for the filter UI
+    price_bounds = products.aggregate(
+        min_p=Min('effective_price'),
+        max_p=Max('effective_price')
+    )
+
+    # Price Filtering
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    if min_price:
+        try: products = products.filter(effective_price__gte=min_price)
+        except: pass
+    if max_price:
+        try: products = products.filter(effective_price__lte=max_price)
+        except: pass
+
+    # No need to filter by brand ID since we are already in brand detail
+    # But for consistency with the template which might show other brand filters:
+    selected_brands = request.GET.getlist('brands')
+    if selected_brands:
+        products = products.filter(brand_id__in=selected_brands)
+    
+    # Rating Filtering
+    min_rating = request.GET.get('rating')
+    if min_rating:
+        try: products = products.filter(avg_rating__gte=min_rating)
+        except: pass
+
+    # Sorting Logic
+    sort = request.GET.get('sort', '-id')
+    if sort == 'price_low':
+        products = products.order_by('effective_price')
+    elif sort == 'price_high':
+        products = products.order_by('-effective_price')
+    elif sort == 'name_az':
+        products = products.order_by('name')
+    elif sort == 'newest':
+        products = products.order_by('-created_at')
+    else:
+        products = products.order_by('-id')
+
+    # Pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(products, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Attach price info
+    for p in page_obj:
+        p.price_info = p.get_best_price_info(prefetched_offers=active_offers)
     
     roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
     
     return render(request, 'products/product_list.html', {
         'current_brand': brand,
-        'products': products,
+        'products': page_obj,
         'categories': roots,
-        'title': f"Products by {brand.name}"
+        'title': f"Products by {brand.name}",
+        'current_sort': sort,
+        'all_brands': Brand.objects.filter(is_active=True).order_by('order', 'name'),
+        'all_brands_count': Brand.objects.filter(is_active=True).count(),
+        'price_bounds': price_bounds,
+        'current_filters': {
+            'min_price': min_price,
+            'max_price': max_price,
+            'selected_brands': [int(b) for b in selected_brands if b.isdigit()],
+            'min_rating': min_rating,
+        }
     })
 

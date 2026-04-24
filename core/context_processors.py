@@ -7,37 +7,46 @@ from orders.models import CustomerOrder
 from contact.models import ContactFormSubmission
 from blog.models import Post
 
+from django.core.cache import cache
+
 def site_settings(request):
-    now = timezone.now()
+    """
+    Cached site-wide settings and announcements.
+    """
+    # Try to get everything from cache first
+    cache_key = 'site_wide_settings_v1'
+    data = cache.get(cache_key)
     
-    try:
-        settings = SiteSettings.objects.first()
-        now = timezone.now()
-        announcements = AnnouncementBar.objects.filter(is_active=True).filter(
-            Q(start_date__isnull=True) | Q(start_date__lte=now)
-        ).filter(
-            Q(end_date__isnull=True) | Q(end_date__gte=now)
-        ).order_by('id')
-    except Exception:
-        settings = None
-        announcements = []
-        
-    try:
-        design = DesignSettings.objects.first()
-    except:
-        design = None
-        
-    try:
-        latest_posts = Post.objects.filter(is_published=True).order_by('-created_at')[:3]
-    except Exception:
-        latest_posts = []
-        
-    return {
-        'site_settings': settings,
-        'design_settings': design,
-        'announcement_bar_list': announcements,
-        'latest_blog_posts': latest_posts,
-    }
+    if data is None:
+        try:
+            settings = SiteSettings.objects.first()
+            now = timezone.now()
+            announcements = list(AnnouncementBar.objects.filter(is_active=True).filter(
+                Q(start_date__isnull=True) | Q(start_date__lte=now)
+            ).filter(
+                Q(end_date__isnull=True) | Q(end_date__gte=now)
+            ).order_by('id'))
+            
+            design = DesignSettings.objects.first()
+            latest_posts = list(Post.objects.filter(is_published=True).order_by('-created_at')[:3])
+            
+            data = {
+                'site_settings': settings,
+                'design_settings': design,
+                'announcement_bar_list': announcements,
+                'latest_blog_posts': latest_posts,
+            }
+            # Cache for 1 hour
+            cache.set(cache_key, data, 3600)
+        except Exception:
+            return {
+                'site_settings': None,
+                'design_settings': None,
+                'announcement_bar_list': [],
+                'latest_blog_posts': [],
+            }
+            
+    return data
 
 def page_heroes(request):
     from pages.models import PageHero

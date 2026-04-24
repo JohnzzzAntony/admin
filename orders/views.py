@@ -38,17 +38,37 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 def _get_cart_items(request):
     """
     Helper: resolve cart session into list of dicts.
-    Cart stores product.id as the unique key.
+    Optimized: Batches product and offer lookups to avoid N+1 queries.
     """
+    from django.utils import timezone
+    from products.models import Offer
+    
     cart = request.session.get('enquiry_cart', {})
+    if not cart:
+        return [], 0
+        
+    product_ids = [int(pid) for pid in cart.keys() if pid.isdigit()]
+    products = {p.id: p for p in Product.objects.filter(id__in=product_ids).select_related('category', 'brand').prefetch_related('images', 'offers')}
+    
+    # Pre-fetch all active offers once
+    now = timezone.now()
+    active_offers = list(Offer.objects.filter(
+        start_date__lte=now,
+        end_date__gte=now
+    ).prefetch_related('products', 'categories', 'brands'))
+
     items = []
     total_shipping = 0
-    for product_id, item_data in cart.items():
+    
+    for product_id_str, item_data in cart.items():
         try:
-            product = Product.objects.get(id=int(product_id))
-            
+            pid = int(product_id_str)
+            product = products.get(pid)
+            if not product:
+                continue
+                
             qty = int(item_data.get('quantity', 1))
-            price_info = product.get_best_price_info()
+            price_info = product.get_best_price_info(prefetched_offers=active_offers)
             
             unit_price = price_info['final_price']
             total_item = round(unit_price * qty, 2)
@@ -77,8 +97,9 @@ def _get_cart_items(request):
                 'offer_name': offer_applied.name if offer_applied else None,
                 'bogo_message': bogo_message,
             })
-        except (Product.DoesNotExist, ValueError):
+        except (ValueError, TypeError):
             continue
+            
     return items, round(total_shipping, 2)
 
 

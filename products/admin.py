@@ -40,8 +40,10 @@ class ProductAdmin(ImportExportModelAdmin):
     search_fields = ('name', 'slug', 'sku_id', 'brand__name')
     list_filter = ('brand', 'category', 'is_featured', 'show_on_homepage', 'is_active')
     readonly_fields = ('sku_id', 'preview', 'badge_management')
-    inlines = [ProductImageInline]
     # change_list_template = "admin/products/product/change_list.html"
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('category', 'category__parent', 'brand')
 
     def get_urls(self):
         from django.urls import path

@@ -41,16 +41,16 @@
 
         <!-- Filter Navigation -->
         <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
-            <button class="filter-tab active" data-city="all">Across UAE</button>
+            <a href="?city=all" class="filter-tab {% if selected_city == 'all' %}active{% endif %}">Across UAE</a>
             {% for city in cities %}
-            <button class="filter-tab" data-city="{{ city|slugify }}">{{ city }}</button>
+            <a href="?city={{ city }}" class="filter-tab {% if selected_city == city %}active{% endif %}">{{ city }}</a>
             {% endfor %}
         </div>
 
         <!-- Locations Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="stores-grid">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16" id="stores-grid">
             {% for store in stores %}
-            <div class="store-card group" data-city="{{ store.city|slugify }}">
+            <div class="store-card group">
                 <div class="h-full bg-white rounded-[40px] border border-slate-100 p-4 hover:border-primary/20 hover:shadow-2xl transition-all duration-500 flex flex-col">
                     <div class="relative aspect-[4/3] rounded-[32px] overflow-hidden mb-8">
                         <img src="{{ store.get_image_url }}" alt="{{ store.name }}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
@@ -95,6 +95,27 @@
             </div>
             {% endfor %}
         </div>
+
+        <!-- Pagination Controls -->
+        {% if stores.has_other_pages %}
+        <div class="flex justify-center items-center gap-2 mt-8">
+            {% if stores.has_previous %}
+                <a href="?city={{ selected_city }}&page={{ stores.previous_page_number }}" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-100 text-slate-900 hover:bg-primary hover:text-white transition-all shadow-sm">
+                    <i class="fas fa-chevron-left text-[10px]"></i>
+                </a>
+            {% endif %}
+
+            <div class="px-6 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-100 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                Page <span class="text-slate-900 mx-2">{{ stores.number }}</span> of {{ stores.paginator.num_pages }}
+            </div>
+
+            {% if stores.has_next %}
+                <a href="?city={{ selected_city }}&page={{ stores.next_page_number }}" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-100 text-slate-900 hover:bg-primary hover:text-white transition-all shadow-sm">
+                    <i class="fas fa-chevron-right text-[10px]"></i>
+                </a>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 </section>
 
@@ -111,6 +132,7 @@
         color: #64748b;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        display: inline-block;
     }
     .filter-tab:hover {
         color: #1e293b;
@@ -128,42 +150,4 @@
         transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const filterTabs = document.querySelectorAll('.filter-tab');
-        const storeCards = document.querySelectorAll('.store-card');
-
-        filterTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Update active state
-                filterTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-
-                const selectedCity = tab.getAttribute('data-city');
-
-                // Filter logic
-                storeCards.forEach(card => {
-                    if (selectedCity === 'all' || card.getAttribute('data-city') === selectedCity) {
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.95)';
-                        setTimeout(() => {
-                            card.style.display = 'block';
-                            requestAnimationFrame(() => {
-                                card.style.opacity = '1';
-                                card.style.transform = 'scale(1)';
-                            });
-                        }, 300);
-                    } else {
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.95)';
-                        setTimeout(() => {
-                            card.style.display = 'none';
-                        }, 300);
-                    }
-                });
-            });
-        });
-    });
-</script>
 {% endblock %}
