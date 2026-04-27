@@ -4,15 +4,20 @@ from django.utils.html import format_html
 
 @admin.register(PageHero)
 class PageHeroAdmin(admin.ModelAdmin):
-    list_display = ('page', 'title', 'hero_preview')
+    list_display = ('page', 'title', 'is_active', 'hero_preview')
+    list_editable = ('is_active',)
     readonly_fields = ('hero_preview',)
+    radio_fields = {"is_active": admin.HORIZONTAL}
     
     fieldsets = (
         ('Reference', {
-            'fields': ('page',),
+            'fields': ('page', 'is_active'),
         }),
         ('Hero Identity', {
-            'fields': (('title', 'subtitle'),),
+            'fields': ('title', 'title_html', 'subtitle', 'alignment'),
+        }),
+        ('Call to Action', {
+            'fields': (('button_text', 'button_link'), ('button_2_text', 'button_2_link')),
         }),
         ('Imagery', {
             'fields': (('hero_image', 'hero_image_url'),),
