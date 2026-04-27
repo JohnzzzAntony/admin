@@ -51,9 +51,22 @@ def site_settings(request):
 def page_heroes(request):
     from pages.models import PageHero
     try:
-        heroes = {hero.page: hero for hero in PageHero.objects.filter(is_active=True)}
-    except:
+        # Get existing heroes
+        db_heroes = {hero.page: hero for hero in PageHero.objects.filter(is_active=True)}
+        
+        # Ensure all choices have an object (even if unsaved)
         heroes = {}
+        for choice_key, choice_label in PageHero.PAGE_CHOICES:
+            if choice_key in db_heroes:
+                heroes[choice_key] = db_heroes[choice_key]
+            else:
+                # Return an unsaved instance with the page set
+                # This allows templates to call .display_title etc.
+                heroes[choice_key] = PageHero(page=choice_key, is_active=True)
+                
+    except Exception:
+        heroes = {}
+        
     return {
         'page_heroes': heroes,
     }

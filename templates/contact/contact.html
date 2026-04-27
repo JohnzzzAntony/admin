@@ -19,9 +19,9 @@
     <div class="container mx-auto px-6 relative z-10 text-center animate__animated animate__fadeInUp">
         <span class="inline-block py-2 px-4 bg-primary text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-6">{{ contact_settings.badge|default:"Get in Touch" }}</span>
         <h1 class="text-5xl lg:text-8xl font-black text-white tracking-tighter mb-4 leading-none">
-            {{ contact_settings.heading_html|safe|default:"Let's Start a <span class='italic text-primary'>Conversation</span>" }}
+            {% if page_heroes.contact.title_html %}{{ page_heroes.contact.title_html|safe }}{% else %}{{ page_heroes.contact.title|default:contact_settings.heading_html|safe|default:"Let's Start a <span class='italic text-primary'>Conversation</span>" }}{% endif %}
         </h1>
-        <p class="text-slate-300 text-lg lg:text-xl font-medium max-w-2xl mx-auto italic">{{ contact_settings.subtitle|default:"We are here to provide excellence and support for your every inquiry." }}</p>
+        <p class="text-slate-300 text-lg lg:text-xl font-medium max-w-2xl mx-auto italic">{{ page_heroes.contact.subtitle|default:contact_settings.subtitle|default:"We are here to provide excellence and support for your every inquiry." }}</p>
     </div>
 </section>
 

@@ -6,10 +6,14 @@ from django.utils.html import format_html
 class PageHeroAdmin(admin.ModelAdmin):
     list_display = ('page', 'title', 'is_active', 'hero_preview')
     list_editable = ('is_active',)
-    readonly_fields = ('hero_preview',)
+    readonly_fields = ('frontend_preview', 'hero_preview')
     radio_fields = {"is_active": admin.HORIZONTAL}
     
     fieldsets = (
+        ('Live Preview', {
+            'fields': ('frontend_preview',),
+            'description': 'This shows how the hero currently looks on the frontend (including defaults if fields are left blank).'
+        }),
         ('Reference', {
             'fields': ('page', 'is_active'),
         }),
@@ -20,17 +24,206 @@ class PageHeroAdmin(admin.ModelAdmin):
             'fields': (('button_text', 'button_link'), ('button_2_text', 'button_2_link')),
         }),
         ('Imagery', {
-            'fields': (('hero_image', 'hero_image_url'),),
+            'fields': ('hero_preview', ('hero_image', 'hero_image_url'),),
         }),
         ('SEO Optimization', {
             'fields': ('meta_title', 'meta_description', 'meta_keywords'),
         }),
     )
     
+    def frontend_preview(self, obj):
+        from django.utils.safestring import mark_safe
+        if not obj.page:
+            return "Save to see preview"
+            
+        # Get current display values (server-side logic)
+        title = obj.display_title
+        subtitle = obj.display_subtitle
+        image = obj.display_image
+        
+        # Base defaults for JS fallbacks
+        defaults = {
+            'about': {
+                'title': 'Our Legacy',
+                'subtitle': 'Defining excellence in the international trade landscape for over a decade.',
+                'image': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069'
+            },
+            'products': {
+                'title': 'Our Products',
+                'subtitle': 'Explore our wide range of premium products.',
+                'image': 'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg'
+            },
+            'services': {
+                'title': 'Our Solutions',
+                'subtitle': 'Discover our range of professional healthcare services, from equipment installation to staff training and preventive maintenance.',
+                'image': 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80'
+            },
+            'gallery': {
+                'title': 'Our Gallery',
+                'subtitle': 'A glimpse into our work and achievements.',
+                'image': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069'
+            },
+            'brands': {
+                'title': 'Trusted Brands',
+                'subtitle': 'Our curated network of world-class medical equipment manufacturers.',
+                'image': 'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg'
+            },
+            'stores': {
+                'title': 'Our Stores',
+                'subtitle': 'Find a JKR store near you.',
+                'image': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069'
+            },
+            'blog': {
+                'title': 'Latest News',
+                'subtitle': 'Stay updated with our latest stories and articles.',
+                'image': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069'
+            },
+            'contact': {
+                'title': 'Contact Us',
+                'subtitle': 'Have questions? We would love to hear from you.',
+                'image': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070'
+            }
+        }
+        
+        default = defaults.get(obj.page, {})
+        
+        # Try to get dynamic defaults from settings models for JS fallback
+        if obj.page == 'about':
+            try:
+                about = AboutUs.objects.first()
+                if about:
+                    default['title'] = about.legacy_title or default['title']
+                    default['subtitle'] = about.legacy_subtitle or default['subtitle']
+            except: pass
+        elif obj.page == 'contact':
+            try:
+                contact = ContactPage.objects.first()
+                if contact:
+                    default['title'] = contact.heading_html or default['title']
+                    default['subtitle'] = contact.subtitle or default['subtitle']
+            except: pass
+
+        # Determine alignment flex value
+        if obj.alignment == 'left':
+            align = 'flex-start'
+            text_align = 'left'
+        elif obj.alignment == 'right':
+            align = 'flex-end'
+            text_align = 'right'
+        else:
+            align = 'center'
+            text_align = 'center'
+            
+        import json
+        js_defaults = json.dumps(default)
+
+        return format_html(
+            '<div style="position: relative; width: 100%; max-width: 800px; height: 250px; border-radius: 12px; overflow: hidden; background: #010101; font-family: sans-serif; border: 1px solid #eee;">'
+            '<img id="preview-img" src="{}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6;" />'
+            '<div style="position: absolute; inset: 0; background: linear-gradient(rgba(0,0,0,0.4), transparent);"></div>'
+            '<div id="preview-content" style="position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: {}; text-align: {}; padding: 40px; color: white;">'
+            '<h1 id="preview-title" style="font-size: 34px; font-weight: 900; margin: 0 0 12px 0; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); line-height: 1.1; letter-spacing: -0.02em;">{}</h1>'
+            '<p id="preview-subtitle" style="font-size: 16px; margin: 0; max-width: 85%; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); opacity: 0.9; font-weight: 500;">{}</p>'
+            '</div>'
+            '<script>'
+            '(function() {{'
+            '    const defaults = {};'
+            '    const titleInput = document.getElementById("id_title");'
+            '    const titleHtmlInput = document.getElementById("id_title_html");'
+            '    const subtitleInput = document.getElementById("id_subtitle");'
+            '    const alignInput = document.getElementById("id_alignment");'
+            '    const urlInput = document.getElementById("id_hero_image_url");'
+            '    const fileInput = document.getElementById("id_hero_image");'
+            '    '
+            '    const previewTitle = document.getElementById("preview-title");'
+            '    const previewSubtitle = document.getElementById("preview-subtitle");'
+            '    const previewImg = document.getElementById("preview-img");'
+            '    const previewContent = document.getElementById("preview-content");'
+            '    '
+            '    function update() {{'
+            '        if (titleHtmlInput && titleHtmlInput.value) {{'
+            '            previewTitle.innerHTML = titleHtmlInput.value;'
+            '        }} else if (titleInput && titleInput.value) {{'
+            '            previewTitle.innerText = titleInput.value;'
+            '        }} else {{'
+            '            previewTitle.innerText = defaults.title || "Hero Title";'
+            '        }}'
+            '        '
+            '        if (subtitleInput && subtitleInput.value) {{'
+            '            previewSubtitle.innerText = subtitleInput.value;'
+            '        }} else {{'
+            '            previewSubtitle.innerText = defaults.subtitle || "Hero Subtitle";'
+            '        }}'
+            '        '
+            '        if (urlInput && urlInput.value) {{'
+            '            previewImg.src = urlInput.value;'
+            '        }} else if (!fileInput || !fileInput.files || !fileInput.files[0]) {{'
+            '            previewImg.src = defaults.image || "";'
+            '        }}'
+            '        '
+            '        if (alignInput) {{'
+            '            const align = alignInput.value;'
+            '            if (align === "left") {{'
+            '                previewContent.style.alignItems = "flex-start";'
+            '                previewContent.style.textAlign = "left";'
+            '            }} else if (align === "right") {{'
+            '                previewContent.style.alignItems = "flex-end";'
+            '                previewContent.style.textAlign = "right";'
+            '            }} else {{'
+            '                previewContent.style.alignItems = "center";'
+            '                previewContent.style.textAlign = "center";'
+            '            }}'
+            '        }}'
+            '    }}'
+            '    '
+            '    if (fileInput) {{'
+            '        fileInput.addEventListener("change", function() {{'
+            '            if (this.files && this.files[0]) {{'
+            '                const reader = new FileReader();'
+            '                reader.onload = function(e) {{'
+            '                    previewImg.src = e.target.result;'
+            '                }};'
+            '                reader.readAsDataURL(this.files[0]);'
+            '            }}'
+            '        }});'
+            '    }}'
+            '    '
+            '    [titleInput, titleHtmlInput, subtitleInput, alignInput, urlInput].forEach(el => {{'
+            '        if (el) el.addEventListener("input", update);'
+            '        if (el) el.addEventListener("change", update);'
+            '    }});'
+            '    '
+            '    update();'
+            '}})();'
+            '</script>'
+            '</div>',
+            image,
+            align,
+            text_align,
+            mark_safe(title),
+            subtitle,
+            mark_safe(js_defaults)
+        )
+    frontend_preview.short_description = "Live Frontend Preview"
+
     def hero_preview(self, obj):
         url = obj.get_image_url
-        return format_html('<img src="{}" style="height:50px; width: 120px; object-fit: cover; border-radius: 5px;" />', url) if url else "-"
-    hero_preview.short_description = 'Hero Preview'
+        if not url:
+            # Get fallback for list view
+            defaults = {
+                'about': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069',
+                'products': 'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg',
+                'services': 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80',
+                'gallery': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069',
+                'brands': 'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg',
+                'stores': 'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-1.jpg',
+                'blog': 'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg',
+                'contact': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069'
+            }
+            url = defaults.get(obj.page, "")
+        
+        return format_html('<img src="{}" style="height:50px; width: 120px; object-fit: cover; border-radius: 5px; border: 1px solid #eee;" />', url) if url else "-"
+    hero_preview.short_description = 'Frontend Preview'
 
 class VideoCardInline(admin.TabularInline):
     model = VideoCard

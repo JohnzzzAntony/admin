@@ -10,13 +10,21 @@
 
 {% block content %}
     <!-- Hero Header -->
-    <section class="py-5 mt-5 position-relative overflow-hidden text-center text-white hero-section">
-    <div class="container py-5 d-flex flex-column align-items-center justify-content-center text-center">
-        <h1 class="display-3 font-weight-bold hero-title animate__animated animate__fadeInDown">{{ page_heroes.gallery.title|default:"Our Gallery" }}</h1>
-        {% if page_heroes.gallery.subtitle %}
+    <section class="py-5 mt-5 position-relative overflow-hidden text-{{ page_heroes.gallery.alignment|default:'center' }} text-white hero-section">
+    <div class="container py-5 d-flex flex-column {% if page_heroes.gallery.alignment == 'left' %}align-items-start{% elif page_heroes.gallery.alignment == 'right' %}align-items-end{% else %}align-items-center{% endif %} justify-content-center">
+        <h1 class="display-3 font-weight-bold hero-title animate__animated animate__fadeInDown">{% if page_heroes.gallery.title_html %}{{ page_heroes.gallery.title_html|safe }}{% else %}{{ page_heroes.gallery.title|default:"Our Gallery" }}{% endif %}</h1>
         <p class="lead mt-3 animate__animated animate__fadeInUp animate__delay-1s" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5); max-width: 700px;">
             {{ page_heroes.gallery.subtitle }}
         </p>
+        {% if page_heroes.gallery.button_text or page_heroes.gallery.button_2_text %}
+        <div class="mt-4 d-flex gap-3 justify-content-{% if page_heroes.gallery.alignment == 'left' %}start{% elif page_heroes.gallery.alignment == 'right' %}end{% else %}center{% endif %} animate__animated animate__fadeInUp animate__delay-1s">
+            {% if page_heroes.gallery.button_text %}
+            <a href="{{ page_heroes.gallery.button_link }}" class="btn btn-primary rounded-pill px-4 py-2 font-weight-bold shadow-sm">{{ page_heroes.gallery.button_text }}</a>
+            {% endif %}
+            {% if page_heroes.gallery.button_2_text %}
+            <a href="{{ page_heroes.gallery.button_2_link }}" class="btn btn-outline-light rounded-pill px-4 py-2 font-weight-bold shadow-sm">{{ page_heroes.gallery.button_2_text }}</a>
+            {% endif %}
+        </div>
         {% endif %}
     </div>
 </section>

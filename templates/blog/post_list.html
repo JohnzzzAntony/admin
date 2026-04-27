@@ -21,7 +21,7 @@
             </nav>
 
             <div class="relative h-64 lg:h-96 rounded-[40px] overflow-hidden bg-slate-900 group shadow-2xl">
-                {% if page_heroes.blog.image %}
+                {% if page_heroes.blog.get_image_url %}
                     <img src="{{ page_heroes.blog.get_image_url }}" class="w-full h-full object-cover opacity-40 transition-transform duration-1000 group-hover:scale-105">
                 {% else %}
                     <div class="w-full h-full bg-gradient-to-br from-slate-950 to-primary/30"></div>

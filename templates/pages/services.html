@@ -16,18 +16,26 @@
             <div class="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/60 to-white"></div>
         </div>
 
-        <div class="relative z-10 max-w-screen-xl mx-auto px-4 text-center">
+        <div class="relative z-10 max-w-screen-xl mx-auto px-4 text-{{ page_heroes.services.alignment|default:'center' }}">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 backdrop-blur-md border border-white/20 mb-6 animate__animated animate__fadeInDown">
                 <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
                 <span class="text-[10px] font-black uppercase tracking-[0.3em] text-white">Professional Services</span>
             </div>
             <h1 class="text-5xl lg:text-8xl font-black text-white tracking-tighter mb-8 animate__animated animate__fadeInUp">
-                {{ page_heroes.services.title|default:"Our Solutions" }}
+                {% if page_heroes.services.title_html %}{{ page_heroes.services.title_html|safe }}{% else %}{{ page_heroes.services.title|default:"Our Solutions" }}{% endif %}
             </h1>
-            {% if page_heroes.services.subtitle %}
-            <p class="text-lg lg:text-xl text-slate-200 font-medium max-w-2xl mx-auto leading-relaxed animate__animated animate__fadeInUp animate__delay-1s">
-                {{ page_heroes.services.subtitle }}
+            <p class="text-lg lg:text-xl text-slate-200 font-medium max-w-2xl {% if page_heroes.services.alignment == 'left' %}mr-auto{% elif page_heroes.services.alignment == 'right' %}ml-auto{% else %}mx-auto{% endif %} leading-relaxed animate__animated animate__fadeInUp animate__delay-1s">
+                {{ page_heroes.services.subtitle|default:"Discover our range of professional healthcare services, from equipment installation to staff training and preventive maintenance." }}
             </p>
+            {% if page_heroes.services.button_text or page_heroes.services.button_2_text %}
+            <div class="mt-8 flex {% if page_heroes.services.alignment == 'left' %}justify-start{% elif page_heroes.services.alignment == 'right' %}justify-end{% else %}justify-center{% endif %} gap-4 animate__animated animate__fadeInUp animate__delay-1s">
+                {% if page_heroes.services.button_text %}
+                <a href="{{ page_heroes.services.button_link }}" class="px-8 py-4 bg-primary text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-slate-900 transition-all shadow-lg">{{ page_heroes.services.button_text }}</a>
+                {% endif %}
+                {% if page_heroes.services.button_2_text %}
+                <a href="{{ page_heroes.services.button_2_link }}" class="px-8 py-4 border-2 border-white/50 text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-slate-900 transition-all shadow-lg">{{ page_heroes.services.button_2_text }}</a>
+                {% endif %}
+            </div>
             {% endif %}
         </div>
 

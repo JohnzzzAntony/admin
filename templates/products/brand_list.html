@@ -7,22 +7,21 @@
     <div class="relative h-[40vh] min-h-[300px] overflow-hidden bg-white">
         <div class="absolute inset-0 z-0">
             <div class="absolute inset-0 bg-gradient-to-b from-primary/5 via-white/40 to-surface z-20"></div>
-            {% if page_heroes.brands.image %}
-                <img src="{{ page_heroes.brands.image.url }}" class="w-full h-full object-cover opacity-20">
-            {% else %}
-                <div class="w-full h-full bg-gradient-to-br from-primary/5 via-white to-secondary/5"></div>
-            {% endif %}
+            <img src="{{ page_heroes.brands.display_image }}" class="w-full h-full object-cover opacity-20">
             
             <!-- Decorative Elements -->
             <div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -mr-48 -mt-48 animate-pulse"></div>
             <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl -ml-48 -mb-48 animate-pulse" style="animation-delay: 2s"></div>
         </div>
 
-        <div class="relative z-30 h-full flex flex-col items-center justify-center text-center p-6">
+        <div class="relative z-30 h-full flex flex-col items-{{ page_heroes.brands.alignment|default:'center' }} justify-center text-{{ page_heroes.brands.alignment|default:'center' }} p-6">
             <span class="px-5 py-2 bg-primary/10 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.4em] mb-6 animate__animated animate__fadeInDown">Partnerships</span>
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-slate-700 tracking-tighter mb-4 animate__animated animate__fadeInUp">
-                Trusted Brands
+                {{ page_heroes.brands.display_title|safe }}
             </h1>
+            <p class="text-slate-500 max-w-2xl font-medium leading-relaxed animate__animated animate__fadeInUp animate__delay-1s">
+                {{ page_heroes.brands.display_subtitle }}
+            </p>
             <nav class="flex items-center gap-3 text-slate-400 text-[10px] font-black uppercase tracking-widest animate__animated animate__fadeInUp animate__delay-1s">
                 <a href="/" class="hover:text-primary transition-colors">Home</a>
                 <span class="w-1 h-1 rounded-full bg-slate-200"></span>

@@ -9,6 +9,7 @@ class PageHero(models.Model):
         ('gallery', 'Gallery'),
         ('stores', 'Stores'),
         ('blog', 'Blog'),
+        ('brands', 'Brands'),
         ('contact', 'Contact Us'),
     )
     page = models.CharField(max_length=20, choices=PAGE_CHOICES, unique=True)
@@ -42,7 +43,91 @@ class PageHero(models.Model):
             if self.hero_image: return self.hero_image.url
             if self.hero_image_url: return self.hero_image_url
         except Exception: pass
-        return "https://via.placeholder.com/1920x600"
+        return ""
+
+    @property
+    def display_title(self):
+        if self.title_html: return self.title_html
+        if self.title: return self.title
+        
+        # Fallbacks based on page
+        defaults = {
+            'about': 'Our Legacy',
+            'products': 'Our Products',
+            'services': 'Our Solutions',
+            'gallery': 'Our Gallery',
+            'brands': 'Trusted Brands',
+            'stores': 'Our Stores',
+            'blog': 'Latest News',
+            'contact': 'Contact Us'
+        }
+        
+        title = defaults.get(self.page, "Hero Title")
+        
+        # Dynamic fallbacks
+        if self.page == 'about':
+            try:
+                from .models import AboutUs
+                about = AboutUs.objects.first()
+                if about: return about.legacy_title or title
+            except: pass
+        elif self.page == 'contact':
+            try:
+                from .models import ContactPage
+                contact = ContactPage.objects.first()
+                if contact: return contact.heading_html or title
+            except: pass
+            
+        return title
+
+    @property
+    def display_subtitle(self):
+        if self.subtitle: return self.subtitle
+        
+        defaults = {
+            'about': 'Defining excellence in the international trade landscape for over a decade.',
+            'products': 'Explore our wide range of premium products.',
+            'services': 'Discover our range of professional healthcare services, from equipment installation to staff training and preventive maintenance.',
+            'gallery': 'A glimpse into our work and achievements.',
+            'brands': 'Our curated network of world-class medical equipment manufacturers.',
+            'stores': 'Find a JKR store near you.',
+            'blog': 'Stay updated with our latest stories and articles.',
+            'contact': 'Have questions? We would love to hear from you.'
+        }
+        
+        subtitle = defaults.get(self.page, "Hero Subtitle")
+        
+        if self.page == 'about':
+            try:
+                from .models import AboutUs
+                about = AboutUs.objects.first()
+                if about: return about.legacy_subtitle or subtitle
+            except: pass
+        elif self.page == 'contact':
+            try:
+                from .models import ContactPage
+                contact = ContactPage.objects.first()
+                if contact: return contact.subtitle or subtitle
+            except: pass
+            
+        return subtitle
+
+    @property
+    def display_image(self):
+        url = self.get_image_url
+        if url: return url
+        
+        defaults = {
+            'about': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069',
+            'products': 'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg',
+            'services': 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80',
+            'gallery': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069',
+            'brands': 'https://jkrintl.com/wp-content/uploads/2022/12/JKR-Banner-2.jpg',
+            'stores': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069',
+            'blog': 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069',
+            'contact': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070'
+        }
+        return defaults.get(self.page, 'https://via.placeholder.com/1920x600')
 
     def __str__(self): return self.get_page_display()
     class Meta:
