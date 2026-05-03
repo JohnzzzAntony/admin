@@ -307,9 +307,10 @@ WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 if IS_PRODUCTION:
     STORAGES = {
         "default": {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"},
-        # CompressedManifestStaticFilesStorage: hashes filenames for cache-busting
-        # AND serves pre-compressed .gz + .br files for ~70% bandwidth reduction.
-        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+        # ManifestStaticFilesStorage: hashes filenames for cache-busting without
+        # raising MissingFileError for referenced files (e.g. source maps) that
+        # are not present in the collected static files.
+        "staticfiles": {"BACKEND": "whitenoise.storage.ManifestStaticFilesStorage"},
     }
 else:
     STORAGES = {
