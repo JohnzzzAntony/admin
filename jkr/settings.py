@@ -287,6 +287,8 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
+
 
 # WhiteNoise options
 # In production: finders disabled (collectstatic must be run), compression enabled.
