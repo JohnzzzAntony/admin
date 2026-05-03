@@ -50,46 +50,57 @@ def site_settings(request):
 
 def page_heroes(request):
     from pages.models import PageHero
-    try:
-        # Get existing heroes
-        db_heroes = {hero.page: hero for hero in PageHero.objects.filter(is_active=True)}
-        
-        # Ensure all choices have an object (even if unsaved)
-        heroes = {}
-        for choice_key, choice_label in PageHero.PAGE_CHOICES:
-            if choice_key in db_heroes:
-                heroes[choice_key] = db_heroes[choice_key]
-            else:
-                # Return an unsaved instance with the page set
-                # This allows templates to call .display_title etc.
-                heroes[choice_key] = PageHero(page=choice_key, is_active=True)
-                
-    except Exception:
-        heroes = {}
-        
+    from django.core.cache import cache
+
+    cache_key = 'page_heroes_v1'
+    heroes = cache.get(cache_key)
+    if heroes is None:
+        try:
+            db_heroes = {hero.page: hero for hero in PageHero.objects.filter(is_active=True)}
+
+            heroes = {}
+            for choice_key, choice_label in PageHero.PAGE_CHOICES:
+                if choice_key in db_heroes:
+                    heroes[choice_key] = db_heroes[choice_key]
+                else:
+                    heroes[choice_key] = PageHero(page=choice_key, is_active=True)
+        except Exception:
+            heroes = {}
+        cache.set(cache_key, heroes, 300)  # Cache 5 minutes
+
     return {
         'page_heroes': heroes,
     }
 
 
 def admin_dashboard(request):
-    """Provides key metrics for the admin dashboard summary."""
+    """Provides key metrics for the admin dashboard summary.
+
+    Cached for 60 s to avoid 4 DB queries on every admin page load while
+    still keeping metrics reasonably fresh.
+    """
     if not request.path.startswith('/admin/'):
         return {}
-    
-    try:
-        total_orders = CustomerOrder.objects.count()
-        total_revenue = CustomerOrder.objects.filter(payment_status='paid').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-        total_products = Product.objects.count()
-        new_messages = ContactFormSubmission.objects.filter(is_read=False).count()
-        
-        return {
-            'dashboard_summary': {
+
+    cache_key = 'admin_dashboard_summary_v1'
+    summary = cache.get(cache_key)
+    if summary is None:
+        try:
+            total_orders = CustomerOrder.objects.count()
+            total_revenue = (
+                CustomerOrder.objects.filter(payment_status='paid')
+                .aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+            )
+            total_products = Product.objects.count()
+            new_messages = ContactFormSubmission.objects.filter(is_read=False).count()
+            summary = {
                 'orders': total_orders,
                 'revenue': f"{total_revenue:,.2f}",
                 'products': total_products,
-                'messages': new_messages
+                'messages': new_messages,
             }
-        }
-    except Exception:
-        return {}
+            cache.set(cache_key, summary, 60)  # Refresh every 60 s
+        except Exception:
+            return {}
+
+    return {'dashboard_summary': summary}

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.utils import timezone
 from .models import SiteSettings, Testimonial, Client, SocialPost, StoreLocation
@@ -10,152 +11,127 @@ from pages.models import AboutUs, MissionVision, Service, Counter, WhyUsCard, Pa
 from .models import Testimonial, Client, SocialPost, StoreLocation
 
 def home(request):
-    """Homepage aggregation view."""
-    sliders = HeroSlider.objects.filter(is_active=True).order_by('order')
-    
-    # Homepage Interleaving Logic
+    """Homepage aggregation view — anonymous requests are cached for 5 minutes."""
+    # Only cache for anonymous users (authenticated users may have personalised data)
+    cache_key = 'homepage_context_v2'
+    if not request.user.is_authenticated:
+        context = cache.get(cache_key)
+        if context is not None:
+            return render(request, 'index.html', context)
+
+    sliders = list(HeroSlider.objects.filter(is_active=True).order_by('order'))
+
     # Homepage sections logic
-    homepage_sections_raw = Category.objects.filter(show_on_homepage=True, is_active=True)
-    
-    # Categories for the circular slider (Top)
-    categories_circles = homepage_sections_raw
-    if not categories_circles.exists():
-        categories_circles = Category.objects.filter(parent__isnull=True, is_active=True)[:10]
-    
-    # ─── Homepage Interleaving Logic ──────────────────────────────────────────
-    # Interleaving Pattern: Category -> Banner -> Category -> Banner
-    
-    # 1. Prepare Categories
-    category_sections = []
-    # Optimization: Prefetch subcategories to speed up logic
-    homepage_sections_raw_prefetched = homepage_sections_raw.prefetch_related('subcategories')
-    
+    homepage_sections_raw = list(
+        Category.objects.filter(show_on_homepage=True, is_active=True)
+        .prefetch_related('subcategories')
+    )
+
+    # Categories for the circular slider (Top) — reuse the already-fetched list
+    categories_circles = homepage_sections_raw or list(
+        Category.objects.filter(parent__isnull=True, is_active=True)[:10]
+    )
+
     # Pre-fetch all active category relations once for efficient descendant lookup
     all_cats_lookup = list(Category.objects.filter(is_active=True).values('id', 'parent_id'))
-    
-    for cat in homepage_sections_raw_prefetched:
-        # Aggregated products for this category and all its children
+
+    # ─── Homepage Interleaving Logic ──────────────────────────────────────────
+    category_sections = []
+    for cat in homepage_sections_raw:
         all_cat_ids = cat.get_descendant_ids(include_self=True, all_cats_prefetched=all_cats_lookup)
-        cat_products = Product.objects.filter(
-            category_id__in=all_cat_ids,
-            is_active=True,
-            quantity__gt=0
-        ).select_related('category', 'brand').prefetch_related('offers', 'images').distinct().order_by('-id')[:8]
-        
-        # Attach aggregated products to the category object for template access
+        # Evaluate the queryset immediately (list) to avoid extra .exists() COUNT query
+        cat_products = list(
+            Product.objects.filter(
+                category_id__in=all_cat_ids,
+                is_active=True,
+                quantity__gt=0
+            ).select_related('category', 'brand').prefetch_related('offers', 'images')
+            .distinct().order_by('-id')[:8]
+        )
         cat.aggregated_products = cat_products
-        
-        if cat_products.exists():
-            category_sections.append({
-                'type': 'category', 
-                'data': cat, 
-                'order': cat.homepage_order
-            })
-    
-    # Sort categories by their defined order
+        if cat_products:  # len() check — no extra COUNT query
+            category_sections.append({'type': 'category', 'data': cat, 'order': cat.homepage_order})
+
     category_sections.sort(key=lambda x: x['order'])
-    
-    # 2. Prepare Banners
-    banner_sections = []
-    banners = PromoBanner.objects.filter(is_active=True).prefetch_related('items')
-    for banner in banners:
-        banner_sections.append({
-            'type': 'banner', 
-            'data': banner, 
-            'order': banner.homepage_order
-        })
-    
-    # Sort banners by their defined order
+
+    banners = list(PromoBanner.objects.filter(is_active=True).prefetch_related('items'))
+    banner_sections = [
+        {'type': 'banner', 'data': b, 'order': b.homepage_order} for b in banners
+    ]
     banner_sections.sort(key=lambda x: x['order'])
 
-    # 3. Interleave and Sort Globally
-    # Combine and sort by homepage_order to allow flexible positioning
-    homepage_sections = category_sections + banner_sections
-    homepage_sections.sort(key=lambda x: x.get('order', 0))
-    
-    # Apply display index for category labeling (e.g. "Section 1")
+    homepage_sections = sorted(category_sections + banner_sections, key=lambda x: x.get('order', 0))
     cat_display_count = 1
     for section in homepage_sections:
         if section['type'] == 'category':
             section['display_index'] = cat_display_count
             cat_display_count += 1
 
-
     about_us = AboutUs.objects.filter(is_active=True).first()
-    
-    # Batch Mission/Vision queries to reduce one round-trip
-    mv_sections = MissionVision.objects.filter(section_type__in=['mission', 'vision'], is_active=True)
+
+    # Single query for both mission and vision
+    mv_sections = list(MissionVision.objects.filter(section_type__in=['mission', 'vision'], is_active=True))
     mission = next((mv for mv in mv_sections if mv.section_type == 'mission'), None)
     vision = next((mv for mv in mv_sections if mv.section_type == 'vision'), None)
-    
-    services = Service.objects.filter(is_active=True).order_by('order')
-    counters = Counter.objects.filter(is_active=True).order_by('order')
-    why_us = WhyUsCard.objects.filter(is_active=True).order_by('order')
-    partners = Partner.objects.filter(is_active=True).order_by('order')
-    gallery = GalleryItem.objects.filter(is_active=True).order_by('order')[:8]
-    
-    testimonials = Testimonial.objects.filter(is_active=True).order_by('order')
-    public_clients = Client.objects.filter(category='Public', is_active=True).order_by('order')
-    private_clients = Client.objects.filter(category='Private', is_active=True).order_by('order')
-    social_posts = SocialPost.objects.all().order_by('order')[:6]
-    
-    # Optimized latest_products
-    latest_products = Product.objects.filter(
-        quantity__gt=0,
-        is_active=True
-    ).select_related('category', 'brand').prefetch_related('offers', 'images').order_by('-id')[:8]
 
-    # Fetch Products with active offers (either via Offer model or manual sale_price)
+    services  = list(Service.objects.filter(is_active=True).order_by('order'))
+    counters  = list(Counter.objects.filter(is_active=True).order_by('order'))
+    why_us    = list(WhyUsCard.objects.filter(is_active=True).order_by('order'))
+    partners  = list(Partner.objects.filter(is_active=True).order_by('order'))
+    gallery   = list(GalleryItem.objects.filter(is_active=True).order_by('order')[:8])
+    testimonials   = list(Testimonial.objects.filter(is_active=True).order_by('order'))
+    public_clients = list(Client.objects.filter(category='Public', is_active=True).order_by('order'))
+    private_clients= list(Client.objects.filter(category='Private', is_active=True).order_by('order'))
+    social_posts   = list(SocialPost.objects.all().order_by('order')[:6])
+
+    latest_products = list(
+        Product.objects.filter(quantity__gt=0, is_active=True)
+        .select_related('category', 'brand').prefetch_related('offers', 'images')
+        .order_by('-id')[:8]
+    )
+
     now = timezone.now()
-    active_offers_products = Product.objects.filter(
-        is_active=True,
-        quantity__gt=0,
-    ).filter(
-        models.Q(offers__start_date__lte=now, offers__end_date__gte=now) |
-        models.Q(sale_price__isnull=False, sale_price__lt=models.F('regular_price'))
-    ).distinct().select_related('category', 'brand').prefetch_related('offers', 'images')
+    active_offers_products = list(
+        Product.objects.filter(is_active=True, quantity__gt=0).filter(
+            models.Q(offers__start_date__lte=now, offers__end_date__gte=now) |
+            models.Q(sale_price__isnull=False, sale_price__lt=models.F('regular_price'))
+        ).distinct().select_related('category', 'brand').prefetch_related('offers', 'images')
+    )
 
-    # Premium Featured Products
-    featured_products = Product.objects.filter(
-        is_featured=True,
-        is_active=True,
-        quantity__gt=0
-    ).select_related('category', 'brand').prefetch_related('offers', 'images').order_by('-id')[:8]
-    
-    # Fallback to latest if none featured
-    if not featured_products.exists():
+    # Evaluate featured products as a list first to avoid double DB hit
+    featured_products = list(
+        Product.objects.filter(is_featured=True, is_active=True, quantity__gt=0)
+        .select_related('category', 'brand').prefetch_related('offers', 'images')
+        .order_by('-id')[:8]
+    )
+    if not featured_products:  # use already-fetched list — no extra COUNT query
         featured_products = latest_products
-    
-    # Pre-fetch all active offers for price calculation optimization
-    all_active_offers = list(Offer.objects.filter(
-        start_date__lte=now,
-        end_date__gte=now
-    ).prefetch_related('products', 'categories', 'brands'))
 
-    # Helper to attach price info in bulk to avoid N+1 in templates
+    all_active_offers = list(
+        Offer.objects.filter(start_date__lte=now, end_date__gte=now)
+        .prefetch_related('products', 'categories', 'brands')
+    )
+
     def attach_price_info(product_list):
         for p in product_list:
             p.price_info = p.get_best_price_info(prefetched_offers=all_active_offers)
-            
+
     attach_price_info(latest_products)
     attach_price_info(featured_products)
     attach_price_info(active_offers_products)
     for section in category_sections:
-        if section['type'] == 'category':
-            attach_price_info(section['data'].aggregated_products)
+        attach_price_info(section['data'].aggregated_products)
 
-    # Homepage Collections: Filter active ones and prefetch related Products.
-    collections = Collection.objects.filter(is_active=True).prefetch_related(
-        'products', 
-        'products__category',
-        'products__brand',
-        'products__offers',
-        'products__images'
+    collections = list(
+        Collection.objects.filter(is_active=True).prefetch_related(
+            'products', 'products__category', 'products__brand',
+            'products__offers', 'products__images'
+        )
     )
     for col in collections:
-        attach_price_info(col.products.all())
+        attach_price_info(list(col.products.all()))
 
-    brands = Brand.objects.filter(show_on_homepage=True, is_active=True).order_by('order')
+    brands = list(Brand.objects.filter(show_on_homepage=True, is_active=True).order_by('order'))
 
     context = {
         'sliders': sliders,
@@ -179,14 +155,21 @@ def home(request):
         'homepage_sections': homepage_sections,
         'brands': brands,
     }
+
+    # Store in cache for anonymous users (5 minutes)
+    if not request.user.is_authenticated:
+        cache.set(cache_key, context, 300)
+
     return render(request, 'index.html', context)
 
 def about_us_view(request):
-    """Specific About Us page."""
+    """Specific About Us page — single query for mission+vision."""
     about_us = AboutUs.objects.first()
-    mission = MissionVision.objects.filter(section_type='mission').first()
-    vision = MissionVision.objects.filter(section_type='vision').first()
-    counters = Counter.objects.filter(is_active=True).order_by('order')
+    # One query for both instead of two separate .filter().first() calls
+    mv_qs = list(MissionVision.objects.filter(section_type__in=['mission', 'vision']))
+    mission = next((mv for mv in mv_qs if mv.section_type == 'mission'), None)
+    vision  = next((mv for mv in mv_qs if mv.section_type == 'vision'), None)
+    counters = list(Counter.objects.filter(is_active=True).order_by('order'))
     return render(request, 'pages/about.html', {
         'about_us': about_us,
         'mission': mission,
@@ -227,12 +210,12 @@ def health_check(request):
     """Simple health check endpoint for monitoring."""
     return JsonResponse({'status': 'healthy', 'timestamp': timezone.now().isoformat()})
 def robots_txt_view(request):
-    """Serve dynamic robots.txt content from SiteSettings."""
-    settings = SiteSettings.objects.first()
-    content = ""
-    if settings and settings.robots_txt:
-        content = settings.robots_txt
-    else:
-        content = "User-agent: *\nDisallow: /admin/\nDisallow: /checkout/\nAllow: /"
-    
+    """Serve dynamic robots.txt — cached for 24h to avoid DB hit on every crawler request."""
+    cache_key = 'robots_txt_v1'
+    content = cache.get(cache_key)
+    if content is None:
+        site = SiteSettings.objects.first()
+        content = (site.robots_txt if site and site.robots_txt
+                   else "User-agent: *\nDisallow: /admin/\nDisallow: /checkout/\nAllow: /")
+        cache.set(cache_key, content, 86400)  # 24 hours
     return HttpResponse(content, content_type="text/plain")

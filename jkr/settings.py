@@ -202,9 +202,11 @@ TEMPLATES = [
 
 if env("DATABASE_URL", default=None):
     DATABASES = {"default": env.db()}
-    # Neon poolers work better with short-lived connections or 0 in some environments
-    DATABASES["default"]["CONN_MAX_AGE"] = 0
-    
+    # Use persistent connections (60s) to avoid per-request TCP handshake overhead.
+    # Neon/Supabase support this via PgBouncer in session mode.
+    DATABASES["default"]["CONN_MAX_AGE"] = env.int("DB_CONN_MAX_AGE", default=60)
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+
     # Required for Neon/Supabase poolers to avoid InvalidCursorName (server-side cursor) errors
     DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 
@@ -213,6 +215,13 @@ if env("DATABASE_URL", default=None):
         DATABASES["default"].setdefault("OPTIONS", {})
         # Merge existing options if any
         DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
+        # Enable keepalives to prevent idle connections being dropped by the proxy
+        DATABASES["default"]["OPTIONS"].update({
+            "keepalives": 1,
+            "keepalives_idle": 30,
+            "keepalives_interval": 10,
+            "keepalives_count": 3,
+        })
 else:
     DATABASES = {
         "default": {
@@ -224,12 +233,29 @@ else:
 # =============================================================================
 # CACHING
 # =============================================================================
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "jkr-unique-snowflake",
+# Use file-based cache in production for cross-process sharing and persistence.
+# Upgrade to Redis (django-redis) when available for maximum performance.
+if IS_PRODUCTION:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+            "LOCATION": "/tmp/django_cache_jkr",
+            "TIMEOUT": 600,  # 10 minutes default
+            "OPTIONS": {
+                "MAX_ENTRIES": 3000,
+            },
+        }
     }
-}
+    # Store sessions in the cache for faster access
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_CACHE_ALIAS = "default"
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "jkr-unique-snowflake",
+        }
+    }
 
 # =============================================================================
 # PASSWORD VALIDATION
@@ -262,32 +288,32 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# WhiteNoise options (finders enabled so collectstatic is not required in dev)
-WHITENOISE_USE_FINDERS = True
+# WhiteNoise options
+# In production: finders disabled (collectstatic must be run), compression enabled.
+# In dev: finders enabled for convenience, compression skipped for speed.
+if IS_PRODUCTION:
+    WHITENOISE_USE_FINDERS = False
+    WHITENOISE_AUTOREFRESH = False
+else:
+    WHITENOISE_USE_FINDERS = True
+    WHITENOISE_AUTOREFRESH = True
+
 WHITENOISE_MANIFEST_STRICT = False
-WHITENOISE_COMPRESS = False
 WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 
-# =============================================================================
-# STORAGE BACKENDS
-# Production:  Cloudinary (media)  +  WhiteNoise (static)
-# Development: Local filesystem
-# =============================================================================
-
+# Modern Django STORAGES dictionary (required by Django 4.2+)
 if IS_PRODUCTION:
-    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-    RAW_FILE_STORAGE = "cloudinary_storage.storage.RawMediaCloudinaryStorage"
-    STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
+    STORAGES = {
+        "default": {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"},
+        # CompressedManifestStaticFilesStorage: hashes filenames for cache-busting
+        # AND serves pre-compressed .gz + .br files for ~70% bandwidth reduction.
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    }
 else:
-    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-    RAW_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
-
-# Modern Django STORAGES dictionary (required by Django 5+)
-STORAGES = {
-    "default": {"BACKEND": DEFAULT_FILE_STORAGE},
-    "staticfiles": {"BACKEND": STATICFILES_STORAGE},
-}
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -319,8 +345,6 @@ JAZZMIN_SETTINGS = {
     "search_model": ["products.Product"],
     "show_ui_builder": False,
     "show_recent_actions": False,
-    "actions_sticky": True,
-    "edit_id_fields": True,
     "related_modal_active": True,
     "changeform_format": "horizontal_tabs",
     "topmenu_links": [

@@ -175,12 +175,13 @@ def product_list(request):
     for p in page_obj:
         p.price_info = p.get_best_price_info(prefetched_offers=active_offers)
     
+    all_brands = Brand.objects.filter(is_active=True).order_by('order', 'name')
     return render(request, 'products/product_list.html', {
         'categories': categories,
         'products': page_obj,
         'current_sort': sort,
-        'all_brands': Brand.objects.filter(is_active=True).order_by('order', 'name'),
-        'all_brands_count': Brand.objects.filter(is_active=True).count(),
+        'all_brands': all_brands,
+        'all_brands_count': all_brands.count(),
         'price_bounds': price_bounds,
         'current_filters': {
             'min_price': min_price,
@@ -274,14 +275,15 @@ def category_detail(request, slug=None, hierarchy_path=None):
     # Root categories for sidebar
     roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
 
+    all_brands = Brand.objects.filter(is_active=True).order_by('order', 'name')
     return render(request, 'products/product_list.html', {
         'current_category': category, 
         'products': page_obj,
         'categories': roots,
         'ancestors': category.get_ancestors(),
         'current_sort': sort,
-        'all_brands': Brand.objects.filter(is_active=True).order_by('order', 'name'),
-        'all_brands_count': Brand.objects.filter(is_active=True).count(),
+        'all_brands': all_brands,
+        'all_brands_count': all_brands.count(),
         'price_bounds': price_bounds,
         'current_filters': {
             'min_price': min_price,
@@ -453,14 +455,15 @@ def collection_detail(request, slug):
     # Root categories for sidebar
     roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
 
+    all_brands = Brand.objects.filter(is_active=True).order_by('order', 'name')
     return render(request, 'products/product_list.html', {
         'collection': collection, 
         'products': page_obj,
         'categories': roots,
         'title': collection.name,
         'current_sort': sort,
-        'all_brands': Brand.objects.filter(is_active=True).order_by('order', 'name'),
-        'all_brands_count': Brand.objects.filter(is_active=True).count(),
+        'all_brands': all_brands,
+        'all_brands_count': all_brands.count(),
         'price_bounds': price_bounds,
         'current_filters': {
             'min_price': min_price,
@@ -552,14 +555,15 @@ def brand_detail(request, slug):
     
     roots = Category.objects.filter(parent__isnull=True, is_active=True).prefetch_related('subcategories')
     
+    all_brands = Brand.objects.filter(is_active=True).order_by('order', 'name')
     return render(request, 'products/product_list.html', {
         'current_brand': brand,
         'products': page_obj,
         'categories': roots,
         'title': f"Products by {brand.name}",
         'current_sort': sort,
-        'all_brands': Brand.objects.filter(is_active=True).order_by('order', 'name'),
-        'all_brands_count': Brand.objects.filter(is_active=True).count(),
+        'all_brands': all_brands,
+        'all_brands_count': all_brands.count(),
         'price_bounds': price_bounds,
         'current_filters': {
             'min_price': min_price,
